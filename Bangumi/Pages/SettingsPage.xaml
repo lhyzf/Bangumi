@@ -1,0 +1,29 @@
+﻿<Page
+    x:Class="Bangumi.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Bangumi.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Pivot>
+            <PivotItem Header="设置">
+                <TextBlock Text="没有可以设置的~(￣▽￣)~*"/>
+            </PivotItem>
+            <PivotItem Header="关于">
+                <StackPanel>
+                    <TextBlock Text="Bangumi for UWP (非官方)" Style="{StaticResource TitleTextBlockStyle}" />
+                    <TextBlock>
+                        <LineBreak/>
+                        © 2019 Bangumi
+                        <LineBreak/>
+                        版本：0.1.0.0
+                    </TextBlock>
+                </StackPanel>
+            </PivotItem>
+        </Pivot>
+    </Grid>
+</Page>

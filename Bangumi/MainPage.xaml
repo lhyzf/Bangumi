@@ -5,10 +5,51 @@
     xmlns:local="using:Bangumi"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
 
+    <Grid>
+        <muxc:NavigationView x:Name="NavView"
+                         Loaded="NavView_Loaded"
+                         ItemInvoked="NavView_ItemInvoked"
+                         BackRequested="NavView_BackRequested"
+                         CompactModeThresholdWidth="0" >
+            <muxc:NavigationView.MenuItems>
+                <muxc:NavigationViewItem Tag="home" Icon="Home" Content="主页"/>
+                <muxc:NavigationViewItem Tag="timeLine" Content="时间表">
+                    <muxc:NavigationViewItem.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8C0;"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem Tag="index" Content="索引">
+                    <muxc:NavigationViewItem.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF0E2;"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+            </muxc:NavigationView.MenuItems>
+
+            <ScrollViewer>
+                <Frame x:Name="ContentFrame" Padding="6,0,6,12" IsTabStop="True"
+                   NavigationFailed="ContentFrame_NavigationFailed"/>
+            </ScrollViewer>
+        </muxc:NavigationView>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger
+                        MinWindowWidth="{x:Bind NavView.CompactModeThresholdWidth}"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!-- Leave the next line for left-only navigation. -->
+                        <Setter Target="ContentFrame.Padding" Value="12,0,12,12"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
+
 </Page>
