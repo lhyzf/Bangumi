@@ -1,4 +1,5 @@
-﻿using Bangumi.Models;
+﻿using Bangumi.Facades;
+using Bangumi.Models;
 using Bangumi.Pages;
 using System;
 using System.Collections.Generic;
@@ -6,9 +7,11 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -37,15 +40,29 @@ namespace Bangumi
         {
             this.InitializeComponent();
 
-            
-
             // Handle keyboard and mouse navigation requests
             this.systemNavigationManager = SystemNavigationManager.GetForCurrentView();
             systemNavigationManager.BackRequested += SystemNavigationManager_BackRequested;
-            
+
             //检测鼠标点击前进后退键
             Window.Current.CoreWindow.PointerPressed +=
                 this.CoreWindow_PointerPressed;
+        }
+
+        //根据用户登录状态改变用户图标
+        private async Task UpdataUserStatus()
+        {
+            bool result = await Helper.OAuthHelper.CheckTokens();
+            if (result)
+            {
+                UserItem.Content = "注销";
+                UserIcon.Glyph = "\uE7E8";
+            }
+            else
+            {
+                UserItem.Content = "登录";
+                UserIcon.Glyph = "\uEE57";
+            }
         }
 
         private void ContentFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
@@ -61,8 +78,9 @@ namespace Bangumi
             ("index", typeof(IndexPage)),
         };
 
-        private void NavView_Loaded(object sender, RoutedEventArgs e)
+        private async void NavView_Loaded(object sender, RoutedEventArgs e)
         {
+            await UpdataUserStatus();
             // You can also add items in code.
             //NavView.MenuItems.Add(new muxc.NavigationViewItemSeparator());
             //NavView.MenuItems.Add(new muxc.NavigationViewItem
@@ -231,6 +249,28 @@ namespace Bangumi
 
                 NavView.Header =
                     ((muxc.NavigationViewItem)NavView.SelectedItem)?.Content?.ToString();
+            }
+        }
+
+        private async void NavigationViewItem_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (UserItem.Content.ToString() == "登录")
+            {
+                await Helper.OAuthHelper.Authorize();
+                await UpdataUserStatus();
+            }
+            else if (UserItem.Content.ToString() == "注销")
+            {
+                string choice = "";
+                var msgDialog = new Windows.UI.Popups.MessageDialog("确定要退出登录吗？") { Title = "注销" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定", uiCommand => { choice = uiCommand.Label; }));
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("取消", uiCommand => { choice = uiCommand.Label; }));
+                await msgDialog.ShowAsync();
+                if (choice== "确定")
+                {
+                    await Helper.OAuthHelper.DeleteTokens();
+                    await UpdataUserStatus();
+                }
             }
         }
     }

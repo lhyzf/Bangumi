@@ -119,11 +119,14 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BangumiFacade.cs" />
+    <Compile Include="Facades\BangumiFacade.cs" />
+    <Compile Include="Helper\OAuthHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\AccessToken.cs" />
     <Compile Include="Models\BangumiCalendar.cs" />
+    <Compile Include="Models\Posts\Token.cs" />
     <Compile Include="Pages\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>

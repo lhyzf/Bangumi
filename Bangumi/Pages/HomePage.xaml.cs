@@ -27,5 +27,6 @@ namespace Bangumi.Pages
             this.InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Enabled;
         }
+
     }
 }

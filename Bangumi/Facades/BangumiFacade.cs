@@ -9,13 +9,18 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Windows.Security.Authentication.Web;
+using Windows.Storage;
+using System.Diagnostics;
+using Windows.Storage.Streams;
+using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.DataProtection;
 
-namespace Bangumi
+namespace Bangumi.Facades
 {
     class BangumiFacade
     {
-        private const string client_id = "bgm8905c514a1b94ec1";
-        private const string client_secret = "b678c34dd896203627da308b6b453775";
+
 
         //处理 ObservableCollection 显示时间表
         public static async Task PopulateBangumiCalendarAsync(ObservableCollection<BangumiCalendar> bangumiCollection)

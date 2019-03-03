@@ -29,6 +29,13 @@
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
             </muxc:NavigationView.MenuItems>
+            <muxc:NavigationView.PaneFooter>
+                <muxc:NavigationViewItem Name="UserItem" Tag="user" Content="登录" Tapped="NavigationViewItem_Tapped">
+                    <muxc:NavigationViewItem.Icon>
+                        <FontIcon Name="UserIcon" FontFamily="Segoe MDL2 Assets" Glyph="&#xEE57;"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+            </muxc:NavigationView.PaneFooter>
 
             <ScrollViewer>
                 <Frame x:Name="ContentFrame" Padding="6,0,6,12" IsTabStop="True"
