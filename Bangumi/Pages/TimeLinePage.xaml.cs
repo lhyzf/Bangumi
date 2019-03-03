@@ -1,4 +1,5 @@
-﻿using Bangumi.Models;
+﻿using Bangumi.Facades;
+using Bangumi.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
