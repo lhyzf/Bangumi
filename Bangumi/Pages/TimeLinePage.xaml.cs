@@ -1,21 +1,10 @@
 ﻿using Bangumi.Facades;
 using Bangumi.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -49,8 +38,15 @@ namespace Bangumi.Pages
             MyProgressRing.Visibility = Visibility.Visible;
             
             ClickToRefresh.Visibility = Visibility.Collapsed;
-            await BangumiFacade.PopulateBangumiCalendarAsync(bangumiCollection);
-            UpdateTime.Text = "更新时间：" + DateTime.Now;
+            try
+            {
+                await BangumiFacade.PopulateBangumiCalendarAsync(bangumiCollection);
+                UpdateTime.Text = "更新时间：" + DateTime.Now;
+            }
+            catch (Exception)
+            {
+                UpdateTime.Text = "网络连接失败，请重试！";
+            }
             ClickToRefresh.Visibility = Visibility.Visible;
 
             MyProgressRing.IsActive = false;

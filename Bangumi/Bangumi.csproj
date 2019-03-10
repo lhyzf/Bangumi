@@ -126,7 +126,9 @@
     </Compile>
     <Compile Include="Models\AccessToken.cs" />
     <Compile Include="Models\BangumiCalendar.cs" />
+    <Compile Include="Models\Watching.cs" />
     <Compile Include="Models\Posts\Token.cs" />
+    <Compile Include="Models\Progress.cs" />
     <Compile Include="Pages\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>

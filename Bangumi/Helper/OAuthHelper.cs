@@ -233,7 +233,7 @@ namespace Bangumi.Helper
         }
 
         // Read UserId from a file
-        private static async Task<string> ReadUserId()
+        public static async Task<string> ReadUserId()
         {
             try
             {

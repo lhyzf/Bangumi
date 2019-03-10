@@ -1,25 +1,13 @@
-﻿using Bangumi.Facades;
-using Bangumi.Models;
-using Bangumi.Pages;
+﻿using Bangumi.Pages;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Foundation.Metadata;
-using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using muxc = Microsoft.UI.Xaml.Controls;
@@ -52,6 +40,7 @@ namespace Bangumi
         //根据用户登录状态改变用户图标
         private async Task UpdataUserStatus()
         {
+            //await Helper.OAuthHelper.CheckAccessToken();
             bool result = await Helper.OAuthHelper.CheckTokens();
             if (result)
             {
