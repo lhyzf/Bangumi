@@ -5,6 +5,9 @@
     xmlns:local="using:Bangumi.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:data="using:Bangumi.Models"
+    xmlns:sys="using:System"
+    Loaded="Page_Loaded"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -13,6 +16,36 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+        <StackPanel Orientation="Horizontal" Height="20">
+            <TextBlock Name="UpdateTime"/>
+            <ProgressRing Name="MyProgressRing" HorizontalAlignment="Left" Height="20" Width="20" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" >
+                <ProgressRing.RenderTransform>
+                    <CompositeTransform ScaleX="0.5" ScaleY="0.5"/>
+                </ProgressRing.RenderTransform>
+            </ProgressRing>
+            <TextBlock Name="ClickToRefresh" VerticalAlignment="Center" Padding="5,0" >
+                <Hyperlink UnderlineStyle="None" FontFamily="Segoe MDL2 Assets" Click="Hyperlink_Click" >
+                    &#xE72C;
+                </Hyperlink>
+            </TextBlock>
+        </StackPanel>
+        <Pivot Grid.Row="1" IsHeaderItemsCarouselEnabled="False">
+            <PivotItem Header="在看">
+                <GridView ItemsSource="{x:Bind watchingCollection}">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="data:Watching">
+                            <StackPanel Orientation="Horizontal" Margin="5">
+                                <Image Source="{x:Bind subject.images.common}" Height="75" Width="75" Stretch="UniformToFill" />
+                                <StackPanel Orientation="Vertical" Width="160" Margin="6,0">
+                                    <TextBlock Text="{x:Bind subject.name_cn}" FontSize="14" TextWrapping="Wrap" />
+                                    <TextBlock Text="{x:Bind subject.name}" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{x:Bind sys:String.Format('看到第 {0} 话', ep_status)}" FontSize="12" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </PivotItem>
+        </Pivot>
     </Grid>
 </Page>

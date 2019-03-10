@@ -29,11 +29,6 @@ namespace Bangumi.Models
         public string grid { get; set; }
     }
 
-    public class Collection
-    {
-        public int doing { get; set; }
-    }
-
     public class Item
     {
         public int id { get; set; }
