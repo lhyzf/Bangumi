@@ -4,6 +4,7 @@ using Bangumi.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -69,6 +70,12 @@ namespace Bangumi.Pages
         private async void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
             await Refresh();
+        }
+
+        private void GridView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var selectedItem = (Watching)e.ClickedItem;
+            Frame.Navigate(typeof(DetailsPage), selectedItem.subject_id);
         }
     }
 }

@@ -21,7 +21,6 @@ namespace Bangumi
     /// </summary>
     public sealed partial class MainPage : Page
     {
-
         SystemNavigationManager systemNavigationManager;
 
         public MainPage()
@@ -226,7 +225,12 @@ namespace Bangumi
             {
                 // SettingsItem is not part of NavView.MenuItems, and doesn't have a Tag.
                 NavView.SelectedItem = (muxc.NavigationViewItem)NavView.SettingsItem;
-                NavView.Header = "Settings";
+                NavView.Header = "设置";
+            }
+            else if (ContentFrame.SourcePageType == typeof(DetailsPage))
+            {
+                NavView.SelectedItem = null;
+                NavView.Header = "详情";
             }
             else if (ContentFrame.SourcePageType != null)
             {
@@ -240,6 +244,7 @@ namespace Bangumi
                     ((muxc.NavigationViewItem)NavView.SelectedItem)?.Content?.ToString();
             }
         }
+
 
         private async void NavigationViewItem_Tapped(object sender, TappedRoutedEventArgs e)
         {
@@ -255,7 +260,7 @@ namespace Bangumi
                 msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定", uiCommand => { choice = uiCommand.Label; }));
                 msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("取消", uiCommand => { choice = uiCommand.Label; }));
                 await msgDialog.ShowAsync();
-                if (choice== "确定")
+                if (choice == "确定")
                 {
                     await Helper.OAuthHelper.DeleteTokens();
                     await UpdataUserStatus();

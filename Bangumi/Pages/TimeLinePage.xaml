@@ -28,7 +28,7 @@
                 </Hyperlink>
             </TextBlock>
         </StackPanel>
-        <Pivot Grid.Row="1" ItemsSource="{x:Bind bangumiCollection}" IsHeaderItemsCarouselEnabled="False">
+        <Pivot Name="WeekPivot" Grid.Row="1" ItemsSource="{x:Bind bangumiCollection}" IsHeaderItemsCarouselEnabled="False">
             <Pivot.HeaderTemplate>
                 <DataTemplate x:DataType="data:BangumiCalendar">
                     <StackPanel>
@@ -39,7 +39,7 @@
             </Pivot.HeaderTemplate>
             <Pivot.ItemTemplate>
                 <DataTemplate x:DataType="data:BangumiCalendar">
-                    <GridView ItemsSource="{x:Bind items}">
+                    <GridView ItemsSource="{x:Bind items}" IsItemClickEnabled="True" ItemClick="GridView_ItemClick">
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="data:Item">
                                 <StackPanel Orientation="Horizontal" Margin="5">
