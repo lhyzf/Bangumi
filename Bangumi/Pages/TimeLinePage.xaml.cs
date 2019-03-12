@@ -42,6 +42,33 @@ namespace Bangumi.Pages
             {
                 await BangumiFacade.PopulateBangumiCalendarAsync(bangumiCollection);
                 UpdateTime.Text = "更新时间：" + DateTime.Now;
+                switch (DateTime.Now.DayOfWeek)
+                {
+                    case DayOfWeek.Monday:
+                        WeekPivot.SelectedIndex = 0;
+                        break;
+                    case DayOfWeek.Tuesday:
+                        WeekPivot.SelectedIndex = 1;
+                        break;
+                    case DayOfWeek.Wednesday:
+                        WeekPivot.SelectedIndex = 2;
+                        break;
+                    case DayOfWeek.Thursday:
+                        WeekPivot.SelectedIndex = 3;
+                        break;
+                    case DayOfWeek.Friday:
+                        WeekPivot.SelectedIndex = 4;
+                        break;
+                    case DayOfWeek.Saturday:
+                        WeekPivot.SelectedIndex = 5;
+                        break;
+                    case DayOfWeek.Sunday:
+                        WeekPivot.SelectedIndex = 6;
+                        break;
+                    default:
+                        break;
+                }
+                var b = WeekPivot.SelectedItem;
             }
             catch (Exception)
             {
@@ -57,6 +84,12 @@ namespace Bangumi.Pages
         private async void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
             await Refresh();
+        }
+
+        private void GridView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var selectedItem = (Item)e.ClickedItem;
+            Frame.Navigate(typeof(DetailsPage), selectedItem.id);
         }
 
     }

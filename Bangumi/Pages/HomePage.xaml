@@ -31,7 +31,7 @@
         </StackPanel>
         <Pivot Grid.Row="1" IsHeaderItemsCarouselEnabled="False">
             <PivotItem Header="在看">
-                <GridView ItemsSource="{x:Bind watchingCollection}">
+                <GridView ItemsSource="{x:Bind watchingCollection}" IsItemClickEnabled="True" ItemClick="GridView_ItemClick">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="data:Watching">
                             <StackPanel Orientation="Horizontal" Margin="5">
