@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using static Bangumi.Helper.OAuthHelper;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -54,8 +55,16 @@ namespace Bangumi.Pages
             ClickToRefresh.Visibility = Visibility.Collapsed;
             try
             {
-                await BangumiFacade.PopulateWatchingListAsync(watchingCollection, await OAuthHelper.ReadUserId());
-                UpdateTime.Text = "更新时间：" + DateTime.Now;
+                var userId = await OAuthHelper.ReadFromFile(OAuthFile.user_id, false);
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    await BangumiFacade.PopulateWatchingListAsync(watchingCollection, userId);
+                    UpdateTime.Text = "更新时间：" + DateTime.Now;
+                }
+                else
+                {
+                    UpdateTime.Text = "请先登录！";
+                }
             }
             catch (Exception)
             {

@@ -22,6 +22,7 @@ namespace Bangumi.Helper
         private const string client_secret = "b678c34dd896203627da308b6b453775";
 
         public static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+
         // 用户登录
         public static async Task Authorize()
         {
@@ -54,7 +55,7 @@ namespace Bangumi.Helper
                 //rootPage.NotifyUser(Error.Message, NotifyType.ErrorMessage);
             }
         }
-        
+
         // 使用返回的的 code 换取 Access Token
         private static async Task GetAccessToken(string codeString)
         {
@@ -73,9 +74,7 @@ namespace Bangumi.Helper
             var jsonMessage = await response.Result.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<AccessToken>(jsonMessage);
             //将信息写入本地文件
-            await WriteAccessToken(result.access_token);
-            await WriteRefreshToken(result.refresh_token);
-            await WriteUserId(result.user_id.ToString());
+            await WriteTokens(result);
         }
 
         // 加密字符串
@@ -124,121 +123,45 @@ namespace Bangumi.Helper
 
         }
 
-        // Write AccessToken to a file and Encryption
-        private static async Task WriteAccessToken(string accessToken)
+        // 写入文件
+        private static async Task WriteToFile(string msg, OAuthFile userFileName, bool encrytion)
         {
-            StorageFile tokenFile = await localFolder.CreateFileAsync("AccessToken.data",
-                CreationCollisionOption.ReplaceExisting);
+            var fileName = getOAuthFileName(userFileName);
+            StorageFile storageFile = await localFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
             try
             {
-                var EncrytedData = await TokenEncryptionAsync(accessToken);
-                await FileIO.WriteBufferAsync(tokenFile, EncrytedData);
-            }
-            catch (Exception)
-            {
-                await tokenFile.DeleteAsync();
-            }
-
-        }
-
-        // Read AccessToken from a file and Decryption
-        public static async Task<string> ReadAccessToken()
-        {
-            try
-            {
-                StorageFile tokenFile = await localFolder.GetFileAsync("AccessToken.data");
-                IBuffer buffMsg = await FileIO.ReadBufferAsync(tokenFile);
-                //if (!IBuffer.Equals(buffMsg, null))
-                //    return "";
-                return await TokenDecryption(buffMsg);
-            }
-            catch (FileNotFoundException e)
-            {
-                // Cannot find file
-                Debug.WriteLine(e.ToString());
-                return "";
-            }
-            catch (IOException e)
-            {
-                // Get information from the exception, then throw
-                // the info to the parent method.
-                if (e.Source != null)
+                if (encrytion)
                 {
-                    Debug.WriteLine("IOException source: {0}", e.Source);
+                    var EncrytedData = await TokenEncryptionAsync(msg);
+                    await FileIO.WriteBufferAsync(storageFile, EncrytedData);
                 }
-                throw;
-            }
-        }
-
-        // Write RefreshToken to a file and Encryption
-        private static async Task WriteRefreshToken(string refreshToken)
-        {
-            StorageFile tokenFile = await localFolder.CreateFileAsync("RefreshToken.data",
-                CreationCollisionOption.ReplaceExisting);
-
-            try
-            {
-                var EncrytedData = await TokenEncryptionAsync(refreshToken);
-                await FileIO.WriteBufferAsync(tokenFile, EncrytedData);
-            }
-            catch (Exception)
-            {
-                await tokenFile.DeleteAsync();
-            }
-        }
-
-        // Read RefreshToken from a file and Decryption
-        private static async Task<string> ReadRefreshToken()
-        {
-            try
-            {
-                StorageFile tokenFile = await localFolder.GetFileAsync("RefreshToken.data");
-                IBuffer buffMsg = await FileIO.ReadBufferAsync(tokenFile);
-                //if (!IBuffer.Equals(buffMsg, null))
-                //    return "";
-                return await TokenDecryption(buffMsg);
-            }
-            catch (FileNotFoundException e)
-            {
-                // Cannot find file
-                Debug.WriteLine(e.ToString());
-                return "";
-            }
-            catch (IOException e)
-            {
-                // Get information from the exception, then throw
-                // the info to the parent method.
-                if (e.Source != null)
+                else
                 {
-                    Debug.WriteLine("IOException source: {0}", e.Source);
+                    await FileIO.WriteTextAsync(storageFile, msg);
                 }
-                throw;
-            }
-        }
-
-        // Write UserId to a file
-        private static async Task WriteUserId(string userId)
-        {
-            StorageFile file = await localFolder.CreateFileAsync("UserId.data",
-                CreationCollisionOption.ReplaceExisting);
-
-            try
-            {
-                await FileIO.WriteTextAsync(file, userId);
             }
             catch (Exception)
             {
-                await file.DeleteAsync();
+                await storageFile.DeleteAsync();
             }
         }
 
-        // Read UserId from a file
-        public static async Task<string> ReadUserId()
+        // 从文件读取
+        public static async Task<string> ReadFromFile(OAuthFile userFileName, bool encrytion)
         {
             try
             {
-                StorageFile File = await localFolder.GetFileAsync("UserId.data");
-                return await FileIO.ReadTextAsync(File);
+                var fileName = getOAuthFileName(userFileName);
+                StorageFile storageFile = await localFolder.GetFileAsync(fileName);
+                if (encrytion)
+                {
+                    IBuffer buffMsg = await FileIO.ReadBufferAsync(storageFile);
+                    return await TokenDecryption(buffMsg);
+                }
+                else
+                {
+                    return await FileIO.ReadTextAsync(storageFile);
+                }
             }
             catch (FileNotFoundException e)
             {
@@ -259,40 +182,57 @@ namespace Bangumi.Helper
         }
 
         // 刷新授权有效期
-        private static async Task RefreshAccessToken()
+        public static async Task RefreshAccessToken()
         {
+            Models.Posts.Token postData = new Models.Posts.Token
+            {
+                grant_type = "refresh_token",
+                client_id = client_id,
+                client_secret = client_secret,
+                refresh_token = await ReadFromFile(OAuthFile.refresh_token, true),
+                redirect_uri = "Bangumi.App",
+            };
+            string postUrl = "https://bgm.tv/oauth/access_token";
+            HttpClient http = new HttpClient();
+            HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(postData), Encoding.UTF8, "application/json");
+            var response = http.PostAsync(postUrl, httpContent);
+            var jsonMessage = await response.Result.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<AccessToken>(jsonMessage);
+            //将信息写入本地文件
+            await WriteTokens(result);
             return;
         }
 
         // 查询授权信息
-        public static async Task CheckAccessToken()
+        public static async Task<bool> CheckAccessToken()
         {
-            var token = await ReadAccessToken();
+            var token = await ReadFromFile(OAuthFile.access_token, true);
             if (string.IsNullOrEmpty(token))
             {
-                await Authorize();
-                return;
+                return false;
             }
-            AccessToken postData = new AccessToken
-            {
-                access_token = token,
-            };
-            string postUrl = "https://bgm.tv/oauth/token_status";
+            string postUrl = string.Format("https://bgm.tv/oauth/token_status?access_token={0}", token);
             HttpClient http = new HttpClient();
-            HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(postData), Encoding.UTF8, "application/x-www-form-urlencoded");
+            HttpContent httpContent = null;
             var response = http.PostAsync(postUrl, httpContent);
+            var responseStatus = response.Result.StatusCode;
             var jsonMessage = await response.Result.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<AccessToken>(jsonMessage);
-            if (result.expires_in == 0)
-                RefreshAccessToken();
+            // C# 时间戳为 1/10000000 秒，从0001年1月1日开始；js 时间戳为秒，从1970年1月1日开始
+            // 获取两天后的时间戳，离过期不足两天时或过期后更新 access_token
+            var aa = (DateTime.Now.AddDays(2).ToUniversalTime().Ticks - new DateTime(1970, 1, 1).Ticks) / 10000000;
+            if (result.expires < aa || responseStatus == System.Net.HttpStatusCode.Unauthorized)
+                await RefreshAccessToken();
+            return await CheckTokens();
         }
 
         // 检查用户授权文件
-        public static async Task<bool> CheckTokens()
+        private static async Task<bool> CheckTokens()
         {
-            var accessToken = await ReadAccessToken();
-            var refreshToken = await ReadRefreshToken();
-            if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
+            var accessToken = await ReadFromFile(OAuthFile.access_token, true);
+            var refreshToken = await ReadFromFile(OAuthFile.refresh_token, true);
+            var userId = await ReadFromFile(OAuthFile.user_id, false);
+            if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken) || string.IsNullOrEmpty(userId))
             {
                 await DeleteTokens();
                 return false;
@@ -300,20 +240,58 @@ namespace Bangumi.Helper
             return true;
         }
 
-        // 删除Tokens
+        // 写入 Tokens
+        private static async Task WriteTokens(AccessToken token)
+        {
+            if (!string.IsNullOrEmpty(token.access_token) && !string.IsNullOrEmpty(token.refresh_token) && !string.IsNullOrEmpty(token.user_id.ToString()))
+            {
+                //await WriteAccessToken(token.access_token);
+                //await WriteRefreshToken(token.refresh_token);
+                //await WriteUserId(token.user_id.ToString());
+                await WriteToFile(token.access_token, OAuthFile.access_token, true);
+                await WriteToFile(token.refresh_token, OAuthFile.refresh_token, true);
+                await WriteToFile(token.user_id.ToString(), OAuthFile.user_id, false);
+            }
+        }
+
+        // 删除 Tokens
         public static async Task DeleteTokens()
         {
-            StorageFile File = await localFolder.CreateFileAsync("AccessToken.data",
+            StorageFile File = await localFolder.CreateFileAsync(getOAuthFileName(OAuthFile.access_token),
                 CreationCollisionOption.ReplaceExisting);
             await File.DeleteAsync();
-            File = await localFolder.CreateFileAsync("RefreshToken.data",
+            File = await localFolder.CreateFileAsync(getOAuthFileName(OAuthFile.refresh_token),
                 CreationCollisionOption.ReplaceExisting);
             await File.DeleteAsync();
-            File = await localFolder.CreateFileAsync("UserId.data",
+            File = await localFolder.CreateFileAsync(getOAuthFileName(OAuthFile.user_id),
                 CreationCollisionOption.ReplaceExisting);
             await File.DeleteAsync();
-            
         }
+
+        private static string getOAuthFileName(OAuthFile fileName)
+        {
+            string result = string.Empty;
+            switch (fileName)
+            {
+                case OAuthFile.access_token:
+                    result = "AccessToken.data";
+                    break;
+                case OAuthFile.refresh_token:
+                    result = "RefreshToken.data";
+                    break;
+                case OAuthFile.user_id:
+                    result = "UserId.data";
+                    break;
+            }
+            return result;
+        }
+
+        public enum OAuthFile
+        {
+            access_token,
+            refresh_token,
+            user_id,
+        };
 
     }
 }

@@ -39,8 +39,7 @@ namespace Bangumi
         //根据用户登录状态改变用户图标
         private async Task UpdataUserStatus()
         {
-            //await Helper.OAuthHelper.CheckAccessToken();
-            bool result = await Helper.OAuthHelper.CheckTokens();
+            bool result = await Helper.OAuthHelper.CheckAccessToken();
             if (result)
             {
                 UserItem.Content = "注销";
@@ -69,6 +68,8 @@ namespace Bangumi
         private async void NavView_Loaded(object sender, RoutedEventArgs e)
         {
             await UpdataUserStatus();
+            //await Helper.OAuthHelper.RefreshAccessToken();
+
             // You can also add items in code.
             //NavView.MenuItems.Add(new muxc.NavigationViewItemSeparator());
             //NavView.MenuItems.Add(new muxc.NavigationViewItem
