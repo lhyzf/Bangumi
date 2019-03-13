@@ -125,10 +125,9 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\AccessToken.cs" />
-    <Compile Include="Models\BangumiCalendar.cs" />
-    <Compile Include="Models\Watching.cs" />
+    <Compile Include="Models\BangumiTimeLine.cs" />
+    <Compile Include="Models\BangumiSubject.cs" />
     <Compile Include="Models\Posts\Token.cs" />
-    <Compile Include="Models\Progress.cs" />
     <Compile Include="Pages\DetailsPage.xaml.cs">
       <DependentUpon>DetailsPage.xaml</DependentUpon>
     </Compile>

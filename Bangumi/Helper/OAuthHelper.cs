@@ -245,9 +245,6 @@ namespace Bangumi.Helper
         {
             if (!string.IsNullOrEmpty(token.access_token) && !string.IsNullOrEmpty(token.refresh_token) && !string.IsNullOrEmpty(token.user_id.ToString()))
             {
-                //await WriteAccessToken(token.access_token);
-                //await WriteRefreshToken(token.refresh_token);
-                //await WriteUserId(token.user_id.ToString());
                 await WriteToFile(token.access_token, OAuthFile.access_token, true);
                 await WriteToFile(token.refresh_token, OAuthFile.refresh_token, true);
                 await WriteToFile(token.user_id.ToString(), OAuthFile.user_id, false);

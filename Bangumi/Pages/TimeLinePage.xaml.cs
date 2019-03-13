@@ -16,13 +16,13 @@ namespace Bangumi.Pages
     /// </summary>
     public sealed partial class TimeLinePage : Page
     {
-        public ObservableCollection<BangumiCalendar> bangumiCollection { get; set; }
+        public ObservableCollection<BangumiTimeLine> bangumiCollection { get; set; }
 
         public TimeLinePage()
         {
             this.InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Enabled;
-            bangumiCollection = new ObservableCollection<BangumiCalendar>();
+            bangumiCollection = new ObservableCollection<BangumiTimeLine>();
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -88,7 +88,7 @@ namespace Bangumi.Pages
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var selectedItem = (Item)e.ClickedItem;
+            var selectedItem = (Subject)e.ClickedItem;
             Frame.Navigate(typeof(DetailsPage), selectedItem.id);
         }
 

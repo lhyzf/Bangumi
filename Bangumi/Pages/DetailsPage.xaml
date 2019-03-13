@@ -5,15 +5,39 @@
     xmlns:local="using:Bangumi.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:data="using:Bangumi.Models"
     Loaded="Page_Loaded"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <StackPanel>
-            <TextBlock Text="Hello bangumi!" />
-            <TextBlock Name="SubjectIdTextBlock" />
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Vertical" >
+            <StackPanel Orientation="Horizontal" >
+                <Image Name="BangumiImage" Height="214" Width="150" />
+                <StackPanel Orientation="Vertical" Margin="10,0">
+                    <TextBlock Name="NameTextBlock" FontSize="23" Foreground="#d26585" />
+                    <TextBlock Name="air_dateTextBlock" FontSize="15" Foreground="#666666" Margin="0,2,0,0" />
+                    <TextBlock Name="air_weekdayTextBlock" FontSize="15" Foreground="#666666" Margin="0,2,0,0" />
+                </StackPanel>
+            </StackPanel>
+            <TextBlock Name="SummaryTextBlock" FontSize="18" TextWrapping="Wrap" LineHeight="30" Margin="0,5,0,0" />
+
         </StackPanel>
+
+        <GridView Grid.Row="1" ItemsSource="">
+            <GridView.ItemTemplate>
+                <DataTemplate>
+                
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+
+
     </Grid>
 </Page>
