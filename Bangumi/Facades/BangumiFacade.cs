@@ -16,13 +16,81 @@ using Windows.Storage.Streams;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.DataProtection;
 using static Bangumi.Helper.OAuthHelper;
+using Newtonsoft.Json.Serialization;
 
 namespace Bangumi.Facades
 {
     class BangumiFacade
     {
 
-        // 处理 ObservableCollection 显示收视进度列表
+        // 获取详情并反序列化
+        public static async Task<Subject> GetSubjectAsync(string subjectId)
+        {
+            string url = string.Format("https://api.bgm.tv/subject/{0}?responseGroup=small", subjectId);
+            HttpClient http = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(15)
+            };
+            try
+            {
+                var response = await http.GetAsync(url);
+                var jsonMessage = await response.Content.ReadAsStringAsync();
+                // 反序列化指定名称的变量
+                JsonSerializerSettings jsonSerializerSetting = new JsonSerializerSettings();
+                jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "name_cn", "summary", "air_date", "air_weekday", "images", "common" });
+                var result = JsonConvert.DeserializeObject<Subject>(jsonMessage, jsonSerializerSetting);
+                return result;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
+        }
+
+        // 显示某一节目收视进度
+        public static async Task PopulateProgressAsync(ObservableCollection<Ep> ProgressCollection, string username, string subjectId)
+        {
+            try
+            {
+                var progress = await GetProgressesAsync(username, subjectId);
+                //清空原数据
+                ProgressCollection.Clear();
+                foreach (var ep in progress.eps)
+                {
+                    ProgressCollection.Add(ep);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        // 获取用户单个节目收视进度并反序列化
+        private static async Task<Progress> GetProgressesAsync(string username, string subjectId)
+        {
+            string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
+            string url = string.Format("https://api.bgm.tv/user/{0}/progress?subject_id={1}&access_token={2}", username, subjectId, token);
+            HttpClient http = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(15)
+            };
+            try
+            {
+                var response = await http.GetAsync(url);
+                var jsonMessage = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<Progress>(jsonMessage);
+                return result;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
+        }
+
+        // 显示用户收视进度列表
         public static async Task PopulateWatchingListAsync(ObservableCollection<Watching> watchingListCollection, string username)
         {
             try
@@ -58,7 +126,10 @@ namespace Bangumi.Facades
             {
                 var response = await http.GetAsync(url);
                 var jsonMessage = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<List<Watching>>(jsonMessage);
+                // 反序列化指定名称的变量
+                JsonSerializerSettings jsonSerializerSetting = new JsonSerializerSettings();
+                jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "subject_id", "ep_status", "subject", "name_cn", "images" , "common" });
+                var result = JsonConvert.DeserializeObject<List<Watching>>(jsonMessage, jsonSerializerSetting);
                 return result;
             }
             catch (Exception e)
@@ -67,55 +138,9 @@ namespace Bangumi.Facades
                 throw;
             }
         }
-
-        // 处理 ObservableCollection 显示某一节目收视进度
-        public static async Task PopulateProgressAsync(ObservableCollection<Watching> watchingListCollection, string username, string subjectId)
-        {
-            try
-            {
-                var watchingList = await GetWatchingListAsync(username);
-                //清空原数据
-                watchingListCollection.Clear();
-                foreach (var watching in watchingList)
-                {
-                    if (string.IsNullOrEmpty(watching.subject.name_cn))
-                    {
-                        watching.subject.name_cn = watching.subject.name;
-                    }
-                    watchingListCollection.Add(watching);
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        // 获取用户单个节目收视进度并反序列化
-        private static async Task<List<Progress>> GetProgressesAsync(string username)
-        {
-            string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
-            string url = string.Format("https://api.bgm.tv/user/{0}/progress?access_token={1}", username, token);
-            HttpClient http = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(15)
-            };
-            try
-            {
-                var response = await http.GetAsync(url);
-                var jsonMessage = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<List<Progress>>(jsonMessage);
-                return result;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-                throw;
-            }
-        }
-
-        // 处理 ObservableCollection 显示时间表
-        public static async Task PopulateBangumiCalendarAsync(ObservableCollection<BangumiCalendar> bangumiCollection)
+        
+        // 显示时间表
+        public static async Task PopulateBangumiCalendarAsync(ObservableCollection<BangumiTimeLine> bangumiCollection)
         {
             try
             {
@@ -141,7 +166,7 @@ namespace Bangumi.Facades
         }
 
         // 获取时间表数据并反序列化
-        private static async Task<List<BangumiCalendar>> GetBangumiCalendarAsync()
+        private static async Task<List<BangumiTimeLine>> GetBangumiCalendarAsync()
         {
             string url = "https://api.bgm.tv/calendar";
             HttpClient http = new HttpClient
@@ -156,7 +181,7 @@ namespace Bangumi.Facades
                 //var serializer = new DataContractJsonSerializer(typeof(List<BangumiCalendar>));
                 //var ms = new MemoryStream(Encoding.Unicode.GetBytes(jsonMessage));
                 //var result = (List<BangumiCalendar>)serializer.ReadObject(ms);
-                var result = JsonConvert.DeserializeObject<List<BangumiCalendar>>(jsonMessage);
+                var result = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(jsonMessage);
                 return result;
             }
             catch (Exception e)
@@ -166,4 +191,20 @@ namespace Bangumi.Facades
             }
         }
     }
+
+    // 重写Newtonsoft.Json的DefaultContractResolver类。
+    // 重写CreateProperties方法，反序列化指定名称的变量。
+    public class JsonPropertyContractResolver : DefaultContractResolver
+    {
+        IEnumerable<string> lstInclude; public JsonPropertyContractResolver(IEnumerable<string> includeProperties)
+        {
+            lstInclude = includeProperties;
+        }
+        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+        {
+            return base.CreateProperties(type, memberSerialization).ToList().FindAll(p => lstInclude.Contains(p.PropertyName));//需要输出的属性  
+        }
+    }
+
+
 }
