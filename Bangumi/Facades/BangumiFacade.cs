@@ -15,6 +15,7 @@ using System.Diagnostics;
 using Windows.Storage.Streams;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.DataProtection;
+using static Bangumi.Helper.OAuthHelper;
 
 namespace Bangumi.Facades
 {
@@ -47,7 +48,7 @@ namespace Bangumi.Facades
         // 获取用户收视进度并反序列化
         private static async Task<List<Watching>> GetWatchingListAsync(string username)
         {
-            string token = await Helper.OAuthHelper.ReadAccessToken();
+            string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
             string url = string.Format("https://api.bgm.tv/user/{0}/collection?cat=watching&responseGroup=medium", username);
             HttpClient http = new HttpClient
             {
@@ -93,7 +94,7 @@ namespace Bangumi.Facades
         // 获取用户单个节目收视进度并反序列化
         private static async Task<List<Progress>> GetProgressesAsync(string username)
         {
-            string token = await Helper.OAuthHelper.ReadAccessToken();
+            string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
             string url = string.Format("https://api.bgm.tv/user/{0}/progress?access_token={1}", username, token);
             HttpClient http = new HttpClient
             {
