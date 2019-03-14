@@ -6,14 +6,6 @@ using System.Threading.Tasks;
 
 namespace Bangumi.Models
 {
-    public class Status
-    {
-        public int id { get; set; }
-        public string css_name { get; set; }
-        public string url_name { get; set; }
-        public string cn_name { get; set; }
-    }
-
     public class Ep
     {
         public int id { get; set; }
@@ -26,7 +18,7 @@ namespace Bangumi.Models
         public string airdate { get; set; }
         public int comment { get; set; }
         public string desc { get; set; }
-        public Status status { get; set; }
+        public string status { get; set; }
     }
 
     public class Collection
@@ -65,22 +57,6 @@ namespace Bangumi.Models
         public Images images { get; set; }
         public Collection collection { get; set; }
         public List<Ep> eps { get; set; }
-    }
-
-    public class Progress
-    {
-        public int subject_id { get; set; }
-        public List<Ep> eps { get; set; }
-    }
-
-    public class Watching
-    {
-        public string name { get; set; }
-        public int subject_id { get; set; }
-        public int ep_status { get; set; }
-        public int vol_status { get; set; }
-        public int lasttouch { get; set; }
-        public Subject subject { get; set; }
     }
 
 }

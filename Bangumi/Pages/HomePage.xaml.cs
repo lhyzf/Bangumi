@@ -2,21 +2,10 @@
 using Bangumi.Helper;
 using Bangumi.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using static Bangumi.Helper.OAuthHelper;
 
@@ -30,7 +19,7 @@ namespace Bangumi.Pages
     public sealed partial class HomePage : Page
     {
         public ObservableCollection<Watching> watchingCollection { get; set; }
-        public ObservableCollection<Progress> progressCollection { get; set; }
+        //public ObservableCollection<Progress> progressCollection { get; set; }
 
         public HomePage()
         {
@@ -84,7 +73,7 @@ namespace Bangumi.Pages
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var selectedItem = (Watching)e.ClickedItem;
-            Frame.Navigate(typeof(DetailsPage), selectedItem.subject_id);
+            Frame.Navigate(typeof(DetailsPage), selectedItem);
         }
     }
 }
