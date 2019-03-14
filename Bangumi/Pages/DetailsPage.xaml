@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:Bangumi.Models"
+    xmlns:sys="using:System"
     Loaded="Page_Loaded"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -22,18 +23,25 @@
                 <Image Name="BangumiImage" Height="214" Width="150" />
                 <StackPanel Orientation="Vertical" Margin="10,0">
                     <TextBlock Name="NameTextBlock" FontSize="23" Foreground="#d26585" />
-                    <TextBlock Name="air_dateTextBlock" FontSize="15" Foreground="#666666" Margin="0,2,0,0" />
-                    <TextBlock Name="air_weekdayTextBlock" FontSize="15" Foreground="#666666" Margin="0,2,0,0" />
+                    <TextBlock Name="air_dateTextBlock" Text="开播时间：" FontSize="15" Foreground="#666666" Margin="0,2,0,0" />
+                    <TextBlock Name="air_weekdayTextBlock" Text="更新时间：" FontSize="15" Foreground="#666666" Margin="0,2,0,0" />
                 </StackPanel>
             </StackPanel>
             <TextBlock Name="SummaryTextBlock" FontSize="18" TextWrapping="Wrap" LineHeight="30" Margin="0,5,0,0" />
 
         </StackPanel>
 
-        <GridView Grid.Row="1" ItemsSource="">
+        <GridView Grid.Row="1" ItemsSource="{x:Bind eps}">
             <GridView.ItemTemplate>
-                <DataTemplate>
-                
+                <DataTemplate x:DataType="data:Ep">
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <StackPanel Orientation="Vertical" Width="160" Margin="6,0">
+                            <TextBlock Text="{x:Bind sys:String.Format('第 {0} 话', sort)}" FontSize="14" TextWrapping="Wrap"/>
+                            <TextBlock Text="{x:Bind name_cn}" FontSize="14" TextWrapping="Wrap"/>
+                            <TextBlock Text="{x:Bind status}" FontSize="12" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </StackPanel>
+
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>

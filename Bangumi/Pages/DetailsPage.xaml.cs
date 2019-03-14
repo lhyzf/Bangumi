@@ -16,6 +16,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Media.Imaging;
+using Bangumi.Helper;
+using static Bangumi.Helper.OAuthHelper;
+using System.Threading.Tasks;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -26,40 +29,118 @@ namespace Bangumi.Pages
     /// </summary>
     public sealed partial class DetailsPage : Page
     {
-        public static ObservableCollection<Subject> subjectCollection;
-        private static string subjectId;
+        public ObservableCollection<Ep> eps { get; set; }
+        private static string subjectId = "";
+        private static string imageSource = "";
+        private static string name_cn = "";
+        private static string air_date = "";
+        private static int air_weekday = 0;
 
         public DetailsPage()
         {
             this.InitializeComponent();
-            subjectCollection = new ObservableCollection<Subject>();
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            LoadDetails();
+            eps = new ObservableCollection<Ep>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            subjectId = e.Parameter.ToString();
+            if (e.Parameter.GetType().Name.Equals("Watching"))
+            {
+                var p = (Watching)e.Parameter;
+                subjectId = p.subject_id.ToString();
+                imageSource = p.subject.images.common;
+                name_cn = p.subject.name_cn;
+                air_date = "";
+                air_weekday = 0;
+            }
+            else if (e.Parameter.GetType().Name.Equals("Subject"))
+            {
+                var p = (Subject)e.Parameter;
+                subjectId = p.id.ToString();
+                imageSource = p.images.common;
+                name_cn = p.name_cn;
+                air_date = p.air_date;
+                air_weekday = p.air_weekday;
+            }
         }
 
-        private async void LoadDetails()
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            var details = new Subject();
-            details = await BangumiFacade.GetSubjectAsync(subjectId);
-            if (string.IsNullOrEmpty(details.name_cn))
+            await LoadDetails();
+            await LoadEps();
+        }
+
+        private async Task LoadEps()
+        {
+            Progress progress = null;
+            var subject = await BangumiFacade.GetSubjectEpsAsync(subjectId);
+            var userId = await OAuthHelper.ReadFromFile(OAuthFile.user_id, false);
+            if (!string.IsNullOrEmpty(userId))
             {
-                details.name_cn = details.name;
+                progress = await BangumiFacade.GetProgressesAsync(userId, subjectId);
             }
-            Uri uri = new Uri(details.images.common);
+
+            foreach (var ep in subject.eps)
+            {
+                if (ep.status == "Air")
+                {
+                    ep.status = "";
+                    if (progress != null)
+                    {
+                        foreach (var p in progress.eps)
+                        {
+                            if (p.id == ep.id)
+                            {
+                                ep.status = p.status.cn_name;
+                                break;
+                            }
+                            else
+                            {
+                            }
+                        }
+                    }
+                    eps.Add(ep);
+                }
+            }
+
+
+        }
+
+        private async Task LoadDetails()
+        {
+            Uri uri = new Uri(imageSource);
             ImageSource imgSource = new BitmapImage(uri);
             this.BangumiImage.Source = imgSource;
-            this.NameTextBlock.Text = details.name_cn;
+            this.NameTextBlock.Text = name_cn;
+            if (!string.IsNullOrEmpty(air_date) || air_weekday != 0)
+            {
+                this.air_dateTextBlock.Text = "开播时间：" + air_date;
+                this.air_weekdayTextBlock.Text = "更新时间：" + GetWeekday(air_weekday);
+            }
+
+            var details = new Subject();
+            details = await BangumiFacade.GetSubjectAsync(subjectId);
             this.air_dateTextBlock.Text = "开播时间：" + details.air_date;
+            this.air_weekdayTextBlock.Text = "更新时间：" + GetWeekday(details.air_weekday);
+            var summary = "暂无简介";
+            if (!string.IsNullOrEmpty(details.summary))
+            {
+                if (details.summary.Length > 120)
+                {
+                    summary = details.summary.Substring(0, 120) + "...";
+                }
+                else
+                {
+                    summary = details.summary;
+                }
+            }
+            this.SummaryTextBlock.Text = summary;
+        }
+
+        private string GetWeekday(int day)
+        {
             var weekday = "";
-            switch (details.air_weekday)
+            switch (day)
             {
                 case 1:
                     weekday = "周一";
@@ -85,20 +166,7 @@ namespace Bangumi.Pages
                 default:
                     break;
             }
-            this.air_weekdayTextBlock.Text = "更新时间：" + weekday;
-            var summary = "暂无简介";
-            if (!string.IsNullOrEmpty(details.summary))
-            {
-                if(details.summary.Length>120)
-                {
-                    summary = details.summary.Substring(0, 120) + "...";
-                }
-                else
-                {
-                    summary = details.summary;
-                }
-            }
-            this.SummaryTextBlock.Text = summary;
+            return weekday;
         }
     }
 }

@@ -89,7 +89,7 @@ namespace Bangumi.Pages
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var selectedItem = (Subject)e.ClickedItem;
-            Frame.Navigate(typeof(DetailsPage), selectedItem.id);
+            Frame.Navigate(typeof(DetailsPage), selectedItem);
         }
 
     }
