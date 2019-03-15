@@ -1,27 +1,76 @@
 ﻿using Bangumi.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Windows.Security.Authentication.Web;
-using Windows.Storage;
-using System.Diagnostics;
-using Windows.Storage.Streams;
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.DataProtection;
 using static Bangumi.Helper.OAuthHelper;
-using Newtonsoft.Json.Serialization;
 
 namespace Bangumi.Facades
 {
+    public class EpId
+    {
+        public string ep_id { get; set; }
+    }
+
     class BangumiFacade
     {
+        // 批量更新收视进度 20190315-无法批量更新
+        public static async Task<bool> UpdateProgressBatchAsync(int ep, StatusEnum status, int n)
+        {
+            string epsId = "";
+            for (int i = n; i > 0; i--)
+            {
+                epsId += (ep - i).ToString() +",";
+            }
+            epsId += ep.ToString();
+            EpId postData = new EpId
+            {
+                ep_id = epsId,
+            };
+            string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
+            string url = string.Format("https://api.bgm.tv/ep/{0}/status/{1}?access_token={2}", ep, status, token);
+            HttpClient http = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(15)
+            };
+            HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(postData), Encoding.UTF8);
+            var response = http.PostAsync(url, httpContent);
+            var jsonMessage = await response.Result.Content.ReadAsStringAsync();
+            var statusCode = response.Result.StatusCode;
+            if (statusCode == System.Net.HttpStatusCode.OK)
+                return true;
+            return false;
+        }
+
+        // 更新收视进度
+        public static async Task<bool> UpdateProgressAsync(string ep, StatusEnum status)
+        {
+            string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
+            string url = string.Format("https://api.bgm.tv/ep/{0}/status/{1}?access_token={2}", ep, status, token);
+            HttpClient http = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(15)
+            };
+            try
+            {
+                var response = await http.GetAsync(url);
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    return true;
+                return false;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
+        }
+
         // 获取用户单个节目收视进度并反序列化
         public static async Task<Progress> GetProgressesAsync(string username, string subjectId)
         {
@@ -83,7 +132,7 @@ namespace Bangumi.Facades
                 var jsonMessage = await response.Content.ReadAsStringAsync();
                 // 反序列化指定名称的变量
                 JsonSerializerSettings jsonSerializerSetting = new JsonSerializerSettings();
-                jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "subject_id", "ep_status", "subject", "name_cn", "images" , "common" });
+                jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "subject_id", "ep_status", "subject", "name_cn", "images", "common" });
                 var result = JsonConvert.DeserializeObject<List<Watching>>(jsonMessage, jsonSerializerSetting);
                 return result;
             }
@@ -189,6 +238,13 @@ namespace Bangumi.Facades
                 Debug.WriteLine(e);
                 throw;
             }
+        }
+        public enum StatusEnum
+        {
+            watched,
+            queue,
+            drop,
+            remove,
         }
     }
 

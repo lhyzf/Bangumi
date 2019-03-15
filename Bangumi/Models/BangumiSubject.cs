@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Bangumi.Models
 {
-    public class Ep
+    public class Ep: INotifyPropertyChanged
     {
         public int id { get; set; }
         public string url { get; set; }
@@ -18,7 +20,21 @@ namespace Bangumi.Models
         public string airdate { get; set; }
         public int comment { get; set; }
         public string desc { get; set; }
-        public string status { get; set; }
+        private string _status { get; set; }
+        public string status
+        {
+            get { return _status; }
+            set
+            {
+                _status = value;
+                OnPropertyChanged();
+            }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName]string propertyName="")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
     public class Collection

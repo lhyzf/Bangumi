@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Bangumi.Helper;
 using static Bangumi.Helper.OAuthHelper;
 using System.Threading.Tasks;
+using static Bangumi.Facades.BangumiFacade;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -72,35 +73,45 @@ namespace Bangumi.Pages
 
         private async Task LoadEps()
         {
-            Progress progress = null;
-            var subject = await BangumiFacade.GetSubjectEpsAsync(subjectId);
-            var userId = await OAuthHelper.ReadFromFile(OAuthFile.user_id, false);
-            if (!string.IsNullOrEmpty(userId))
+            try
             {
-                progress = await BangumiFacade.GetProgressesAsync(userId, subjectId);
-            }
-
-            foreach (var ep in subject.eps)
-            {
-                if (ep.status == "Air")
+                Progress progress = null;
+                var subject = await BangumiFacade.GetSubjectEpsAsync(subjectId);
+                var userId = await OAuthHelper.ReadFromFile(OAuthFile.user_id, false);
+                if (!string.IsNullOrEmpty(userId))
                 {
-                    ep.status = "";
-                    if (progress != null)
+                    progress = await BangumiFacade.GetProgressesAsync(userId, subjectId);
+                }
+
+                eps.Clear();
+                foreach (var ep in subject.eps)
+                {
+                    if (ep.status == "Air")
                     {
-                        foreach (var p in progress.eps)
+                        ep.status = "";
+                        if (progress != null)
                         {
-                            if (p.id == ep.id)
+                            foreach (var p in progress.eps)
                             {
-                                ep.status = p.status.cn_name;
-                                break;
-                            }
-                            else
-                            {
+                                if (p.id == ep.id)
+                                {
+                                    ep.status = p.status.cn_name;
+                                    break;
+                                }
+                                else
+                                {
+                                }
                             }
                         }
+                        eps.Add(ep);
                     }
-                    eps.Add(ep);
                 }
+            }
+            catch (Exception e)
+            {
+                var msgDialog = new Windows.UI.Popups.MessageDialog(e.Message) { Title = "Error" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
             }
 
 
@@ -117,24 +128,32 @@ namespace Bangumi.Pages
                 this.air_dateTextBlock.Text = "开播时间：" + air_date;
                 this.air_weekdayTextBlock.Text = "更新时间：" + GetWeekday(air_weekday);
             }
-
-            var details = new Subject();
-            details = await BangumiFacade.GetSubjectAsync(subjectId);
-            this.air_dateTextBlock.Text = "开播时间：" + details.air_date;
-            this.air_weekdayTextBlock.Text = "更新时间：" + GetWeekday(details.air_weekday);
-            var summary = "暂无简介";
-            if (!string.IsNullOrEmpty(details.summary))
+            try
             {
-                if (details.summary.Length > 120)
+                var details = new Subject();
+                details = await BangumiFacade.GetSubjectAsync(subjectId);
+                this.air_dateTextBlock.Text = "开播时间：" + details.air_date;
+                this.air_weekdayTextBlock.Text = "更新时间：" + GetWeekday(details.air_weekday);
+                var summary = "暂无简介";
+                if (!string.IsNullOrEmpty(details.summary))
                 {
-                    summary = details.summary.Substring(0, 120) + "...";
+                    if (details.summary.Length > 120)
+                    {
+                        summary = details.summary.Substring(0, 120) + "...";
+                    }
+                    else
+                    {
+                        summary = details.summary;
+                    }
                 }
-                else
-                {
-                    summary = details.summary;
-                }
+                this.SummaryTextBlock.Text = summary;
             }
-            this.SummaryTextBlock.Text = summary;
+            catch (Exception e)
+            {
+                var msgDialog = new Windows.UI.Popups.MessageDialog(e.Message) { Title = "Error" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
+            }
         }
 
         private string GetWeekday(int day)
@@ -168,5 +187,65 @@ namespace Bangumi.Pages
             }
             return weekday;
         }
+
+        // 看过
+        private async void WatchedMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var ep = (Ep)EpsGridView.SelectedItem;
+            if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), StatusEnum.watched))
+            {
+                ep.status = "看过";
+                //await LoadEps();
+            }
+        }
+
+        // 看到
+        private async void WatchedToMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var ep = (Ep)EpsGridView.SelectedItem;
+            if (await BangumiFacade.UpdateProgressBatchAsync(ep.id, StatusEnum.watched, ep.sort))
+            {
+                await LoadEps();
+            }
+        }
+
+        // 想看
+        private async void QueueMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var ep = (Ep)EpsGridView.SelectedItem;
+            if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), StatusEnum.queue))
+            {
+                ep.status = "想看";
+                //await LoadEps();
+            }
+        }
+
+        // 抛弃
+        private async void DropMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var ep = (Ep)EpsGridView.SelectedItem;
+            if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), StatusEnum.drop))
+            {
+                ep.status = "抛弃";
+                //await LoadEps();
+            }
+        }
+
+        // 未看
+        private async void RemoveMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var ep = (Ep)EpsGridView.SelectedItem;
+            if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), StatusEnum.remove))
+            {
+                ep.status = "";
+                //await LoadEps();
+            }
+        }
+
+        private void Eps_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+        }
+
     }
 }

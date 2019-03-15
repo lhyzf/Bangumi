@@ -31,14 +31,23 @@
 
         </StackPanel>
 
-        <GridView Grid.Row="1" ItemsSource="{x:Bind eps}">
+        <GridView Name="EpsGridView" Grid.Row="1" ItemsSource="{x:Bind eps}" >
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="data:Ep">
-                    <StackPanel Orientation="Horizontal" Margin="5">
+                    <StackPanel Tapped="Eps_Tapped" Orientation="Horizontal" Margin="5" >
+                        <FlyoutBase.AttachedFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Click="WatchedMenuFlyoutItem_Click" Text="看过"/>
+                                <MenuFlyoutItem Click="WatchedToMenuFlyoutItem_Click" IsEnabled="False" Text="看到"/>
+                                <MenuFlyoutItem Click="QueueMenuFlyoutItem_Click" Text="想看"/>
+                                <MenuFlyoutItem Click="DropMenuFlyoutItem_Click" Text="抛弃"/>
+                                <MenuFlyoutItem Click="RemoveMenuFlyoutItem_Click" Text="未看"/>
+                            </MenuFlyout>
+                        </FlyoutBase.AttachedFlyout>
                         <StackPanel Orientation="Vertical" Width="160" Margin="6,0">
                             <TextBlock Text="{x:Bind sys:String.Format('第 {0} 话', sort)}" FontSize="14" TextWrapping="Wrap"/>
                             <TextBlock Text="{x:Bind name_cn}" FontSize="14" TextWrapping="Wrap"/>
-                            <TextBlock Text="{x:Bind status}" FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock Text="{x:Bind status,Mode=OneWay}" FontSize="12" TextWrapping="Wrap"/>
                         </StackPanel>
                     </StackPanel>
 
