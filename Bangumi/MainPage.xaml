@@ -12,34 +12,47 @@
 
     <Grid>
         <muxc:NavigationView x:Name="NavView"
-                         Loaded="NavView_Loaded"
-                         ItemInvoked="NavView_ItemInvoked"
-                         BackRequested="NavView_BackRequested"
-                         CompactModeThresholdWidth="0" >
+                             Loaded="NavView_Loaded"
+                             ItemInvoked="NavView_ItemInvoked"
+                             BackRequested="NavView_BackRequested"
+                             CompactModeThresholdWidth="0" >
             <muxc:NavigationView.MenuItems>
-                <muxc:NavigationViewItem Tag="home" Icon="Home" Content="主页"/>
-                <muxc:NavigationViewItem Tag="timeLine" Content="时间表">
+                <muxc:NavigationViewItem Tag="home" 
+                                         Icon="Home" 
+                                         Content="主页"/>
+                <muxc:NavigationViewItem Tag="timeLine" 
+                                         Content="时间表">
                     <muxc:NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8C0;"/>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" 
+                                  Glyph="&#xE8C0;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
-                <muxc:NavigationViewItem Tag="index" Content="索引">
+                <muxc:NavigationViewItem Tag="index" 
+                                         Content="索引">
                     <muxc:NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF0E2;"/>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" 
+                                  Glyph="&#xF0E2;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
             </muxc:NavigationView.MenuItems>
             <muxc:NavigationView.PaneFooter>
-                <muxc:NavigationViewItem Name="UserItem" Tag="user" Content="登录" Tapped="NavigationViewItem_Tapped">
+                <muxc:NavigationViewItem Name="UserItem" 
+                                         Tag="user" 
+                                         Content="登录" 
+                                         Tapped="NavigationViewItem_Tapped">
                     <muxc:NavigationViewItem.Icon>
-                        <FontIcon Name="UserIcon" FontFamily="Segoe MDL2 Assets" Glyph="&#xEE57;"/>
+                        <FontIcon Name="UserIcon" 
+                                  FontFamily="Segoe MDL2 Assets" 
+                                  Glyph="&#xEE57;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
             </muxc:NavigationView.PaneFooter>
 
             <ScrollViewer>
-                <Frame x:Name="ContentFrame" Padding="6,0,6,12" IsTabStop="True"
-                   NavigationFailed="ContentFrame_NavigationFailed"/>
+                <Frame x:Name="ContentFrame" 
+                       Padding="6,0,6,12" 
+                       IsTabStop="True"
+                       NavigationFailed="ContentFrame_NavigationFailed"/>
             </ScrollViewer>
         </muxc:NavigationView>
 
@@ -52,7 +65,8 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <!-- Leave the next line for left-only navigation. -->
-                        <Setter Target="ContentFrame.Padding" Value="12,0,12,12"/>
+                        <Setter Target="ContentFrame.Padding" 
+                                Value="12,0,12,12"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

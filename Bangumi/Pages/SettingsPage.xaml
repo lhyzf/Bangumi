@@ -15,7 +15,8 @@
             </PivotItem>
             <PivotItem Header="关于">
                 <StackPanel>
-                    <TextBlock Text="Bangumi for UWP (非官方)" Style="{StaticResource TitleTextBlockStyle}" />
+                    <TextBlock Text="Bangumi for UWP (非官方)" 
+                               Style="{StaticResource TitleTextBlockStyle}" />
                     <TextBlock>
                         <LineBreak/>
                         © 2019 Bangumi

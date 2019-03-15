@@ -6,7 +6,43 @@ using System.Threading.Tasks;
 
 namespace Bangumi.Models
 {
-    public class Status
+    public class CollectionStatus
+    {
+        public SubjectStatus status { get; set; }
+        public int rating { get; set; }
+        public string comment { get; set; }
+        public List<string> tag { get; set; }
+        public int ep_status { get; set; }
+        public int lasttouch { get; set; }
+        public User user { get; set; }
+    }
+
+    public class Avatar
+    {
+        public string large { get; set; }
+        public string medium { get; set; }
+        public string small { get; set; }
+    }
+
+    public class User
+    {
+        public int id { get; set; }
+        public string url { get; set; }
+        public string username { get; set; }
+        public string nickname { get; set; }
+        public Avatar avatar { get; set; }
+        public string sign { get; set; }
+        public int usergroup { get; set; }
+    }
+
+    public class SubjectStatus
+    {
+        public int id { get; set; }
+        public string type { get; set; }
+        public string name { get; set; }
+    }
+
+    public class EpStatus
     {
         public int id { get; set; }
         public string css_name { get; set; }
@@ -17,7 +53,7 @@ namespace Bangumi.Models
     public class UserEp
     {
         public int id { get; set; }
-        public Status status { get; set; }
+        public EpStatus status { get; set; }
     }
 
     public class Progress

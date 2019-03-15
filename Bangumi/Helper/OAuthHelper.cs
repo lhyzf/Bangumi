@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,22 +60,37 @@ namespace Bangumi.Helper
         // 使用返回的的 code 换取 Access Token
         private static async Task GetAccessToken(string codeString)
         {
-            Models.Posts.Token postData = new Models.Posts.Token
+            string url = "https://bgm.tv/oauth/access_token";
+            string postData = "grant_type=authorization_code";
+            postData += "&client_id=" + client_id;
+            postData += "&client_secret=" + client_secret;
+            postData += "&code=" + codeString;
+            postData += "&redirect_uri=Bangumi.App";
+
+            try
             {
-                grant_type = "authorization_code",
-                client_id = client_id,
-                client_secret = client_secret,
-                code = codeString,
-                redirect_uri = "Bangumi.App",
-            };
-            string postUrl = "https://bgm.tv/oauth/access_token";
-            HttpClient http = new HttpClient();
-            HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(postData), Encoding.UTF8, "application/json");
-            var response = http.PostAsync(postUrl, httpContent);
-            var jsonMessage = await response.Result.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<AccessToken>(jsonMessage);
-            //将信息写入本地文件
-            await WriteTokens(result);
+                byte[] requestBytes = Encoding.ASCII.GetBytes(postData);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                Stream requestStream = await request.GetRequestStreamAsync();
+                requestStream.Write(requestBytes, 0, requestBytes.Length);
+                // Get response
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                string content;
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    content = reader.ReadToEnd();
+                }
+                var result = JsonConvert.DeserializeObject<AccessToken>(content);
+                //将信息写入本地文件
+                await WriteTokens(result);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
         }
 
         // 加密字符串
@@ -184,23 +200,37 @@ namespace Bangumi.Helper
         // 刷新授权有效期
         public static async Task RefreshAccessToken()
         {
-            Models.Posts.Token postData = new Models.Posts.Token
+            string url = "https://bgm.tv/oauth/access_token";
+            string postData = "grant_type=refresh_token";
+            postData += "&client_id=" + client_id;
+            postData += "&client_secret=" + client_secret;
+            postData += "&refresh_token=" + await ReadFromFile(OAuthFile.refresh_token, true);
+            postData += "&redirect_uri=Bangumi.App";
+
+            try
             {
-                grant_type = "refresh_token",
-                client_id = client_id,
-                client_secret = client_secret,
-                refresh_token = await ReadFromFile(OAuthFile.refresh_token, true),
-                redirect_uri = "Bangumi.App",
-            };
-            string postUrl = "https://bgm.tv/oauth/access_token";
-            HttpClient http = new HttpClient();
-            HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(postData), Encoding.UTF8, "application/json");
-            var response = http.PostAsync(postUrl, httpContent);
-            var jsonMessage = await response.Result.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<AccessToken>(jsonMessage);
-            //将信息写入本地文件
-            await WriteTokens(result);
-            return;
+                byte[] requestBytes = Encoding.ASCII.GetBytes(postData);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                Stream requestStream = await request.GetRequestStreamAsync();
+                requestStream.Write(requestBytes, 0, requestBytes.Length);
+                // Get response
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                string content;
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    content = reader.ReadToEnd();
+                }
+                var result = JsonConvert.DeserializeObject<AccessToken>(content);
+                //将信息写入本地文件
+                await WriteTokens(result);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
         }
 
         // 查询授权信息
@@ -211,19 +241,33 @@ namespace Bangumi.Helper
             {
                 return false;
             }
-            string postUrl = string.Format("https://bgm.tv/oauth/token_status?access_token={0}", token);
-            HttpClient http = new HttpClient();
-            HttpContent httpContent = null;
-            var response = http.PostAsync(postUrl, httpContent);
-            var responseStatus = response.Result.StatusCode;
-            var jsonMessage = await response.Result.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<AccessToken>(jsonMessage);
-            // C# 时间戳为 1/10000000 秒，从0001年1月1日开始；js 时间戳为秒，从1970年1月1日开始
-            // 获取两天后的时间戳，离过期不足两天时或过期后更新 access_token
-            var aa = (DateTime.Now.AddDays(2).ToUniversalTime().Ticks - new DateTime(1970, 1, 1).Ticks) / 10000000;
-            if (result.expires < aa || responseStatus == System.Net.HttpStatusCode.Unauthorized)
-                await RefreshAccessToken();
-            return await CheckTokens();
+            string url = string.Format("https://bgm.tv/oauth/token_status?access_token={0}", token);
+
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = "POST";
+                request.ContentType = "application/json";
+                // Get response
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                string content;
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    content = reader.ReadToEnd();
+                }
+                var result = JsonConvert.DeserializeObject<AccessToken>(content);
+                // C# 时间戳为 1/10000000 秒，从0001年1月1日开始；js 时间戳为秒，从1970年1月1日开始
+                // 获取两天后的时间戳，离过期不足两天时或过期后更新 access_token
+                var aa = (DateTime.Now.AddDays(2).ToUniversalTime().Ticks - new DateTime(1970, 1, 1).Ticks) / 10000000;
+                if (result.expires < aa || response.StatusCode == HttpStatusCode.Unauthorized)
+                    await RefreshAccessToken();
+                return await CheckTokens();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
         }
 
         // 检查用户授权文件
