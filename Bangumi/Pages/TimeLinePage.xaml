@@ -15,38 +15,65 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Height="20">
+        <StackPanel Orientation="Horizontal" 
+                    Height="20">
             <TextBlock Name="UpdateTime"/>
-            <ProgressRing Name="MyProgressRing" HorizontalAlignment="Left" Height="20" Width="20" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" >
+            <ProgressRing Name="MyProgressRing" 
+                          HorizontalAlignment="Left" 
+                          Height="20" 
+                          Width="20" 
+                          VerticalAlignment="Top" 
+                          RenderTransformOrigin="0.5,0.5" >
                 <ProgressRing.RenderTransform>
-                    <CompositeTransform ScaleX="0.5" ScaleY="0.5"/>
+                    <CompositeTransform ScaleX="0.5" 
+                                        ScaleY="0.5"/>
                 </ProgressRing.RenderTransform>
             </ProgressRing>
-            <TextBlock Name="ClickToRefresh" VerticalAlignment="Center" Padding="5,0" >
-                <Hyperlink UnderlineStyle="None" FontFamily="Segoe MDL2 Assets" Click="Hyperlink_Click" >
+            <TextBlock Name="ClickToRefresh" 
+                       VerticalAlignment="Center" 
+                       Padding="5,0" >
+                <Hyperlink UnderlineStyle="None" 
+                           FontFamily="Segoe MDL2 Assets" 
+                           Click="Hyperlink_Click" >
                     &#xE72C;
                 </Hyperlink>
             </TextBlock>
         </StackPanel>
-        <Pivot Name="WeekPivot" Grid.Row="1" ItemsSource="{x:Bind bangumiCollection}" IsHeaderItemsCarouselEnabled="False">
+        <Pivot Name="WeekPivot" 
+               Grid.Row="1" 
+               ItemsSource="{x:Bind bangumiCollection}" 
+               IsHeaderItemsCarouselEnabled="False">
             <Pivot.HeaderTemplate>
                 <DataTemplate x:DataType="data:BangumiTimeLine">
                     <StackPanel>
                         <!--<TextBlock Text="3-1" FontSize="14" HorizontalAlignment="Center"/>-->
-                        <TextBlock Text="{x:Bind weekday.cn}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind weekday.cn}" 
+                                   HorizontalAlignment="Center"/>
                     </StackPanel>
                 </DataTemplate>
             </Pivot.HeaderTemplate>
             <Pivot.ItemTemplate>
                 <DataTemplate x:DataType="data:BangumiTimeLine">
-                    <GridView ItemsSource="{x:Bind items}" IsItemClickEnabled="True" ItemClick="GridView_ItemClick">
+                    <GridView ItemsSource="{x:Bind items}" 
+                              IsItemClickEnabled="True" 
+                              ItemClick="GridView_ItemClick">
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="data:Subject">
-                                <StackPanel Orientation="Horizontal" Margin="5">
-                                    <Image Source="{x:Bind images.common}" Height="75" Width="75" Stretch="UniformToFill" />
-                                    <StackPanel Orientation="Vertical" Width="160" Margin="6,0">
-                                        <TextBlock Text="{x:Bind name_cn}" FontSize="14" TextWrapping="Wrap" />
-                                        <TextBlock Text="{x:Bind name}" FontSize="12" TextWrapping="Wrap"/>
+                                <StackPanel Orientation="Horizontal" 
+                                            Margin="5">
+                                    <Image Source="{x:Bind images.common}" 
+                                           Height="75" 
+                                           Width="75" 
+                                           Stretch="UniformToFill" />
+                                    <StackPanel Orientation="Vertical" 
+                                                Width="160" 
+                                                Margin="6,0">
+                                        <TextBlock Text="{x:Bind name_cn}" 
+                                                   FontSize="14" 
+                                                   TextWrapping="Wrap" />
+                                        <TextBlock Text="{x:Bind name}" 
+                                                   FontSize="12" 
+                                                   TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>

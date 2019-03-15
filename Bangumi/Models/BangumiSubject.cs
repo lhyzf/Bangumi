@@ -13,7 +13,7 @@ namespace Bangumi.Models
         public int id { get; set; }
         public string url { get; set; }
         public int type { get; set; }
-        public int sort { get; set; }
+        public float sort { get; set; }
         public string name { get; set; }
         public string name_cn { get; set; }
         public string duration { get; set; }

@@ -68,7 +68,51 @@ namespace Bangumi.Pages
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             await LoadDetails();
+            await LoadCollectionStatus();
             await LoadEps();
+        }
+
+        private void SetCollectionButon(string status)
+        {
+            if (!string.IsNullOrEmpty(status))
+            {
+                if (status == "抛弃")
+                {
+                    CollectionButtonIcon.Glyph = "\uE007";
+                }
+                else
+                {
+                    CollectionButtonIcon.Glyph = "\uE00B";
+                }
+                CollectionButtonText.Text = status;
+            }
+            else
+            {
+                CollectionButtonIcon.Glyph = "\uE006";
+                CollectionButtonText.Text = "收藏";
+            }
+        }
+
+        private async Task LoadCollectionStatus()
+        {
+            try
+            {
+                CollectionStatus collectionStatus = await GetCollectionStatusAsync(subjectId);
+                if (collectionStatus.status != null)
+                {
+                    SetCollectionButon(collectionStatus.status.name);
+                }
+                else
+                {
+                    SetCollectionButon("");
+                }
+            }
+            catch (Exception e)
+            {
+                var msgDialog = new Windows.UI.Popups.MessageDialog(e.Message) { Title = "Error" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
+            }
         }
 
         private async Task LoadEps()
@@ -89,6 +133,10 @@ namespace Bangumi.Pages
                     if (ep.status == "Air")
                     {
                         ep.status = "";
+                        if (string.IsNullOrEmpty(ep.name_cn))
+                        {
+                            ep.name_cn = ep.name;
+                        }
                         if (progress != null)
                         {
                             foreach (var p in progress.eps)
@@ -97,9 +145,6 @@ namespace Bangumi.Pages
                                 {
                                     ep.status = p.status.cn_name;
                                     break;
-                                }
-                                else
-                                {
                                 }
                             }
                         }
@@ -192,10 +237,9 @@ namespace Bangumi.Pages
         private async void WatchedMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var ep = (Ep)EpsGridView.SelectedItem;
-            if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), StatusEnum.watched))
+            if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), BangumiFacade.EpStatusEnum.watched))
             {
                 ep.status = "看过";
-                //await LoadEps();
             }
         }
 
@@ -203,7 +247,20 @@ namespace Bangumi.Pages
         private async void WatchedToMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var ep = (Ep)EpsGridView.SelectedItem;
-            if (await BangumiFacade.UpdateProgressBatchAsync(ep.id, StatusEnum.watched, ep.sort))
+            string epsId = string.Empty;
+            foreach (var episode in eps)
+            {
+                if (episode.id == ep.id)
+                {
+                    epsId += episode.id.ToString();
+                    break;
+                }
+                else
+                {
+                    epsId += episode.id.ToString() + ",";
+                }
+            }
+            if (await BangumiFacade.UpdateProgressBatchAsync(ep.id, BangumiFacade.EpStatusEnum.watched, epsId))
             {
                 await LoadEps();
             }
@@ -213,10 +270,9 @@ namespace Bangumi.Pages
         private async void QueueMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var ep = (Ep)EpsGridView.SelectedItem;
-            if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), StatusEnum.queue))
+            if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), BangumiFacade.EpStatusEnum.queue))
             {
                 ep.status = "想看";
-                //await LoadEps();
             }
         }
 
@@ -224,10 +280,9 @@ namespace Bangumi.Pages
         private async void DropMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var ep = (Ep)EpsGridView.SelectedItem;
-            if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), StatusEnum.drop))
+            if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), BangumiFacade.EpStatusEnum.drop))
             {
                 ep.status = "抛弃";
-                //await LoadEps();
             }
         }
 
@@ -235,10 +290,9 @@ namespace Bangumi.Pages
         private async void RemoveMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var ep = (Ep)EpsGridView.SelectedItem;
-            if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), StatusEnum.remove))
+            if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), BangumiFacade.EpStatusEnum.remove))
             {
                 ep.status = "";
-                //await LoadEps();
             }
         }
 
@@ -247,5 +301,58 @@ namespace Bangumi.Pages
             FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
 
+        // 收藏 想看
+        private async void WishCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.wish))
+            {
+                SetCollectionButon("想看");
+            }
+        }
+
+        // 收藏 看过 还无效
+        private async void WatchedCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.collect))
+            {
+                SetCollectionButon("看过");
+            }
+        }
+
+        // 收藏 在看
+        private async void DoingCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.@do))
+            {
+                SetCollectionButon("在看");
+            }
+        }
+
+        // 收藏 搁置
+        private async void OnHoldCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.on_hold))
+            {
+                SetCollectionButon("搁置");
+            }
+        }
+
+        // 收藏 抛弃
+        private async void DropCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.dropped))
+            {
+                SetCollectionButon("抛弃");
+            }
+        }
+
+        // 收藏 删除
+        private async void RemoveCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.collect))
+            {
+                SetCollectionButon("删除");
+            }
+        }
     }
 }

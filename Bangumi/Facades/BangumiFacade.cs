@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,54 +15,108 @@ using static Bangumi.Helper.OAuthHelper;
 
 namespace Bangumi.Facades
 {
-    public class EpId
-    {
-        public string ep_id { get; set; }
-    }
-
     class BangumiFacade
     {
-        // 批量更新收视进度 20190315-无法批量更新
-        public static async Task<bool> UpdateProgressBatchAsync(int ep, StatusEnum status, int n)
+        // 更新指定条目收藏状态
+        public static async Task<bool> UpdateCollectionStatusAsync(string subjectId, CollectionStatusEnum collectionStatusEnum)
         {
-            string epsId = "";
-            for (int i = n; i > 0; i--)
-            {
-                epsId += (ep - i).ToString() +",";
-            }
-            epsId += ep.ToString();
-            EpId postData = new EpId
-            {
-                ep_id = epsId,
-            };
             string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
-            string url = string.Format("https://api.bgm.tv/ep/{0}/status/{1}?access_token={2}", ep, status, token);
-            HttpClient http = new HttpClient
+            string url = string.Format("https://api.bgm.tv/collection/{0}/update?access_token={1}", subjectId, token);
+            string postData = "status=" + collectionStatusEnum.ToString();
+            postData += "&privacy=0";
+
+            try
             {
-                Timeout = TimeSpan.FromSeconds(15)
-            };
-            HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(postData), Encoding.UTF8);
-            var response = http.PostAsync(url, httpContent);
-            var jsonMessage = await response.Result.Content.ReadAsStringAsync();
-            var statusCode = response.Result.StatusCode;
-            if (statusCode == System.Net.HttpStatusCode.OK)
-                return true;
-            return false;
+                byte[] requestBytes = Encoding.ASCII.GetBytes(postData);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                Stream requestStream = await request.GetRequestStreamAsync();
+                requestStream.Write(requestBytes, 0, requestBytes.Length);
+                // Get response
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                //using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                //{
+                //    string content = reader.ReadToEnd();
+                //}
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
+        }
+
+        // 获取指定条目收藏信息
+        public static async Task<CollectionStatus> GetCollectionStatusAsync(string subjectId)
+        {
+            string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
+            string url = string.Format("https://api.bgm.tv/collection/{0}?access_token={1}", subjectId, token);
+
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                string content;
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    content = reader.ReadToEnd();
+                }
+                var result = JsonConvert.DeserializeObject<CollectionStatus>(content);
+                return result;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
+        }
+
+        // 批量更新收视进度 20190315-无法批量更新
+        public static async Task<bool> UpdateProgressBatchAsync(int ep, EpStatusEnum status, string epsId)
+        {
+            string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
+            string url = string.Format("https://api.bgm.tv/ep/{0}/status/{1}?access_token={2}&ep_id={3}", ep, status, token, epsId);
+            string postData = "ep_id=" + epsId;
+
+            try
+            {
+                byte[] requestBytes = Encoding.ASCII.GetBytes(postData);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                Stream requestStream = await request.GetRequestStreamAsync();
+                requestStream.Write(requestBytes, 0, requestBytes.Length);
+                // Get response
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                throw;
+            }
         }
 
         // 更新收视进度
-        public static async Task<bool> UpdateProgressAsync(string ep, StatusEnum status)
+        public static async Task<bool> UpdateProgressAsync(string ep, EpStatusEnum status)
         {
             string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
             string url = string.Format("https://api.bgm.tv/ep/{0}/status/{1}?access_token={2}", ep, status, token);
-            HttpClient http = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(15)
-            };
             try
             {
-                var response = await http.GetAsync(url);
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                if (response.StatusCode == HttpStatusCode.OK)
                     return true;
                 return false;
             }
@@ -76,15 +132,16 @@ namespace Bangumi.Facades
         {
             string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
             string url = string.Format("https://api.bgm.tv/user/{0}/progress?subject_id={1}&access_token={2}", username, subjectId, token);
-            HttpClient http = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(15)
-            };
             try
             {
-                var response = await http.GetAsync(url);
-                var jsonMessage = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<Progress>(jsonMessage);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                string content;
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    content = reader.ReadToEnd();
+                }
+                var result = JsonConvert.DeserializeObject<Progress>(content);
                 return result;
             }
             catch (Exception e)
@@ -122,18 +179,19 @@ namespace Bangumi.Facades
         {
             string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
             string url = string.Format("https://api.bgm.tv/user/{0}/collection?cat=watching&responseGroup=medium", username);
-            HttpClient http = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(15)
-            };
             try
             {
-                var response = await http.GetAsync(url);
-                var jsonMessage = await response.Content.ReadAsStringAsync();
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                string content;
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    content = reader.ReadToEnd();
+                }
                 // 反序列化指定名称的变量
                 JsonSerializerSettings jsonSerializerSetting = new JsonSerializerSettings();
                 jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "subject_id", "ep_status", "subject", "name_cn", "images", "common" });
-                var result = JsonConvert.DeserializeObject<List<Watching>>(jsonMessage, jsonSerializerSetting);
+                var result = JsonConvert.DeserializeObject<List<Watching>>(content, jsonSerializerSetting);
                 return result;
             }
             catch (Exception e)
@@ -149,15 +207,16 @@ namespace Bangumi.Facades
         public static async Task<Subject> GetSubjectEpsAsync(string subjectId)
         {
             string url = string.Format("https://api.bgm.tv/subject/{0}/ep", subjectId);
-            HttpClient http = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(15)
-            };
             try
             {
-                var response = await http.GetAsync(url);
-                var jsonMessage = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<Subject>(jsonMessage);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                string content;
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    content = reader.ReadToEnd();
+                }
+                var result = JsonConvert.DeserializeObject<Subject>(content);
                 return result;
             }
             catch (Exception e)
@@ -171,18 +230,19 @@ namespace Bangumi.Facades
         public static async Task<Subject> GetSubjectAsync(string subjectId)
         {
             string url = string.Format("https://api.bgm.tv/subject/{0}?responseGroup=small", subjectId);
-            HttpClient http = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(15)
-            };
             try
             {
-                var response = await http.GetAsync(url);
-                var jsonMessage = await response.Content.ReadAsStringAsync();
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                string content;
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    content = reader.ReadToEnd();
+                }
                 // 反序列化指定名称的变量
                 JsonSerializerSettings jsonSerializerSetting = new JsonSerializerSettings();
                 jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "name_cn", "summary", "air_date", "air_weekday", "images", "common" });
-                var result = JsonConvert.DeserializeObject<Subject>(jsonMessage, jsonSerializerSetting);
+                var result = JsonConvert.DeserializeObject<Subject>(content, jsonSerializerSetting);
                 return result;
             }
             catch (Exception e)
@@ -222,15 +282,16 @@ namespace Bangumi.Facades
         private static async Task<List<BangumiTimeLine>> GetBangumiCalendarAsync()
         {
             string url = "https://api.bgm.tv/calendar";
-            HttpClient http = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(15)
-            };
             try
             {
-                var response = await http.GetAsync(url);
-                var jsonMessage = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(jsonMessage);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                string content;
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    content = reader.ReadToEnd();
+                }
+                var result = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(content);
                 return result;
             }
             catch (Exception e)
@@ -239,13 +300,23 @@ namespace Bangumi.Facades
                 throw;
             }
         }
-        public enum StatusEnum
+        public enum EpStatusEnum
         {
             watched,
             queue,
             drop,
             remove,
         }
+
+        public enum CollectionStatusEnum
+        {
+            wish,
+            collect,
+            @do,
+            on_hold,
+            dropped,
+        }
+
     }
 
     // 重写Newtonsoft.Json的DefaultContractResolver类。
