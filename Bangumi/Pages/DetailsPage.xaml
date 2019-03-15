@@ -52,7 +52,7 @@
                                 <MenuFlyoutItem Text="抛弃"
                                                 Click="DropCollectionFlyoutItem_Click"/>
                                 <MenuFlyoutItem Text="删除"
-                                                IsEnabled="False"
+                                                Visibility="Collapsed"
                                                 Click="RemoveCollectionFlyoutItem_Click"/>
                             </MenuFlyout>
                         </Button.Flyout>
