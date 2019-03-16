@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -26,6 +27,12 @@ namespace Bangumi.Pages
         {
             this.InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Enabled;
+            string appVersion = string.Format("版本: {0}.{1}.{2}.{3}",
+                    Package.Current.Id.Version.Major,
+                    Package.Current.Id.Version.Minor,
+                    Package.Current.Id.Version.Build,
+                    Package.Current.Id.Version.Revision);
+            Version.Text = appVersion;
         }
     }
 }
