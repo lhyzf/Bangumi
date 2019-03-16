@@ -1,0 +1,185 @@
+﻿<Page
+    x:Class="Bangumi.Pages.SearchPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Bangumi.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:data="using:Bangumi.Models"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <AutoSuggestBox Name="SearchBox" PlaceholderText="关键字|Subject ID"
+                        QueryIcon="Find"
+                        TextChanged="AutoSuggestBox_TextChanged"
+                        QuerySubmitted="AutoSuggestBox_QuerySubmitted"
+                        SuggestionChosen="AutoSuggestBox_SuggestionChosen"
+                        ItemsSource="{x:Bind suggestions}"
+                        Margin="10,0"/>
+        <Pivot Name="TypePivot" 
+               Grid.Row="1"
+               SelectionChanged="TypePivot_SelectionChanged">
+            <PivotItem Header="动画" Name="AnimePivotItem">
+                <GridView Name="AnimeGridView"
+                          IsItemClickEnabled="True" 
+                          ItemClick="GridView_ItemClick"
+                          IncrementalLoadingTrigger="Edge"
+                          DataFetchSize="1">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="data:Subject">
+                            <StackPanel Orientation="Horizontal" 
+                                        Margin="5">
+                                <Image Source="{x:Bind images.common}" 
+                                       Height="75" 
+                                       Width="75" 
+                                       Stretch="UniformToFill" />
+                                <StackPanel Orientation="Vertical" 
+                                            Width="160" 
+                                            Margin="6,0">
+                                    <TextBlock Text="{x:Bind name_cn}" 
+                                               FontSize="14" 
+                                               Foreground="#d26585"
+                                               TextWrapping="Wrap" />
+                                    <TextBlock Text="{x:Bind name}" 
+                                               FontSize="12" 
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </PivotItem>
+            <PivotItem Header="书籍">
+                <GridView Name="BookGridView"
+                          IsItemClickEnabled="True" 
+                          ItemClick="GridView_ItemClick"
+                          IncrementalLoadingTrigger="Edge"
+                          DataFetchSize="1">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="data:Subject">
+                            <StackPanel Orientation="Horizontal" 
+                                        Margin="5">
+                                <Image Source="{x:Bind images.common}" 
+                                       Height="75" 
+                                       Width="75" 
+                                       Stretch="UniformToFill" />
+                                <StackPanel Orientation="Vertical" 
+                                            Width="160" 
+                                            Margin="6,0">
+                                    <TextBlock Text="{x:Bind name_cn}" 
+                                               FontSize="14" 
+                                               Foreground="#d26585"
+                                               TextWrapping="Wrap" />
+                                    <TextBlock Text="{x:Bind name}" 
+                                               FontSize="12" 
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </PivotItem>
+            <PivotItem Header="音乐">
+                <GridView Name="MusicGridView"
+                          IsItemClickEnabled="True" 
+                          ItemClick="GridView_ItemClick"
+                          IncrementalLoadingTrigger="Edge"
+                          DataFetchSize="1">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="data:Subject">
+                            <StackPanel Orientation="Horizontal" 
+                                        Margin="5">
+                                <Image Source="{x:Bind images.common}" 
+                                       Height="75" 
+                                       Width="75" 
+                                       Stretch="UniformToFill" />
+                                <StackPanel Orientation="Vertical" 
+                                            Width="160" 
+                                            Margin="6,0">
+                                    <TextBlock Text="{x:Bind name_cn}" 
+                                               FontSize="14" 
+                                               Foreground="#d26585"
+                                               TextWrapping="Wrap" />
+                                    <TextBlock Text="{x:Bind name}" 
+                                               FontSize="12" 
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </PivotItem>
+            <PivotItem Header="游戏">
+                <GridView Name="GameGridView"
+                          IsItemClickEnabled="True" 
+                          ItemClick="GridView_ItemClick"
+                          IncrementalLoadingTrigger="Edge"
+                          DataFetchSize="1">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="data:Subject">
+                            <StackPanel Orientation="Horizontal" 
+                                        Margin="5">
+                                <Image Source="{x:Bind images.common}" 
+                                       Height="75" 
+                                       Width="75" 
+                                       Stretch="UniformToFill" />
+                                <StackPanel Orientation="Vertical" 
+                                            Width="160" 
+                                            Margin="6,0">
+                                    <TextBlock Text="{x:Bind name_cn}" 
+                                               FontSize="14" 
+                                               Foreground="#d26585"
+                                               TextWrapping="Wrap" />
+                                    <TextBlock Text="{x:Bind name}" 
+                                               FontSize="12" 
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </PivotItem>
+            <PivotItem Header="三次元">
+                <GridView Name="RealGridView"
+                          IsItemClickEnabled="True" 
+                          ItemClick="GridView_ItemClick"
+                          IncrementalLoadingTrigger="Edge"
+                          DataFetchSize="1">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="data:Subject">
+                            <StackPanel Orientation="Horizontal" 
+                                        Margin="5">
+                                <Image Source="{x:Bind images.common}" 
+                                       Height="75" 
+                                       Width="75" 
+                                       Stretch="UniformToFill" />
+                                <StackPanel Orientation="Vertical" 
+                                            Width="160" 
+                                            Margin="6,0">
+                                    <TextBlock Text="{x:Bind name_cn}" 
+                                               FontSize="14" 
+                                               Foreground="#d26585"
+                                               TextWrapping="Wrap" />
+                                    <TextBlock Text="{x:Bind name}" 
+                                               FontSize="12" 
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </PivotItem>
+        </Pivot>
+    </Grid>
+</Page>

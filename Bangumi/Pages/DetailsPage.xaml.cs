@@ -63,6 +63,14 @@ namespace Bangumi.Pages
                 air_date = p.air_date;
                 air_weekday = p.air_weekday;
             }
+            else if (e.Parameter.GetType().Name.Equals("Int32"))
+            {
+                subjectId = e.Parameter.ToString();
+                imageSource = "";
+                name_cn = "";
+                air_date = "";
+                air_weekday = 0;
+            }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -120,9 +128,12 @@ namespace Bangumi.Pages
 
         private async void LoadDetails()
         {
-            Uri uri = new Uri(imageSource);
-            ImageSource imgSource = new BitmapImage(uri);
-            this.BangumiImage.Source = imgSource;
+            if (!string.IsNullOrEmpty(imageSource))
+            {
+                Uri uri = new Uri(imageSource);
+                ImageSource imgSource = new BitmapImage(uri);
+                this.BangumiImage.Source = imgSource;
+            }
             this.NameTextBlock.Text = name_cn;
             if (!string.IsNullOrEmpty(air_date) || air_weekday != 0)
             {
@@ -133,6 +144,12 @@ namespace Bangumi.Pages
             {
                 var details = new Subject();
                 details = await BangumiFacade.GetSubjectAsync(subjectId);
+                if (string.IsNullOrEmpty(imageSource))
+                {
+                    Uri uri = new Uri(details.images.common);
+                    ImageSource imgSource = new BitmapImage(uri);
+                    this.BangumiImage.Source = imgSource;
+                }
                 this.air_dateTextBlock.Text = "开播时间：" + details.air_date;
                 this.air_weekdayTextBlock.Text = "更新时间：" + GetWeekday(details.air_weekday);
                 var summary = "暂无简介";

@@ -17,7 +17,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" 
-                    Height="20">
+                    Height="20"
+                    Margin="10,0">
             <TextBlock Name="UpdateTime"/>
             <ProgressRing Name="MyProgressRing" 
                           HorizontalAlignment="Left" 
