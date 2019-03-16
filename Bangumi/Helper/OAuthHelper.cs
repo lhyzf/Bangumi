@@ -19,7 +19,7 @@ namespace Bangumi.Helper
 {
     class OAuthHelper
     {
-        private const string client_id = "bgm8905c514a1b94ec1";
+        public const string client_id = "bgm8905c514a1b94ec1";
         private const string client_secret = "b678c34dd896203627da308b6b453775";
 
         public static StorageFolder localFolder = ApplicationData.Current.LocalFolder;

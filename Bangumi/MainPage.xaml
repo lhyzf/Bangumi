@@ -21,6 +21,13 @@
                 <muxc:NavigationViewItem Tag="home" 
                                          Icon="Home" 
                                          Content="主页"/>
+                <muxc:NavigationViewItem Tag="collection" 
+                                         Content="收藏">
+                    <muxc:NavigationViewItem.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" 
+                                  Glyph="&#xE734;"/>
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
                 <muxc:NavigationViewItem Tag="timeLine" 
                                          Content="时间表">
                     <muxc:NavigationViewItem.Icon>
@@ -49,12 +56,11 @@
                 </muxc:NavigationViewItem>
             </muxc:NavigationView.PaneFooter>
 
-            <ScrollViewer>
+            <!--<ScrollViewer>-->
                 <Frame x:Name="ContentFrame" 
-                       Padding="6,0,6,12" 
                        IsTabStop="True"
                        NavigationFailed="ContentFrame_NavigationFailed"/>
-            </ScrollViewer>
+            <!--</ScrollViewer>-->
         </muxc:NavigationView>
         <ProgressRing Name="MyProgressRing" Height="50" Width="50"></ProgressRing>
 
@@ -62,13 +68,13 @@
             <VisualStateGroup>
                 <VisualState>
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger
-                        MinWindowWidth="{x:Bind NavView.CompactModeThresholdWidth}"/>
+                        <!--<AdaptiveTrigger
+                        MinWindowWidth="{x:Bind NavView.CompactModeThresholdWidth}"/>-->
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <!-- Leave the next line for left-only navigation. -->
-                        <Setter Target="ContentFrame.Padding" 
-                                Value="12,0,12,12"/>
+                        <!--<Setter Target="ContentFrame.Padding" 
+                                Value="12,0,12,12"/>-->
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
