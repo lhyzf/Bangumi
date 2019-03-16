@@ -39,6 +39,16 @@
                 </Hyperlink>
             </TextBlock>
         </StackPanel>
+        <ComboBox Name="TypeCombobox" 
+                  HorizontalAlignment="Right"
+                  SelectedIndex="0"
+                  SelectionChanged="TypeCombobox_SelectionChanged">
+            <ComboBoxItem Content="动画" />
+            <ComboBoxItem Content="书籍" />
+            <ComboBoxItem Content="音乐" />
+            <ComboBoxItem Content="游戏" />
+            <ComboBoxItem Content="三次元" />
+        </ComboBox>
         <Pivot Name="CollectionPivot" 
                Grid.Row="1" 
                ItemsSource="{x:Bind subjectCollection}" 
@@ -70,10 +80,10 @@
                                                 Margin="6,0">
                                         <TextBlock Text="{x:Bind subject.name_cn}" 
                                                    FontSize="14" 
+                                                   Foreground="#d26585"
                                                    TextWrapping="Wrap" />
                                         <TextBlock Text="{x:Bind subject.name}" 
-                                                   FontSize="12" 
-                                                   TextWrapping="Wrap"/>
+                                                   FontSize="12" />
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>

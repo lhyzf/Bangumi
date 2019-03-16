@@ -12,33 +12,41 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <ScrollViewer>
-        <Grid>
+        <Grid Margin="10,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <StackPanel Orientation="Vertical" >
-                <StackPanel Orientation="Horizontal" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
                     <Image Name="BangumiImage" 
                        Height="214" 
                        Width="150" />
                     <StackPanel Orientation="Vertical" 
-                            Margin="10,0">
+                                Grid.Column="1"
+                                Margin="10,0">
                         <TextBlock Name="NameTextBlock" 
-                               FontSize="23" 
-                               Foreground="#d26585" />
+                                   TextWrapping="Wrap"
+                                   FontSize="23" 
+                                   Foreground="#d26585" />
                         <TextBlock Name="air_dateTextBlock" 
-                               Text="开播时间：" 
-                               FontSize="15" 
-                               Foreground="#666666" 
-                               Margin="0,2,0,0" />
+                                   Text="开播时间：" 
+                                   FontSize="15" 
+                                   Foreground="#666666" 
+                                   Margin="0,2,0,0" />
                         <TextBlock Name="air_weekdayTextBlock" 
-                               Text="更新时间：" 
-                               FontSize="15" 
-                               Foreground="#666666" 
-                               Margin="0,2,0,0" />
-                        <Button Name="CollectionButton" >
+                                   Text="更新时间：" 
+                                   FontSize="15" 
+                                   Foreground="#666666" 
+                                   Margin="0,2,0,0" />
+                        <Button Name="CollectionButton"
+                                Foreground="#d26585"
+                                Background="{ThemeResource SystemAltHighColor}">
                             <Button.Flyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Text="想看" 
@@ -58,15 +66,15 @@
                             </Button.Flyout>
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon Name="CollectionButtonIcon" 
-                                      FontFamily="Segoe MDL2 Assets" 
-                                      Glyph="&#xE006;" 
-                                      Margin="0,0,5,0"/>
+                                          FontFamily="Segoe MDL2 Assets" 
+                                          Glyph="&#xE006;" 
+                                          Margin="0,0,5,0"/>
                                 <TextBlock Name="CollectionButtonText" 
-                                       Text="收藏" />
+                                           Text="收藏" />
                             </StackPanel>
                         </Button>
                     </StackPanel>
-                </StackPanel>
+                </Grid>
                 <TextBlock Name="SummaryTextBlock" 
                        FontSize="18" 
                        TextWrapping="Wrap" 
@@ -89,8 +97,25 @@
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="data:Ep">
                         <StackPanel Tapped="Eps_Tapped" 
-                                Orientation="Horizontal" 
-                                Margin="5" >
+                                    Orientation="Horizontal" 
+                                    Padding="5" 
+                                    Background="{ThemeResource SystemChromeLowColor}" >
+                            <StackPanel Orientation="Vertical" 
+                                    Width="150" 
+                                    Margin="6,0">
+                                <Grid>
+                                    <TextBlock Text="{x:Bind sys:String.Format('第 {0} 话', sort)}" 
+                                               FontSize="14" />
+                                    <TextBlock Text="{x:Bind status,Mode=OneWay}" 
+                                               FontSize="12" 
+                                               Foreground="#d26585"
+                                               HorizontalAlignment="Right"/>
+                                </Grid>
+                                <TextBlock Text="{x:Bind name_cn}" 
+                                       FontSize="14" 
+                                       TextTrimming="WordEllipsis"/>
+                            </StackPanel>
+                            
                             <FlyoutBase.AttachedFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Click="WatchedMenuFlyoutItem_Click" 
@@ -106,19 +131,7 @@
                                                 Text="未看"/>
                                 </MenuFlyout>
                             </FlyoutBase.AttachedFlyout>
-                            <StackPanel Orientation="Vertical" 
-                                    Width="160" 
-                                    Margin="6,0">
-                                <TextBlock Text="{x:Bind sys:String.Format('第 {0} 话', sort)}" 
-                                       FontSize="14" 
-                                       TextWrapping="Wrap"/>
-                                <TextBlock Text="{x:Bind name_cn}" 
-                                       FontSize="14" 
-                                       TextWrapping="Wrap"/>
-                                <TextBlock Text="{x:Bind status,Mode=OneWay}" 
-                                       FontSize="12" 
-                                       TextWrapping="Wrap"/>
-                            </StackPanel>
+                            
                         </StackPanel>
 
                     </DataTemplate>

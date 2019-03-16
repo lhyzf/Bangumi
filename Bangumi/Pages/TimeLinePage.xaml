@@ -70,10 +70,10 @@
                                                 Margin="6,0">
                                         <TextBlock Text="{x:Bind name_cn}" 
                                                    FontSize="14" 
+                                                   Foreground="#d26585"
                                                    TextWrapping="Wrap" />
                                         <TextBlock Text="{x:Bind name}" 
-                                                   FontSize="12" 
-                                                   TextWrapping="Wrap"/>
+                                                   FontSize="12" />
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
