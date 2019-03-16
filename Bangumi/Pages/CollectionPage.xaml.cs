@@ -51,7 +51,7 @@ namespace Bangumi.Pages
             try
             {
                 var userId = await OAuthHelper.ReadFromFile(OAuthHelper.OAuthFile.user_id, false);
-                var subjectType = BangumiFacade.SubjectType.anime;
+                var subjectType = GetSubjectType();
                 if (!string.IsNullOrEmpty(userId))
                 {
                     await BangumiFacade.PopulateSubjectCollectionAsync(subjectCollection, userId, subjectType);
@@ -82,6 +82,33 @@ namespace Bangumi.Pages
         {
             var selectedItem = (SList)e.ClickedItem;
             Frame.Navigate(typeof(DetailsPage), selectedItem.subject);
+        }
+
+        private void TypeCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Refresh();
+        }
+
+        private BangumiFacade.SubjectType GetSubjectType()
+        {
+            var type = TypeCombobox.SelectedIndex;
+            BangumiFacade.SubjectType subjectType = BangumiFacade.SubjectType.anime;
+            switch (type)
+            {
+                case 0:subjectType = BangumiFacade.SubjectType.anime;
+                    break;
+                case 1:subjectType = BangumiFacade.SubjectType.book;
+                    break;
+                case 2:subjectType = BangumiFacade.SubjectType.music;
+                    break;
+                case 3:subjectType = BangumiFacade.SubjectType.game;
+                    break;
+                case 4:subjectType = BangumiFacade.SubjectType.real;
+                    break;
+                default:
+                    break;
+            }
+            return subjectType;
         }
     }
 }

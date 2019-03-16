@@ -20,7 +20,7 @@
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Tag="home" 
                                          Icon="Home" 
-                                         Content="主页"/>
+                                         Content="进度"/>
                 <muxc:NavigationViewItem Tag="collection" 
                                          Content="收藏">
                     <muxc:NavigationViewItem.Icon>

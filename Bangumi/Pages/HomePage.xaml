@@ -59,10 +59,12 @@
                                             Margin="6,0">
                                     <TextBlock Text="{x:Bind subject.name_cn}" 
                                                FontSize="14" 
+                                               Foreground="#d26585"
                                                TextWrapping="Wrap" />
                                     <TextBlock Text="{x:Bind subject.name}" 
                                                FontSize="12" 
-                                               TextWrapping="Wrap"/>
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
                                     <TextBlock Text="{x:Bind sys:String.Format('看过 {0} 话', ep_status)}" 
                                                FontSize="12" 
                                                TextWrapping="Wrap"/>
