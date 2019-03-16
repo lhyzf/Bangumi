@@ -25,14 +25,14 @@ namespace Bangumi.Pages
             bangumiCollection = new ObservableCollection<BangumiTimeLine>();
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (bangumiCollection.Count == 0)
-                await Refresh();
+                Refresh();
         }
 
         //刷新时间表
-        public async Task Refresh()
+        public async void Refresh()
         {
             MyProgressRing.IsActive = true;
             MyProgressRing.Visibility = Visibility.Visible;
@@ -81,9 +81,9 @@ namespace Bangumi.Pages
         }
 
         //点击刷新
-        private async void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        private void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
-            await Refresh();
+            Refresh();
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)

@@ -37,9 +37,9 @@ namespace Bangumi
         }
 
         //根据用户登录状态改变用户图标
-        private async Task UpdataUserStatus()
+        private async void UpdataUserStatus()
         {
-            bool result = await Helper.OAuthHelper.CheckAccessToken();
+            bool result = await Helper.OAuthHelper.CheckTokens();
             if (result)
             {
                 UserItem.Content = "注销";
@@ -65,9 +65,9 @@ namespace Bangumi
             ("index", typeof(IndexPage)),
         };
 
-        private async void NavView_Loaded(object sender, RoutedEventArgs e)
+        private void NavView_Loaded(object sender, RoutedEventArgs e)
         {
-            await UpdataUserStatus();
+            UpdataUserStatus();
             //await Helper.OAuthHelper.RefreshAccessToken();
 
             // You can also add items in code.
@@ -251,8 +251,14 @@ namespace Bangumi
         {
             if (UserItem.Content.ToString() == "登录")
             {
+                MyProgressRing.IsActive = true;
+                MyProgressRing.Visibility = Visibility.Visible;
+                Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 10);
                 await Helper.OAuthHelper.Authorize();
-                await UpdataUserStatus();
+                Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 10);
+                MyProgressRing.IsActive = false;
+                MyProgressRing.Visibility = Visibility.Collapsed;
+                UpdataUserStatus();
             }
             else if (UserItem.Content.ToString() == "注销")
             {
@@ -264,7 +270,7 @@ namespace Bangumi
                 if (choice == "确定")
                 {
                     await Helper.OAuthHelper.DeleteTokens();
-                    await UpdataUserStatus();
+                    UpdataUserStatus();
                 }
             }
         }

@@ -65,11 +65,14 @@ namespace Bangumi.Pages
             }
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await LoadDetails();
-            await LoadCollectionStatus();
-            await LoadEps();
+            MyProgressRing.IsActive = true;
+            MyProgressRing.Visibility = Visibility.Visible;
+
+            LoadDetails();
+            LoadCollectionStatus();
+            LoadEps();
         }
 
         private void SetCollectionButon(string status)
@@ -93,7 +96,7 @@ namespace Bangumi.Pages
             }
         }
 
-        private async Task LoadCollectionStatus()
+        private async void LoadCollectionStatus()
         {
             try
             {
@@ -115,54 +118,7 @@ namespace Bangumi.Pages
             }
         }
 
-        private async Task LoadEps()
-        {
-            try
-            {
-                Progress progress = null;
-                var subject = await BangumiFacade.GetSubjectEpsAsync(subjectId);
-                var userId = await OAuthHelper.ReadFromFile(OAuthFile.user_id, false);
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    progress = await BangumiFacade.GetProgressesAsync(userId, subjectId);
-                }
-
-                eps.Clear();
-                foreach (var ep in subject.eps)
-                {
-                    if (ep.status == "Air")
-                    {
-                        ep.status = "";
-                        if (string.IsNullOrEmpty(ep.name_cn))
-                        {
-                            ep.name_cn = ep.name;
-                        }
-                        if (progress != null)
-                        {
-                            foreach (var p in progress.eps)
-                            {
-                                if (p.id == ep.id)
-                                {
-                                    ep.status = p.status.cn_name;
-                                    break;
-                                }
-                            }
-                        }
-                        eps.Add(ep);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                var msgDialog = new Windows.UI.Popups.MessageDialog(e.Message) { Title = "Error" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
-            }
-
-
-        }
-
-        private async Task LoadDetails()
+        private async void LoadDetails()
         {
             Uri uri = new Uri(imageSource);
             ImageSource imgSource = new BitmapImage(uri);
@@ -201,6 +157,55 @@ namespace Bangumi.Pages
             }
         }
 
+        private async void LoadEps()
+        {
+            try
+            {
+                Progress progress = null;
+                var subject = await BangumiFacade.GetSubjectEpsAsync(subjectId);
+                var userId = await OAuthHelper.ReadFromFile(OAuthFile.user_id, false);
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    progress = await BangumiFacade.GetProgressesAsync(userId, subjectId);
+                }
+
+                MyProgressRing.IsActive = false;
+                MyProgressRing.Visibility = Visibility.Collapsed;
+                eps.Clear();
+                foreach (var ep in subject.eps)
+                {
+                    if (ep.status == "Air")
+                    {
+                        ep.status = "";
+                        if (string.IsNullOrEmpty(ep.name_cn))
+                        {
+                            ep.name_cn = ep.name;
+                        }
+                        if (progress != null)
+                        {
+                            foreach (var p in progress.eps)
+                            {
+                                if (p.id == ep.id)
+                                {
+                                    ep.status = p.status.cn_name;
+                                    break;
+                                }
+                            }
+                        }
+                        eps.Add(ep);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                var msgDialog = new Windows.UI.Popups.MessageDialog(e.Message) { Title = "Error" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
+            }
+
+
+        }
+
         private string GetWeekday(int day)
         {
             var weekday = "";
@@ -236,16 +241,19 @@ namespace Bangumi.Pages
         // 看过
         private async void WatchedMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            MyProgressBar.Visibility = Visibility.Visible;
             var ep = (Ep)EpsGridView.SelectedItem;
             if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), BangumiFacade.EpStatusEnum.watched))
             {
                 ep.status = "看过";
             }
+            MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
         // 看到
         private async void WatchedToMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            MyProgressBar.Visibility = Visibility.Visible;
             var ep = (Ep)EpsGridView.SelectedItem;
             string epsId = string.Empty;
             foreach (var episode in eps)
@@ -262,38 +270,52 @@ namespace Bangumi.Pages
             }
             if (await BangumiFacade.UpdateProgressBatchAsync(ep.id, BangumiFacade.EpStatusEnum.watched, epsId))
             {
-                await LoadEps();
+                foreach (var episode in eps)
+                {
+                    episode.status = "看过";
+                    if (episode.id == ep.id)
+                    {
+                        break;
+                    }
+                }
             }
+            MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
         // 想看
         private async void QueueMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            MyProgressBar.Visibility = Visibility.Visible;
             var ep = (Ep)EpsGridView.SelectedItem;
             if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), BangumiFacade.EpStatusEnum.queue))
             {
                 ep.status = "想看";
             }
+            MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
         // 抛弃
         private async void DropMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            MyProgressBar.Visibility = Visibility.Visible;
             var ep = (Ep)EpsGridView.SelectedItem;
             if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), BangumiFacade.EpStatusEnum.drop))
             {
                 ep.status = "抛弃";
             }
+            MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
         // 未看
         private async void RemoveMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            MyProgressBar.Visibility = Visibility.Visible;
             var ep = (Ep)EpsGridView.SelectedItem;
             if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), BangumiFacade.EpStatusEnum.remove))
             {
                 ep.status = "";
             }
+            MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
         private void Eps_Tapped(object sender, TappedRoutedEventArgs e)
@@ -304,55 +326,67 @@ namespace Bangumi.Pages
         // 收藏 想看
         private async void WishCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            MyProgressBar.Visibility = Visibility.Visible;
             if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.wish))
             {
                 SetCollectionButon("想看");
             }
+            MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
         // 收藏 看过 还无效
         private async void WatchedCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            MyProgressBar.Visibility = Visibility.Visible;
             if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.collect))
             {
                 SetCollectionButon("看过");
             }
+            MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
         // 收藏 在看
         private async void DoingCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            MyProgressBar.Visibility = Visibility.Visible;
             if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.@do))
             {
                 SetCollectionButon("在看");
             }
+            MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
         // 收藏 搁置
         private async void OnHoldCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            MyProgressBar.Visibility = Visibility.Visible;
             if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.on_hold))
             {
                 SetCollectionButon("搁置");
             }
+            MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
         // 收藏 抛弃
         private async void DropCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            MyProgressBar.Visibility = Visibility.Visible;
             if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.dropped))
             {
                 SetCollectionButon("抛弃");
             }
+            MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
         // 收藏 删除
         private async void RemoveCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            MyProgressBar.Visibility = Visibility.Visible;
             if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.collect))
             {
                 SetCollectionButon("删除");
             }
+            MyProgressBar.Visibility = Visibility.Collapsed;
         }
     }
 }

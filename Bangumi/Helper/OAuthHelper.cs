@@ -89,7 +89,6 @@ namespace Bangumi.Helper
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                throw;
             }
         }
 
@@ -193,7 +192,7 @@ namespace Bangumi.Helper
                 {
                     Debug.WriteLine("IOException source: {0}", e.Source);
                 }
-                throw;
+                return "";
             }
         }
 
@@ -229,18 +228,13 @@ namespace Bangumi.Helper
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                throw;
             }
         }
 
         // 查询授权信息
-        public static async Task<bool> CheckAccessToken()
+        private static async void CheckAccessToken()
         {
             var token = await ReadFromFile(OAuthFile.access_token, true);
-            if (string.IsNullOrEmpty(token))
-            {
-                return false;
-            }
             string url = string.Format("https://bgm.tv/oauth/token_status?access_token={0}", token);
 
             try
@@ -261,17 +255,15 @@ namespace Bangumi.Helper
                 var aa = (DateTime.Now.AddDays(2).ToUniversalTime().Ticks - new DateTime(1970, 1, 1).Ticks) / 10000000;
                 if (result.expires < aa || response.StatusCode == HttpStatusCode.Unauthorized)
                     await RefreshAccessToken();
-                return await CheckTokens();
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                throw;
             }
         }
 
         // 检查用户授权文件
-        private static async Task<bool> CheckTokens()
+        public static async Task<bool> CheckTokens()
         {
             var accessToken = await ReadFromFile(OAuthFile.access_token, true);
             var refreshToken = await ReadFromFile(OAuthFile.refresh_token, true);
@@ -281,6 +273,7 @@ namespace Bangumi.Helper
                 await DeleteTokens();
                 return false;
             }
+            CheckAccessToken();
             return true;
         }
 
