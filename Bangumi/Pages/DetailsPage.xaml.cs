@@ -163,6 +163,12 @@ namespace Bangumi.Pages
             {
                 Progress progress = null;
                 var subject = await BangumiFacade.GetSubjectEpsAsync(subjectId);
+                if (subject.eps == null)
+                {
+                    MyProgressRing.IsActive = false;
+                    MyProgressRing.Visibility = Visibility.Collapsed;
+                    return;
+                }
                 var userId = await OAuthHelper.ReadFromFile(OAuthFile.user_id, false);
                 if (!string.IsNullOrEmpty(userId))
                 {
