@@ -17,8 +17,33 @@ namespace Bangumi.Facades
 {
     class BangumiFacade
     {
+        // 搜索
+        public static async Task<SearchResult> GetSearchResultAsync(string keyWord, string type, int start, int n)
+        {
+            string url = string.Format("https://api.bgm.tv/search/subject/{0}?type={1}&responseGroup=small&start={2}&max_results={3}", keyWord, type, start, n);
+            try
+            {
+                var enUrl = Uri.EscapeUriString(url);
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(enUrl);
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                string content;
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    content = reader.ReadToEnd();
+                }
+                var result = JsonConvert.DeserializeObject<SearchResult>(content);
+                return result;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return null;
+            }
+        }
+
         // 处理收藏信息
-        public static async Task PopulateSubjectCollectionAsync(ObservableCollection<Collect> subjectCollection, 
+        public static async Task PopulateSubjectCollectionAsync(ObservableCollection<Collect> subjectCollection,
             string username, SubjectType subjectType)
         {
             try

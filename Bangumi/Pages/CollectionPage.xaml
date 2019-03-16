@@ -16,7 +16,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" 
-                    Height="20">
+                    Height="20"
+                    Margin="10,0">
             <TextBlock Name="UpdateTime"/>
             <ProgressRing Name="MyProgressRing" 
                           HorizontalAlignment="Left" 
@@ -42,7 +43,8 @@
         <ComboBox Name="TypeCombobox" 
                   HorizontalAlignment="Right"
                   SelectedIndex="0"
-                  SelectionChanged="TypeCombobox_SelectionChanged">
+                  SelectionChanged="TypeCombobox_SelectionChanged"
+                  Margin="10,0">
             <ComboBoxItem Content="动画" />
             <ComboBoxItem Content="书籍" />
             <ComboBoxItem Content="音乐" />

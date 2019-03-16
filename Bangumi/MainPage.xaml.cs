@@ -64,6 +64,7 @@ namespace Bangumi
             ("collection", typeof(CollectionPage)),
             ("timeLine", typeof(TimeLinePage)),
             ("index", typeof(IndexPage)),
+            ("search", typeof(SearchPage)),
         };
 
         private void NavView_Loaded(object sender, RoutedEventArgs e)

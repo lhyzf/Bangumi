@@ -75,6 +75,12 @@ namespace Bangumi.Models
         public List<Ep> eps { get; set; }
     }
 
+    public class SearchResult
+    {
+        public int results { get; set; }
+        public List<Subject> list { get; set; }
+    }
+
     public class SList
     {
         public int subject_id { get; set; }
