@@ -17,6 +17,56 @@ namespace Bangumi.Facades
 {
     class BangumiFacade
     {
+        // 处理收藏信息
+        public static async Task PopulateSubjectCollectionAsync(ObservableCollection<Collect> subjectCollection, 
+            string username, SubjectType subjectType)
+        {
+            try
+            {
+                var subjectCollections = await GetSubjectCollectionAsync(username, subjectType);
+                //清空原数据
+                subjectCollection.Clear();
+                foreach (var subjects in subjectCollections.collects)
+                {
+                    foreach (var item in subjects.list)
+                    {
+                        if (string.IsNullOrEmpty(item.subject.name_cn))
+                        {
+                            item.subject.name_cn = item.subject.name;
+                        }
+                    }
+                    subjectCollection.Add(subjects);
+                }
+            }
+            catch (Exception)
+            {
+                return;
+            }
+        }
+
+        // 获取指定类别收藏信息并反序列化
+        private static async Task<SubjectCollection> GetSubjectCollectionAsync(string username, SubjectType subjectType)
+        {
+            string url = string.Format("https://api.bgm.tv/user/{0}/collections/{1}?app_id={2}&max_results=25", username, subjectType, client_id);
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
+                string content;
+                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                {
+                    content = reader.ReadToEnd();
+                }
+                var result = JsonConvert.DeserializeObject<List<SubjectCollection>>(content);
+                return result.ElementAt(0);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return null;
+            }
+        }
+
         // 更新指定条目收藏状态
         public static async Task<bool> UpdateCollectionStatusAsync(string subjectId, CollectionStatusEnum collectionStatusEnum)
         {
@@ -253,7 +303,7 @@ namespace Bangumi.Facades
             }
         }
 
-        // 显示时间表
+        // 处理时间表
         public static async Task PopulateBangumiCalendarAsync(ObservableCollection<BangumiTimeLine> bangumiCollection)
         {
             try
@@ -316,6 +366,15 @@ namespace Bangumi.Facades
             @do,
             on_hold,
             dropped,
+        }
+
+        public enum SubjectType
+        {
+            book,
+            anime,
+            music,
+            game,
+            real,
         }
 
     }

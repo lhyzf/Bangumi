@@ -31,7 +31,7 @@ namespace Bangumi.Pages
                 Refresh();
         }
 
-        //刷新时间表
+        // 刷新时间表
         public async void Refresh()
         {
             MyProgressRing.IsActive = true;

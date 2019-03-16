@@ -61,6 +61,7 @@ namespace Bangumi
         private readonly List<(string Tag, Type Page)> _pages = new List<(string Tag, Type Page)>
         {
             ("home", typeof(HomePage)),
+            ("collection", typeof(CollectionPage)),
             ("timeLine", typeof(TimeLinePage)),
             ("index", typeof(IndexPage)),
         };
