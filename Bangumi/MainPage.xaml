@@ -15,7 +15,8 @@
                              Loaded="NavView_Loaded"
                              ItemInvoked="NavView_ItemInvoked"
                              BackRequested="NavView_BackRequested"
-                             CompactModeThresholdWidth="0" >
+                             CompactModeThresholdWidth="0"
+                             OpenPaneLength="150">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Tag="home" 
                                          Icon="Home" 
@@ -55,6 +56,7 @@
                        NavigationFailed="ContentFrame_NavigationFailed"/>
             </ScrollViewer>
         </muxc:NavigationView>
+        <ProgressRing Name="MyProgressRing" Height="50" Width="50"></ProgressRing>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>

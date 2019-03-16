@@ -14,8 +14,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Vertical" >
@@ -74,7 +73,15 @@
                        Margin="0,5,0,0" />
 
         </StackPanel>
-
+        <ProgressBar Name="MyProgressBar"
+                     Grid.Row="1"
+                     IsIndeterminate="True"
+                     Visibility="Collapsed"
+                     VerticalAlignment="Top"/>
+        <ProgressRing Name="MyProgressRing"
+                      Grid.RowSpan="2"
+                      Width="50"
+                      Height="50"/>
         <GridView Name="EpsGridView" 
                   Grid.Row="1" 
                   ItemsSource="{x:Bind eps}" >

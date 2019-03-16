@@ -48,7 +48,7 @@ namespace Bangumi.Facades
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                throw;
+                return false;
             }
         }
 
@@ -73,11 +73,12 @@ namespace Bangumi.Facades
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                throw;
+                return null;
             }
         }
 
-        // 批量更新收视进度 20190315-无法批量更新
+        // 批量更新收视进度
+        // 使用 HttpWebRequest 提交表单进行更新，更新收藏状态使用相同方法
         public static async Task<bool> UpdateProgressBatchAsync(int ep, EpStatusEnum status, string epsId)
         {
             string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
@@ -103,7 +104,7 @@ namespace Bangumi.Facades
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                throw;
+                return false;
             }
         }
 
@@ -123,7 +124,7 @@ namespace Bangumi.Facades
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                throw;
+                return false;
             }
         }
 
@@ -147,7 +148,7 @@ namespace Bangumi.Facades
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                throw;
+                return null;
             }
         }
 
@@ -170,7 +171,7 @@ namespace Bangumi.Facades
             }
             catch (Exception)
             {
-                throw;
+                return;
             }
         }
 
@@ -197,7 +198,7 @@ namespace Bangumi.Facades
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                throw;
+                return null;
             }
         }
 
@@ -222,7 +223,7 @@ namespace Bangumi.Facades
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                throw;
+                return null;
             }
         }
 
@@ -248,7 +249,7 @@ namespace Bangumi.Facades
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                throw;
+                return null;
             }
         }
 
@@ -274,7 +275,7 @@ namespace Bangumi.Facades
             }
             catch (Exception)
             {
-                throw;
+                return;
             }
         }
 
@@ -297,7 +298,7 @@ namespace Bangumi.Facades
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                throw;
+                return null;
             }
         }
         public enum EpStatusEnum
