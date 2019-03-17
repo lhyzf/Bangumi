@@ -36,7 +36,8 @@
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
                 <muxc:NavigationViewItem Tag="index" 
-                                         Content="索引">
+                                         Content="索引"
+                                         Visibility="Collapsed">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" 
                                   Glyph="&#xF0E2;"/>

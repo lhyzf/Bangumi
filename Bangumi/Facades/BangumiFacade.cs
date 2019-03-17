@@ -376,6 +376,7 @@ namespace Bangumi.Facades
                 return null;
             }
         }
+
         public enum EpStatusEnum
         {
             watched,
