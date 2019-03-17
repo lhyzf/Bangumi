@@ -35,6 +35,7 @@ namespace Bangumi.Pages
         private string preMusic = "";
         private string preGame = "";
         private string preReal = "";
+        private bool searched = false;
 
         public SearchPage()
         {
@@ -56,25 +57,27 @@ namespace Bangumi.Pages
                 return;
             }
             suggestDelay = true;
-            await Task.Delay(1000);
-            suggestDelay = false;
+            searched = false;
+            suggestions.Clear();
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && !string.IsNullOrEmpty(sender.Text))
             {
                 var input = sender.Text;
                 var result = await BangumiFacade.GetSearchResultAsync(input, "", 0, 10);
-                if (result != null && result.list != null)
+                if (searched)
                 {
-                    suggestions.Clear();
+                    suggestDelay = false;
+                    return;
+                }
+                if (result != null)
+                {
                     foreach (var item in result.list)
                     {
-                        if (string.IsNullOrEmpty(item.name_cn))
-                        {
-                            item.name_cn = item.name;
-                        }
                         suggestions.Add(item.name_cn);
                     }
                 }
             }
+            await Task.Delay(1000);
+            suggestDelay = false;
         }
 
         private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
@@ -166,6 +169,7 @@ namespace Bangumi.Pages
         // 执行搜索操作
         private void Search(string keyword)
         {
+            searched = true;
             if (string.IsNullOrEmpty(keyword))
             {
                 return;
@@ -208,7 +212,7 @@ namespace Bangumi.Pages
     class IncrementalLoadingCollection : ObservableCollection<Subject>, ISupportIncrementalLoading
     {
         int offset = 0;
-        int max = 100;
+        int max = 20;
         private string keyword;
         private string type;
 
@@ -230,24 +234,21 @@ namespace Bangumi.Pages
                 await Task.WhenAll(Task.Delay(1000), dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
                     SearchResult result = await BangumiFacade.GetSearchResultAsync(keyword, type, offset, 20);
-                    if (result != null && result.list != null)
+                    if (result != null)
                     {
                         max = result.results;
                         foreach (Subject item in result.list)
                         {
-                            if (string.IsNullOrEmpty(item.name_cn))
-                            {
-                                item.name_cn = item.name;
-                            }
                             Add(item);
                         }
-                        offset += 20;
                         if (!HasMoreItems)
                         {
                             System.Diagnostics.Debug.WriteLine("Loading complete.");
                         }
                     }
                 }).AsTask());
+
+                offset += 20;
 
                 return new LoadMoreItemsResult { Count = count };
             });
