@@ -17,6 +17,8 @@ namespace Bangumi.Facades
 {
     class BangumiFacade
     {
+        private static string NoImageUri = "ms-appx:///Assets/NoImage.png";
+
         // 搜索
         public static async Task<SearchResult> GetSearchResultAsync(string keyWord, string type, int start, int n)
         {
@@ -33,7 +35,22 @@ namespace Bangumi.Facades
                     content = reader.ReadToEnd();
                 }
                 var result = JsonConvert.DeserializeObject<SearchResult>(content);
-                return result;
+                if (result != null && result.list != null)
+                {
+                    foreach (var item in result.list)
+                    {
+                        if (string.IsNullOrEmpty(item.name_cn))
+                        {
+                            item.name_cn = item.name;
+                        }
+                        if (item.images==null)
+                        {
+                            item.images = new Images { common = NoImageUri };
+                        }
+                    }
+                    return result;
+                }
+                return null;
             }
             catch (Exception e)
             {

@@ -83,6 +83,11 @@ namespace Bangumi.Pages
             LoadEps();
         }
 
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            EpsGridView.ItemsSource = null;
+        }
+
         private void SetCollectionButon(string status)
         {
             if (!string.IsNullOrEmpty(status))
@@ -142,8 +147,7 @@ namespace Bangumi.Pages
             }
             try
             {
-                var details = new Subject();
-                details = await BangumiFacade.GetSubjectAsync(subjectId);
+                var details = await BangumiFacade.GetSubjectAsync(subjectId);
                 if (string.IsNullOrEmpty(imageSource))
                 {
                     Uri uri = new Uri(details.images.common);
