@@ -357,13 +357,36 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        // 收藏 看过 还无效
+        // 收藏 看过
         private async void WatchedCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
             if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.collect))
             {
                 SetCollectionButon("看过");
+                int epId = 0; ;
+                string epsId = string.Empty;
+                foreach (var episode in eps)
+                {
+                    if (eps.IndexOf(episode) == eps.Count - 1)
+                    {
+                        epsId += episode.id.ToString();
+                        epId = episode.id;
+                        break;
+                    }
+                    else
+                    {
+                        epsId += episode.id.ToString() + ",";
+                    }
+                }
+                if (await BangumiFacade.UpdateProgressBatchAsync(epId, BangumiFacade.EpStatusEnum.watched, epsId))
+                {
+                    foreach (var episode in eps)
+                    {
+                        episode.status = "看过";
+                    }
+                }
+
             }
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
