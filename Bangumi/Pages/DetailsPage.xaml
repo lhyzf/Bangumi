@@ -92,8 +92,9 @@
                       Width="50"
                       Height="50"/>
             <GridView Name="EpsGridView" 
-                  Grid.Row="1" 
-                  ItemsSource="{x:Bind eps}" >
+                      Grid.Row="1" 
+                      ItemsSource="{x:Bind eps}" 
+                      Margin="0,5,0,0">
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="data:Ep">
                         <StackPanel Tapped="Eps_Tapped" 
