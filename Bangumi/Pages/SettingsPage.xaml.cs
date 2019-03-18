@@ -23,16 +23,19 @@ namespace Bangumi.Pages
     /// </summary>
     public sealed partial class SettingsPage : Page
     {
+        public string Version
+        {
+            get
+            {
+                var version = Windows.ApplicationModel.Package.Current.Id.Version;
+                return String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+            }
+        }
+
         public SettingsPage()
         {
             this.InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Enabled;
-            string appVersion = string.Format("版本: {0}.{1}.{2}.{3}",
-                    Package.Current.Id.Version.Major,
-                    Package.Current.Id.Version.Minor,
-                    Package.Current.Id.Version.Build,
-                    Package.Current.Id.Version.Revision);
-            Version.Text = appVersion;
         }
     }
 }

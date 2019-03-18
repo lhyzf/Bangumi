@@ -20,8 +20,10 @@
                     <TextBlock>
                         <LineBreak/>
                         © 2019 Bangumi
+                        <LineBreak/>
+                        版本：
+                        <Run Text="{x:Bind Version}"/>
                     </TextBlock>
-                    <TextBlock Name="Version"/>
                 </StackPanel>
             </PivotItem>
         </Pivot>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.System;
+using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,6 +27,9 @@ namespace Bangumi
         public MainPage()
         {
             this.InitializeComponent();
+
+            // 启用标题栏的后退按钮
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             // Handle keyboard and mouse navigation requests
             this.systemNavigationManager = SystemNavigationManager.GetForCurrentView();
@@ -92,19 +96,22 @@ namespace Bangumi
             // here to load the home page.
             NavView_Navigate("home", new EntranceNavigationTransitionInfo());
 
-            // Add keyboard accelerators for backwards navigation.
-            var goBack = new KeyboardAccelerator { Key = VirtualKey.GoBack };
-            goBack.Invoked += BackInvoked;
-            this.KeyboardAccelerators.Add(goBack);
-
-            // ALT routes here
-            var altLeft = new KeyboardAccelerator
+            if(AnalyticsInfo.VersionInfo.DeviceFamily== "Windows.Desktop")
             {
-                Key = VirtualKey.Left,
-                Modifiers = VirtualKeyModifiers.Menu
-            };
-            altLeft.Invoked += BackInvoked;
-            this.KeyboardAccelerators.Add(altLeft);
+                // Add keyboard accelerators for backwards navigation.
+                var goBack = new KeyboardAccelerator { Key = VirtualKey.GoBack };
+                goBack.Invoked += BackInvoked;
+                this.KeyboardAccelerators.Add(goBack);
+
+                // ALT routes here
+                var altLeft = new KeyboardAccelerator
+                {
+                    Key = VirtualKey.Left,
+                    Modifiers = VirtualKeyModifiers.Menu
+                };
+                altLeft.Invoked += BackInvoked;
+                this.KeyboardAccelerators.Add(altLeft);
+            }
 
         }
 
