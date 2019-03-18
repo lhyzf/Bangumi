@@ -19,8 +19,10 @@ namespace Bangumi.Helper
 {
     class OAuthHelper
     {
-        public const string client_id = "bgm8905c514a1b94ec1";
-        private const string client_secret = "b678c34dd896203627da308b6b453775";
+        // 将自己申请的应用相关信息填入
+        // public const string client_id = "";
+        // private const string client_secret = "";
+        // private const string redirect_url = "";
 
         public static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
 
@@ -33,14 +35,14 @@ namespace Bangumi.Helper
 
                 Uri StartUri = new Uri(URL);
                 // When using the desktop flow, the success code is displayed in the html title of this end uri
-                Uri EndUri = new Uri("https://bgm.tv/oauth/Bangumi.App");
+                Uri EndUri = new Uri($"https://bgm.tv/oauth/{redirect_url}");
 
                 //rootPage.NotifyUser("Navigating to: " + GoogleURL, NotifyType.StatusMessage);
 
                 WebAuthenticationResult WebAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
                 if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
                 {
-                    await GetAccessToken(WebAuthenticationResult.ResponseData.ToString().Replace("https://bgm.tv/oauth/Bangumi.App?code=", ""));
+                    await GetAccessToken(WebAuthenticationResult.ResponseData.ToString().Replace($"https://bgm.tv/oauth/{redirect_url}?code=", ""));
                 }
                 else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
                 {
@@ -65,7 +67,7 @@ namespace Bangumi.Helper
             postData += "&client_id=" + client_id;
             postData += "&client_secret=" + client_secret;
             postData += "&code=" + codeString;
-            postData += "&redirect_uri=Bangumi.App";
+            postData += "&redirect_uri=" + redirect_url;
 
             try
             {
@@ -204,7 +206,7 @@ namespace Bangumi.Helper
             postData += "&client_id=" + client_id;
             postData += "&client_secret=" + client_secret;
             postData += "&refresh_token=" + await ReadFromFile(OAuthFile.refresh_token, true);
-            postData += "&redirect_uri=Bangumi.App";
+            postData += "&redirect_uri=" + redirect_url;
 
             try
             {
