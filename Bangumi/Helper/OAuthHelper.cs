@@ -181,7 +181,7 @@ namespace Bangumi.Helper
             catch (FileNotFoundException e)
             {
                 // Cannot find file
-                Debug.WriteLine(e.ToString());
+                Debug.WriteLine("File not found.");
                 return "";
             }
             catch (IOException e)

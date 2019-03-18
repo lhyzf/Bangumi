@@ -15,12 +15,12 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <AutoSuggestBox Name="SearchBox" PlaceholderText="关键字|Subject ID"
+        <AutoSuggestBox Name="SearchBox" 
+                        PlaceholderText="关键字|Subject ID"
                         QueryIcon="Find"
+                        ItemsSource="{x:Bind suggestions}"
                         TextChanged="AutoSuggestBox_TextChanged"
                         QuerySubmitted="AutoSuggestBox_QuerySubmitted"
-                        SuggestionChosen="AutoSuggestBox_SuggestionChosen"
-                        ItemsSource="{x:Bind suggestions}"
                         Margin="10,0"/>
         <Pivot Name="TypePivot" 
                Grid.Row="1"

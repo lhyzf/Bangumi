@@ -15,7 +15,8 @@
                              Loaded="NavView_Loaded"
                              ItemInvoked="NavView_ItemInvoked"
                              BackRequested="NavView_BackRequested"
-                             CompactModeThresholdWidth="0"
+                             IsBackButtonVisible="Collapsed"
+                             CompactModeThresholdWidth="600"
                              OpenPaneLength="150">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Tag="home" 
@@ -76,8 +77,8 @@
             <VisualStateGroup>
                 <VisualState>
                     <VisualState.StateTriggers>
-                        <!--<AdaptiveTrigger
-                        MinWindowWidth="{x:Bind NavView.CompactModeThresholdWidth}"/>-->
+                        <AdaptiveTrigger
+                        MinWindowWidth="{x:Bind NavView.CompactModeThresholdWidth}"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <!-- Leave the next line for left-only navigation. -->

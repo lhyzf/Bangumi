@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -41,7 +43,7 @@ namespace Bangumi.Pages
         {
             this.InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Enabled;
-            suggestions = new ObservableCollection<string>();
+            suggestions=new ObservableCollection<string>();
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
@@ -52,32 +54,35 @@ namespace Bangumi.Pages
 
         private async void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            if (suggestDelay)
-            {
-                return;
-            }
-            suggestDelay = true;
             searched = false;
-            suggestions.Clear();
-            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && !string.IsNullOrEmpty(sender.Text))
+            if (AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
             {
-                var input = sender.Text;
-                var result = await BangumiFacade.GetSearchResultAsync(input, "", 0, 10);
-                if (searched)
+                if (suggestDelay)
                 {
-                    suggestDelay = false;
                     return;
                 }
-                if (result != null)
+                suggestDelay = true;
+                if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput && !string.IsNullOrEmpty(sender.Text))
                 {
-                    foreach (var item in result.list)
+                    var input = sender.Text;
+                    var result = await BangumiFacade.GetSearchResultAsync(input, "", 0, 10);
+                    suggestions.Clear();
+                    if (searched)
                     {
-                        suggestions.Add(item.name_cn);
+                        suggestDelay = false;
+                        return;
+                    }
+                    if (result != null)
+                    {
+                        foreach (var item in result.list)
+                        {
+                            suggestions.Add(item.name_cn);
+                        }
                     }
                 }
+                await Task.Delay(200);
+                suggestDelay = false;
             }
-            await Task.Delay(1000);
-            suggestDelay = false;
         }
 
         private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
@@ -106,11 +111,9 @@ namespace Bangumi.Pages
                     Search(args.QueryText);
                 }
             }
-        }
-
-        private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
-        {
-            // Set sender.Text. You can use args.SelectedItem to build your text string.
+            // 使系统关闭虚拟键盘
+            SearchBox.IsEnabled = false;
+            SearchBox.IsEnabled = true;
         }
 
         private void TypePivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
