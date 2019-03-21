@@ -45,35 +45,47 @@
                                    FontSize="15" 
                                    Foreground="#666666" 
                                    Margin="0,2,0,0" />
-                        <Button Name="CollectionButton"
-                                Foreground="#d26585"
-                                Background="{ThemeResource SystemAltHighColor}">
-                            <Button.Flyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem Text="想看" 
+                        <StackPanel Orientation="Horizontal">
+                            <Button Name="CollectionButton"
+                                    IsEnabled="False"
+                                    Foreground="#d26585"
+                                    Background="{ThemeResource SystemAltHighColor}">
+                                <Button.Flyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="想看" 
                                                 Click="WishCollectionFlyoutItem_Click" />
-                                    <MenuFlyoutItem Text="看过"
+                                        <MenuFlyoutItem Text="看过"
                                                 Click="WatchedCollectionFlyoutItem_Click"/>
-                                    <MenuFlyoutItem Text="在看"
+                                        <MenuFlyoutItem Text="在看"
                                                 Click="DoingCollectionFlyoutItem_Click"/>
-                                    <MenuFlyoutItem Text="搁置"
+                                        <MenuFlyoutItem Text="搁置"
                                                 Click="OnHoldCollectionFlyoutItem_Click"/>
-                                    <MenuFlyoutItem Text="抛弃"
+                                        <MenuFlyoutItem Text="抛弃"
                                                 Click="DropCollectionFlyoutItem_Click"/>
-                                    <MenuFlyoutItem Text="删除"
+                                        <MenuFlyoutItem Text="删除"
                                                 Visibility="Collapsed"
                                                 Click="RemoveCollectionFlyoutItem_Click"/>
-                                </MenuFlyout>
-                            </Button.Flyout>
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon Name="CollectionButtonIcon" 
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon Name="CollectionButtonIcon" 
                                           FontFamily="Segoe MDL2 Assets" 
                                           Glyph="&#xE006;" 
                                           Margin="0,0,5,0"/>
-                                <TextBlock Name="CollectionButtonText" 
+                                    <TextBlock Name="CollectionButtonText" 
                                            Text="收藏" />
-                            </StackPanel>
-                        </Button>
+                                </StackPanel>
+                            </Button>
+                            <Button Name="CollectionAdvanceButton" 
+                                    FontFamily="Segoe MDL2 Assets" 
+                                    Background="{ThemeResource SystemAltHighColor}"
+                                    Click="CollectionAdvanceButton_Click"
+                                    IsEnabled="False"
+                                    Margin="5,0,0,0">
+                                <FontIcon FontFamily="Segoe MDL2 Assets" 
+                                          Glyph="&#xE70F;"/>
+                            </Button>
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
                 <TextBlock Name="SummaryTextBlock" 
@@ -117,7 +129,7 @@
                                        FontSize="14" 
                                        TextTrimming="WordEllipsis"/>
                             </StackPanel>
-                            
+
                             <FlyoutBase.AttachedFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Click="WatchedMenuFlyoutItem_Click" 
@@ -133,7 +145,7 @@
                                                 Text="未看"/>
                                 </MenuFlyout>
                             </FlyoutBase.AttachedFlyout>
-                            
+
                         </StackPanel>
 
                     </DataTemplate>

@@ -14,6 +14,7 @@ namespace Bangumi.Models
         public List<string> tag { get; set; }
         public int ep_status { get; set; }
         public int lasttouch { get; set; }
+        public string @private { get; set; }
         public User user { get; set; }
     }
 
