@@ -1,25 +1,18 @@
-﻿using Bangumi.Models;
+﻿using Bangumi.ContentDialogs;
 using Bangumi.Facades;
+using Bangumi.Helper;
+using Bangumi.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Media.Imaging;
-using Bangumi.Helper;
-using static Bangumi.Helper.OAuthHelper;
-using System.Threading.Tasks;
+using Windows.UI.Xaml.Navigation;
 using static Bangumi.Facades.BangumiFacade;
+using static Bangumi.Helper.OAuthHelper;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -31,11 +24,14 @@ namespace Bangumi.Pages
     public sealed partial class DetailsPage : Page
     {
         public ObservableCollection<Ep> eps { get; set; }
-        private static string subjectId = "";
-        private static string imageSource = "";
-        private static string name_cn = "";
-        private static string air_date = "";
-        private static int air_weekday = 0;
+        private string subjectId = "";
+        private string imageSource = "";
+        private string name_cn = "";
+        private string air_date = "";
+        private int air_weekday = 0;
+        private int myRate;
+        private string myComment;
+        private bool myPrivacy;
 
         public DetailsPage()
         {
@@ -117,11 +113,16 @@ namespace Bangumi.Pages
                 if (collectionStatus.status != null)
                 {
                     SetCollectionButon(collectionStatus.status.name);
+                    myRate = collectionStatus.rating;
+                    myComment = collectionStatus.comment;
+                    myPrivacy = collectionStatus.@private == "1" ? true : false;
                 }
                 else
                 {
                     SetCollectionButon("");
                 }
+                CollectionButton.IsEnabled = true;
+                CollectionAdvanceButton.IsEnabled = true;
             }
             catch (Exception e)
             {
@@ -437,6 +438,56 @@ namespace Bangumi.Pages
                 SetCollectionButon("删除");
             }
             MyProgressBar.Visibility = Visibility.Collapsed;
+        }
+
+        // 编辑评分和吐槽
+        private async void CollectionAdvanceButton_Click(object sender, RoutedEventArgs e)
+        {
+            CollectionEditContentDialog collectionEditContentDialog = new CollectionEditContentDialog()
+            {
+                rate = myRate,
+                comment = myComment,
+                privacy = myPrivacy,
+            };
+            if (ContentDialogResult.Primary == await collectionEditContentDialog.ShowAsync())
+            {
+                MyProgressBar.Visibility = Visibility.Visible;
+                if (await UpdateCollectionStatusAsync(subjectId, GetStatusEnum(), collectionEditContentDialog.comment,
+                     collectionEditContentDialog.rate.ToString(), collectionEditContentDialog.privacy == true ? "1" : "0"))
+                {
+                    myRate = collectionEditContentDialog.rate;
+                    myComment = collectionEditContentDialog.comment;
+                    myPrivacy = collectionEditContentDialog.privacy;
+                }
+                MyProgressBar.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private CollectionStatusEnum GetStatusEnum()
+        {
+            CollectionStatusEnum result;
+            switch (CollectionButtonText.Text)
+            {
+                case "想看":
+                    result = CollectionStatusEnum.wish;
+                    break;
+                case "看过":
+                    result = CollectionStatusEnum.collect;
+                    break;
+                case "在看":
+                    result = CollectionStatusEnum.@do;
+                    break;
+                case "搁置":
+                    result = CollectionStatusEnum.on_hold;
+                    break;
+                case "抛弃":
+                    result = CollectionStatusEnum.dropped;
+                    break;
+                default:
+                    result = CollectionStatusEnum.@do;
+                    break;
+            }
+            return result;
         }
     }
 }

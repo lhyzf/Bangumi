@@ -1,0 +1,35 @@
+﻿<ContentDialog
+    x:Class="Bangumi.ContentDialogs.CollectionEditContentDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Bangumi.ContentDialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="评分和吐槽"
+    PrimaryButtonText="确认"
+    SecondaryButtonText="取消"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <StackPanel>
+        <TextBlock Text="评分（0为取消评分）："
+                   Margin="0,5,0,0"/>
+        <Slider Name="RateSlider" 
+                AutomationProperties.Name="Slider with ticks"
+                TickFrequency="1" 
+                TickPlacement="Outside"
+                Minimum="0"
+                Maximum="10"
+                Value="{x:Bind rate}"/>
+        <TextBlock Text="吐槽：" 
+                   Margin="0,5,0,0"/>
+        <TextBox Name="CommentTextBox"
+                 Text="{x:Bind comment}"
+                 TextWrapping="Wrap"/>
+        <CheckBox Name="PrivacyCheckBox" 
+                  Content="私密"
+                  IsChecked="{x:Bind privacy}"
+                  Margin="0,5,0,0"/>
+    </StackPanel>
+</ContentDialog>

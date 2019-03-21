@@ -43,7 +43,7 @@ namespace Bangumi.Facades
                         {
                             item.name_cn = item.name;
                         }
-                        if (item.images==null)
+                        if (item.images == null)
                         {
                             item.images = new Images { common = NoImageUri };
                         }
@@ -110,12 +110,15 @@ namespace Bangumi.Facades
         }
 
         // 更新指定条目收藏状态
-        public static async Task<bool> UpdateCollectionStatusAsync(string subjectId, CollectionStatusEnum collectionStatusEnum)
+        public static async Task<bool> UpdateCollectionStatusAsync(string subjectId, CollectionStatusEnum collectionStatusEnum,
+            string comment = "", string rating = "", string privace = "0")
         {
             string token = await Helper.OAuthHelper.ReadFromFile(OAuthFile.access_token, true);
             string url = string.Format("https://api.bgm.tv/collection/{0}/update?access_token={1}", subjectId, token);
             string postData = "status=" + collectionStatusEnum.ToString();
-            postData += "&privacy=0";
+            postData += "&comment=" + comment;
+            postData += "&rating=" + rating;
+            postData += "&privacy=" + privace;
 
             try
             {
