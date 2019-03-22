@@ -75,5 +75,11 @@ namespace Bangumi.Pages
             var selectedItem = (Watching)e.ClickedItem;
             Frame.Navigate(typeof(DetailsPage), selectedItem);
         }
+
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double UseableWidth = DoingPivot.ActualWidth - 24;
+            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 220);
+        }
     }
 }

@@ -95,20 +95,31 @@ namespace Bangumi.Pages
             BangumiFacade.SubjectType subjectType = BangumiFacade.SubjectType.anime;
             switch (type)
             {
-                case 0:subjectType = BangumiFacade.SubjectType.anime;
+                case 0:
+                    subjectType = BangumiFacade.SubjectType.anime;
                     break;
-                case 1:subjectType = BangumiFacade.SubjectType.book;
+                case 1:
+                    subjectType = BangumiFacade.SubjectType.book;
                     break;
-                case 2:subjectType = BangumiFacade.SubjectType.music;
+                case 2:
+                    subjectType = BangumiFacade.SubjectType.music;
                     break;
-                case 3:subjectType = BangumiFacade.SubjectType.game;
+                case 3:
+                    subjectType = BangumiFacade.SubjectType.game;
                     break;
-                case 4:subjectType = BangumiFacade.SubjectType.real;
+                case 4:
+                    subjectType = BangumiFacade.SubjectType.real;
                     break;
                 default:
                     break;
             }
             return subjectType;
+        }
+
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double UseableWidth = CollectionPivot.ActualWidth - 24;
+            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 220);
         }
     }
 }

@@ -17,7 +17,7 @@
                              BackRequested="NavView_BackRequested"
                              IsBackButtonVisible="Collapsed"
                              CompactModeThresholdWidth="600"
-                             OpenPaneLength="150">
+                             OpenPaneLength="200">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Tag="home" 
                                          Icon="Home" 
