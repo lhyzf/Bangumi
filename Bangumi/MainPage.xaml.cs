@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.System;
 using Windows.System.Profile;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -27,7 +29,8 @@ namespace Bangumi
         public MainPage()
         {
             this.InitializeComponent();
-
+            // 设置窗口的最小大小
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 480));
             // 启用标题栏的后退按钮
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
@@ -133,7 +136,7 @@ namespace Bangumi
             {
                 e.Handled = true;
                 if (backPressed) this.On_BackRequested();
-                //if (forwardPressed) this.TryGoForward();
+                // if (forwardPressed) this.TryGoForward();
             }
         }
 

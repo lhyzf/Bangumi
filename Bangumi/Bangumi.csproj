@@ -129,6 +129,7 @@
       <DependentUpon>CollectionEditContentDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Facades\BangumiFacade.cs" />
+    <Compile Include="Helper\GridWidthHelper.cs" />
     <Compile Include="Helper\OAuthHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -221,16 +222,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.2.6</Version>
+      <Version>6.2.8</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
       <Version>2.0.181018004</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>9.0.1</Version>
+      <Version>12.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Net.Http">
-      <Version>4.1.1</Version>
+      <Version>4.3.4</Version>
     </PackageReference>
     <PackageReference Include="System.ValueTuple">
       <Version>4.5.0</Version>

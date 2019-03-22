@@ -1,4 +1,5 @@
 ﻿using Bangumi.Facades;
+using Bangumi.Helper;
 using Bangumi.Models;
 using System;
 using System.Collections.ObjectModel;
@@ -36,7 +37,7 @@ namespace Bangumi.Pages
         {
             MyProgressRing.IsActive = true;
             MyProgressRing.Visibility = Visibility.Visible;
-            
+
             ClickToRefresh.Visibility = Visibility.Collapsed;
             try
             {
@@ -92,5 +93,10 @@ namespace Bangumi.Pages
             Frame.Navigate(typeof(DetailsPage), selectedItem);
         }
 
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double UseableWidth = WeekPivot.ActualWidth - 24;
+            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
+        }
     }
 }

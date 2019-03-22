@@ -29,6 +29,8 @@ namespace Bangumi.Pages
         private string name_cn = "";
         private string air_date = "";
         private int air_weekday = 0;
+
+        // 评分、吐槽用
         private int myRate;
         private string myComment;
         private bool myPrivacy;
@@ -76,7 +78,6 @@ namespace Bangumi.Pages
 
             LoadDetails();
             LoadCollectionStatus();
-            LoadEps();
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -105,6 +106,7 @@ namespace Bangumi.Pages
             }
         }
 
+        // 获取收藏、评分和吐槽信息
         private async void LoadCollectionStatus()
         {
             try
@@ -132,6 +134,7 @@ namespace Bangumi.Pages
             }
         }
 
+        // 加载详情和章节
         private async void LoadDetails()
         {
             if (!string.IsNullOrEmpty(imageSource))
@@ -148,43 +151,32 @@ namespace Bangumi.Pages
             }
             try
             {
-                var details = await BangumiFacade.GetSubjectAsync(subjectId);
+                // 条目信息
+                var subject = await BangumiFacade.GetSubjectAsync(subjectId);
                 if (string.IsNullOrEmpty(imageSource))
                 {
-                    Uri uri = new Uri(details.images.common);
+                    Uri uri = new Uri(subject.images.common);
                     ImageSource imgSource = new BitmapImage(uri);
                     this.BangumiImage.Source = imgSource;
                 }
-                this.air_dateTextBlock.Text = "开播时间：" + details.air_date;
-                this.air_weekdayTextBlock.Text = "更新时间：" + GetWeekday(details.air_weekday);
+                this.air_dateTextBlock.Text = "开播时间：" + subject.air_date;
+                this.air_weekdayTextBlock.Text = "更新时间：" + GetWeekday(subject.air_weekday);
                 var summary = "暂无简介";
-                if (!string.IsNullOrEmpty(details.summary))
+                if (!string.IsNullOrEmpty(subject.summary))
                 {
-                    if (details.summary.Length > 120)
+                    if (subject.summary.Length > 80)
                     {
-                        summary = details.summary.Substring(0, 120) + "...";
+                        summary = subject.summary.Substring(0, 80) + "...";
                     }
                     else
                     {
-                        summary = details.summary;
+                        summary = subject.summary;
                     }
                 }
                 this.SummaryTextBlock.Text = summary;
-            }
-            catch (Exception e)
-            {
-                var msgDialog = new Windows.UI.Popups.MessageDialog(e.Message) { Title = "Error" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
-            }
-        }
 
-        private async void LoadEps()
-        {
-            try
-            {
+                // 章节
                 Progress progress = null;
-                var subject = await BangumiFacade.GetSubjectEpsAsync(subjectId);
                 if (subject.eps == null)
                 {
                     MyProgressRing.IsActive = false;
@@ -223,6 +215,7 @@ namespace Bangumi.Pages
                         eps.Add(ep);
                     }
                 }
+
             }
             catch (Exception e)
             {
@@ -230,8 +223,6 @@ namespace Bangumi.Pages
                 msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
                 await msgDialog.ShowAsync();
             }
-
-
         }
 
         private string GetWeekday(int day)
@@ -488,6 +479,20 @@ namespace Bangumi.Pages
                     break;
             }
             return result;
+        }
+
+
+        // 在调整窗口大小时计算item的宽度
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double UseableWidth = EpsGridView.ActualWidth - EpsGridView.Margin.Left - EpsGridView.Margin.Right;
+            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
+        }
+
+        // 更多资料
+        private void MoreInfoButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -8,6 +8,7 @@
     xmlns:data="using:Bangumi.Models"
     xmlns:sys="using:System"
     Loaded="Page_Loaded"
+    SizeChanged="Page_SizeChanged"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -41,7 +42,11 @@
                 </Hyperlink>
             </TextBlock>
         </StackPanel>
-        <Pivot Grid.Row="1" 
+
+        <Border Name="MyWidth"
+                    Visibility="Collapsed"/>
+
+        <Pivot Name="DoingPivot" Grid.Row="1" 
                IsHeaderItemsCarouselEnabled="False">
             <PivotItem Header="在看">
                 <GridView ItemsSource="{x:Bind watchingCollection}" 
@@ -49,28 +54,38 @@
                           ItemClick="GridView_ItemClick">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="data:Watching">
-                            <StackPanel Orientation="Horizontal" 
-                                        Margin="5">
+                            <Grid Padding="5"
+                                  Width="{Binding ElementName=MyWidth,Path=Width}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
                                 <Image Source="{x:Bind subject.images.common}" 
                                        Height="75" 
                                        Width="75" 
                                        Stretch="UniformToFill" />
-                                <StackPanel Orientation="Vertical" 
-                                            Width="160" 
-                                            Margin="6,0">
+                                <Grid Grid.Column="1"
+                                      Padding="6,0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                    </Grid.RowDefinitions>
                                     <TextBlock Text="{x:Bind subject.name_cn}" 
                                                FontSize="14" 
                                                Foreground="#d26585"
                                                TextWrapping="Wrap" />
-                                    <TextBlock Text="{x:Bind subject.name}" 
+                                    <TextBlock Grid.Row="1"
+                                               Text="{x:Bind subject.name}" 
                                                FontSize="12" 
                                                TextTrimming="WordEllipsis"
                                                TextWrapping="NoWrap"/>
-                                    <TextBlock Text="{x:Bind sys:String.Format('看过 {0} 话', ep_status)}" 
+                                    <TextBlock Grid.Row="2"
+                                               Text="{x:Bind sys:String.Format('看过 {0} 话', ep_status)}" 
                                                FontSize="12" 
                                                TextWrapping="Wrap"/>
-                                </StackPanel>
-                            </StackPanel>
+                                </Grid>
+                            </Grid>
                         </DataTemplate>
                     </GridView.ItemTemplate>
                 </GridView>

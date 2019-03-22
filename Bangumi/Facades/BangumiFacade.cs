@@ -325,7 +325,7 @@ namespace Bangumi.Facades
         // 获取详情并反序列化
         public static async Task<Subject> GetSubjectAsync(string subjectId)
         {
-            string url = string.Format("https://api.bgm.tv/subject/{0}?responseGroup=small", subjectId);
+            string url = string.Format("https://api.bgm.tv/subject/{0}?responseGroup=large", subjectId);
             try
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -335,10 +335,7 @@ namespace Bangumi.Facades
                 {
                     content = reader.ReadToEnd();
                 }
-                // 反序列化指定名称的变量
-                JsonSerializerSettings jsonSerializerSetting = new JsonSerializerSettings();
-                jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "name_cn", "summary", "air_date", "air_weekday", "images", "common" });
-                var result = JsonConvert.DeserializeObject<Subject>(content, jsonSerializerSetting);
+                var result = JsonConvert.DeserializeObject<Subject>(content);
                 return result;
             }
             catch (Exception e)
