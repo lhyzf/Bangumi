@@ -109,6 +109,10 @@ namespace Bangumi.Pages
         // 获取收藏、评分和吐槽信息
         private async void LoadCollectionStatus()
         {
+            if (!await CheckTokens())
+            {
+                return;
+            }
             try
             {
                 CollectionStatus collectionStatus = await GetCollectionStatusAsync(subjectId);
@@ -337,9 +341,12 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        private void Eps_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void Eps_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+            if (await CheckTokens())
+            {
+                FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+            }
         }
 
         // 收藏 想看

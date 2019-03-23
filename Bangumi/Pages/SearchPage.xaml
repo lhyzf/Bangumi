@@ -22,7 +22,7 @@
                         ItemsSource="{x:Bind suggestions}"
                         TextChanged="AutoSuggestBox_TextChanged"
                         QuerySubmitted="AutoSuggestBox_QuerySubmitted"
-                        Padding="10,0"/>
+                        Margin="10,0"/>
 
         <Border Name="MyWidth"
                 Visibility="Collapsed"/>
