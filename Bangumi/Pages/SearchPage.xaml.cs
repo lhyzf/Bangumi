@@ -1,4 +1,5 @@
 ﻿using Bangumi.Facades;
+using Bangumi.Helper;
 using Bangumi.Models;
 using System;
 using System.Collections.Generic;
@@ -208,7 +209,11 @@ namespace Bangumi.Pages
             }
         }
 
-
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double UseableWidth = TypePivot.ActualWidth - 20;
+            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
+        }
     }
 
     // 分页加载
