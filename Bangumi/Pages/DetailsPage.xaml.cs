@@ -485,7 +485,7 @@ namespace Bangumi.Pages
         // 在调整窗口大小时计算item的宽度
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            double UseableWidth = EpsGridView.ActualWidth - EpsGridView.Margin.Left - EpsGridView.Margin.Right;
+            double UseableWidth = EpsGridView.ActualWidth - EpsGridView.Padding.Left - EpsGridView.Padding.Right;
             MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
         }
 
