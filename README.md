@@ -1,4 +1,4 @@
-﻿﻿# Bangumi UWP
+﻿# Bangumi UWP
 
 一个 [Bangumi 番組計画](https://bgm.tv) 的第三方客户端。
 
