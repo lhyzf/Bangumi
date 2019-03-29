@@ -220,7 +220,7 @@ namespace Bangumi.Facades
                 {
                     // 反序列化指定名称的变量
                     JsonSerializerSettings jsonSerializerSetting = new JsonSerializerSettings();
-                    jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "subject_id", "ep_status", "subject", "name_cn", "images", "common" });
+                    jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "subject_id", "ep_status", "subject", "name_cn", "images", "common", "eps_count" });
                     var result = JsonConvert.DeserializeObject<List<Watching>>(response, jsonSerializerSetting);
                     return result;
                 }
