@@ -81,9 +81,12 @@
                                                TextTrimming="WordEllipsis"
                                                TextWrapping="NoWrap"/>
                                     <TextBlock Grid.Row="2"
-                                               Text="{x:Bind sys:String.Format('看过 {0} 话', ep_status)}" 
                                                FontSize="12" 
-                                               TextWrapping="Wrap"/>
+                                               TextWrapping="Wrap">
+                                        <Run Text="{x:Bind ep_status}"/>
+                                        <Run Text="/"/>
+                                        <Run Text="{x:Bind subject.eps_count}"/>
+                                    </TextBlock>
                                 </Grid>
                             </Grid>
                         </DataTemplate>
