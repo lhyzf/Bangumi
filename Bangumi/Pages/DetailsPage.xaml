@@ -14,152 +14,153 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <GridView Name="EpsGridView" 
-              ItemsSource="{x:Bind eps}" 
-              Padding="10,0">
-        <GridView.Header>
-            <StackPanel Orientation="Vertical" >
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Image Name="BangumiImage" 
-                           Height="214" 
-                           Width="150" />
-                    <StackPanel Orientation="Vertical" 
-                                Grid.Column="1"
-                                Margin="10,0">
-                        <TextBlock Name="NameTextBlock" 
-                                   TextWrapping="Wrap"
-                                   FontSize="23" 
-                                   Foreground="#d26585" />
-                        <TextBlock Name="air_dateTextBlock" 
-                                   Text="开播时间：" 
-                                   FontSize="15" 
-                                   Foreground="#666666" 
-                                   Margin="0,2,0,0" />
-                        <TextBlock Name="air_weekdayTextBlock" 
-                                   Text="更新时间：" 
-                                   FontSize="15" 
-                                   Foreground="#666666" 
-                                   Margin="0,2,0,0" />
-                        <StackPanel Orientation="Horizontal">
-                            <Button Name="CollectionButton"
-                                    IsEnabled="False"
-                                    Foreground="#d26585"
-                                    Background="{ThemeResource SystemAltHighColor}">
-                                <Button.Flyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Text="想看" 
-                                                        Click="WishCollectionFlyoutItem_Click" />
-                                        <MenuFlyoutItem Text="看过"
-                                                        Click="WatchedCollectionFlyoutItem_Click"/>
-                                        <MenuFlyoutItem Text="在看"
-                                                        Click="DoingCollectionFlyoutItem_Click"/>
-                                        <MenuFlyoutItem Text="搁置"
-                                                        Click="OnHoldCollectionFlyoutItem_Click"/>
-                                        <MenuFlyoutItem Text="抛弃"
-                                                        Click="DropCollectionFlyoutItem_Click"/>
-                                        <MenuFlyoutItem Text="删除"
-                                                        Visibility="Collapsed"
-                                                        Click="RemoveCollectionFlyoutItem_Click"/>
-                                    </MenuFlyout>
-                                </Button.Flyout>
-                                <StackPanel Orientation="Horizontal">
-                                    <FontIcon Name="CollectionButtonIcon" 
-                                              FontFamily="Segoe MDL2 Assets" 
-                                              Glyph="&#xE006;" 
-                                              Margin="0,0,5,0"/>
-                                    <TextBlock Name="CollectionButtonText" 
-                                               Text="收藏" />
-                                </StackPanel>
-                            </Button>
-                            <Button Name="CollectionAdvanceButton" 
-                                    FontFamily="Segoe MDL2 Assets" 
-                                    Background="{ThemeResource SystemAltHighColor}"
-                                    Click="CollectionAdvanceButton_Click"
-                                    IsEnabled="False"
-                                    Margin="5,0,0,0">
-                                <FontIcon FontFamily="Segoe MDL2 Assets" 
-                                          Glyph="&#xE70F;"/>
-                            </Button>
-                        </StackPanel>
-                    </StackPanel>
-                </Grid>
-                <TextBlock Name="SummaryTextBlock" 
-                           FontSize="18" 
-                           TextWrapping="Wrap" 
-                           LineHeight="30" 
-                           Margin="0,5,0,0" />
-                <HyperlinkButton Content="更多资料"
-                                 Click="MoreInfoButton_Click"
-                                 Visibility="Collapsed"
-                                 FontSize="16"
-                                 Foreground="#d26585"/>
+    <Grid>
+        <ProgressBar Name="MyProgressBar"
+                     IsIndeterminate="True"
+                     Visibility="Collapsed"
+                     VerticalAlignment="Top"/>
+        <ProgressRing Name="MyProgressRing"
+                      Width="50"
+                      Height="50"/>
 
-                <ProgressBar Name="MyProgressBar"
-                             Grid.Row="1"
-                             IsIndeterminate="True"
-                             Visibility="Collapsed"
-                             VerticalAlignment="Top"/>
-                <ProgressRing Name="MyProgressRing"
-                              Grid.RowSpan="2"
-                              Width="50"
-                              Height="50"/>
-
-                <Border Name="MyWidth"
-                        Visibility="Collapsed"/>
-
-            </StackPanel>
-        </GridView.Header>
-        <GridView.ItemTemplate>
-            <DataTemplate x:DataType="data:Ep">
-                <Grid Tapped="Eps_Tapped" 
-                      Padding="5" 
-                      Height="68"
-                      Width="{Binding ElementName=MyWidth,Path=Width}"
-                      Background="{ThemeResource SystemChromeLowColor}" >
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+        <GridView Name="EpsGridView" 
+                  ItemsSource="{x:Bind eps}" 
+                  Margin="0,5,0,0"
+                  Padding="10,0,10,5">
+            <GridView.Header>
+                <StackPanel Orientation="Vertical" >
                     <Grid>
-                        <TextBlock Text="{x:Bind sys:String.Format('第 {0} 话', sort)}" 
-                                   FontSize="14" />
-                        <TextBlock Grid.Column="1" 
-                                   x:Phase="2"
-                                   Text="{x:Bind status,Mode=OneWay}" 
-                                   FontSize="12" 
-                                   Foreground="#d26585"
-                                   HorizontalAlignment="Right"/>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Name="BangumiImage" 
+                               Height="214" 
+                               Width="150" />
+                        <StackPanel Orientation="Vertical" 
+                                    Grid.Column="1"
+                                    Margin="10,0">
+                            <TextBlock Name="NameTextBlock" 
+                                       TextWrapping="Wrap"
+                                       FontSize="23" 
+                                       Foreground="#d26585" />
+                            <TextBlock Name="air_dateTextBlock" 
+                                       Text="开播时间：" 
+                                       FontSize="15" 
+                                       Foreground="#666666" 
+                                       Margin="0,2,0,0" />
+                            <TextBlock Name="air_weekdayTextBlock" 
+                                       Text="更新时间：" 
+                                       FontSize="15" 
+                                       Foreground="#666666" 
+                                       Margin="0,2,0,0" />
+                            <StackPanel Orientation="Horizontal">
+                                <Button Name="CollectionButton"
+                                        IsEnabled="False"
+                                        Foreground="#d26585"
+                                        Background="{ThemeResource SystemAltHighColor}">
+                                    <Button.Flyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="想看" 
+                                                            Click="WishCollectionFlyoutItem_Click" />
+                                            <MenuFlyoutItem Text="看过"
+                                                            Click="WatchedCollectionFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="在看"
+                                                            Click="DoingCollectionFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="搁置"
+                                                            Click="OnHoldCollectionFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="抛弃"
+                                                            Click="DropCollectionFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="删除"
+                                                            Visibility="Collapsed"
+                                                            Click="RemoveCollectionFlyoutItem_Click"/>
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                    <StackPanel Orientation="Horizontal">
+                                        <FontIcon Name="CollectionButtonIcon" 
+                                                  FontFamily="Segoe MDL2 Assets" 
+                                                  Glyph="&#xE006;" 
+                                                  Margin="0,0,5,0"/>
+                                        <TextBlock Name="CollectionButtonText" 
+                                                   Text="收藏" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Name="CollectionAdvanceButton" 
+                                        FontFamily="Segoe MDL2 Assets" 
+                                        Background="{ThemeResource SystemAltHighColor}"
+                                        Click="CollectionAdvanceButton_Click"
+                                        IsEnabled="False"
+                                        Margin="5,0,0,0">
+                                    <FontIcon FontFamily="Segoe MDL2 Assets" 
+                                              Glyph="&#xE70F;"/>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
                     </Grid>
-                    <TextBlock Grid.Row="1"
-                               x:Phase="1"
-                               Text="{x:Bind name_cn}" 
-                               FontSize="14" 
-                               HorizontalAlignment="Left"
-                               TextWrapping="Wrap"
-                               TextTrimming="WordEllipsis"/>
+                    <TextBlock Name="SummaryTextBlock" 
+                               FontSize="18" 
+                               TextWrapping="Wrap" 
+                               LineHeight="30" 
+                               Margin="0,5,0,0" />
+                    <HyperlinkButton Name="MoreInfoHyperLink"
+                                     Content="更多资料"
+                                     Click="MoreInfoButton_Click"
+                                     Visibility="Collapsed"
+                                     FontSize="16"
+                                     Foreground="#d26585"/>
 
-                    <FlyoutBase.AttachedFlyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Click="WatchedMenuFlyoutItem_Click" 
-                                            Text="看过"/>
-                            <MenuFlyoutItem Click="WatchedToMenuFlyoutItem_Click" 
-                                            IsEnabled="True" 
-                                            Text="看到"/>
-                            <MenuFlyoutItem Click="QueueMenuFlyoutItem_Click" 
-                                            Text="想看"/>
-                            <MenuFlyoutItem Click="DropMenuFlyoutItem_Click" 
-                                            Text="抛弃"/>
-                            <MenuFlyoutItem Click="RemoveMenuFlyoutItem_Click" 
-                                            Text="未看"/>
-                        </MenuFlyout>
-                    </FlyoutBase.AttachedFlyout>
-                </Grid>
-            </DataTemplate>
-        </GridView.ItemTemplate>
-    </GridView>
+                    <Border Name="MyWidth"
+                            Visibility="Collapsed"/>
 
+                </StackPanel>
+            </GridView.Header>
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="data:Ep">
+                    <Grid Tapped="Eps_Tapped" 
+                          Padding="5" 
+                          Height="68"
+                          Width="{Binding ElementName=MyWidth,Path=Width}"
+                          Background="{ThemeResource SystemChromeLowColor}" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid>
+                            <TextBlock Text="{x:Bind sys:String.Format('第 {0} 话', sort)}" 
+                                       FontSize="14" />
+                            <TextBlock Grid.Column="1" 
+                                       x:Phase="2"
+                                       Text="{x:Bind status,Mode=OneWay}" 
+                                       FontSize="12" 
+                                       Foreground="#d26585"
+                                       HorizontalAlignment="Right"/>
+                        </Grid>
+                        <TextBlock Grid.Row="1"
+                                   x:Phase="1"
+                                   Text="{x:Bind name_cn}" 
+                                   FontSize="14" 
+                                   HorizontalAlignment="Left"
+                                   TextWrapping="Wrap"
+                                   TextTrimming="WordEllipsis"/>
+
+                        <FlyoutBase.AttachedFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Click="WatchedMenuFlyoutItem_Click" 
+                                                Text="看过"/>
+                                <MenuFlyoutItem Click="WatchedToMenuFlyoutItem_Click" 
+                                                IsEnabled="True" 
+                                                Text="看到"/>
+                                <MenuFlyoutItem Click="QueueMenuFlyoutItem_Click" 
+                                                Text="想看"/>
+                                <MenuFlyoutItem Click="DropMenuFlyoutItem_Click" 
+                                                Text="抛弃"/>
+                                <MenuFlyoutItem Click="RemoveMenuFlyoutItem_Click" 
+                                                Text="未看"/>
+                            </MenuFlyout>
+                        </FlyoutBase.AttachedFlyout>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+    </Grid>
 </Page>

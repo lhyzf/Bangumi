@@ -129,8 +129,12 @@
     <Compile Include="ContentDialogs\CollectionEditContentDialog.xaml.cs">
       <DependentUpon>CollectionEditContentDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ContentDialogs\SubjectMoreInfoContentDialog.xaml.cs">
+      <DependentUpon>SubjectMoreInfoContentDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Facades\BangumiFacade.cs" />
     <Compile Include="Helper\GridWidthHelper.cs" />
+    <Compile Include="Helper\HttpWebRequestHelper.cs" />
     <Compile Include="Helper\OAuthHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -185,6 +189,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="ContentDialogs\CollectionEditContentDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ContentDialogs\SubjectMoreInfoContentDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

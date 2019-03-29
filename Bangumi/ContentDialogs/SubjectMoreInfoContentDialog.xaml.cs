@@ -17,26 +17,22 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Bangumi.ContentDialogs
 {
-    public sealed partial class CollectionEditContentDialog : ContentDialog
+    public sealed partial class SubjectMoreInfoContentDialog : ContentDialog
     {
-        public int rate { get; set; }
-        public string comment { get; set; }
-        public bool privacy { get; set; }
+        public string name { get; set; }
+        public string info { get; set; }
+        public string summary { get; set; }
+        public string characters { get; set; }
+        public string staff { get; set; }
 
-        public CollectionEditContentDialog()
+        public SubjectMoreInfoContentDialog()
         {
             this.InitializeComponent();
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            rate = (int)RateSlider.Value;
-            comment = CommentTextBox.Text;
-            privacy = (bool)PrivacyCheckBox.IsChecked;
         }
 
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-        }
     }
 }

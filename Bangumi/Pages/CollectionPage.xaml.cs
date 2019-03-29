@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -35,10 +36,15 @@ namespace Bangumi.Pages
             subjectCollection = new ObservableCollection<Collect>();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (subjectCollection.Count == 0)
-                Refresh();
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    Refresh();
+                });
+            }
         }
 
         // 刷新收藏列表，API限制每类最多25条
@@ -73,9 +79,12 @@ namespace Bangumi.Pages
         }
 
         //点击刷新
-        private void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        private async void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
-            Refresh();
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Refresh();
+            });
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
@@ -84,9 +93,12 @@ namespace Bangumi.Pages
             Frame.Navigate(typeof(DetailsPage), selectedItem.subject);
         }
 
-        private void TypeCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void TypeCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Refresh();
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Refresh();
+            });
         }
 
         private BangumiFacade.SubjectType GetSubjectType()
