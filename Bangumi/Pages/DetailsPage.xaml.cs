@@ -3,7 +3,9 @@ using Bangumi.Facades;
 using Bangumi.Helper;
 using Bangumi.Models;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -11,8 +13,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using static Bangumi.Facades.BangumiFacade;
-using static Bangumi.Helper.OAuthHelper;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -30,6 +30,13 @@ namespace Bangumi.Pages
         private string air_date = "";
         private int air_weekday = 0;
 
+        // 更多资料用
+        private string name;
+        private string moreInfo;
+        private string moreSummary;
+        private string moreCharacters;
+        private string moreStaff;
+
         // 评分、吐槽用
         private int myRate;
         private string myComment;
@@ -43,7 +50,7 @@ namespace Bangumi.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter.GetType().Name.Equals("Watching"))
+            if (e.Parameter.GetType() == typeof(Watching))
             {
                 var p = (Watching)e.Parameter;
                 subjectId = p.subject_id.ToString();
@@ -52,7 +59,7 @@ namespace Bangumi.Pages
                 air_date = "";
                 air_weekday = 0;
             }
-            else if (e.Parameter.GetType().Name.Equals("Subject"))
+            else if (e.Parameter.GetType() == typeof(Subject))
             {
                 var p = (Subject)e.Parameter;
                 subjectId = p.id.ToString();
@@ -61,7 +68,7 @@ namespace Bangumi.Pages
                 air_date = p.air_date;
                 air_weekday = p.air_weekday;
             }
-            else if (e.Parameter.GetType().Name.Equals("Int32"))
+            else if (e.Parameter.GetType() == typeof(Int32))
             {
                 subjectId = e.Parameter.ToString();
                 imageSource = "";
@@ -71,13 +78,16 @@ namespace Bangumi.Pages
             }
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             MyProgressRing.IsActive = true;
             MyProgressRing.Visibility = Visibility.Visible;
 
-            LoadDetails();
-            LoadCollectionStatus();
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                LoadDetails();
+                LoadCollectionStatus();
+            });
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -85,7 +95,7 @@ namespace Bangumi.Pages
             EpsGridView.ItemsSource = null;
         }
 
-        private void SetCollectionButon(string status)
+        private void SetCollectionButton(string status)
         {
             if (!string.IsNullOrEmpty(status))
             {
@@ -109,23 +119,23 @@ namespace Bangumi.Pages
         // 获取收藏、评分和吐槽信息
         private async void LoadCollectionStatus()
         {
-            if (!await CheckTokens())
+            if (!await OAuthHelper.CheckTokens())
             {
                 return;
             }
             try
             {
-                CollectionStatus collectionStatus = await GetCollectionStatusAsync(subjectId);
+                CollectionStatus collectionStatus = await BangumiFacade.GetCollectionStatusAsync(subjectId);
                 if (collectionStatus.status != null)
                 {
-                    SetCollectionButon(collectionStatus.status.name);
+                    SetCollectionButton(collectionStatus.status.name);
                     myRate = collectionStatus.rating;
                     myComment = collectionStatus.comment;
                     myPrivacy = collectionStatus.@private == "1" ? true : false;
                 }
                 else
                 {
-                    SetCollectionButon("");
+                    SetCollectionButton("");
                 }
                 CollectionButton.IsEnabled = true;
                 CollectionAdvanceButton.IsEnabled = true;
@@ -179,6 +189,67 @@ namespace Bangumi.Pages
                 }
                 this.SummaryTextBlock.Text = summary;
 
+                // 更多资料
+                name = subject.name;
+                moreSummary = string.IsNullOrEmpty(subject.summary) ? "暂无简介" : subject.summary;
+                moreInfo = "作品分类：" + GetSubjectTypeCn((BangumiFacade.SubjectType)subject.type);
+                moreInfo += "\n放送开始：" + subject.air_date;
+                moreInfo += "\n放送星期：" + GetWeekday(subject.air_weekday);
+                moreInfo += "\n话数：" + subject.eps_count;
+                if (subject.crt != null)
+                {
+                    foreach (var crt in subject.crt)
+                    {
+                        moreCharacters += string.Format("{0}：", string.IsNullOrEmpty(crt.name_cn) ? crt.name : crt.name_cn);
+                        if (crt.actors != null)
+                        {
+                            foreach (var actor in crt.actors)
+                            {
+                                moreCharacters += actor.name + "、";
+                            }
+                            moreCharacters = moreCharacters.TrimEnd('、');
+                        }
+                        else
+                        {
+                            moreCharacters += "暂无资料";
+                        }
+                        moreCharacters += "\n";
+                    }
+                    moreCharacters = moreCharacters.TrimEnd('\n');
+                }
+                else
+                {
+                    moreCharacters += "暂无资料";
+                }
+                if (subject.staff != null)
+                {
+                    var sd = new Dictionary<string, string>();
+                    foreach (var staff in subject.staff)
+                    {
+                        foreach (var job in staff.jobs)
+                        {
+                            if(!sd.ContainsKey(job))
+                            {
+                                sd.Add(job, string.IsNullOrEmpty(staff.name_cn) ? staff.name : staff.name_cn);
+                            }
+                            else
+                            {
+                                sd[job] += string.Format("、{0}", string.IsNullOrEmpty(staff.name_cn) ? staff.name : staff.name_cn);
+                            }
+                        }
+                    }
+                    foreach (var s in sd)
+                    {
+                        moreStaff += string.Format("{0}：{1}\n", s.Key, s.Value);
+                    }
+                    moreStaff = moreStaff.TrimEnd('\n');
+                }
+                else
+                {
+                    moreStaff += "暂无资料";
+                }
+                MoreInfoHyperLink.Visibility = Visibility.Visible;
+
                 // 章节
                 Progress progress = null;
                 if (subject.eps == null)
@@ -187,14 +258,12 @@ namespace Bangumi.Pages
                     MyProgressRing.Visibility = Visibility.Collapsed;
                     return;
                 }
-                var userId = await OAuthHelper.ReadFromFile(OAuthFile.user_id, false);
+                var userId = await OAuthHelper.ReadFromFile(OAuthHelper.OAuthFile.user_id, false);
                 if (!string.IsNullOrEmpty(userId))
                 {
                     progress = await BangumiFacade.GetProgressesAsync(userId, subjectId);
                 }
 
-                MyProgressRing.IsActive = false;
-                MyProgressRing.Visibility = Visibility.Collapsed;
                 eps.Clear();
                 foreach (var ep in subject.eps)
                 {
@@ -227,38 +296,11 @@ namespace Bangumi.Pages
                 msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
                 await msgDialog.ShowAsync();
             }
-        }
-
-        private string GetWeekday(int day)
-        {
-            var weekday = "";
-            switch (day)
+            finally
             {
-                case 1:
-                    weekday = "周一";
-                    break;
-                case 2:
-                    weekday = "周二";
-                    break;
-                case 3:
-                    weekday = "周三";
-                    break;
-                case 4:
-                    weekday = "周四";
-                    break;
-                case 5:
-                    weekday = "周五";
-                    break;
-                case 6:
-                    weekday = "周六";
-                    break;
-                case 7:
-                    weekday = "周日";
-                    break;
-                default:
-                    break;
+                MyProgressRing.IsActive = false;
+                MyProgressRing.Visibility = Visibility.Collapsed;
             }
-            return weekday;
         }
 
         // 看过
@@ -343,7 +385,7 @@ namespace Bangumi.Pages
 
         private async void Eps_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (await CheckTokens())
+            if (await OAuthHelper.CheckTokens())
             {
                 FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
             }
@@ -353,9 +395,9 @@ namespace Bangumi.Pages
         private async void WishCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
-            if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.wish))
+            if (await BangumiFacade.UpdateCollectionStatusAsync(subjectId, BangumiFacade.CollectionStatusEnum.wish))
             {
-                SetCollectionButon("想看");
+                SetCollectionButton("想看");
             }
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
@@ -364,9 +406,9 @@ namespace Bangumi.Pages
         private async void WatchedCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
-            if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.collect))
+            if (await BangumiFacade.UpdateCollectionStatusAsync(subjectId, BangumiFacade.CollectionStatusEnum.collect))
             {
-                SetCollectionButon("看过");
+                SetCollectionButton("看过");
                 int epId = 0; ;
                 string epsId = string.Empty;
                 foreach (var episode in eps)
@@ -398,9 +440,9 @@ namespace Bangumi.Pages
         private async void DoingCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
-            if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.@do))
+            if (await BangumiFacade.UpdateCollectionStatusAsync(subjectId, BangumiFacade.CollectionStatusEnum.@do))
             {
-                SetCollectionButon("在看");
+                SetCollectionButton("在看");
             }
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
@@ -409,9 +451,9 @@ namespace Bangumi.Pages
         private async void OnHoldCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
-            if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.on_hold))
+            if (await BangumiFacade.UpdateCollectionStatusAsync(subjectId, BangumiFacade.CollectionStatusEnum.on_hold))
             {
-                SetCollectionButon("搁置");
+                SetCollectionButton("搁置");
             }
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
@@ -420,9 +462,9 @@ namespace Bangumi.Pages
         private async void DropCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
-            if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.dropped))
+            if (await BangumiFacade.UpdateCollectionStatusAsync(subjectId, BangumiFacade.CollectionStatusEnum.dropped))
             {
-                SetCollectionButon("抛弃");
+                SetCollectionButton("抛弃");
             }
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
@@ -431,9 +473,9 @@ namespace Bangumi.Pages
         private async void RemoveCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
-            if (await UpdateCollectionStatusAsync(subjectId, CollectionStatusEnum.collect))
+            if (await BangumiFacade.UpdateCollectionStatusAsync(subjectId, BangumiFacade.CollectionStatusEnum.collect))
             {
-                SetCollectionButon("删除");
+                SetCollectionButton("删除");
             }
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
@@ -450,44 +492,34 @@ namespace Bangumi.Pages
             if (ContentDialogResult.Primary == await collectionEditContentDialog.ShowAsync())
             {
                 MyProgressBar.Visibility = Visibility.Visible;
-                if (await UpdateCollectionStatusAsync(subjectId, GetStatusEnum(), collectionEditContentDialog.comment,
+                CollectionAdvanceButton.IsEnabled = false;
+                if (await BangumiFacade.UpdateCollectionStatusAsync(subjectId, GetStatusEnum(), collectionEditContentDialog.comment,
                      collectionEditContentDialog.rate.ToString(), collectionEditContentDialog.privacy == true ? "1" : "0"))
                 {
                     myRate = collectionEditContentDialog.rate;
                     myComment = collectionEditContentDialog.comment;
                     myPrivacy = collectionEditContentDialog.privacy;
                 }
+                CollectionAdvanceButton.IsEnabled = true;
                 MyProgressBar.Visibility = Visibility.Collapsed;
             }
         }
 
-        private CollectionStatusEnum GetStatusEnum()
-        {
-            CollectionStatusEnum result;
-            switch (CollectionButtonText.Text)
-            {
-                case "想看":
-                    result = CollectionStatusEnum.wish;
-                    break;
-                case "看过":
-                    result = CollectionStatusEnum.collect;
-                    break;
-                case "在看":
-                    result = CollectionStatusEnum.@do;
-                    break;
-                case "搁置":
-                    result = CollectionStatusEnum.on_hold;
-                    break;
-                case "抛弃":
-                    result = CollectionStatusEnum.dropped;
-                    break;
-                default:
-                    result = CollectionStatusEnum.@do;
-                    break;
-            }
-            return result;
-        }
 
+        // 更多资料
+        private async void MoreInfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            SubjectMoreInfoContentDialog subjectMoreInfoContentDialog = new SubjectMoreInfoContentDialog()
+            {
+                name = name,
+                info = moreInfo,
+                summary = moreSummary,
+                characters = moreCharacters,
+                staff = moreStaff,
+            };
+            subjectMoreInfoContentDialog.Title = name_cn;
+            await subjectMoreInfoContentDialog.ShowAsync();
+        }
 
         // 在调整窗口大小时计算item的宽度
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -496,10 +528,89 @@ namespace Bangumi.Pages
             MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
         }
 
-        // 更多资料
-        private void MoreInfoButton_Click(object sender, RoutedEventArgs e)
+        private string GetSubjectTypeCn(BangumiFacade.SubjectType type)
         {
+            string cn = "";
+            switch (type)
+            {
+                case BangumiFacade.SubjectType.book:
+                    cn = "书籍";
+                    break;
+                case BangumiFacade.SubjectType.anime:
+                    cn = "动画";
+                    break;
+                case BangumiFacade.SubjectType.music:
+                    cn = "音乐";
+                    break;
+                case BangumiFacade.SubjectType.game:
+                    cn = "游戏";
+                    break;
+                case BangumiFacade.SubjectType.real:
+                    cn = "三次元";
+                    break;
+                default:
+                    break;
+            }
+            return cn;
+        }
 
+        private string GetWeekday(int day)
+        {
+            var weekday = "";
+            switch (day)
+            {
+                case 1:
+                    weekday = "星期一";
+                    break;
+                case 2:
+                    weekday = "星期二";
+                    break;
+                case 3:
+                    weekday = "星期三";
+                    break;
+                case 4:
+                    weekday = "星期四";
+                    break;
+                case 5:
+                    weekday = "星期五";
+                    break;
+                case 6:
+                    weekday = "星期六";
+                    break;
+                case 7:
+                    weekday = "星期日";
+                    break;
+                default:
+                    break;
+            }
+            return weekday;
+        }
+
+        private BangumiFacade.CollectionStatusEnum GetStatusEnum()
+        {
+            BangumiFacade.CollectionStatusEnum result;
+            switch (CollectionButtonText.Text)
+            {
+                case "想看":
+                    result = BangumiFacade.CollectionStatusEnum.wish;
+                    break;
+                case "看过":
+                    result = BangumiFacade.CollectionStatusEnum.collect;
+                    break;
+                case "在看":
+                    result = BangumiFacade.CollectionStatusEnum.@do;
+                    break;
+                case "搁置":
+                    result = BangumiFacade.CollectionStatusEnum.on_hold;
+                    break;
+                case "抛弃":
+                    result = BangumiFacade.CollectionStatusEnum.dropped;
+                    break;
+                default:
+                    result = BangumiFacade.CollectionStatusEnum.@do;
+                    break;
+            }
+            return result;
         }
     }
 }

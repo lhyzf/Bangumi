@@ -1,15 +1,12 @@
-﻿using Bangumi.Models;
+﻿using Bangumi.Helper;
+using Bangumi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using static Bangumi.Helper.OAuthHelper;
 
@@ -19,48 +16,8 @@ namespace Bangumi.Facades
     {
         private static string NoImageUri = "ms-appx:///Assets/NoImage.png";
 
-        // 搜索
-        public static async Task<SearchResult> GetSearchResultAsync(string keyWord, string type, int start, int n)
-        {
-            string url = string.Format("https://api.bgm.tv/search/subject/{0}?type={1}&responseGroup=small&start={2}&max_results={3}", keyWord, type, start, n);
-            try
-            {
-                var enUrl = Uri.EscapeUriString(url);
-
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(enUrl);
-                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-                string content;
-                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                {
-                    content = reader.ReadToEnd();
-                }
-                var result = JsonConvert.DeserializeObject<SearchResult>(content);
-                if (result != null && result.list != null)
-                {
-                    foreach (var item in result.list)
-                    {
-                        if (string.IsNullOrEmpty(item.name_cn))
-                        {
-                            item.name_cn = item.name;
-                        }
-                        if (item.images == null)
-                        {
-                            item.images = new Images { common = NoImageUri };
-                        }
-                    }
-                    return result;
-                }
-                return null;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-                return null;
-            }
-        }
-
         // 处理收藏信息
-        public static async Task PopulateSubjectCollectionAsync(ObservableCollection<Collect> subjectCollection,
+        public static async Task<bool> PopulateSubjectCollectionAsync(ObservableCollection<Collect> subjectCollection,
             string username, SubjectType subjectType)
         {
             try
@@ -79,10 +36,12 @@ namespace Bangumi.Facades
                     }
                     subjectCollection.Add(subjects);
                 }
+                return true;
             }
             catch (Exception)
             {
-                return;
+                Debug.WriteLine("PopulateSubjectCollectionAsync Error.");
+                return false;
             }
         }
 
@@ -92,19 +51,17 @@ namespace Bangumi.Facades
             string url = string.Format("https://api.bgm.tv/user/{0}/collections/{1}?app_id={2}&max_results=25", username, subjectType, client_id);
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-                string content;
-                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                string response = await HttpWebRequestHelper.GetResponseAsync(url);
+                if (response != null)
                 {
-                    content = reader.ReadToEnd();
+                    var result = JsonConvert.DeserializeObject<List<SubjectCollection>>(response);
+                    return result.ElementAt(0);
                 }
-                var result = JsonConvert.DeserializeObject<List<SubjectCollection>>(content);
-                return result.ElementAt(0);
+                return null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine("GetSubjectCollectionAsync Error.");
                 return null;
             }
         }
@@ -122,27 +79,16 @@ namespace Bangumi.Facades
 
             try
             {
-                byte[] requestBytes = Encoding.ASCII.GetBytes(postData);
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                request.Method = "POST";
-                request.ContentType = "application/x-www-form-urlencoded";
-                Stream requestStream = await request.GetRequestStreamAsync();
-                requestStream.Write(requestBytes, 0, requestBytes.Length);
-                // Get response
-                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-                //using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                //{
-                //    string content = reader.ReadToEnd();
-                //}
-                if (response.StatusCode == HttpStatusCode.OK)
+                string response = await HttpWebRequestHelper.PostResponseAsync(url, postData);
+                if (response != null && response.Contains(string.Format("\"type\":\"{0}\"", collectionStatusEnum.ToString())))
                 {
                     return true;
                 }
                 return false;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine("UpdateCollectionStatusAsync Error.");
                 return false;
             }
         }
@@ -155,19 +101,17 @@ namespace Bangumi.Facades
 
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-                string content;
-                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                string response = await HttpWebRequestHelper.GetResponseAsync(url);
+                if (response != null)
                 {
-                    content = reader.ReadToEnd();
+                    var result = JsonConvert.DeserializeObject<CollectionStatus>(response);
+                    return result;
                 }
-                var result = JsonConvert.DeserializeObject<CollectionStatus>(content);
-                return result;
+                return null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine("GetCollectionStatusAsync Error.");
                 return null;
             }
         }
@@ -182,23 +126,16 @@ namespace Bangumi.Facades
 
             try
             {
-                byte[] requestBytes = Encoding.ASCII.GetBytes(postData);
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                request.Method = "POST";
-                request.ContentType = "application/x-www-form-urlencoded";
-                Stream requestStream = await request.GetRequestStreamAsync();
-                requestStream.Write(requestBytes, 0, requestBytes.Length);
-                // Get response
-                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-                if (response.StatusCode == HttpStatusCode.OK)
+                string response = await HttpWebRequestHelper.PostResponseAsync(url, postData);
+                if (response != null && response.Contains("\"error\":\"OK\""))
                 {
                     return true;
                 }
                 return false;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine("UpdateProgressBatchAsync Error.");
                 return false;
             }
         }
@@ -210,15 +147,16 @@ namespace Bangumi.Facades
             string url = string.Format("https://api.bgm.tv/ep/{0}/status/{1}?access_token={2}", ep, status, token);
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-                if (response.StatusCode == HttpStatusCode.OK)
+                string response = await HttpWebRequestHelper.GetResponseAsync(url);
+                if (response != null && response.Contains("\"error\":\"OK\""))
+                {
                     return true;
+                }
                 return false;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine("UpdateProgressAsync Error.");
                 return false;
             }
         }
@@ -230,25 +168,23 @@ namespace Bangumi.Facades
             string url = string.Format("https://api.bgm.tv/user/{0}/progress?subject_id={1}&access_token={2}", username, subjectId, token);
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-                string content;
-                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                string response = await HttpWebRequestHelper.GetResponseAsync(url);
+                if (response != null)
                 {
-                    content = reader.ReadToEnd();
+                    var result = JsonConvert.DeserializeObject<Progress>(response);
+                    return result;
                 }
-                var result = JsonConvert.DeserializeObject<Progress>(content);
-                return result;
+                return null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine("GetProgressesAsync Error.");
                 return null;
             }
         }
 
         // 显示用户收视进度列表
-        public static async Task PopulateWatchingListAsync(ObservableCollection<Watching> watchingListCollection, string username)
+        public static async Task<bool> PopulateWatchingListAsync(ObservableCollection<Watching> watchingListCollection, string username)
         {
             try
             {
@@ -263,10 +199,12 @@ namespace Bangumi.Facades
                     }
                     watchingListCollection.Add(watching);
                 }
+                return true;
             }
             catch (Exception)
             {
-                return;
+                Debug.WriteLine("PopulateWatchingListAsync Error.");
+                return false;
             }
         }
 
@@ -277,47 +215,78 @@ namespace Bangumi.Facades
             string url = string.Format("https://api.bgm.tv/user/{0}/collection?cat=watching&responseGroup=medium", username);
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-                string content;
-                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                string response = await HttpWebRequestHelper.GetResponseAsync(url);
+                if (response != null)
                 {
-                    content = reader.ReadToEnd();
+                    // 反序列化指定名称的变量
+                    JsonSerializerSettings jsonSerializerSetting = new JsonSerializerSettings();
+                    jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "subject_id", "ep_status", "subject", "name_cn", "images", "common" });
+                    var result = JsonConvert.DeserializeObject<List<Watching>>(response, jsonSerializerSetting);
+                    return result;
                 }
-                // 反序列化指定名称的变量
-                JsonSerializerSettings jsonSerializerSetting = new JsonSerializerSettings();
-                jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "subject_id", "ep_status", "subject", "name_cn", "images", "common" });
-                var result = JsonConvert.DeserializeObject<List<Watching>>(content, jsonSerializerSetting);
-                return result;
+                return null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine("GetWatchingListAsync Error.");
                 return null;
             }
         }
 
 
         // ----------------- 获取信息，不涉及用户 ----------------------
+        // 搜索
+        public static async Task<SearchResult> GetSearchResultAsync(string keyWord, string type, int start, int n)
+        {
+            string url = string.Format("https://api.bgm.tv/search/subject/{0}?type={1}&responseGroup=small&start={2}&max_results={3}", keyWord, type, start, n);
+            try
+            {
+                string response = await HttpWebRequestHelper.GetResponseAsync(url);
+                if (response != null && !response.StartsWith("<!DOCTYPE html>"))
+                {
+                    var result = JsonConvert.DeserializeObject<SearchResult>(response);
+                    if (result != null && result.list != null)
+                    {
+                        foreach (var item in result.list)
+                        {
+                            if (string.IsNullOrEmpty(item.name_cn))
+                            {
+                                item.name_cn = item.name;
+                            }
+                            if (item.images == null)
+                            {
+                                item.images = new Images { common = NoImageUri };
+                            }
+                        }
+                        return result;
+                    }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                Debug.WriteLine("GetSearchResultAsync Error.");
+                return null;
+            }
+        }
+        
         // 获取剧集并反序列化
         public static async Task<Subject> GetSubjectEpsAsync(string subjectId)
         {
             string url = string.Format("https://api.bgm.tv/subject/{0}/ep", subjectId);
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-                string content;
-                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                string response = await HttpWebRequestHelper.GetResponseAsync(url);
+                if (response != null)
                 {
-                    content = reader.ReadToEnd();
+                    var result = JsonConvert.DeserializeObject<Subject>(response);
+                    return result;
                 }
-                var result = JsonConvert.DeserializeObject<Subject>(content);
-                return result;
+                return null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine("GetSubjectEpsAsync Error.");
                 return null;
             }
         }
@@ -328,25 +297,23 @@ namespace Bangumi.Facades
             string url = string.Format("https://api.bgm.tv/subject/{0}?responseGroup=large", subjectId);
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-                string content;
-                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                string response = await HttpWebRequestHelper.GetResponseAsync(url);
+                if (response != null)
                 {
-                    content = reader.ReadToEnd();
+                    var result = JsonConvert.DeserializeObject<Subject>(response);
+                    return result;
                 }
-                var result = JsonConvert.DeserializeObject<Subject>(content);
-                return result;
+                return null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine("GetSubjectAsync Error.");
                 return null;
             }
         }
 
         // 处理时间表
-        public static async Task PopulateBangumiCalendarAsync(ObservableCollection<BangumiTimeLine> bangumiCollection)
+        public static async Task<bool> PopulateBangumiCalendarAsync(ObservableCollection<BangumiTimeLine> bangumiCollection)
         {
             try
             {
@@ -364,10 +331,12 @@ namespace Bangumi.Facades
                     }
                     bangumiCollection.Add(bangumiCalendar);
                 }
+                return true;
             }
             catch (Exception)
             {
-                return;
+                Debug.WriteLine("PopulateBangumiCalendarAsync Error.");
+                return false;
             }
         }
 
@@ -377,19 +346,17 @@ namespace Bangumi.Facades
             string url = "https://api.bgm.tv/calendar";
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-                string content;
-                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                string response = await HttpWebRequestHelper.GetResponseAsync(url);
+                if (response != null)
                 {
-                    content = reader.ReadToEnd();
+                    var result = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(response);
+                    return result;
                 }
-                var result = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(content);
-                return result;
+                return null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine("GetBangumiCalendarAsync Error.");
                 return null;
             }
         }
@@ -411,13 +378,13 @@ namespace Bangumi.Facades
             dropped,
         }
 
-        public enum SubjectType
+        public enum SubjectType : int
         {
-            book,
-            anime,
-            music,
-            game,
-            real,
+            book = 1,
+            anime = 2,
+            music = 3,
+            game = 4,
+            real = 6,
         }
 
     }

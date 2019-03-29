@@ -4,6 +4,7 @@ using Bangumi.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -26,10 +27,15 @@ namespace Bangumi.Pages
             bangumiCollection = new ObservableCollection<BangumiTimeLine>();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (bangumiCollection.Count == 0)
-                Refresh();
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    Refresh();
+                });
+            }
         }
 
         // 刷新时间表
@@ -82,9 +88,12 @@ namespace Bangumi.Pages
         }
 
         //点击刷新
-        private void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        private async void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
-            Refresh();
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Refresh();
+            });
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)

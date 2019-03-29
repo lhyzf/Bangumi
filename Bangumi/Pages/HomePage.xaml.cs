@@ -4,6 +4,7 @@ using Bangumi.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -29,10 +30,15 @@ namespace Bangumi.Pages
 
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (watchingCollection.Count == 0)
-                Refresh();
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    Refresh();
+                });
+            }
         }
 
         //刷新收视进度列表
@@ -47,17 +53,20 @@ namespace Bangumi.Pages
                 var userId = await OAuthHelper.ReadFromFile(OAuthFile.user_id, false);
                 if (!string.IsNullOrEmpty(userId))
                 {
-                    await BangumiFacade.PopulateWatchingListAsync(watchingCollection, userId);
-                    UpdateTime.Text = "更新时间：" + DateTime.Now;
+                    if (await BangumiFacade.PopulateWatchingListAsync(watchingCollection, userId))
+                    {
+                        UpdateTime.Text = "更新时间：" + DateTime.Now;
+                    }
                 }
                 else
                 {
                     UpdateTime.Text = "请先登录！";
                 }
+
             }
             catch (Exception)
             {
-                UpdateTime.Text = "网络连接失败，请重试！";
+                UpdateTime.Text = "";
             }
             ClickToRefresh.Visibility = Visibility.Visible;
 
@@ -65,9 +74,12 @@ namespace Bangumi.Pages
             MyProgressRing.Visibility = Visibility.Collapsed;
         }
 
-        private void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        private async void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
-            Refresh();
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Refresh();
+            });
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)

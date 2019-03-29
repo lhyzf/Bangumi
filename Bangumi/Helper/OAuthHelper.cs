@@ -53,7 +53,7 @@ namespace Bangumi.Helper
                     //OutputToken("Error returned by AuthenticateAsync() : " + WebAuthenticationResult.ResponseStatus.ToString());
                 }
             }
-            catch (Exception Error)
+            catch (Exception)
             {
                 //rootPage.NotifyUser(Error.Message, NotifyType.ErrorMessage);
             }
@@ -141,7 +141,7 @@ namespace Bangumi.Helper
         }
 
         // 写入文件
-        private static async Task WriteToFile(string msg, OAuthFile userFileName, bool encrytion)
+        private static async Task<bool> WriteToFile(string msg, OAuthFile userFileName, bool encrytion)
         {
             var fileName = getOAuthFileName(userFileName);
             StorageFile storageFile = await localFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
@@ -156,10 +156,12 @@ namespace Bangumi.Helper
                 {
                     await FileIO.WriteTextAsync(storageFile, msg);
                 }
+                return true;
             }
             catch (Exception)
             {
                 await storageFile.DeleteAsync();
+                return false;
             }
         }
 
@@ -180,7 +182,7 @@ namespace Bangumi.Helper
                     return await FileIO.ReadTextAsync(storageFile);
                 }
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 // Cannot find file
                 Debug.WriteLine("File not found.");
@@ -241,21 +243,12 @@ namespace Bangumi.Helper
 
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                request.Method = "POST";
-                request.ContentType = "application/json";
-                // Get response
-                HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
-                string content;
-                using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                {
-                    content = reader.ReadToEnd();
-                }
-                var result = JsonConvert.DeserializeObject<AccessToken>(content);
+                string response = await HttpWebRequestHelper.PostResponseAsync(url);
+                var result = JsonConvert.DeserializeObject<AccessToken>(response);
                 // C# 时间戳为 1/10000000 秒，从0001年1月1日开始；js 时间戳为秒，从1970年1月1日开始
                 // 获取两天后的时间戳，离过期不足两天时或过期后更新 access_token
                 var aa = (DateTime.Now.AddDays(2).ToUniversalTime().Ticks - new DateTime(1970, 1, 1).Ticks) / 10000000;
-                if (result.expires < aa || response.StatusCode == HttpStatusCode.Unauthorized)
+                if (string.IsNullOrEmpty(response) || result.expires < aa)
                     await RefreshAccessToken();
             }
             catch (Exception e)
@@ -275,6 +268,7 @@ namespace Bangumi.Helper
                 await DeleteTokens();
                 return false;
             }
+            // 检查是否在有效期内，接近过期或过期则刷新token
             CheckAccessToken();
             return true;
         }
