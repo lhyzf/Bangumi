@@ -10,6 +10,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -21,6 +23,7 @@ namespace Bangumi.Pages
     /// </summary>
     public sealed partial class DetailsPage : Page
     {
+        private const string NoImageUri = Constants.noImageUri;
         public ObservableCollection<Ep> eps { get; set; }
         private string subjectId = "";
         private string imageSource = "";
@@ -28,6 +31,7 @@ namespace Bangumi.Pages
         private string air_date = "";
         private int air_weekday = 0;
         private string airWeekdayName = "";
+        private string summary = "";
 
         // 更多资料用
         private string name;
@@ -55,8 +59,6 @@ namespace Bangumi.Pages
                 subjectId = p.subject_id.ToString();
                 imageSource = p.subject.images.common;
                 name_cn = p.subject.name_cn;
-                air_date = "";
-                air_weekday = 0;
             }
             else if (e.Parameter.GetType() == typeof(Subject))
             {
@@ -66,14 +68,12 @@ namespace Bangumi.Pages
                 name_cn = p.name_cn;
                 air_date = p.air_date;
                 air_weekday = p.air_weekday;
+                airWeekdayName = GetWeekday(air_weekday);
             }
             else if (e.Parameter.GetType() == typeof(Int32))
             {
                 subjectId = e.Parameter.ToString();
-                imageSource = "";
-                name_cn = "";
-                air_date = "";
-                air_weekday = 0;
+                imageSource = NoImageUri;
             }
         }
 
@@ -154,43 +154,40 @@ namespace Bangumi.Pages
         /// </summary>
         private async void LoadDetails()
         {
-            //if (!string.IsNullOrEmpty(imageSource))
-            //{
-            //    Uri uri = new Uri(imageSource);
-            //    ImageSource imgSource = new BitmapImage(uri);
-            //    this.BangumiImage.Source = imgSource;
-            //}
-            //this.NameTextBlock.Text = name_cn;
-            if (!string.IsNullOrEmpty(air_date) || air_weekday != 0)
-            {
-                this.air_dateTextBlock.Text = "开播时间：" + air_date;
-                this.air_weekdayTextBlock.Text = "更新时间：" + GetWeekday(air_weekday);
-            }
             try
             {
-                // 条目信息
+                // 获取条目信息
                 var subject = await BangumiFacade.GetSubjectAsync(subjectId);
-                if (string.IsNullOrEmpty(imageSource))
+                // 条目标题
+                if (string.IsNullOrEmpty(name_cn))
                 {
-                    imageSource = subject.images.common;
-                    //Uri uri = new Uri(subject.images.common);
-                    //ImageSource imgSource = new BitmapImage(uri);
-                    //this.BangumiImage.Source = imgSource;
+                    name_cn = string.IsNullOrEmpty(subject.name_cn) ? subject.name : subject.name_cn;
+                    this.NameTextBlock.Text = name_cn;
                 }
-                this.air_dateTextBlock.Text = "开播时间：" + subject.air_date;
-                this.air_weekdayTextBlock.Text = "更新时间：" + GetWeekday(subject.air_weekday);
-                //airWeekdayName = GetWeekday(subject.air_weekday);
-                var summary = "暂无简介";
+                // 条目图片
+                if (imageSource.Equals(NoImageUri))
+                {
+                    Uri uri = new Uri(subject.images.common);
+                    ImageSource imgSource = new BitmapImage(uri);
+                    this.BangumiImage.Source = imgSource;
+                }
+                // 放送日期
+                if (string.IsNullOrEmpty(air_date))
+                {
+                    air_date = subject.air_date;
+                    air_weekday = subject.air_weekday;
+                    airWeekdayName = GetWeekday(subject.air_weekday);
+                    this.air_dateTextBlock.Text = "开播时间：" + air_date;
+                    this.air_weekdayTextBlock.Text = "更新时间：" + airWeekdayName;
+                }
+                // 条目简介
                 if (!string.IsNullOrEmpty(subject.summary))
                 {
-                    if (subject.summary.Length > 80)
-                    {
-                        summary = subject.summary.Substring(0, 80) + "...";
-                    }
-                    else
-                    {
-                        summary = subject.summary;
-                    }
+                    summary = subject.summary.Length > 80 ? (subject.summary.Substring(0, 80) + "...") : subject.summary;
+                }
+                else
+                {
+                    summary = "暂无简介";
                 }
                 this.SummaryTextBlock.Text = summary;
 
@@ -201,6 +198,7 @@ namespace Bangumi.Pages
                 moreInfo += "\n放送开始：" + subject.air_date;
                 moreInfo += "\n放送星期：" + GetWeekday(subject.air_weekday);
                 moreInfo += "\n话数：" + subject.eps_count;
+                // 角色
                 if (subject.crt != null)
                 {
                     foreach (var crt in subject.crt)
@@ -226,6 +224,7 @@ namespace Bangumi.Pages
                 {
                     moreCharacters += "暂无资料";
                 }
+                // 演职人员
                 if (subject.staff != null)
                 {
                     var sd = new Dictionary<string, string>();
@@ -233,7 +232,7 @@ namespace Bangumi.Pages
                     {
                         foreach (var job in staff.jobs)
                         {
-                            if(!sd.ContainsKey(job))
+                            if (!sd.ContainsKey(job))
                             {
                                 sd.Add(job, string.IsNullOrEmpty(staff.name_cn) ? staff.name : staff.name_cn);
                             }
@@ -255,44 +254,43 @@ namespace Bangumi.Pages
                 }
                 MoreInfoHyperLink.Visibility = Visibility.Visible;
 
-                // 章节
-                Progress progress = null;
-                if (subject.eps == null)
+                // 显示章节
+                if (subject.eps != null)
                 {
-                    MyProgressRing.IsActive = false;
-                    MyProgressRing.Visibility = Visibility.Collapsed;
-                    return;
+                    eps.Clear();
+                    foreach (var ep in subject.eps)
+                    {
+                        if (ep.status == "Air")
+                        {
+                            ep.status = "";
+                            if (string.IsNullOrEmpty(ep.name_cn))
+                            {
+                                ep.name_cn = ep.name;
+                            }
+                            eps.Add(ep);
+                        }
+                    }
                 }
+                // 显示用户章节状态
                 if (OAuthHelper.IsLogin)
                 {
-                    progress = await BangumiFacade.GetProgressesAsync(subjectId);
-                }
-
-                eps.Clear();
-                foreach (var ep in subject.eps)
-                {
-                    if (ep.status == "Air")
+                    Progress progress = await BangumiFacade.GetProgressesAsync(subjectId);
+                    if (progress != null)
                     {
-                        ep.status = "";
-                        if (string.IsNullOrEmpty(ep.name_cn))
-                        {
-                            ep.name_cn = ep.name;
-                        }
-                        if (progress != null)
+                        foreach (var ep in eps)
                         {
                             foreach (var p in progress.eps)
                             {
                                 if (p.id == ep.id)
                                 {
                                     ep.status = p.status.cn_name;
+                                    progress.eps.Remove(p);
                                     break;
                                 }
                             }
                         }
-                        eps.Add(ep);
                     }
                 }
-
             }
             catch (Exception e)
             {
@@ -359,7 +357,6 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        // 
         /// <summary>
         /// 剧集想看。
         /// </summary>
@@ -464,7 +461,7 @@ namespace Bangumi.Pages
                         episode.status = "看过";
                     }
                 }
-                
+
             }
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
