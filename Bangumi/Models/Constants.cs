@@ -12,6 +12,7 @@ namespace Bangumi.Models
         // public const string client_id = "";
         // public const string client_secret = "";
         // public const string redirect_url = "";
+        public const string baseUrl = "https://api.bgm.tv";
 
     }
 }

@@ -49,10 +49,9 @@ namespace Bangumi.Pages
             ClickToRefresh.Visibility = Visibility.Collapsed;
             try
             {
-                var userId = await OAuthHelper.ReadFromFile(OAuthFile.user_id, false);
-                if (!string.IsNullOrEmpty(userId))
+                if (OAuthHelper.IsLogin)
                 {
-                    if (await BangumiFacade.PopulateWatchingListAsync(watchingCollection, userId))
+                    if (await BangumiFacade.PopulateWatchingListAsync(watchingCollection))
                     {
                         UpdateTime.Text = "更新时间：" + DateTime.Now;
                     }
@@ -65,7 +64,7 @@ namespace Bangumi.Pages
             }
             catch (Exception)
             {
-                UpdateTime.Text = "";
+                UpdateTime.Text = "发生错误，请重试！";
             }
             ClickToRefresh.Visibility = Visibility.Visible;
 

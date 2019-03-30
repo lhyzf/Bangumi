@@ -13,22 +13,21 @@ namespace Bangumi.Facades
 {
     class BangumiFacade
     {
-        private const string BaseUrl = "https://api.bgm.tv";
+        private const string baseUrl = Constants.baseUrl;
+        private const string client_id = Constants.client_id;
         private const string NoImageUri = "ms-appx:///Assets/NoImage.png";
-        
+
         /// <summary>
         /// 显示用户选定类别收藏信息
         /// </summary>
         /// <param name="subjectCollection"></param>
-        /// <param name="username"></param>
         /// <param name="subjectType"></param>
         /// <returns></returns>
-        public static async Task<bool> PopulateSubjectCollectionAsync(ObservableCollection<Collect> subjectCollection,
-            string username, SubjectType subjectType)
+        public static async Task<bool> PopulateSubjectCollectionAsync(ObservableCollection<Collect> subjectCollection, SubjectType subjectType)
         {
             try
             {
-                var subjectCollections = await GetSubjectCollectionAsync(username, subjectType);
+                var subjectCollections = await GetSubjectCollectionAsync(subjectType);
                 //清空原数据
                 subjectCollection.Clear();
                 foreach (var subjects in subjectCollections.collects)
@@ -55,13 +54,12 @@ namespace Bangumi.Facades
         /// 显示用户收视进度列表
         /// </summary>
         /// <param name="watchingListCollection"></param>
-        /// <param name="username"></param>
         /// <returns></returns>
-        public static async Task<bool> PopulateWatchingListAsync(ObservableCollection<Watching> watchingListCollection, string username)
+        public static async Task<bool> PopulateWatchingListAsync(ObservableCollection<Watching> watchingListCollection)
         {
             try
             {
-                var watchingList = await GetWatchingListAsync(username);
+                var watchingList = await GetWatchingListAsync();
                 //清空原数据
                 watchingListCollection.Clear();
                 foreach (var watching in watchingList)
@@ -116,12 +114,11 @@ namespace Bangumi.Facades
         /// <summary>
         /// 获取指定类别收藏信息
         /// </summary>
-        /// <param name="username"></param>
         /// <param name="subjectType"></param>
         /// <returns></returns>
-        private static async Task<SubjectCollection> GetSubjectCollectionAsync(string username, SubjectType subjectType)
+        private static async Task<SubjectCollection> GetSubjectCollectionAsync(SubjectType subjectType)
         {
-            string url = string.Format("{0}/user/{1}/collections/{2}?app_id={3}&max_results=25", BaseUrl, username, subjectType, Constants.client_id);
+            string url = string.Format("{0}/user/{1}/collections/{2}?app_id={3}&max_results=25", baseUrl, OAuthHelper.UserIdString, subjectType, client_id);
             try
             {
                 string response = await HttpHelper.GetAsync(url);
@@ -146,8 +143,8 @@ namespace Bangumi.Facades
         /// <returns></returns>
         public static async Task<CollectionStatus> GetCollectionStatusAsync(string subjectId)
         {
-            string token = await Helper.OAuthHelper.ReadFromFile(OAuthHelper.OAuthFile.access_token, true);
-            string url = string.Format("{0}/collection/{1}?access_token={2}", BaseUrl, subjectId, token);
+            string token = OAuthHelper.AccessTokenString;
+            string url = string.Format("{0}/collection/{1}?access_token={2}", baseUrl, subjectId, token);
 
             try
             {
@@ -169,13 +166,12 @@ namespace Bangumi.Facades
         /// <summary>
         /// 获取用户指定条目收视进度
         /// </summary>
-        /// <param name="username"></param>
         /// <param name="subjectId"></param>
         /// <returns></returns>
-        public static async Task<Progress> GetProgressesAsync(string username, string subjectId)
+        public static async Task<Progress> GetProgressesAsync(string subjectId)
         {
-            string token = await Helper.OAuthHelper.ReadFromFile(OAuthHelper.OAuthFile.access_token, true);
-            string url = string.Format("{0}/user/{1}/progress?subject_id={2}&access_token={3}", BaseUrl, username, subjectId, token);
+            string token = OAuthHelper.AccessTokenString;
+            string url = string.Format("{0}/user/{1}/progress?subject_id={2}&access_token={3}", baseUrl, OAuthHelper.UserIdString, subjectId, token);
             try
             {
                 string response = await HttpHelper.GetAsync(url);
@@ -196,12 +192,11 @@ namespace Bangumi.Facades
         /// <summary>
         /// 获取用户收视进度
         /// </summary>
-        /// <param name="username"></param>
         /// <returns></returns>
-        private static async Task<List<Watching>> GetWatchingListAsync(string username)
+        private static async Task<List<Watching>> GetWatchingListAsync()
         {
-            string token = await Helper.OAuthHelper.ReadFromFile(OAuthHelper.OAuthFile.access_token, true);
-            string url = string.Format("{0}/user/{1}/collection?cat=watching&responseGroup=medium", BaseUrl, username);
+            string token = OAuthHelper.AccessTokenString;
+            string url = string.Format("{0}/user/{1}/collection?cat=watching&responseGroup=medium", baseUrl, OAuthHelper.UserIdString);
             try
             {
                 string response = await HttpHelper.GetAsync(url);
@@ -234,8 +229,8 @@ namespace Bangumi.Facades
         public static async Task<bool> UpdateCollectionStatusAsync(string subjectId, CollectionStatusEnum collectionStatusEnum,
             string comment = "", string rating = "", string privace = "0")
         {
-            string token = await OAuthHelper.ReadFromFile(OAuthHelper.OAuthFile.access_token, true);
-            string url = string.Format("{0}/collection/{1}/update?access_token={2}", BaseUrl, subjectId, token);
+            string token = OAuthHelper.AccessTokenString;
+            string url = string.Format("{0}/collection/{1}/update?access_token={2}", baseUrl, subjectId, token);
             string postData = "status=" + collectionStatusEnum.ToString();
             postData += "&comment=" + comment;
             postData += "&rating=" + rating;
@@ -267,8 +262,8 @@ namespace Bangumi.Facades
         /// <returns></returns>
         public static async Task<bool> UpdateProgressBatchAsync(int ep, EpStatusEnum status, string epsId)
         {
-            string token = await Helper.OAuthHelper.ReadFromFile(OAuthHelper.OAuthFile.access_token, true);
-            string url = string.Format("{0}/ep/{1}/status/{2}?access_token={3}", BaseUrl, ep, status, token);
+            string token = OAuthHelper.AccessTokenString;
+            string url = string.Format("{0}/ep/{1}/status/{2}?access_token={3}", baseUrl, ep, status, token);
             string postData = "ep_id=" + epsId;
 
             try
@@ -295,8 +290,8 @@ namespace Bangumi.Facades
         /// <returns></returns>
         public static async Task<bool> UpdateProgressAsync(string ep, EpStatusEnum status)
         {
-            string token = await Helper.OAuthHelper.ReadFromFile(OAuthHelper.OAuthFile.access_token, true);
-            string url = string.Format("{0}/ep/{1}/status/{2}?access_token={3}", BaseUrl, ep, status, token);
+            string token = OAuthHelper.AccessTokenString;
+            string url = string.Format("{0}/ep/{1}/status/{2}?access_token={3}", baseUrl, ep, status, token);
             try
             {
                 string response = await HttpHelper.GetAsync(url);
@@ -324,7 +319,7 @@ namespace Bangumi.Facades
         /// <returns></returns>
         public static async Task<SearchResult> GetSearchResultAsync(string keyWord, string type, int start, int n)
         {
-            string url = string.Format("{0}/search/subject/{1}?type={2}&responseGroup=small&start={3}&max_results={4}", BaseUrl, keyWord, type, start, n);
+            string url = string.Format("{0}/search/subject/{1}?type={2}&responseGroup=small&start={3}&max_results={4}", baseUrl, keyWord, type, start, n);
             try
             {
                 string response = await HttpHelper.GetAsync(url);
@@ -363,7 +358,7 @@ namespace Bangumi.Facades
         /// <returns></returns>
         public static async Task<Subject> GetSubjectEpsAsync(string subjectId)
         {
-            string url = string.Format("{0}/subject/{1}/ep", BaseUrl, subjectId);
+            string url = string.Format("{0}/subject/{1}/ep", baseUrl, subjectId);
             try
             {
                 string response = await HttpHelper.GetAsync(url);
@@ -388,7 +383,7 @@ namespace Bangumi.Facades
         /// <returns></returns>
         public static async Task<Subject> GetSubjectAsync(string subjectId)
         {
-            string url = string.Format("{0}/subject/{1}?responseGroup=large", BaseUrl, subjectId);
+            string url = string.Format("{0}/subject/{1}?responseGroup=large", baseUrl, subjectId);
             try
             {
                 string response = await HttpHelper.GetAsync(url);
@@ -412,7 +407,7 @@ namespace Bangumi.Facades
         /// <returns></returns>
         private static async Task<List<BangumiTimeLine>> GetBangumiCalendarAsync()
         {
-            string url = string.Format("{0}/calendar", BaseUrl);
+            string url = string.Format("{0}/calendar", baseUrl);
             try
             {
                 string response = await HttpHelper.GetAsync(url);
