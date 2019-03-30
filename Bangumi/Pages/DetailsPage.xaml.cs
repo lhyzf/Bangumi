@@ -32,6 +32,7 @@ namespace Bangumi.Pages
         private int air_weekday = 0;
         private string airWeekdayName = "";
         private string summary = "";
+        private bool isReady = false;
 
         // 更多资料用
         private string name;
@@ -290,6 +291,7 @@ namespace Bangumi.Pages
                             }
                         }
                     }
+                    isReady = true;
                 }
             }
             catch (Exception e)
@@ -306,7 +308,7 @@ namespace Bangumi.Pages
         }
 
         /// <summary>
-        /// 剧集看过。
+        /// 章节看过。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -322,7 +324,7 @@ namespace Bangumi.Pages
         }
 
         /// <summary>
-        /// 剧集看到。
+        /// 章节看到。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -358,7 +360,7 @@ namespace Bangumi.Pages
         }
 
         /// <summary>
-        /// 剧集想看。
+        /// 章节想看。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -374,7 +376,7 @@ namespace Bangumi.Pages
         }
 
         /// <summary>
-        /// 剧集抛弃。
+        /// 章节抛弃。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -390,7 +392,7 @@ namespace Bangumi.Pages
         }
 
         /// <summary>
-        /// 剧集未看。
+        /// 章节未看。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -405,9 +407,14 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
+        /// <summary>
+        /// 修改章节状态弹出菜单。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Eps_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(OAuthHelper.AccessTokenString))
+            if (OAuthHelper.IsLogin && isReady)
             {
                 FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
             }
