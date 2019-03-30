@@ -2,25 +2,15 @@
 using Bangumi.Helper;
 using Bangumi.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -169,7 +159,10 @@ namespace Bangumi.Pages
             return flag;
         }
 
-        // 执行搜索操作
+        /// <summary>
+        /// 执行搜索操作。
+        /// </summary>
+        /// <param name="keyword"></param>
         private void Search(string keyword)
         {
             searched = true;
@@ -215,7 +208,9 @@ namespace Bangumi.Pages
         }
     }
 
-    // 分页加载
+    /// <summary>
+    /// 在页面到达底部时加载更多。
+    /// </summary>
     class IncrementalLoadingCollection : ObservableCollection<Subject>, ISupportIncrementalLoading
     {
         int offset = 0;

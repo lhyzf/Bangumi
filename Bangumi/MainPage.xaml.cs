@@ -44,7 +44,10 @@ namespace Bangumi
                 this.CoreWindow_PointerPressed;
         }
 
-        //根据用户登录状态改变用户图标
+        /// <summary>
+        /// 根据用户登录状态改变用户图标。
+        /// </summary>
+        /// <returns></returns>
         private async Task UpdataUserStatus()
         {
             bool result = await OAuthHelper.CheckTokens();
@@ -118,7 +121,11 @@ namespace Bangumi
 
         }
 
-        //鼠标后退键返回上一页
+        /// <summary>
+        /// 鼠标后退键返回上一页。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CoreWindow_PointerPressed(CoreWindow sender,
             PointerEventArgs e)
         {
@@ -258,7 +265,11 @@ namespace Bangumi
             }
         }
 
-
+        /// <summary>
+        /// 点击登录按钮，根据登录状态执行不同操作。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void NavigationViewItem_Tapped(object sender, TappedRoutedEventArgs e)
         {
             if (UserItem.Content.ToString() == "登录")

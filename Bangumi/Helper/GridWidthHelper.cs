@@ -9,7 +9,7 @@ namespace Bangumi.Helper
     class GridWidthHelper
     {
         /// <summary>
-        /// 获取自适应列表项宽度
+        /// 获取自适应列表项宽度。
         /// </summary>
         /// <param name="WindowWidth">可用窗口宽度</param>
         /// <param name="min">项目最小宽度</param>

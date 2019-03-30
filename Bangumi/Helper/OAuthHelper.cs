@@ -23,7 +23,7 @@ namespace Bangumi.Helper
         public static bool IsLogin = false;
 
         /// <summary>
-        /// 用户登录
+        /// 用户登录。
         /// </summary>
         /// <returns></returns>
         public static async Task Authorize()
@@ -59,7 +59,7 @@ namespace Bangumi.Helper
         }
 
         /// <summary>
-        /// 使用返回的的 code 换取 Access Token
+        /// 使用返回的的 code 换取 Access Token。
         /// </summary>
         /// <param name="codeString"></param>
         /// <returns></returns>
@@ -90,7 +90,7 @@ namespace Bangumi.Helper
 
 
         /// <summary>
-        /// 刷新授权有效期
+        /// 刷新授权有效期。
         /// </summary>
         /// <returns></returns>
         public static async Task RefreshAccessToken()
@@ -123,7 +123,7 @@ namespace Bangumi.Helper
         }
 
         /// <summary>
-        /// 查询授权信息
+        /// 查询授权信息。
         /// </summary>
         private static async void CheckAccessToken()
         {
@@ -154,7 +154,7 @@ namespace Bangumi.Helper
         }
 
         /// <summary>
-        /// 检查用户授权文件
+        /// 检查用户授权文件。
         /// </summary>
         /// <returns></returns>
         public static async Task<bool> CheckTokens()
@@ -175,7 +175,7 @@ namespace Bangumi.Helper
         }
 
         /// <summary>
-        /// 写入 Tokens
+        /// 写入 Tokens。
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
@@ -190,7 +190,7 @@ namespace Bangumi.Helper
         }
 
         /// <summary>
-        /// 删除 Tokens
+        /// 删除 Tokens。
         /// </summary>
         /// <returns></returns>
         public static async Task DeleteTokens()
