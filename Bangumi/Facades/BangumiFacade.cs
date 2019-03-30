@@ -48,7 +48,7 @@ namespace Bangumi.Facades
         // 获取指定类别收藏信息并反序列化
         private static async Task<SubjectCollection> GetSubjectCollectionAsync(string username, SubjectType subjectType)
         {
-            string url = string.Format("https://api.bgm.tv/user/{0}/collections/{1}?app_id={2}&max_results=25", username, subjectType, client_id);
+            string url = string.Format("https://api.bgm.tv/user/{0}/collections/{1}?app_id={2}&max_results=25", username, subjectType, Constants.client_id);
             try
             {
                 string response = await HttpWebRequestHelper.GetResponseAsync(url);

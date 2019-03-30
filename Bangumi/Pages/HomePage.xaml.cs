@@ -25,7 +25,6 @@ namespace Bangumi.Pages
         public HomePage()
         {
             this.InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Enabled;
             watchingCollection = new ObservableCollection<Watching>();
 
         }
