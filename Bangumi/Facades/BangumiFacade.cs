@@ -15,7 +15,7 @@ namespace Bangumi.Facades
     {
         private const string baseUrl = Constants.baseUrl;
         private const string client_id = Constants.client_id;
-        private const string NoImageUri = "ms-appx:///Assets/NoImage.png";
+        private const string NoImageUri = Constants.noImageUri;
 
         /// <summary>
         /// 显示用户选定类别收藏信息。

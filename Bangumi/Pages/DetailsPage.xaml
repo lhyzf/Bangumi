@@ -35,7 +35,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Image Name="BangumiImage" 
-                               Source="{x:Bind imageSource}"
+                               Source="{x:Bind imageSource,Mode=OneWay}"
                                Height="214" 
                                Width="150" />
                         <StackPanel Orientation="Vertical" 
@@ -47,12 +47,12 @@
                                        FontSize="23" 
                                        Foreground="#d26585" />
                             <TextBlock Name="air_dateTextBlock" 
-                                       Text="开播时间：" 
+                                       Text="{x:Bind sys:String.Format('开播时间：{0}',air_date)}" 
                                        FontSize="15" 
                                        Foreground="#666666" 
                                        Margin="0,2,0,0" />
                             <TextBlock Name="air_weekdayTextBlock" 
-                                       Text="更新时间：" 
+                                       Text="{x:Bind sys:String.Format('更新时间：{0}',airWeekdayName)}" 
                                        FontSize="15" 
                                        Foreground="#666666" 
                                        Margin="0,2,0,0" />
