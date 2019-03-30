@@ -352,7 +352,7 @@ namespace Bangumi.Facades
         }
 
         /// <summary>
-        /// 获取指定条目所有剧集。
+        /// 获取指定条目所有章节。
         /// </summary>
         /// <param name="subjectId"></param>
         /// <returns></returns>
