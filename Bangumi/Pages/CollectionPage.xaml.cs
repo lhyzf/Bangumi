@@ -32,7 +32,6 @@ namespace Bangumi.Pages
         public CollectionPage()
         {
             this.InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Enabled;
             subjectCollection = new ObservableCollection<Collect>();
         }
 

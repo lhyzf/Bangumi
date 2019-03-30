@@ -23,7 +23,6 @@ namespace Bangumi.Pages
         public TimeLinePage()
         {
             this.InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Enabled;
             bangumiCollection = new ObservableCollection<BangumiTimeLine>();
         }
 

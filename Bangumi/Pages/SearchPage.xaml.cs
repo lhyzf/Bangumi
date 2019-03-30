@@ -43,7 +43,6 @@ namespace Bangumi.Pages
         public SearchPage()
         {
             this.InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Enabled;
             suggestions=new ObservableCollection<string>();
         }
 

@@ -143,6 +143,7 @@
     <Compile Include="Models\BangumiTimeLine.cs" />
     <Compile Include="Models\BangumiSubject.cs" />
     <Compile Include="Models\BangumiUserProgress.cs" />
+    <Compile Include="Models\Constants.cs" />
     <Compile Include="Pages\CollectionPage.xaml.cs">
       <DependentUpon>CollectionPage.xaml</DependentUpon>
     </Compile>

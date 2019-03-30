@@ -19,11 +19,6 @@ namespace Bangumi.Helper
 {
     class OAuthHelper
     {
-        // 将自己申请的应用相关信息填入
-        // public const string client_id = "";
-        // private const string client_secret = "";
-        // private const string redirect_url = "";
-
         public static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
 
         // 用户登录
@@ -31,18 +26,18 @@ namespace Bangumi.Helper
         {
             try
             {
-                String URL = "https://bgm.tv/oauth/authorize?client_id=" + client_id + "&response_type=code";
+                String URL = "https://bgm.tv/oauth/authorize?client_id=" + Constants.client_id + "&response_type=code";
 
                 Uri StartUri = new Uri(URL);
                 // When using the desktop flow, the success code is displayed in the html title of this end uri
-                Uri EndUri = new Uri($"https://bgm.tv/oauth/{redirect_url}");
+                Uri EndUri = new Uri($"https://bgm.tv/oauth/{Constants.redirect_url}");
 
                 //rootPage.NotifyUser("Navigating to: " + GoogleURL, NotifyType.StatusMessage);
 
                 WebAuthenticationResult WebAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
                 if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
                 {
-                    await GetAccessToken(WebAuthenticationResult.ResponseData.ToString().Replace($"https://bgm.tv/oauth/{redirect_url}?code=", ""));
+                    await GetAccessToken(WebAuthenticationResult.ResponseData.ToString().Replace($"https://bgm.tv/oauth/{Constants.redirect_url}?code=", ""));
                 }
                 else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
                 {
@@ -64,10 +59,10 @@ namespace Bangumi.Helper
         {
             string url = "https://bgm.tv/oauth/access_token";
             string postData = "grant_type=authorization_code";
-            postData += "&client_id=" + client_id;
-            postData += "&client_secret=" + client_secret;
+            postData += "&client_id=" + Constants.client_id;
+            postData += "&client_secret=" + Constants.client_secret;
             postData += "&code=" + codeString;
-            postData += "&redirect_uri=" + redirect_url;
+            postData += "&redirect_uri=" + Constants.redirect_url;
 
             try
             {
@@ -205,10 +200,10 @@ namespace Bangumi.Helper
         {
             string url = "https://bgm.tv/oauth/access_token";
             string postData = "grant_type=refresh_token";
-            postData += "&client_id=" + client_id;
-            postData += "&client_secret=" + client_secret;
+            postData += "&client_id=" + Constants.client_id;
+            postData += "&client_secret=" + Constants.client_secret;
             postData += "&refresh_token=" + await ReadFromFile(OAuthFile.refresh_token, true);
-            postData += "&redirect_uri=" + redirect_url;
+            postData += "&redirect_uri=" + Constants.redirect_url;
 
             try
             {
