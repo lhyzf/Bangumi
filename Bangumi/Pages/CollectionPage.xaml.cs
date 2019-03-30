@@ -55,11 +55,10 @@ namespace Bangumi.Pages
             ClickToRefresh.Visibility = Visibility.Collapsed;
             try
             {
-                var userId = await OAuthHelper.ReadFromFile(OAuthHelper.OAuthFile.user_id, false);
                 var subjectType = GetSubjectType();
-                if (!string.IsNullOrEmpty(userId))
+                if (OAuthHelper.IsLogin)
                 {
-                    await BangumiFacade.PopulateSubjectCollectionAsync(subjectCollection, userId, subjectType);
+                    await BangumiFacade.PopulateSubjectCollectionAsync(subjectCollection, subjectType);
                     UpdateTime.Text = "更新时间：" + DateTime.Now;
                 }
                 else

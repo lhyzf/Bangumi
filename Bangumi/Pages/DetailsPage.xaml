@@ -35,12 +35,14 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Image Name="BangumiImage" 
+                               Source="{x:Bind imageSource}"
                                Height="214" 
                                Width="150" />
                         <StackPanel Orientation="Vertical" 
                                     Grid.Column="1"
                                     Margin="10,0">
                             <TextBlock Name="NameTextBlock" 
+                                       Text="{x:Bind name_cn}"
                                        TextWrapping="Wrap"
                                        FontSize="23" 
                                        Foreground="#d26585" />

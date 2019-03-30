@@ -1,4 +1,5 @@
-﻿using Bangumi.Pages;
+﻿using Bangumi.Helper;
+using Bangumi.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,9 +45,9 @@ namespace Bangumi
         }
 
         //根据用户登录状态改变用户图标
-        private async void UpdataUserStatus()
+        private async Task UpdataUserStatus()
         {
-            bool result = await Helper.OAuthHelper.CheckTokens();
+            bool result = await OAuthHelper.CheckTokens();
             if (result)
             {
                 UserItem.Content = "注销";
@@ -74,10 +75,9 @@ namespace Bangumi
             ("search", typeof(SearchPage)),
         };
 
-        private void NavView_Loaded(object sender, RoutedEventArgs e)
+        private async void NavView_Loaded(object sender, RoutedEventArgs e)
         {
-            UpdataUserStatus();
-            //await Helper.OAuthHelper.RefreshAccessToken();
+            await UpdataUserStatus();
 
             // You can also add items in code.
             //NavView.MenuItems.Add(new muxc.NavigationViewItemSeparator());
@@ -266,11 +266,11 @@ namespace Bangumi
                 MyProgressRing.IsActive = true;
                 MyProgressRing.Visibility = Visibility.Visible;
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 10);
-                await Helper.OAuthHelper.Authorize();
+                await OAuthHelper.Authorize();
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 10);
                 MyProgressRing.IsActive = false;
                 MyProgressRing.Visibility = Visibility.Collapsed;
-                UpdataUserStatus();
+                await UpdataUserStatus();
             }
             else if (UserItem.Content.ToString() == "注销")
             {
@@ -281,8 +281,8 @@ namespace Bangumi
                 await msgDialog.ShowAsync();
                 if (choice == "确定")
                 {
-                    await Helper.OAuthHelper.DeleteTokens();
-                    UpdataUserStatus();
+                    await OAuthHelper.DeleteTokens();
+                    await UpdataUserStatus();
                 }
             }
         }

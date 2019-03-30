@@ -35,7 +35,6 @@ namespace Bangumi.Pages
         public SettingsPage()
         {
             this.InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Enabled;
         }
     }
 }

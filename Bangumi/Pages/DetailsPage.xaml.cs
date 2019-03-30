@@ -29,6 +29,7 @@ namespace Bangumi.Pages
         private string name_cn = "";
         private string air_date = "";
         private int air_weekday = 0;
+        private string airWeekdayName = "";
 
         // 更多资料用
         private string name;
@@ -119,7 +120,7 @@ namespace Bangumi.Pages
         // 获取收藏、评分和吐槽信息
         private async void LoadCollectionStatus()
         {
-            if (!await OAuthHelper.CheckTokens())
+            if (!OAuthHelper.IsLogin)
             {
                 return;
             }
@@ -151,13 +152,13 @@ namespace Bangumi.Pages
         // 加载详情和章节
         private async void LoadDetails()
         {
-            if (!string.IsNullOrEmpty(imageSource))
-            {
-                Uri uri = new Uri(imageSource);
-                ImageSource imgSource = new BitmapImage(uri);
-                this.BangumiImage.Source = imgSource;
-            }
-            this.NameTextBlock.Text = name_cn;
+            //if (!string.IsNullOrEmpty(imageSource))
+            //{
+            //    Uri uri = new Uri(imageSource);
+            //    ImageSource imgSource = new BitmapImage(uri);
+            //    this.BangumiImage.Source = imgSource;
+            //}
+            //this.NameTextBlock.Text = name_cn;
             if (!string.IsNullOrEmpty(air_date) || air_weekday != 0)
             {
                 this.air_dateTextBlock.Text = "开播时间：" + air_date;
@@ -169,12 +170,14 @@ namespace Bangumi.Pages
                 var subject = await BangumiFacade.GetSubjectAsync(subjectId);
                 if (string.IsNullOrEmpty(imageSource))
                 {
-                    Uri uri = new Uri(subject.images.common);
-                    ImageSource imgSource = new BitmapImage(uri);
-                    this.BangumiImage.Source = imgSource;
+                    imageSource = subject.images.common;
+                    //Uri uri = new Uri(subject.images.common);
+                    //ImageSource imgSource = new BitmapImage(uri);
+                    //this.BangumiImage.Source = imgSource;
                 }
                 this.air_dateTextBlock.Text = "开播时间：" + subject.air_date;
                 this.air_weekdayTextBlock.Text = "更新时间：" + GetWeekday(subject.air_weekday);
+                //airWeekdayName = GetWeekday(subject.air_weekday);
                 var summary = "暂无简介";
                 if (!string.IsNullOrEmpty(subject.summary))
                 {
@@ -258,10 +261,9 @@ namespace Bangumi.Pages
                     MyProgressRing.Visibility = Visibility.Collapsed;
                     return;
                 }
-                var userId = await OAuthHelper.ReadFromFile(OAuthHelper.OAuthFile.user_id, false);
-                if (!string.IsNullOrEmpty(userId))
+                if (OAuthHelper.IsLogin)
                 {
-                    progress = await BangumiFacade.GetProgressesAsync(userId, subjectId);
+                    progress = await BangumiFacade.GetProgressesAsync(subjectId);
                 }
 
                 eps.Clear();
@@ -383,9 +385,9 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        private async void Eps_Tapped(object sender, TappedRoutedEventArgs e)
+        private void Eps_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (await OAuthHelper.CheckTokens())
+            if (!string.IsNullOrEmpty(OAuthHelper.AccessTokenString))
             {
                 FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
             }
