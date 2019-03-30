@@ -1,17 +1,24 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Bangumi.Helper
 {
-    class HttpWebRequestHelper
+    class HttpHelper
     {
-        public static async Task<string> GetResponseAsync(string url)
+        /// <summary>
+        /// 使用 Get 方法获取数据
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static async Task<string> GetAsync(string url)
         {
             try
             {
@@ -24,12 +31,18 @@ namespace Bangumi.Helper
             }
             catch (Exception)
             {
-                Debug.WriteLine("Network request fail.");
+                Debug.WriteLine("Network request fail.(Get)");
                 return null;
             }
         }
 
-        public static async Task<string> PostResponseAsync(string url, string post = "")
+        /// <summary>
+        /// 使用 Post 方法提交数据
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="post"></param>
+        /// <returns></returns>
+        public static async Task<string> PostAsync(string url, string post = "")
         {
             try
             {
@@ -47,7 +60,7 @@ namespace Bangumi.Helper
             }
             catch (Exception)
             {
-                Debug.WriteLine("Network request fail.");
+                Debug.WriteLine("Network request fail.(Post)");
                 return null;
             }
 

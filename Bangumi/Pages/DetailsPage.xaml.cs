@@ -431,7 +431,7 @@ namespace Bangumi.Pages
                         episode.status = "看过";
                     }
                 }
-
+                
             }
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
