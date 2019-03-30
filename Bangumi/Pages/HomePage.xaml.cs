@@ -3,12 +3,9 @@ using Bangumi.Helper;
 using Bangumi.Models;
 using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-using static Bangumi.Helper.OAuthHelper;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -40,7 +37,9 @@ namespace Bangumi.Pages
             }
         }
 
-        //刷新收视进度列表
+        /// <summary>
+        /// 刷新收视进度列表。
+        /// </summary>
         public async void Refresh()
         {
             MyProgressRing.IsActive = true;

@@ -12,7 +12,7 @@ namespace Bangumi.Helper
         public static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         
         /// <summary>
-        /// 写入文件
+        /// 写入文件。
         /// </summary>
         /// <param name="msg"></param>
         /// <param name="userFileName"></param>
@@ -42,7 +42,7 @@ namespace Bangumi.Helper
         }
 
         /// <summary>
-        /// 从文件读取
+        /// 从文件读取。
         /// </summary>
         /// <param name="userFileName"></param>
         /// <param name="encrytion"></param>

@@ -18,7 +18,7 @@ namespace Bangumi.Facades
         private const string NoImageUri = "ms-appx:///Assets/NoImage.png";
 
         /// <summary>
-        /// 显示用户选定类别收藏信息
+        /// 显示用户选定类别收藏信息。
         /// </summary>
         /// <param name="subjectCollection"></param>
         /// <param name="subjectType"></param>
@@ -51,7 +51,7 @@ namespace Bangumi.Facades
         }
 
         /// <summary>
-        /// 显示用户收视进度列表
+        /// 显示用户收视进度列表。
         /// </summary>
         /// <param name="watchingListCollection"></param>
         /// <returns></returns>
@@ -80,7 +80,7 @@ namespace Bangumi.Facades
         }
 
         /// <summary>
-        /// 显示时间表
+        /// 显示时间表。
         /// </summary>
         /// <param name="bangumiCollection"></param>
         /// <returns></returns>
@@ -112,7 +112,7 @@ namespace Bangumi.Facades
         }
 
         /// <summary>
-        /// 获取指定类别收藏信息
+        /// 获取指定类别收藏信息。
         /// </summary>
         /// <param name="subjectType"></param>
         /// <returns></returns>
@@ -137,7 +137,7 @@ namespace Bangumi.Facades
         }
 
         /// <summary>
-        /// 获取指定条目收藏信息
+        /// 获取指定条目收藏信息。
         /// </summary>
         /// <param name="subjectId"></param>
         /// <returns></returns>
@@ -164,7 +164,7 @@ namespace Bangumi.Facades
         }
 
         /// <summary>
-        /// 获取用户指定条目收视进度
+        /// 获取用户指定条目收视进度。
         /// </summary>
         /// <param name="subjectId"></param>
         /// <returns></returns>
@@ -190,7 +190,7 @@ namespace Bangumi.Facades
         }
 
         /// <summary>
-        /// 获取用户收视进度
+        /// 获取用户收视进度。
         /// </summary>
         /// <returns></returns>
         private static async Task<List<Watching>> GetWatchingListAsync()
@@ -218,7 +218,7 @@ namespace Bangumi.Facades
         }
 
         /// <summary>
-        /// 更新指定条目收藏状态
+        /// 更新指定条目收藏状态。
         /// </summary>
         /// <param name="subjectId"></param>
         /// <param name="collectionStatusEnum"></param>
@@ -283,7 +283,7 @@ namespace Bangumi.Facades
         }
 
         /// <summary>
-        /// 更新收视进度
+        /// 更新收视进度。
         /// </summary>
         /// <param name="ep"></param>
         /// <param name="status"></param>
@@ -310,7 +310,7 @@ namespace Bangumi.Facades
 
         // ----------------- 获取信息，不涉及用户 ----------------------
         /// <summary>
-        /// 搜索
+        /// 搜索。
         /// </summary>
         /// <param name="keyWord"></param>
         /// <param name="type"></param>
@@ -352,7 +352,7 @@ namespace Bangumi.Facades
         }
 
         /// <summary>
-        /// 获取指定条目所有剧集
+        /// 获取指定条目所有剧集。
         /// </summary>
         /// <param name="subjectId"></param>
         /// <returns></returns>
@@ -377,7 +377,7 @@ namespace Bangumi.Facades
         }
 
         /// <summary>
-        /// 获取指定条目详情
+        /// 获取指定条目详情。
         /// </summary>
         /// <param name="subjectId"></param>
         /// <returns></returns>
@@ -402,7 +402,7 @@ namespace Bangumi.Facades
         }
 
         /// <summary>
-        /// 获取时间表
+        /// 获取时间表。
         /// </summary>
         /// <returns></returns>
         private static async Task<List<BangumiTimeLine>> GetBangumiCalendarAsync()

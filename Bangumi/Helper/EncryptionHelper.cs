@@ -9,7 +9,7 @@ namespace Bangumi.Helper
     class EncryptionHelper
     {
         /// <summary>
-        /// 加密字符串
+        /// 加密字符串。
         /// </summary>
         /// <param name="strMsg"></param>
         /// <returns></returns>
@@ -35,7 +35,7 @@ namespace Bangumi.Helper
         }
 
         /// <summary>
-        /// 解密字符串
+        /// 解密字符串。
         /// </summary>
         /// <param name="buffProtected"></param>
         /// <returns></returns>

@@ -14,7 +14,7 @@ namespace Bangumi.Helper
     class HttpHelper
     {
         /// <summary>
-        /// 使用 Get 方法获取数据
+        /// 使用 Get 方法获取数据。
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
@@ -37,7 +37,7 @@ namespace Bangumi.Helper
         }
 
         /// <summary>
-        /// 使用 Post 方法提交数据
+        /// 使用 Post 方法提交数据。
         /// </summary>
         /// <param name="url"></param>
         /// <param name="post"></param>

@@ -2,21 +2,10 @@
 using Bangumi.Helper;
 using Bangumi.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -46,7 +35,9 @@ namespace Bangumi.Pages
             }
         }
 
-        // 刷新收藏列表，API限制每类最多25条
+        /// <summary>
+        /// 刷新收藏列表，API限制每类最多25条。
+        /// </summary>
         public async void Refresh()
         {
             MyProgressRing.IsActive = true;
@@ -76,7 +67,11 @@ namespace Bangumi.Pages
             MyProgressRing.Visibility = Visibility.Collapsed;
         }
 
-        //点击刷新
+        /// <summary>
+        /// 点击刷新。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private async void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>

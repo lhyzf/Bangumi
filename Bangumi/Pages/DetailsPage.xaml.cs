@@ -10,8 +10,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -117,7 +115,9 @@ namespace Bangumi.Pages
             }
         }
 
-        // 获取收藏、评分和吐槽信息
+        /// <summary>
+        /// 获取收藏、评分和吐槽信息。
+        /// </summary>
         private async void LoadCollectionStatus()
         {
             if (!OAuthHelper.IsLogin)
@@ -149,7 +149,9 @@ namespace Bangumi.Pages
             }
         }
 
-        // 加载详情和章节
+        /// <summary>
+        /// 加载详情和章节。
+        /// </summary>
         private async void LoadDetails()
         {
             //if (!string.IsNullOrEmpty(imageSource))
@@ -305,7 +307,11 @@ namespace Bangumi.Pages
             }
         }
 
-        // 看过
+        /// <summary>
+        /// 剧集看过。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void WatchedMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
@@ -317,7 +323,11 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        // 看到
+        /// <summary>
+        /// 剧集看到。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void WatchedToMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
@@ -349,7 +359,12 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        // 想看
+        // 
+        /// <summary>
+        /// 剧集想看。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void QueueMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
@@ -361,7 +376,11 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        // 抛弃
+        /// <summary>
+        /// 剧集抛弃。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void DropMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
@@ -373,7 +392,11 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        // 未看
+        /// <summary>
+        /// 剧集未看。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void RemoveMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
@@ -393,7 +416,11 @@ namespace Bangumi.Pages
             }
         }
 
-        // 收藏 想看
+        /// <summary>
+        /// 收藏想看。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void WishCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
@@ -404,7 +431,11 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        // 收藏 看过
+        /// <summary>
+        /// 收藏看过。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void WatchedCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
@@ -438,7 +469,11 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        // 收藏 在看
+        /// <summary>
+        /// 收藏在看。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void DoingCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
@@ -449,7 +484,11 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        // 收藏 搁置
+        /// <summary>
+        /// 收藏搁置。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void OnHoldCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
@@ -460,7 +499,11 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        // 收藏 抛弃
+        /// <summary>
+        /// 收藏抛弃。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void DropCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
@@ -471,7 +514,12 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        // 收藏 删除
+        /// <summary>
+        /// 收藏删除。
+        /// 未提供 API。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void RemoveCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MyProgressBar.Visibility = Visibility.Visible;
@@ -482,7 +530,11 @@ namespace Bangumi.Pages
             MyProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        // 编辑评分和吐槽
+        /// <summary>
+        /// 编辑评分和吐槽。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void CollectionAdvanceButton_Click(object sender, RoutedEventArgs e)
         {
             CollectionEditContentDialog collectionEditContentDialog = new CollectionEditContentDialog()
@@ -507,8 +559,11 @@ namespace Bangumi.Pages
             }
         }
 
-
-        // 更多资料
+        /// <summary>
+        /// 更多资料。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void MoreInfoButton_Click(object sender, RoutedEventArgs e)
         {
             SubjectMoreInfoContentDialog subjectMoreInfoContentDialog = new SubjectMoreInfoContentDialog()
@@ -523,7 +578,11 @@ namespace Bangumi.Pages
             await subjectMoreInfoContentDialog.ShowAsync();
         }
 
-        // 在调整窗口大小时计算item的宽度
+        /// <summary>
+        /// 在调整窗口大小时计算item的宽度。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             double UseableWidth = EpsGridView.ActualWidth - EpsGridView.Padding.Left - EpsGridView.Padding.Right;
