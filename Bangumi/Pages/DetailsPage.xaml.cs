@@ -451,26 +451,29 @@ namespace Bangumi.Pages
             if (await BangumiFacade.UpdateCollectionStatusAsync(subjectId, BangumiFacade.CollectionStatusEnum.collect))
             {
                 SetCollectionButton("看过");
-                int epId = 0; ;
-                string epsId = string.Empty;
-                foreach (var episode in eps)
+                if (SettingHelper.EpsBatch == true)
                 {
-                    if (eps.IndexOf(episode) == eps.Count - 1)
-                    {
-                        epsId += episode.id.ToString();
-                        epId = episode.id;
-                        break;
-                    }
-                    else
-                    {
-                        epsId += episode.id.ToString() + ",";
-                    }
-                }
-                if (await BangumiFacade.UpdateProgressBatchAsync(epId, BangumiFacade.EpStatusEnum.watched, epsId))
-                {
+                    int epId = 0; ;
+                    string epsId = string.Empty;
                     foreach (var episode in eps)
                     {
-                        episode.status = "看过";
+                        if (eps.IndexOf(episode) == eps.Count - 1)
+                        {
+                            epsId += episode.id.ToString();
+                            epId = episode.id;
+                            break;
+                        }
+                        else
+                        {
+                            epsId += episode.id.ToString() + ",";
+                        }
+                    }
+                    if (await BangumiFacade.UpdateProgressBatchAsync(epId, BangumiFacade.EpStatusEnum.watched, epsId))
+                    {
+                        foreach (var episode in eps)
+                        {
+                            episode.status = "看过";
+                        }
                     }
                 }
 

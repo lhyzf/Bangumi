@@ -138,6 +138,7 @@
     <Compile Include="Helper\GridWidthHelper.cs" />
     <Compile Include="Helper\HttpHelper.cs" />
     <Compile Include="Helper\OAuthHelper.cs" />
+    <Compile Include="Helper\SettingHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
