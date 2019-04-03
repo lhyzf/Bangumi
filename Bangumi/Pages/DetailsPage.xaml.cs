@@ -5,6 +5,7 @@ using Bangumi.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -166,7 +167,7 @@ namespace Bangumi.Pages
                     this.NameTextBlock.Text = name_cn;
                 }
                 // 条目图片
-                if (imageSource.Equals(NoImageUri))
+                if (imageSource.Equals(NoImageUri) && subject.images != null)
                 {
                     Uri uri = new Uri(subject.images.common);
                     ImageSource imgSource = new BitmapImage(uri);
@@ -259,17 +260,21 @@ namespace Bangumi.Pages
                 if (subject.eps != null)
                 {
                     eps.Clear();
-                    foreach (var ep in subject.eps)
+                    foreach (var ep in subject.eps.OrderBy(c => c.type))
                     {
-                        if (ep.status == "Air")
+                        if (string.IsNullOrEmpty(ep.name_cn))
                         {
-                            ep.status = "";
-                            if (string.IsNullOrEmpty(ep.name_cn))
-                            {
-                                ep.name_cn = ep.name;
-                            }
-                            eps.Add(ep);
+                            ep.name_cn = ep.name;
                         }
+                        if (ep.type == 0)
+                        {
+                            ep.sort = "第 " + ep.sort + " 话";
+                        }
+                        else
+                        {
+                            ep.sort = GetEpisodeType(ep.type) + " " + ep.sort;
+                        }
+                        eps.Add(ep);
                     }
                 }
                 // 显示用户章节状态
@@ -414,7 +419,7 @@ namespace Bangumi.Pages
         /// <param name="e"></param>
         private void Eps_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (OAuthHelper.IsLogin && isReady)
+            if (OAuthHelper.IsLogin && isReady && ((Ep)EpsGridView.SelectedItem).status != "NA")
             {
                 FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
             }
@@ -677,5 +682,38 @@ namespace Bangumi.Pages
             }
             return result;
         }
+
+        private string GetEpisodeType(int n)
+        {
+            string type = "";
+            switch (n)
+            {
+                case 0:
+                    type = "本篇";
+                    break;
+                case 1:
+                    type = "特别篇";
+                    break;
+                case 2:
+                    type = "OP";
+                    break;
+                case 3:
+                    type = "ED";
+                    break;
+                case 4:
+                    type = "预告/宣传/广告";
+                    break;
+                case 5:
+                    type = "MAD";
+                    break;
+                case 6:
+                    type = "其他";
+                    break;
+                default:
+                    break;
+            }
+            return type;
+        }
+
     }
 }
