@@ -5,6 +5,7 @@
     xmlns:local="using:Bangumi.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="Page_Loaded"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -12,10 +13,22 @@
     <Grid>
         <Pivot>
             <PivotItem Header="设置">
-                <TextBlock Text="没有可以设置的~(￣▽￣)~*"/>
+                <StackPanel Padding="0,10,0,0">
+                    <ToggleSwitch Name="EpsBatchToggleSwitch"
+                                  OnContent="开启" 
+                                  OffContent="关闭"
+                                  FontSize="16"
+                                  Toggled="EpsBatchToggleSwitch_Toggled">
+                        <ToggleSwitch.Header>
+                            <TextBlock Text="收藏状态修改为看过时，将所有章节状态修改为看过"
+                                       TextWrapping="Wrap"
+                                       FontSize="18" />
+                        </ToggleSwitch.Header>
+                    </ToggleSwitch>
+                </StackPanel>
             </PivotItem>
             <PivotItem Header="关于">
-                <StackPanel>
+                <StackPanel Padding="0,10,0,0">
                     <TextBlock Text="Bangumi UWP (非官方)" 
                                Style="{StaticResource TitleTextBlockStyle}" />
                     <TextBlock>
