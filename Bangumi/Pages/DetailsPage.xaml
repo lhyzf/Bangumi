@@ -15,14 +15,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <ProgressBar Name="MyProgressBar"
-                     IsIndeterminate="True"
-                     Visibility="Collapsed"
-                     VerticalAlignment="Top"/>
-        <ProgressRing Name="MyProgressRing"
-                      Width="50"
-                      Height="50"/>
-
         <GridView Name="EpsGridView" 
                   ItemsSource="{x:Bind eps}" 
                   Margin="0,5,0,0"
@@ -128,7 +120,7 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Grid>
-                            <TextBlock Text="{x:Bind sys:String.Format('第 {0} 话', sort)}" 
+                            <TextBlock Text="{x:Bind sort}" 
                                        FontSize="14" />
                             <TextBlock Grid.Column="1" 
                                        x:Phase="2"
@@ -164,5 +156,14 @@
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>
+        
+        <ProgressBar Name="MyProgressBar"
+                     IsIndeterminate="True"
+                     Visibility="Collapsed"
+                     VerticalAlignment="Top"/>
+        <ProgressRing Name="MyProgressRing"
+                      Width="50"
+                      Height="50"/>
+
     </Grid>
 </Page>

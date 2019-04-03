@@ -68,6 +68,11 @@ namespace Bangumi.Facades
                     {
                         watching.subject.name_cn = watching.subject.name;
                     }
+                    if (watching.subject.images == null)
+                    {
+                        watching.subject.images = new Images { common = NoImageUri };
+                    }
+
                     watchingListCollection.Add(watching);
                 }
                 return true;
@@ -98,6 +103,10 @@ namespace Bangumi.Facades
                         if (string.IsNullOrEmpty(item.name_cn))
                         {
                             item.name_cn = item.name;
+                        }
+                        if (item.images == null)
+                        {
+                            item.images = new Images { common = NoImageUri };
                         }
                     }
                     bangumiCollection.Add(bangumiCalendar);
