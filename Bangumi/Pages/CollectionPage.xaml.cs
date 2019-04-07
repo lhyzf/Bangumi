@@ -26,13 +26,21 @@ namespace Bangumi.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (subjectCollection.Count == 0)
+            if (subjectCollection.Count == 0 && !MyProgressRing.IsActive)
             {
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     Refresh();
                 });
             }
+        }
+
+        private async void TypeCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Refresh();
+            });
         }
 
         /// <summary>
@@ -42,27 +50,24 @@ namespace Bangumi.Pages
         {
             MyProgressRing.IsActive = true;
             MyProgressRing.Visibility = Visibility.Visible;
-
             ClickToRefresh.Visibility = Visibility.Collapsed;
-            try
+            var subjectType = GetSubjectType();
+            if (OAuthHelper.IsLogin)
             {
-                var subjectType = GetSubjectType();
-                if (OAuthHelper.IsLogin)
+                if (await BangumiFacade.PopulateSubjectCollectionAsync(subjectCollection, subjectType))
                 {
-                    await BangumiFacade.PopulateSubjectCollectionAsync(subjectCollection, subjectType);
                     UpdateTime.Text = "更新时间：" + DateTime.Now;
                 }
                 else
                 {
-                    UpdateTime.Text = "请先登录！";
+                    UpdateTime.Text = "网络连接失败，请重试！";
                 }
             }
-            catch (Exception)
+            else
             {
-                UpdateTime.Text = "网络连接失败，请重试！";
+                UpdateTime.Text = "请先登录！";
             }
             ClickToRefresh.Visibility = Visibility.Visible;
-
             MyProgressRing.IsActive = false;
             MyProgressRing.Visibility = Visibility.Collapsed;
         }
@@ -84,14 +89,6 @@ namespace Bangumi.Pages
         {
             var selectedItem = (SList)e.ClickedItem;
             Frame.Navigate(typeof(DetailsPage), selectedItem.subject);
-        }
-
-        private async void TypeCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                Refresh();
-            });
         }
 
         private BangumiFacade.SubjectType GetSubjectType()

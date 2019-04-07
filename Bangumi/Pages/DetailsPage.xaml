@@ -34,6 +34,7 @@
                                     Grid.Column="1"
                                     Margin="10,0">
                             <TextBlock Name="NameTextBlock" 
+                                       IsTextSelectionEnabled="True"
                                        Text="{x:Bind name_cn}"
                                        TextWrapping="Wrap"
                                        FontSize="23" 
@@ -92,6 +93,7 @@
                         </StackPanel>
                     </Grid>
                     <TextBlock Name="SummaryTextBlock" 
+                               IsTextSelectionEnabled="True"
                                FontSize="18" 
                                TextWrapping="Wrap" 
                                LineHeight="30" 

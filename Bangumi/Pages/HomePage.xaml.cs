@@ -44,29 +44,23 @@ namespace Bangumi.Pages
         {
             MyProgressRing.IsActive = true;
             MyProgressRing.Visibility = Visibility.Visible;
-
             ClickToRefresh.Visibility = Visibility.Collapsed;
-            try
+            if (OAuthHelper.IsLogin)
             {
-                if (OAuthHelper.IsLogin)
+                if (await BangumiFacade.PopulateWatchingListAsync(watchingCollection))
                 {
-                    if (await BangumiFacade.PopulateWatchingListAsync(watchingCollection))
-                    {
-                        UpdateTime.Text = "更新时间：" + DateTime.Now;
-                    }
+                    UpdateTime.Text = "更新时间：" + DateTime.Now;
                 }
                 else
                 {
-                    UpdateTime.Text = "请先登录！";
+                    UpdateTime.Text = "网络连接失败，请重试！";
                 }
-
             }
-            catch (Exception)
+            else
             {
-                UpdateTime.Text = "发生错误，请重试！";
+                UpdateTime.Text = "请先登录！";
             }
             ClickToRefresh.Visibility = Visibility.Visible;
-
             MyProgressRing.IsActive = false;
             MyProgressRing.Visibility = Visibility.Collapsed;
         }

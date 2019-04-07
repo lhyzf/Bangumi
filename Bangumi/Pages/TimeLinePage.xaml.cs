@@ -42,46 +42,17 @@ namespace Bangumi.Pages
         {
             MyProgressRing.IsActive = true;
             MyProgressRing.Visibility = Visibility.Visible;
-
             ClickToRefresh.Visibility = Visibility.Collapsed;
-            try
+            if (await BangumiFacade.PopulateBangumiCalendarAsync(bangumiCollection))
             {
-                await BangumiFacade.PopulateBangumiCalendarAsync(bangumiCollection);
                 UpdateTime.Text = "更新时间：" + DateTime.Now;
-                switch (DateTime.Now.DayOfWeek)
-                {
-                    case DayOfWeek.Monday:
-                        WeekPivot.SelectedIndex = 0;
-                        break;
-                    case DayOfWeek.Tuesday:
-                        WeekPivot.SelectedIndex = 1;
-                        break;
-                    case DayOfWeek.Wednesday:
-                        WeekPivot.SelectedIndex = 2;
-                        break;
-                    case DayOfWeek.Thursday:
-                        WeekPivot.SelectedIndex = 3;
-                        break;
-                    case DayOfWeek.Friday:
-                        WeekPivot.SelectedIndex = 4;
-                        break;
-                    case DayOfWeek.Saturday:
-                        WeekPivot.SelectedIndex = 5;
-                        break;
-                    case DayOfWeek.Sunday:
-                        WeekPivot.SelectedIndex = 6;
-                        break;
-                    default:
-                        break;
-                }
-                var b = WeekPivot.SelectedItem;
+                WeekPivot.SelectedIndex = GetDayOfWeek();
             }
-            catch (Exception)
+            else
             {
                 UpdateTime.Text = "网络连接失败，请重试！";
             }
             ClickToRefresh.Visibility = Visibility.Visible;
-
             MyProgressRing.IsActive = false;
             MyProgressRing.Visibility = Visibility.Collapsed;
         }
@@ -110,5 +81,38 @@ namespace Bangumi.Pages
             double UseableWidth = WeekPivot.ActualWidth - 24;
             MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
         }
+
+        private int GetDayOfWeek()
+        {
+            int day = 0;
+            switch (DateTime.Now.DayOfWeek)
+            {
+                case DayOfWeek.Monday:
+                    day = 0;
+                    break;
+                case DayOfWeek.Tuesday:
+                    day = 1;
+                    break;
+                case DayOfWeek.Wednesday:
+                    day = 2;
+                    break;
+                case DayOfWeek.Thursday:
+                    day = 3;
+                    break;
+                case DayOfWeek.Friday:
+                    day = 4;
+                    break;
+                case DayOfWeek.Saturday:
+                    day = 5;
+                    break;
+                case DayOfWeek.Sunday:
+                    day = 6;
+                    break;
+                default:
+                    break;
+            }
+            return day;
+        }
+
     }
 }

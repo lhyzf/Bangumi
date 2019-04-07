@@ -453,7 +453,7 @@ namespace Bangumi.Pages
                 SetCollectionButton("看过");
                 if (SettingHelper.EpsBatch == true)
                 {
-                    int epId = 0; ;
+                    int epId = 0;
                     string epsId = string.Empty;
                     foreach (var episode in eps)
                     {
