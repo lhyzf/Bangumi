@@ -126,6 +126,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\Converters.cs" />
+    <Compile Include="Common\ViewModelBase.cs" />
     <Compile Include="ContentDialogs\CollectionEditContentDialog.xaml.cs">
       <DependentUpon>CollectionEditContentDialog.xaml</DependentUpon>
     </Compile>
@@ -145,25 +147,30 @@
     <Compile Include="Models\AccessToken.cs" />
     <Compile Include="Models\BangumiModels.cs" />
     <Compile Include="Models\Constants.cs" />
-    <Compile Include="Pages\CollectionPage.xaml.cs">
+    <Compile Include="ViewModels\CollectionViewModel.cs" />
+    <Compile Include="ViewModels\DetailsViewModel.cs" />
+    <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\SearchViewModel.cs" />
+    <Compile Include="ViewModels\TimeLineViewModel.cs" />
+    <Compile Include="Views\CollectionPage.xaml.cs">
       <DependentUpon>CollectionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\DetailsPage.xaml.cs">
+    <Compile Include="Views\DetailsPage.xaml.cs">
       <DependentUpon>DetailsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\HomePage.xaml.cs">
+    <Compile Include="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\IndexPage.xaml.cs">
+    <Compile Include="Views\IndexPage.xaml.cs">
       <DependentUpon>IndexPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SearchPage.xaml.cs">
+    <Compile Include="Views\SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SettingsPage.xaml.cs">
+    <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\TimeLinePage.xaml.cs">
+    <Compile Include="Views\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -202,31 +209,31 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\CollectionPage.xaml">
+    <Page Include="Views\CollectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\DetailsPage.xaml">
+    <Page Include="Views\DetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\HomePage.xaml">
+    <Page Include="Views\HomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\IndexPage.xaml">
+    <Page Include="Views\IndexPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\SearchPage.xaml">
+    <Page Include="Views\SearchPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\SettingsPage.xaml">
+    <Page Include="Views\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\TimeLinePage.xaml">
+    <Page Include="Views\TimeLinePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

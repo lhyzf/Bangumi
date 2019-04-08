@@ -1,13 +1,12 @@
 ﻿<Page
-    x:Class="Bangumi.Pages.HomePage"
+    x:Class="Bangumi.Views.HomePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Bangumi.Pages"
+    xmlns:local="using:Bangumi.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:Bangumi.Models"
-    xmlns:sys="using:System"
-    Loaded="Page_Loaded"
+    xmlns:common="using:Bangumi.Common"
     SizeChanged="Page_SizeChanged"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d"
@@ -21,9 +20,11 @@
         <StackPanel Orientation="Horizontal" 
                     Height="20"
                     Margin="10,0">
-            <TextBlock Name="UpdateTime"/>
+            <TextBlock Text="{x:Bind ViewModel.Message, Mode=OneWay}"/>
             <ProgressRing Name="MyProgressRing" 
+                          Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                           HorizontalAlignment="Left" 
+                          IsActive="True"
                           Height="20" 
                           Width="20" 
                           VerticalAlignment="Top" 
@@ -34,6 +35,7 @@
                 </ProgressRing.RenderTransform>
             </ProgressRing>
             <TextBlock Name="ClickToRefresh" 
+                       Visibility="{x:Bind common:Converters.CollapsedIf(ViewModel.IsLoading), Mode=OneWay}"
                        VerticalAlignment="Center" 
                        Padding="5,0" >
                 <Hyperlink UnderlineStyle="None" 
@@ -50,7 +52,7 @@
         <Pivot Name="DoingPivot" Grid.Row="1" 
                IsHeaderItemsCarouselEnabled="False">
             <PivotItem Header="在看">
-                <GridView ItemsSource="{x:Bind watchingCollection}" 
+                <GridView ItemsSource="{x:Bind ViewModel.watchingCollection}" 
                           IsItemClickEnabled="True" 
                           ItemClick="GridView_ItemClick">
                     <GridView.ItemTemplate>
