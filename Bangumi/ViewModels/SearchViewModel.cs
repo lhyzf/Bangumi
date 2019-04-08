@@ -22,7 +22,13 @@ namespace Bangumi.ViewModels
         {
         }
 
-        public ObservableCollection<string> suggestions { get; private set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> Suggestions { get; private set; } = new ObservableCollection<string>();
+        public ObservableCollection<Subject> AllCollection;
+        public ObservableCollection<Subject> AnimeCollection;
+        public ObservableCollection<Subject> BookCollection;
+        public ObservableCollection<Subject> MusicCollection;
+        public ObservableCollection<Subject> GameCollection;
+        public ObservableCollection<Subject> RealCollection;
 
         private int _selectedIndex;
         public int SelectedIndex
@@ -35,6 +41,13 @@ namespace Bangumi.ViewModels
         {
             get => _searchText;
             set => Set(ref _searchText, value);
+        }
+
+        private string _searchStatus;
+        public string SearchStatus
+        {
+            get => _searchStatus;
+            set => Set(ref _searchStatus, value);
         }
 
         public bool SuggestDelay = false;
@@ -53,7 +66,7 @@ namespace Bangumi.ViewModels
             if (!string.IsNullOrEmpty(SearchText))
             {
                 var result = await BangumiFacade.GetSearchResultAsync(SearchText, "", 0, 10);
-                suggestions.Clear();
+                Suggestions.Clear();
                 if (SearchText == PreSearch[SelectedIndex])
                 {
                     SuggestDelay = false;
@@ -63,7 +76,7 @@ namespace Bangumi.ViewModels
                 {
                     foreach (var item in result.list)
                     {
-                        suggestions.Add(item.name_cn);
+                        Suggestions.Add(item.name_cn);
                     }
                 }
             }
@@ -96,8 +109,8 @@ namespace Bangumi.ViewModels
     /// </summary>
     public class SearchResultIncrementalLoadingCollection : ObservableCollection<Subject>, ISupportIncrementalLoading
     {
-        int offset = 0;
-        int max = 20;
+        public int offset { get; private set; } = 0;
+        public int max { get; private set; } = 20;
         private string keyword;
         private string type;
 

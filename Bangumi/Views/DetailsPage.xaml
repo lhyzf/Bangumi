@@ -16,7 +16,6 @@
     <Grid>
         <GridView Name="EpsGridView" 
                   ItemsSource="{x:Bind ViewModel.eps}" 
-                  Margin="0,5,0,0"
                   Padding="10,0,10,5">
             <GridView.Header>
                 <StackPanel Orientation="Vertical" >
@@ -104,10 +103,6 @@
                                      Visibility="{x:Bind common:Converters.CollapsedIf(ViewModel.IsDetailLoading), Mode=OneWay}"
                                      FontSize="16"
                                      Foreground="#d26585"/>
-
-                    <Border Name="MyWidth"
-                            Visibility="Collapsed"/>
-
                 </StackPanel>
             </GridView.Header>
             <GridView.ItemTemplate>
@@ -168,6 +163,9 @@
                       IsActive="True"
                       Width="50"
                       Height="50"/>
+
+        <Border Name="MyWidth"
+                            Visibility="Collapsed"/>
 
     </Grid>
 </Page>

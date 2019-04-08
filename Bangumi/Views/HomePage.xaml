@@ -13,89 +13,83 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" 
-                    Height="20"
-                    Margin="10,0">
-            <TextBlock Text="{x:Bind ViewModel.Message, Mode=OneWay}"/>
-            <ProgressRing Name="MyProgressRing" 
-                          Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                          HorizontalAlignment="Left" 
-                          IsActive="True"
-                          Height="20" 
-                          Width="20" 
-                          VerticalAlignment="Top" 
-                          RenderTransformOrigin="0.5,0.5" >
-                <ProgressRing.RenderTransform>
-                    <CompositeTransform ScaleX="0.5" 
-                                        ScaleY="0.5"/>
-                </ProgressRing.RenderTransform>
-            </ProgressRing>
-            <TextBlock Name="ClickToRefresh" 
-                       Visibility="{x:Bind common:Converters.CollapsedIf(ViewModel.IsLoading), Mode=OneWay}"
-                       VerticalAlignment="Center" 
-                       Padding="5,0" >
-                <Hyperlink UnderlineStyle="None" 
-                           FontFamily="Segoe MDL2 Assets" 
-                           Click="Hyperlink_Click" >
-                    &#xE72C;
-                </Hyperlink>
-            </TextBlock>
-        </StackPanel>
-
+        <GridView Name="MyGridView" 
+                  Padding="12,0,12,6"
+                  ItemsSource="{x:Bind ViewModel.watchingCollection}" 
+                  IsItemClickEnabled="True" 
+                  ItemClick="GridView_ItemClick">
+            <GridView.Header>
+                <StackPanel Orientation="Horizontal" 
+                            Height="20">
+                    <TextBlock Text="{x:Bind ViewModel.Message, Mode=OneWay}"/>
+                    <ProgressRing Name="MyProgressRing" 
+                                  Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                                  HorizontalAlignment="Left" 
+                                  IsActive="True"
+                                  Height="20" 
+                                  Width="20" 
+                                  VerticalAlignment="Top" 
+                                  RenderTransformOrigin="0.5,0.5" >
+                        <ProgressRing.RenderTransform>
+                            <CompositeTransform ScaleX="0.5" 
+                                                ScaleY="0.5"/>
+                        </ProgressRing.RenderTransform>
+                    </ProgressRing>
+                    <TextBlock Name="ClickToRefresh" 
+                               Visibility="{x:Bind common:Converters.CollapsedIf(ViewModel.IsLoading), Mode=OneWay}"
+                               VerticalAlignment="Center" 
+                               Padding="5,0" >
+                        <Hyperlink UnderlineStyle="None" 
+                                   FontFamily="Segoe MDL2 Assets" 
+                                   Click="Hyperlink_Click" >
+                            &#xE72C;
+                        </Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+            </GridView.Header>
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="data:Watching">
+                    <Grid Padding="5"
+                          Width="{Binding ElementName=MyWidth,Path=Width}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="{x:Bind subject.images.common}" 
+                               Height="75" 
+                               Width="75" 
+                               Stretch="UniformToFill" />
+                        <Grid Grid.Column="1"
+                              Padding="6,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{x:Bind subject.name_cn}" 
+                                       FontSize="14" 
+                                       Foreground="#d26585"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Grid.Row="1"
+                                       Text="{x:Bind subject.name}" 
+                                       FontSize="12" 
+                                       TextTrimming="WordEllipsis"
+                                       TextWrapping="NoWrap"/>
+                            <TextBlock Grid.Row="2"
+                                       FontSize="12" 
+                                       TextWrapping="Wrap">
+                                <Run Text="{x:Bind ep_status}"/>
+                                <Run Text="/"/>
+                                <Run Text="{x:Bind subject.eps_count}"/>
+                            </TextBlock>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+        
         <Border Name="MyWidth"
-                    Visibility="Collapsed"/>
+                Visibility="Collapsed"/>
 
-        <Pivot Name="DoingPivot" Grid.Row="1" 
-               IsHeaderItemsCarouselEnabled="False">
-            <PivotItem Header="在看">
-                <GridView ItemsSource="{x:Bind ViewModel.watchingCollection}" 
-                          IsItemClickEnabled="True" 
-                          ItemClick="GridView_ItemClick">
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="data:Watching">
-                            <Grid Padding="5"
-                                  Width="{Binding ElementName=MyWidth,Path=Width}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Source="{x:Bind subject.images.common}" 
-                                       Height="75" 
-                                       Width="75" 
-                                       Stretch="UniformToFill" />
-                                <Grid Grid.Column="1"
-                                      Padding="6,0">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="auto"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Text="{x:Bind subject.name_cn}" 
-                                               FontSize="14" 
-                                               Foreground="#d26585"
-                                               TextWrapping="Wrap" />
-                                    <TextBlock Grid.Row="1"
-                                               Text="{x:Bind subject.name}" 
-                                               FontSize="12" 
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                    <TextBlock Grid.Row="2"
-                                               FontSize="12" 
-                                               TextWrapping="Wrap">
-                                        <Run Text="{x:Bind ep_status}"/>
-                                        <Run Text="/"/>
-                                        <Run Text="{x:Bind subject.eps_count}"/>
-                                    </TextBlock>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
-                </GridView>
-            </PivotItem>
-        </Pivot>
     </Grid>
 </Page>

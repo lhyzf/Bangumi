@@ -48,7 +48,7 @@ namespace Bangumi.Views
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            double UseableWidth = DoingPivot.ActualWidth - 24;
+            double UseableWidth = MyGridView.ActualWidth - MyGridView.Padding.Left - MyGridView.Padding.Right;
             MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 220);
         }
     }

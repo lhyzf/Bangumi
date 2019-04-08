@@ -34,5 +34,31 @@ namespace Bangumi.Common
         /// </summary>
         public static Visibility CollapsedIfNullOrEmpty(string value) =>
             string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible;
+
+        public static string GetSubjectTypeName(int type)
+        {
+            string cn = "";
+            switch (type)
+            {
+                case 1:
+                    cn = "书籍";
+                    break;
+                case 2:
+                    cn = "动画";
+                    break;
+                case 3:
+                    cn = "音乐";
+                    break;
+                case 4:
+                    cn = "游戏";
+                    break;
+                case 6:
+                    cn = "三次元";
+                    break;
+                default:
+                    break;
+            }
+            return cn;
+        }
     }
 }
