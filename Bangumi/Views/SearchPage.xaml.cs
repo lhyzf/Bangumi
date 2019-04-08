@@ -55,7 +55,7 @@ namespace Bangumi.Views
                 ViewModel.SearchText = args.ChosenSuggestion.ToString();
                 if (!ViewModel.CheckIfSearched())
                 {
-                    ViewModel.suggestions.Clear();
+                    ViewModel.Suggestions.Clear();
                     Search();
                 }
             }
@@ -70,7 +70,7 @@ namespace Bangumi.Views
                 }
                 if (!ViewModel.CheckIfSearched())
                 {
-                    ViewModel.suggestions.Clear();
+                    ViewModel.Suggestions.Clear();
                     Search();
                 }
             }
@@ -83,7 +83,7 @@ namespace Bangumi.Views
         {
             if (!ViewModel.CheckIfSearched())
             {
-                ViewModel.suggestions.Clear();
+                ViewModel.Suggestions.Clear();
                 Search();
             }
         }
@@ -102,29 +102,40 @@ namespace Bangumi.Views
             switch (ViewModel.SelectedIndex)
             {
                 case 0:
-                    type = "2";
+                    type = "";
                     ViewModel.PreSearch[ViewModel.SelectedIndex] = ViewModel.SearchText;
-                    AnimeGridView.ItemsSource = new SearchResultIncrementalLoadingCollection(keyword, type);
+                    ViewModel.AllCollection= new SearchResultIncrementalLoadingCollection(keyword, type);
+                    AllGridView.ItemsSource = ViewModel.AllCollection;
                     break;
                 case 1:
-                    type = "1";
+                    type = "2";
                     ViewModel.PreSearch[ViewModel.SelectedIndex] = ViewModel.SearchText;
-                    BookGridView.ItemsSource = new SearchResultIncrementalLoadingCollection(keyword, type);
+                    ViewModel.AnimeCollection = new SearchResultIncrementalLoadingCollection(keyword, type);
+                    AnimeGridView.ItemsSource = ViewModel.AnimeCollection;
                     break;
                 case 2:
-                    type = "3";
+                    type = "1";
                     ViewModel.PreSearch[ViewModel.SelectedIndex] = ViewModel.SearchText;
-                    MusicGridView.ItemsSource = new SearchResultIncrementalLoadingCollection(keyword, type);
+                    ViewModel.BookCollection = new SearchResultIncrementalLoadingCollection(keyword, type);
+                    BookGridView.ItemsSource = ViewModel.BookCollection;
                     break;
                 case 3:
-                    type = "4";
+                    type = "3";
                     ViewModel.PreSearch[ViewModel.SelectedIndex] = ViewModel.SearchText;
-                    GameGridView.ItemsSource = new SearchResultIncrementalLoadingCollection(keyword, type);
+                    ViewModel.MusicCollection = new SearchResultIncrementalLoadingCollection(keyword, type);
+                    MusicGridView.ItemsSource = ViewModel.MusicCollection;
                     break;
                 case 4:
+                    type = "4";
+                    ViewModel.PreSearch[ViewModel.SelectedIndex] = ViewModel.SearchText;
+                    ViewModel.GameCollection = new SearchResultIncrementalLoadingCollection(keyword, type);
+                    GameGridView.ItemsSource = ViewModel.GameCollection;
+                    break;
+                case 5:
                     type = "6";
                     ViewModel.PreSearch[ViewModel.SelectedIndex] = ViewModel.SearchText;
-                    RealGridView.ItemsSource = new SearchResultIncrementalLoadingCollection(keyword, type);
+                    ViewModel.RealCollection = new SearchResultIncrementalLoadingCollection(keyword, type);
+                    RealGridView.ItemsSource = ViewModel.RealCollection;
                     break;
             }
         }
@@ -132,10 +143,10 @@ namespace Bangumi.Views
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             double UseableWidth = TypePivot.ActualWidth - 20;
-            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
+            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 250);
         }
+
+
+
     }
-
-
-
 }

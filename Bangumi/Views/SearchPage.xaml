@@ -22,7 +22,7 @@
                         Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}"
                         PlaceholderText="关键字|Subject ID"
                         QueryIcon="Find"
-                        ItemsSource="{x:Bind ViewModel.suggestions}"
+                        ItemsSource="{x:Bind ViewModel.Suggestions}"
                         TextChanged="AutoSuggestBox_TextChanged"
                         QuerySubmitted="AutoSuggestBox_QuerySubmitted"
                         Margin="10,0"/>
@@ -34,6 +34,59 @@
                SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
                Grid.Row="1"
                SelectionChanged="TypePivot_SelectionChanged">
+            <PivotItem Header="全部" 
+                       Margin="0">
+                <GridView Name="AllGridView"
+                          Padding="10,0"
+                          IsItemClickEnabled="True" 
+                          ItemClick="GridView_ItemClick"
+                          IncrementalLoadingTrigger="Edge"
+                          DataFetchSize="1">
+                    <GridView.Footer>
+                        <TextBlock Text="{x:Bind ViewModel.SearchStatus, Mode=OneWay}"
+                                   FontSize="14" 
+                                   HorizontalAlignment="Center"/>
+                    </GridView.Footer>
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="data:Subject">
+                            <Grid Padding="5"
+                                  Width="{Binding ElementName=MyWidth,Path=Width}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Source="{x:Bind images.common}" 
+                                       Height="75" 
+                                       Width="75" 
+                                       Stretch="UniformToFill" />
+                                <Grid Grid.Column="1"
+                                      Padding="6,0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="{x:Bind name_cn}" 
+                                               FontSize="14" 
+                                               Foreground="#d26585"
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
+                                    <TextBlock Grid.Row="1"
+                                               Text="{x:Bind name}" 
+                                               FontSize="12" 
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
+                                    <TextBlock Grid.Row="2"
+                                               Text="{x:Bind common:Converters.GetSubjectTypeName(type)}" 
+                                               FontSize="12" 
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </PivotItem>
             <PivotItem Header="动画" 
                        Margin="0">
                 <GridView Name="AnimeGridView"
@@ -63,7 +116,8 @@
                                     <TextBlock Text="{x:Bind name_cn}" 
                                                FontSize="14" 
                                                Foreground="#d26585"
-                                               TextWrapping="Wrap" />
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
                                     <TextBlock Grid.Row="1"
                                                Text="{x:Bind name}" 
                                                FontSize="12" 
@@ -104,7 +158,8 @@
                                     <TextBlock Text="{x:Bind name_cn}" 
                                                FontSize="14" 
                                                Foreground="#d26585"
-                                               TextWrapping="Wrap" />
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
                                     <TextBlock Grid.Row="1"
                                                Text="{x:Bind name}" 
                                                FontSize="12" 
@@ -145,7 +200,8 @@
                                     <TextBlock Text="{x:Bind name_cn}" 
                                                FontSize="14" 
                                                Foreground="#d26585"
-                                               TextWrapping="Wrap" />
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
                                     <TextBlock Grid.Row="1"
                                                Text="{x:Bind name}" 
                                                FontSize="12" 
@@ -186,7 +242,8 @@
                                     <TextBlock Text="{x:Bind name_cn}" 
                                                FontSize="14" 
                                                Foreground="#d26585"
-                                               TextWrapping="Wrap" />
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
                                     <TextBlock Grid.Row="1"
                                                Text="{x:Bind name}" 
                                                FontSize="12" 
@@ -227,7 +284,8 @@
                                     <TextBlock Text="{x:Bind name_cn}" 
                                                FontSize="14" 
                                                Foreground="#d26585"
-                                               TextWrapping="Wrap" />
+                                               TextTrimming="WordEllipsis"
+                                               TextWrapping="NoWrap"/>
                                     <TextBlock Grid.Row="1"
                                                Text="{x:Bind name}" 
                                                FontSize="12" 
