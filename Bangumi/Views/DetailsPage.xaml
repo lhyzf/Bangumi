@@ -1,22 +1,21 @@
 ﻿<Page
-    x:Class="Bangumi.Pages.DetailsPage"
+    x:Class="Bangumi.Views.DetailsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Bangumi.Pages"
+    xmlns:local="using:Bangumi.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:Bangumi.Models"
+    xmlns:common="using:Bangumi.Common"
     xmlns:sys="using:System"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    Loaded="Page_Loaded"
-    Unloaded="Page_Unloaded"
     SizeChanged="Page_SizeChanged"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
         <GridView Name="EpsGridView" 
-                  ItemsSource="{x:Bind eps}" 
+                  ItemsSource="{x:Bind ViewModel.eps}" 
                   Margin="0,5,0,0"
                   Padding="10,0,10,5">
             <GridView.Header>
@@ -27,7 +26,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Image Name="BangumiImage" 
-                               Source="{x:Bind imageSource,Mode=OneWay}"
+                               Source="{x:Bind ViewModel.ImageSource, Mode=OneWay}"
                                Height="214" 
                                Width="150" />
                         <StackPanel Orientation="Vertical" 
@@ -35,23 +34,23 @@
                                     Margin="10,0">
                             <TextBlock Name="NameTextBlock" 
                                        IsTextSelectionEnabled="True"
-                                       Text="{x:Bind name_cn}"
+                                       Text="{x:Bind ViewModel.Name_cn, Mode=OneWay}"
                                        TextWrapping="Wrap"
                                        FontSize="23" 
                                        Foreground="#d26585" />
                             <TextBlock Name="air_dateTextBlock" 
-                                       Text="{x:Bind sys:String.Format('开播时间：{0}',air_date)}" 
+                                       Text="{x:Bind sys:String.Format('开播时间：{0}',ViewModel.Air_date), Mode=OneWay}" 
                                        FontSize="15" 
                                        Foreground="#666666" 
                                        Margin="0,2,0,0" />
                             <TextBlock Name="air_weekdayTextBlock" 
-                                       Text="{x:Bind sys:String.Format('更新时间：{0}',airWeekdayName)}" 
+                                       Text="{x:Bind sys:String.Format('更新时间：{0}',ViewModel.AirWeekdayName), Mode=OneWay}" 
                                        FontSize="15" 
                                        Foreground="#666666" 
                                        Margin="0,2,0,0" />
                             <StackPanel Orientation="Horizontal">
                                 <Button Name="CollectionButton"
-                                        IsEnabled="False"
+                                        IsEnabled="{x:Bind common:Converters.Not(ViewModel.IsCollectionStatusLoading), Mode=OneWay}"
                                         Foreground="#d26585"
                                         Background="{ThemeResource SystemAltHighColor}">
                                     <Button.Flyout>
@@ -74,17 +73,17 @@
                                     <StackPanel Orientation="Horizontal">
                                         <FontIcon Name="CollectionButtonIcon" 
                                                   FontFamily="Segoe MDL2 Assets" 
-                                                  Glyph="&#xE006;" 
+                                                  Glyph="{x:Bind ViewModel.CollectionStatusIcon, Mode=OneWay}" 
                                                   Margin="0,0,5,0"/>
                                         <TextBlock Name="CollectionButtonText" 
-                                                   Text="收藏" />
+                                                   Text="{x:Bind ViewModel.CollectionStatusText, Mode=OneWay}" />
                                     </StackPanel>
                                 </Button>
                                 <Button Name="CollectionAdvanceButton" 
                                         FontFamily="Segoe MDL2 Assets" 
                                         Background="{ThemeResource SystemAltHighColor}"
                                         Click="CollectionAdvanceButton_Click"
-                                        IsEnabled="False"
+                                        IsEnabled="{x:Bind common:Converters.Not(ViewModel.IsRateLoading), Mode=OneWay}"
                                         Margin="5,0,0,0">
                                     <FontIcon FontFamily="Segoe MDL2 Assets" 
                                               Glyph="&#xE70F;"/>
@@ -93,6 +92,7 @@
                         </StackPanel>
                     </Grid>
                     <TextBlock Name="SummaryTextBlock" 
+                               Text="{x:Bind ViewModel.Summary, Mode=OneWay}"
                                IsTextSelectionEnabled="True"
                                FontSize="18" 
                                TextWrapping="Wrap" 
@@ -101,7 +101,7 @@
                     <HyperlinkButton Name="MoreInfoHyperLink"
                                      Content="更多资料"
                                      Click="MoreInfoButton_Click"
-                                     Visibility="Collapsed"
+                                     Visibility="{x:Bind common:Converters.CollapsedIf(ViewModel.IsDetailLoading), Mode=OneWay}"
                                      FontSize="16"
                                      Foreground="#d26585"/>
 
@@ -160,10 +160,12 @@
         </GridView>
         
         <ProgressBar Name="MyProgressBar"
+                     Visibility="{x:Bind ViewModel.IsUpdating, Mode=OneWay}"
                      IsIndeterminate="True"
-                     Visibility="Collapsed"
                      VerticalAlignment="Top"/>
         <ProgressRing Name="MyProgressRing"
+                      Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                      IsActive="True"
                       Width="50"
                       Height="50"/>
 

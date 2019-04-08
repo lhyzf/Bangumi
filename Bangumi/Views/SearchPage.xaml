@@ -1,11 +1,12 @@
 ﻿<Page
-    x:Class="Bangumi.Pages.SearchPage"
+    x:Class="Bangumi.Views.SearchPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Bangumi.Pages"
+    xmlns:local="using:Bangumi.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:Bangumi.Models"
+    xmlns:common="using:Bangumi.Common"
     SizeChanged="Page_SizeChanged"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d"
@@ -18,9 +19,10 @@
         </Grid.RowDefinitions>
 
         <AutoSuggestBox Name="SearchBox" 
+                        Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}"
                         PlaceholderText="关键字|Subject ID"
                         QueryIcon="Find"
-                        ItemsSource="{x:Bind suggestions}"
+                        ItemsSource="{x:Bind ViewModel.suggestions}"
                         TextChanged="AutoSuggestBox_TextChanged"
                         QuerySubmitted="AutoSuggestBox_QuerySubmitted"
                         Margin="10,0"/>
@@ -29,6 +31,7 @@
                 Visibility="Collapsed"/>
 
         <Pivot Name="TypePivot" 
+               SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
                Grid.Row="1"
                SelectionChanged="TypePivot_SelectionChanged">
             <PivotItem Header="动画" 

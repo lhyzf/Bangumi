@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Bangumi.Facades
 {
-    class BangumiFacade
+    public class BangumiFacade
     {
         private const string baseUrl = Constants.baseUrl;
         private const string client_id = Constants.client_id;
@@ -30,6 +30,10 @@ namespace Bangumi.Facades
                 var subjectCollections = await GetSubjectCollectionAsync(subjectType);
                 //清空原数据
                 subjectCollection.Clear();
+                if (subjectCollections.collects==null)
+                {
+                    return true;
+                }
                 foreach (var subjects in subjectCollections.collects)
                 {
                     foreach (var item in subjects.list)
@@ -131,6 +135,10 @@ namespace Bangumi.Facades
             try
             {
                 string response = await HttpHelper.GetAsync(url);
+                if (response == "null")
+                {
+                    return new SubjectCollection();
+                }
                 if (response != null)
                 {
                     var result = JsonConvert.DeserializeObject<List<SubjectCollection>>(response);
@@ -450,6 +458,7 @@ namespace Bangumi.Facades
             @do,
             on_hold,
             dropped,
+            no,
         }
 
         public enum SubjectType : int
