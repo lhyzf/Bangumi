@@ -23,12 +23,7 @@ namespace Bangumi.ViewModels
         }
 
         public ObservableCollection<string> Suggestions { get; private set; } = new ObservableCollection<string>();
-        public ObservableCollection<Subject> AllCollection;
-        public ObservableCollection<Subject> AnimeCollection;
-        public ObservableCollection<Subject> BookCollection;
-        public ObservableCollection<Subject> MusicCollection;
-        public ObservableCollection<Subject> GameCollection;
-        public ObservableCollection<Subject> RealCollection;
+        public SearchResultIncrementalLoadingCollection SearchResultCollection;
 
         private int _selectedIndex;
         public int SelectedIndex
@@ -43,12 +38,21 @@ namespace Bangumi.ViewModels
             set => Set(ref _searchText, value);
         }
 
-        private string _searchStatus;
-        public string SearchStatus
+        public ObservableCollection<string> SearchStatus { get; private set; } = new ObservableCollection<string>
         {
-            get => _searchStatus;
-            set => Set(ref _searchStatus, value);
-        }
+            "","","","","",""
+        };
+
+        public ObservableCollection<string> ResultNumber { get; private set; } = new ObservableCollection<string>
+        {
+            "","","","","",""
+        };
+
+        public ObservableCollection<bool> NoResult { get; private set; } = new ObservableCollection<bool>
+        {
+            false,false,false,false,false,false
+        };
+
 
         public bool SuggestDelay = false;
         public string[] PreSearch = new string[6];
@@ -85,6 +89,20 @@ namespace Bangumi.ViewModels
         }
 
         /// <summary>
+        /// 重置搜索页结果状态显示
+        /// </summary>
+        public void ResetSearchStatus()
+        {
+            for (int i = 0; i < ResultNumber.Count; i++)
+            {
+                ResultNumber[i] = "";
+                SearchStatus[i] = "";
+                NoResult[i] = false;
+                PreSearch[i] = "";
+            }
+        }
+
+        /// <summary>
         /// 检查当前关键词是否与上一次搜索相同。
         /// </summary>
         /// <returns></returns>
@@ -101,6 +119,36 @@ namespace Bangumi.ViewModels
             }
         }
 
+        /// <summary>
+        /// 开始加载。
+        /// </summary>
+        /// <param name="index">当前搜索所属类型所在的Pivot索引。</param>
+        public void OnLoadMoreStarted(int index)
+        {
+            SearchStatus[index] = "正在加载...";
+        }
+
+        /// <summary>
+        /// 加载完成。
+        /// </summary>
+        /// <param name="index">当前搜索所属类型所在的Pivot索引。</param>
+        public void OnLoadMoreCompleted(int index, int ItemsCount, bool HasMoreItems)
+        {
+            ResultNumber[index] = "(" + ItemsCount + ")";
+            if (!HasMoreItems)
+            {
+                if (ItemsCount == 0)
+                {
+                    SearchStatus[index] = "";
+                    ResultNumber[index] = "";
+                    NoResult[index] = true;
+                }
+                else
+                {
+                    SearchStatus[index] = "没有更多了";
+                }
+            }
+        }
 
     }
 
@@ -109,15 +157,18 @@ namespace Bangumi.ViewModels
     /// </summary>
     public class SearchResultIncrementalLoadingCollection : ObservableCollection<Subject>, ISupportIncrementalLoading
     {
-        public int offset { get; private set; } = 0;
-        public int max { get; private set; } = 20;
+        int offset = 0;
+        int max = 20;
+        int index;
+        int ItemsCount = 0;
         private string keyword;
         private string type;
 
-        public SearchResultIncrementalLoadingCollection(string keyword, string type)
+        public SearchResultIncrementalLoadingCollection(string keyword, string type, int index)
         {
             this.keyword = keyword;
             this.type = type;
+            this.index = index;
         }
 
         public bool HasMoreItems { get { return offset < max; } }
@@ -128,9 +179,13 @@ namespace Bangumi.ViewModels
             return AsyncInfo.Run(async cancelToken =>
             {
                 System.Diagnostics.Debug.WriteLine("Loading {0}/{1} items", offset + 20, max);
-                //await Task.Run(() => { });
                 await Task.WhenAll(Task.Delay(1000), dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
+                    // 加载开始事件
+                    if (this.OnLoadMoreStarted != null)
+                    {
+                        this.OnLoadMoreStarted(index);
+                    }
                     SearchResult result = await BangumiFacade.GetSearchResultAsync(keyword, type, offset, 20);
                     if (result != null)
                     {
@@ -143,13 +198,27 @@ namespace Bangumi.ViewModels
                         {
                             System.Diagnostics.Debug.WriteLine("Loading complete.");
                         }
+                        ItemsCount += result.list.Count;
+                    }
+                    offset += 20;
+                    // 加载完成事件
+                    if (this.OnLoadMoreCompleted != null)
+                    {
+                        if (offset > max)
+                        {
+                            offset = max;
+                        }
+                        this.OnLoadMoreCompleted(index, ItemsCount, HasMoreItems);
                     }
                 }).AsTask());
-
-                offset += 20;
 
                 return new LoadMoreItemsResult { Count = count };
             });
         }
+        public delegate void LoadMoreStarted(int index);
+        public delegate void LoadMoreCompleted(int index, int ItemsCount, bool HasMoreItems);
+
+        public event LoadMoreStarted OnLoadMoreStarted;
+        public event LoadMoreCompleted OnLoadMoreCompleted;
     }
 }
