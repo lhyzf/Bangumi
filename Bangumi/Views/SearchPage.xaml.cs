@@ -49,6 +49,7 @@ namespace Bangumi.Views
 
         private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
+            ViewModel.ResetSearchStatus();
             if (args.ChosenSuggestion != null)
             {
                 // User selected an item from the suggestion list, take an action on it here.
@@ -97,47 +98,43 @@ namespace Bangumi.Views
             {
                 return;
             }
-            string keyword = ViewModel.SearchText;
             string type = "";
+            ViewModel.PreSearch[ViewModel.SelectedIndex] = ViewModel.SearchText;
             switch (ViewModel.SelectedIndex)
             {
                 case 0:
                     type = "";
-                    ViewModel.PreSearch[ViewModel.SelectedIndex] = ViewModel.SearchText;
-                    ViewModel.AllCollection= new SearchResultIncrementalLoadingCollection(keyword, type);
-                    AllGridView.ItemsSource = ViewModel.AllCollection;
+                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex);
+                    AllGridView.ItemsSource = ViewModel.SearchResultCollection;
                     break;
                 case 1:
                     type = "2";
-                    ViewModel.PreSearch[ViewModel.SelectedIndex] = ViewModel.SearchText;
-                    ViewModel.AnimeCollection = new SearchResultIncrementalLoadingCollection(keyword, type);
-                    AnimeGridView.ItemsSource = ViewModel.AnimeCollection;
+                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex);
+                    AnimeGridView.ItemsSource = ViewModel.SearchResultCollection;
                     break;
                 case 2:
                     type = "1";
-                    ViewModel.PreSearch[ViewModel.SelectedIndex] = ViewModel.SearchText;
-                    ViewModel.BookCollection = new SearchResultIncrementalLoadingCollection(keyword, type);
-                    BookGridView.ItemsSource = ViewModel.BookCollection;
+                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex);
+                    BookGridView.ItemsSource = ViewModel.SearchResultCollection;
                     break;
                 case 3:
                     type = "3";
-                    ViewModel.PreSearch[ViewModel.SelectedIndex] = ViewModel.SearchText;
-                    ViewModel.MusicCollection = new SearchResultIncrementalLoadingCollection(keyword, type);
-                    MusicGridView.ItemsSource = ViewModel.MusicCollection;
+                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex);
+                    MusicGridView.ItemsSource = ViewModel.SearchResultCollection;
                     break;
                 case 4:
                     type = "4";
-                    ViewModel.PreSearch[ViewModel.SelectedIndex] = ViewModel.SearchText;
-                    ViewModel.GameCollection = new SearchResultIncrementalLoadingCollection(keyword, type);
-                    GameGridView.ItemsSource = ViewModel.GameCollection;
+                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex);
+                    GameGridView.ItemsSource = ViewModel.SearchResultCollection;
                     break;
                 case 5:
                     type = "6";
-                    ViewModel.PreSearch[ViewModel.SelectedIndex] = ViewModel.SearchText;
-                    ViewModel.RealCollection = new SearchResultIncrementalLoadingCollection(keyword, type);
-                    RealGridView.ItemsSource = ViewModel.RealCollection;
+                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex);
+                    RealGridView.ItemsSource = ViewModel.SearchResultCollection;
                     break;
             }
+            ViewModel.SearchResultCollection.OnLoadMoreStarted += ViewModel.OnLoadMoreStarted;
+            ViewModel.SearchResultCollection.OnLoadMoreCompleted += ViewModel.OnLoadMoreCompleted;
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -34,17 +34,31 @@
                SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
                Grid.Row="1"
                SelectionChanged="TypePivot_SelectionChanged">
-            <PivotItem Header="全部" 
-                       Margin="0">
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock Text="全部">
+                        <Run Text="{x:Bind ViewModel.ResultNumber[0], Mode=OneWay}"/>
+                    </TextBlock>
+                </PivotItem.Header>
                 <GridView Name="AllGridView"
                           Padding="10,0"
                           IsItemClickEnabled="True" 
                           ItemClick="GridView_ItemClick"
                           IncrementalLoadingTrigger="Edge"
                           DataFetchSize="1">
+                    <GridView.Header>
+                        <TextBlock Text="无搜索结果，请换个关键词再试"
+                                   Visibility="{x:Bind ViewModel.NoResult[0], Mode=OneWay}"
+                                   FontSize="16" 
+                                   Foreground="Gray"
+                                   LineHeight="30"
+                                   HorizontalAlignment="Center"/>
+                    </GridView.Header>
                     <GridView.Footer>
-                        <TextBlock Text="{x:Bind ViewModel.SearchStatus, Mode=OneWay}"
-                                   FontSize="14" 
+                        <TextBlock Text="{x:Bind ViewModel.SearchStatus[0], Mode=OneWay}"
+                                   FontSize="16" 
+                                   Foreground="Gray"
+                                   LineHeight="30"
                                    HorizontalAlignment="Center"/>
                     </GridView.Footer>
                     <GridView.ItemTemplate>
@@ -87,14 +101,33 @@
                     </GridView.ItemTemplate>
                 </GridView>
             </PivotItem>
-            <PivotItem Header="动画" 
-                       Margin="0">
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock Text="动画">
+                        <Run Text="{x:Bind ViewModel.ResultNumber[1], Mode=OneWay}"/>
+                    </TextBlock>
+                </PivotItem.Header>
                 <GridView Name="AnimeGridView"
                           Padding="10,0"
                           IsItemClickEnabled="True" 
                           ItemClick="GridView_ItemClick"
                           IncrementalLoadingTrigger="Edge"
                           DataFetchSize="1">
+                    <GridView.Header>
+                        <TextBlock Text="无搜索结果，请换个关键词再试"
+                                   Visibility="{x:Bind ViewModel.NoResult[1], Mode=OneWay}"
+                                   FontSize="16" 
+                                   Foreground="Gray"
+                                   LineHeight="30"
+                                   HorizontalAlignment="Center"/>
+                    </GridView.Header>
+                    <GridView.Footer>
+                        <TextBlock Text="{x:Bind ViewModel.SearchStatus[1], Mode=OneWay}"
+                                   FontSize="16" 
+                                   Foreground="Gray"
+                                   LineHeight="30"
+                                   HorizontalAlignment="Center"/>
+                    </GridView.Footer>
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="data:Subject">
                             <Grid Padding="5"
@@ -129,14 +162,33 @@
                     </GridView.ItemTemplate>
                 </GridView>
             </PivotItem>
-            <PivotItem Header="书籍"
-                       Margin="0">
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock Text="书籍">
+                        <Run Text="{x:Bind ViewModel.ResultNumber[2], Mode=OneWay}"/>
+                    </TextBlock>
+                </PivotItem.Header>
                 <GridView Name="BookGridView"
                           Padding="10,0"
                           IsItemClickEnabled="True" 
                           ItemClick="GridView_ItemClick"
                           IncrementalLoadingTrigger="Edge"
                           DataFetchSize="1">
+                    <GridView.Header>
+                        <TextBlock Text="无搜索结果，请换个关键词再试"
+                                   Visibility="{x:Bind ViewModel.NoResult[2], Mode=OneWay}"
+                                   FontSize="16" 
+                                   Foreground="Gray"
+                                   LineHeight="30"
+                                   HorizontalAlignment="Center"/>
+                    </GridView.Header>
+                    <GridView.Footer>
+                        <TextBlock Text="{x:Bind ViewModel.SearchStatus[2], Mode=OneWay}"
+                                   FontSize="16" 
+                                   Foreground="Gray"
+                                   LineHeight="30"
+                                   HorizontalAlignment="Center"/>
+                    </GridView.Footer>
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="data:Subject">
                             <Grid Padding="5"
@@ -171,14 +223,33 @@
                     </GridView.ItemTemplate>
                 </GridView>
             </PivotItem>
-            <PivotItem Header="音乐"
-                       Margin="0">
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock Text="音乐">
+                        <Run Text="{x:Bind ViewModel.ResultNumber[3], Mode=OneWay}"/>
+                    </TextBlock>
+                </PivotItem.Header>
                 <GridView Name="MusicGridView"
                           Padding="10,0"
                           IsItemClickEnabled="True" 
                           ItemClick="GridView_ItemClick"
                           IncrementalLoadingTrigger="Edge"
                           DataFetchSize="1">
+                    <GridView.Header>
+                        <TextBlock Text="无搜索结果，请换个关键词再试"
+                                   Visibility="{x:Bind ViewModel.NoResult[3], Mode=OneWay}"
+                                   FontSize="16" 
+                                   Foreground="Gray"
+                                   LineHeight="30"
+                                   HorizontalAlignment="Center"/>
+                    </GridView.Header>
+                    <GridView.Footer>
+                        <TextBlock Text="{x:Bind ViewModel.SearchStatus[3], Mode=OneWay}"
+                                   FontSize="16" 
+                                   Foreground="Gray"
+                                   LineHeight="30"
+                                   HorizontalAlignment="Center"/>
+                    </GridView.Footer>
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="data:Subject">
                             <Grid Padding="5"
@@ -213,14 +284,33 @@
                     </GridView.ItemTemplate>
                 </GridView>
             </PivotItem>
-            <PivotItem Header="游戏"
-                       Margin="0">
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock Text="游戏">
+                        <Run Text="{x:Bind ViewModel.ResultNumber[4], Mode=OneWay}"/>
+                    </TextBlock>
+                </PivotItem.Header>
                 <GridView Name="GameGridView"
                           Padding="10,0"
                           IsItemClickEnabled="True" 
                           ItemClick="GridView_ItemClick"
                           IncrementalLoadingTrigger="Edge"
                           DataFetchSize="1">
+                    <GridView.Header>
+                        <TextBlock Text="无搜索结果，请换个关键词再试"
+                                   Visibility="{x:Bind ViewModel.NoResult[4], Mode=OneWay}"
+                                   FontSize="16" 
+                                   Foreground="Gray"
+                                   LineHeight="30"
+                                   HorizontalAlignment="Center"/>
+                    </GridView.Header>
+                    <GridView.Footer>
+                        <TextBlock Text="{x:Bind ViewModel.SearchStatus[4], Mode=OneWay}"
+                                   FontSize="16" 
+                                   Foreground="Gray"
+                                   LineHeight="30"
+                                   HorizontalAlignment="Center"/>
+                    </GridView.Footer>
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="data:Subject">
                             <Grid Padding="5"
@@ -255,14 +345,33 @@
                     </GridView.ItemTemplate>
                 </GridView>
             </PivotItem>
-            <PivotItem Header="三次元"
-                       Margin="0">
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock Text="三次元">
+                        <Run Text="{x:Bind ViewModel.ResultNumber[5], Mode=OneWay}"/>
+                    </TextBlock>
+                </PivotItem.Header>
                 <GridView Name="RealGridView"
                           Padding="10,0"
                           IsItemClickEnabled="True" 
                           ItemClick="GridView_ItemClick"
                           IncrementalLoadingTrigger="Edge"
                           DataFetchSize="1">
+                    <GridView.Header>
+                        <TextBlock Text="无搜索结果，请换个关键词再试"
+                                   Visibility="{x:Bind ViewModel.NoResult[5], Mode=OneWay}"
+                                   FontSize="16" 
+                                   Foreground="Gray"
+                                   LineHeight="30"
+                                   HorizontalAlignment="Center"/>
+                    </GridView.Header>
+                    <GridView.Footer>
+                        <TextBlock Text="{x:Bind ViewModel.SearchStatus[5], Mode=OneWay}"
+                                   FontSize="16" 
+                                   Foreground="Gray"
+                                   LineHeight="30"
+                                   HorizontalAlignment="Center"/>
+                    </GridView.Footer>
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="data:Subject">
                             <Grid Padding="5"
