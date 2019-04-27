@@ -26,7 +26,7 @@ namespace Bangumi.Helper
                 HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
                 using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
                 {
-                    return reader.ReadToEnd();
+                    return await reader.ReadToEndAsync();
                 }
             }
             catch (Exception)
@@ -55,7 +55,7 @@ namespace Bangumi.Helper
                 HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
                 using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
                 {
-                    return reader.ReadToEnd();
+                    return await reader.ReadToEndAsync();
                 }
             }
             catch (Exception)
