@@ -14,15 +14,31 @@
         <Pivot>
             <PivotItem Header="设置">
                 <StackPanel Padding="0,10,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                                    Margin="0,4,5,0"
+                                    FontWeight="Normal"
+                                    Text="主题模式" />
+                        <TextBlock Text="*重启生效" 
+                                   VerticalAlignment="Bottom"
+                                   FontSize="12"/>
+                    </StackPanel>
+                    <StackPanel Name="ThemePanel" Margin="0,10,0,0">
+                        <RadioButton Tag="Light" Checked="OnThemeRadioButtonChecked" Content="亮" />
+                        <RadioButton Tag="Dark" Checked="OnThemeRadioButtonChecked" Content="暗" />
+                        <RadioButton Tag="Default" Checked="OnThemeRadioButtonChecked" Content="使用系统设置" />
+                    </StackPanel>
                     <ToggleSwitch Name="EpsBatchToggleSwitch"
                                   OnContent="开启" 
                                   OffContent="关闭"
                                   FontSize="16"
                                   Toggled="EpsBatchToggleSwitch_Toggled">
                         <ToggleSwitch.Header>
-                            <TextBlock Text="收藏状态修改为看过时，将所有章节状态修改为看过"
-                                       TextWrapping="Wrap"
-                                       FontSize="18" />
+                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                                       Text="收藏状态修改为看过时，将所有章节状态修改为看过"
+                                       Margin="0,4,0,0"
+                                       FontWeight="Normal"
+                                       TextWrapping="Wrap" />
                         </ToggleSwitch.Header>
                     </ToggleSwitch>
                 </StackPanel>

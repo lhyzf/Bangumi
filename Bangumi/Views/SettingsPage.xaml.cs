@@ -1,5 +1,6 @@
 ﻿using Bangumi.Helper;
 using System;
+using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -17,7 +18,7 @@ namespace Bangumi.Views
             get
             {
                 var version = Windows.ApplicationModel.Package.Current.Id.Version;
-                return String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+                return string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
             }
         }
 
@@ -29,6 +30,7 @@ namespace Bangumi.Views
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             EpsBatchToggleSwitch.IsOn = SettingHelper.EpsBatch == true;
+            ThemePanel.Children.Cast<RadioButton>().FirstOrDefault(c => c?.Tag?.ToString() == SettingHelper.MyTheme.ToString()).IsChecked = true;
         }
 
         private void EpsBatchToggleSwitch_Toggled(object sender, RoutedEventArgs e)
@@ -46,5 +48,28 @@ namespace Bangumi.Views
                 }
             }
         }
+
+        // 修改应用主题颜色
+        private void OnThemeRadioButtonChecked(object sender, RoutedEventArgs e)
+        {
+            var selectedTheme = ((RadioButton)sender)?.Tag?.ToString();
+
+            if (selectedTheme != null)
+            {
+                if (selectedTheme == "Dark")
+                {
+                    SettingHelper.MyTheme = ElementTheme.Dark;
+                }
+                else if (selectedTheme == "Light")
+                {
+                    SettingHelper.MyTheme = ElementTheme.Light;
+                }
+                else
+                {
+                    SettingHelper.MyTheme = ElementTheme.Default;
+                }
+            }
+        }
+
     }
 }
