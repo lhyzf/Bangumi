@@ -30,7 +30,7 @@ namespace Bangumi.Facades
                 var subjectCollections = await GetSubjectCollectionAsync(subjectType);
                 //清空原数据
                 subjectCollection.Clear();
-                if (subjectCollections.collects==null)
+                if (subjectCollections.collects == null)
                 {
                     return true;
                 }
