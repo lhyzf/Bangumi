@@ -27,4 +27,4 @@
 
 ## 编译环境
 
-- Visual Studio Community 2017
+- Visual Studio Community 2019
