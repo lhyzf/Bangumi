@@ -108,6 +108,7 @@
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="data:Ep">
                     <Grid Tapped="Eps_Tapped" 
+                          RightTapped="Eps_RightTapped"
                           Padding="5" 
                           Height="68"
                           Width="{Binding ElementName=MyWidth,Path=Width}"

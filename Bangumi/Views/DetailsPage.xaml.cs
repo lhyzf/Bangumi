@@ -119,6 +119,17 @@ namespace Bangumi.Views
         }
 
         /// <summary>
+        /// 修改章节状态弹出菜单，无视章节状态。
+        /// </summary>
+        private void Eps_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            if (OAuthHelper.IsLogin && !ViewModel.IsLoading)
+            {
+                FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+            }
+        }
+
+        /// <summary>
         /// 收藏想看。
         /// </summary>
         private void WishCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -200,7 +211,6 @@ namespace Bangumi.Views
             double UseableWidth = EpsGridView.ActualWidth - EpsGridView.Padding.Left - EpsGridView.Padding.Right;
             MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
         }
-
 
     }
 }
