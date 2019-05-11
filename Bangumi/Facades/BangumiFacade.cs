@@ -59,7 +59,7 @@ namespace Bangumi.Facades
         /// </summary>
         /// <param name="watchingListCollection"></param>
         /// <returns></returns>
-        public static async Task<bool> PopulateWatchingListAsync(ObservableCollection<Watching> watchingListCollection)
+        public static async Task<bool> PopulateWatchingListAsync(ObservableCollection<WatchingStatus> watchingListCollection)
         {
             try
             {
@@ -68,6 +68,7 @@ namespace Bangumi.Facades
                 watchingListCollection.Clear();
                 foreach (var watching in watchingList)
                 {
+                    WatchingStatus watchingStatus = new WatchingStatus();
                     if (string.IsNullOrEmpty(watching.subject.name_cn))
                     {
                         watching.subject.name_cn = watching.subject.name;
@@ -77,8 +78,52 @@ namespace Bangumi.Facades
                         watching.subject.images = new Images { common = NoImageUri };
                     }
 
-                    watchingListCollection.Add(watching);
+                    watchingStatus.name = watching.subject.name;
+                    watchingStatus.name_cn = watching.subject.name_cn;
+                    watchingStatus.image = watching.subject.images.common;
+                    watchingStatus.subject_id = watching.subject_id;
+                    watchingStatus.lasttouch = watching.lasttouch;
+                    watchingStatus.url = watching.subject.url;
+                    if (watching.ep_status == 0)
+                        watchingStatus.watched_eps = "尚未观看";
+                    else
+                        watchingStatus.watched_eps = "看到第" + watching.ep_status + "话";
+                    watchingStatus.eps_count = "共" + watching.subject.eps_count + "话";
+                    watchingStatus.ep_color = "gray";
+
+                    watchingListCollection.Add(watchingStatus);
                 }
+                foreach (var watchingStatus in watchingListCollection)
+                {
+                    SimpleEp simpleEp = new SimpleEp();
+                    var subject = await GetSubjectEpsAsync(watchingStatus.subject_id.ToString());
+                    var progress = await GetProgressesAsync(watchingStatus.subject_id.ToString());
+                    if (subject.eps.Where(e => e.status == "NA").Count() == 0)
+                        watchingStatus.eps_count = "全" + subject.eps.Count + "话";
+                    else
+                        watchingStatus.eps_count = "更新到第" + (subject.eps.Count - subject.eps.Where(e => e.status == "NA").Count()) + "话";
+                    if (progress != null)
+                    {
+                        watchingStatus.watched_eps = "看到第" + progress.eps.Count + "话";
+                        if (progress.eps.Count < (subject.eps.Count - subject.eps.Where(e => e.status == "NA").Count()))
+                            watchingStatus.ep_color = "#d26585";
+                    }
+                    else
+                    {
+                        watchingStatus.watched_eps = "尚未观看";
+                        watchingStatus.ep_color = "#d26585";
+                    }
+                    watchingStatus.eps = new List<SimpleEp>();
+                    foreach (var ep in subject.eps)
+                    {
+                        simpleEp.id = ep.id;
+                        simpleEp.sort = ep.sort;
+                        simpleEp.status = ep.status;
+                        simpleEp.type = ep.type;
+                        watchingStatus.eps.Add(simpleEp);
+                    }
+                }
+
                 return true;
             }
             catch (Exception)

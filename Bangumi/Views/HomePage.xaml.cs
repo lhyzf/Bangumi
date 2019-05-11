@@ -42,7 +42,7 @@ namespace Bangumi.Views
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var selectedItem = (Watching)e.ClickedItem;
+            var selectedItem = (WatchingStatus)e.ClickedItem;
             Frame.Navigate(typeof(DetailsPage), selectedItem);
         }
 

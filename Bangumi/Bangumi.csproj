@@ -147,6 +147,7 @@
     <Compile Include="Models\AccessToken.cs" />
     <Compile Include="Models\BangumiModels.cs" />
     <Compile Include="Models\Constants.cs" />
+    <Compile Include="Models\WatchingStatus.cs" />
     <Compile Include="ViewModels\CollectionViewModel.cs" />
     <Compile Include="ViewModels\DetailsViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />

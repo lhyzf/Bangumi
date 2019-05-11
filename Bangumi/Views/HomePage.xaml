@@ -48,14 +48,14 @@
                 </StackPanel>
             </GridView.Header>
             <GridView.ItemTemplate>
-                <DataTemplate x:DataType="data:Watching">
+                <DataTemplate x:DataType="data:WatchingStatus">
                     <Grid Padding="5"
                           Width="{Binding ElementName=MyWidth,Path=Width}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Image Source="{x:Bind subject.images.common}" 
+                        <Image Source="{x:Bind image}" 
                                Height="75" 
                                Width="75" 
                                Stretch="UniformToFill" />
@@ -66,21 +66,23 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Text="{x:Bind subject.name_cn}" 
+                            <TextBlock Text="{x:Bind name_cn}" 
                                        FontSize="14" 
                                        Foreground="#d26585"
                                        TextWrapping="Wrap" />
                             <TextBlock Grid.Row="1"
-                                       Text="{x:Bind subject.name}" 
+                                       Text="{x:Bind name}" 
                                        FontSize="12" 
+                                       Foreground="Gray"
                                        TextTrimming="WordEllipsis"
                                        TextWrapping="NoWrap"/>
                             <TextBlock Grid.Row="2"
                                        FontSize="12" 
+                                       Foreground="{x:Bind ep_color, Mode=OneWay}"
                                        TextWrapping="Wrap">
-                                <Run Text="{x:Bind ep_status}"/>
+                                <Run Text="{x:Bind watched_eps, Mode=OneWay}"/>
                                 <Run Text="/"/>
-                                <Run Text="{x:Bind subject.eps_count}"/>
+                                <Run Text="{x:Bind eps_count, Mode=OneWay}"/>
                             </TextBlock>
                         </Grid>
                     </Grid>
