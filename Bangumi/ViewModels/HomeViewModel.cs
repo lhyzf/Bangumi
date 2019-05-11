@@ -14,9 +14,8 @@ namespace Bangumi.ViewModels
             IsLoading = false;
         }
 
-        public ObservableCollection<Watching> watchingCollection { get; private set; } = new ObservableCollection<Watching>();
-        //public ObservableCollection<Progress> progressCollection { get; set; }
-
+        public ObservableCollection<WatchingStatus> watchingCollection { get; private set; } = new ObservableCollection<WatchingStatus>();
+        
         private bool _isLoading;
         public bool IsLoading
         {

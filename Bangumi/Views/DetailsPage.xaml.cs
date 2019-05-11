@@ -34,12 +34,12 @@ namespace Bangumi.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter.GetType() == typeof(Watching))
+            if (e.Parameter.GetType() == typeof(WatchingStatus))
             {
-                var p = (Watching)e.Parameter;
+                var p = (WatchingStatus)e.Parameter;
                 ViewModel.SubjectId = p.subject_id.ToString();
-                ViewModel.ImageSource = p.subject.images.common;
-                ViewModel.Name_cn = p.subject.name_cn;
+                ViewModel.ImageSource = p.image;
+                ViewModel.Name_cn = p.name_cn;
             }
             else if (e.Parameter.GetType() == typeof(Subject))
             {
