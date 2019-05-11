@@ -29,9 +29,10 @@ namespace Bangumi.Helper
                     return await reader.ReadToEndAsync();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("Network request fail.(Get)");
+                Debug.WriteLine(e.Message);
                 return null;
             }
         }
@@ -58,9 +59,10 @@ namespace Bangumi.Helper
                     return await reader.ReadToEndAsync();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("Network request fail.(Post)");
+                Debug.WriteLine(e.Message);
                 return null;
             }
 
