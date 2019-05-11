@@ -30,7 +30,7 @@ namespace Bangumi.Helper
         {
             try
             {
-                String URL = "{oauthBaseUrl}/authorize?client_id=" + client_id + "&response_type=code";
+                string URL = $"{oauthBaseUrl}/authorize?client_id=" + client_id + "&response_type=code";
 
                 Uri StartUri = new Uri(URL);
                 // When using the desktop flow, the success code is displayed in the html title of this end uri
@@ -114,6 +114,13 @@ namespace Bangumi.Helper
                     UserIdString = result.user_id.ToString();
                     // 将信息写入本地文件
                     await WriteTokens(result);
+                }
+                else
+                {
+                    //授权信息已失效，要求重新登录
+                    IsLogin = false;
+                    await Authorize();
+                    await CheckTokens();
                 }
             }
             catch (Exception e)
