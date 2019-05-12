@@ -49,6 +49,7 @@ namespace Bangumi.Views
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             double UseableWidth = MyGridView.ActualWidth - MyGridView.Padding.Left - MyGridView.Padding.Right;
+            if (UseableWidth < 0) return;
             MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 220);
         }
     }
