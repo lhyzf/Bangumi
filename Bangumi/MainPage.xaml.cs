@@ -31,7 +31,7 @@ namespace Bangumi
         {
             this.InitializeComponent();
             // 设置窗口的最小大小
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 480));
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(200, 100));
             // 启用标题栏的后退按钮
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
