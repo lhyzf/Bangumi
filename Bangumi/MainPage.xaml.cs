@@ -281,6 +281,7 @@ namespace Bangumi
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 10);
                 MyProgressRing.IsActive = false;
                 MyProgressRing.Visibility = Visibility.Collapsed;
+                await Task.Delay(500);
                 await UpdataUserStatus();
             }
             else if (UserItem.Content.ToString() == "注销")
