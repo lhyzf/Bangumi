@@ -81,6 +81,16 @@ namespace Bangumi.Helper
                     //将信息写入本地文件
                     await WriteTokens(result);
                 }
+                else //再试一次
+                {
+                    response = await HttpHelper.PostAsync(url, postData);
+                    if (!string.IsNullOrEmpty(response))
+                    {
+                        var result = JsonConvert.DeserializeObject<AccessToken>(response);
+                        //将信息写入本地文件
+                        await WriteTokens(result);
+                    }
+                }
             }
             catch (Exception e)
             {

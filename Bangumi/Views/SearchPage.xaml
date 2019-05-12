@@ -88,11 +88,13 @@
                                     <TextBlock Grid.Row="1"
                                                Text="{x:Bind name}" 
                                                FontSize="12" 
+                                               Foreground="Gray"
                                                TextTrimming="WordEllipsis"
                                                TextWrapping="NoWrap"/>
                                     <TextBlock Grid.Row="2"
                                                Text="{x:Bind common:Converters.GetSubjectTypeName(type)}" 
                                                FontSize="12" 
+                                               Foreground="Gray"
                                                TextTrimming="WordEllipsis"
                                                TextWrapping="NoWrap"/>
                                 </Grid>
@@ -154,6 +156,7 @@
                                     <TextBlock Grid.Row="1"
                                                Text="{x:Bind name}" 
                                                FontSize="12" 
+                                               Foreground="Gray"
                                                TextTrimming="WordEllipsis"
                                                TextWrapping="NoWrap"/>
                                 </Grid>
@@ -215,6 +218,7 @@
                                     <TextBlock Grid.Row="1"
                                                Text="{x:Bind name}" 
                                                FontSize="12" 
+                                               Foreground="Gray"
                                                TextTrimming="WordEllipsis"
                                                TextWrapping="NoWrap"/>
                                 </Grid>
@@ -276,6 +280,7 @@
                                     <TextBlock Grid.Row="1"
                                                Text="{x:Bind name}" 
                                                FontSize="12" 
+                                               Foreground="Gray"
                                                TextTrimming="WordEllipsis"
                                                TextWrapping="NoWrap"/>
                                 </Grid>
@@ -337,6 +342,7 @@
                                     <TextBlock Grid.Row="1"
                                                Text="{x:Bind name}" 
                                                FontSize="12" 
+                                               Foreground="Gray"
                                                TextTrimming="WordEllipsis"
                                                TextWrapping="NoWrap"/>
                                 </Grid>
@@ -398,6 +404,7 @@
                                     <TextBlock Grid.Row="1"
                                                Text="{x:Bind name}" 
                                                FontSize="12" 
+                                               Foreground="Gray"
                                                TextTrimming="WordEllipsis"
                                                TextWrapping="NoWrap"/>
                                 </Grid>

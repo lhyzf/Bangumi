@@ -103,6 +103,7 @@
                                         <TextBlock Grid.Row="1"
                                                    Text="{x:Bind subject.name}" 
                                                    FontSize="12"
+                                                   Foreground="Gray"
                                                    TextTrimming="WordEllipsis"/>
                                     </Grid>
                                 </Grid>

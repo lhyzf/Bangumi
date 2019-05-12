@@ -151,7 +151,7 @@ namespace Bangumi.Facades
                             if (progress.eps.Count < (watchingStatus.eps.Count - watchingStatus.eps.Where(e => e.status == "NA").Count()))
                                 watchingStatus.ep_color = "#d26585";
                             else
-                                watchingStatus.ep_color = "gray";
+                                watchingStatus.ep_color = "Gray";
                         }
                         else
                         {
@@ -190,7 +190,7 @@ namespace Bangumi.Facades
                                 if (progress.eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                                     item.ep_color = "#d26585";
                                 else
-                                    item.ep_color = "gray";
+                                    item.ep_color = "Gray";
                             }
                             else
                             {

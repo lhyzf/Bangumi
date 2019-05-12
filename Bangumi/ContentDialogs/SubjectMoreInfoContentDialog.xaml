@@ -7,6 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="using:System"
     mc:Ignorable="d"
+    xmlns:helper="using:Bangumi.Helper"
+    RequestedTheme="{x:Bind helper:SettingHelper.MyTheme}"
     Title="TITLE"
     PrimaryButtonText="关闭"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
