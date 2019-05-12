@@ -50,7 +50,6 @@
                     Visibility="Collapsed"/>
 
         <Pivot Name="WeekPivot" 
-               SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=OneWay}"
                Grid.Row="1" 
                ItemsSource="{x:Bind ViewModel.bangumiCollection}" 
                IsHeaderItemsCarouselEnabled="False">

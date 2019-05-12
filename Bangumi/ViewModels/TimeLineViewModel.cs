@@ -26,13 +26,6 @@ namespace Bangumi.ViewModels
             set => Set(ref _isLoading, value);
         }
 
-        private int _selectedIndex;
-        public int SelectedIndex
-        {
-            get => _selectedIndex;
-            set => Set(ref _selectedIndex, value);
-        }
-
         private string _message;
         public string Message
         {
@@ -49,45 +42,12 @@ namespace Bangumi.ViewModels
             if (await BangumiFacade.PopulateBangumiCalendarAsync(bangumiCollection))
             {
                 Message = "更新时间：" + DateTime.Now;
-                SelectedIndex = GetDayOfWeek();
             }
             else
             {
                 Message = "网络连接失败，请重试！";
             }
             IsLoading = false;
-        }
-
-        private int GetDayOfWeek()
-        {
-            int day = 0;
-            switch (DateTime.Now.DayOfWeek)
-            {
-                case DayOfWeek.Monday:
-                    day = 0;
-                    break;
-                case DayOfWeek.Tuesday:
-                    day = 1;
-                    break;
-                case DayOfWeek.Wednesday:
-                    day = 2;
-                    break;
-                case DayOfWeek.Thursday:
-                    day = 3;
-                    break;
-                case DayOfWeek.Friday:
-                    day = 4;
-                    break;
-                case DayOfWeek.Saturday:
-                    day = 5;
-                    break;
-                case DayOfWeek.Sunday:
-                    day = 6;
-                    break;
-                default:
-                    break;
-            }
-            return day;
         }
 
 
