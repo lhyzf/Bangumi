@@ -155,6 +155,7 @@ namespace Bangumi.Facades
                                 item.eps_count = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
                             if (progress != null)
                             {
+                                item.next_ep = progress.eps.Count + 1;
                                 item.watched_eps = "看到第" + progress.eps.Count + "话";
                                 if (progress.eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                                     item.ep_color = "#d26585";
@@ -175,6 +176,7 @@ namespace Bangumi.Facades
                             }
                             else
                             {
+                                item.next_ep = 1;
                                 item.watched_eps = "尚未观看";
                                 item.ep_color = "#d26585";
                             }
@@ -204,6 +206,7 @@ namespace Bangumi.Facades
                                 var progress = await GetProgressesAsync(item.subject_id.ToString());
                                 if (progress != null)
                                 {
+                                    item.next_ep = progress.eps.Count + 1;
                                     item.watched_eps = "看到第" + progress.eps.Count + "话";
                                     if (progress.eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                                         item.ep_color = "#d26585";
@@ -224,6 +227,7 @@ namespace Bangumi.Facades
                                 }
                                 else
                                 {
+                                    item.next_ep = 1;
                                     item.watched_eps = "尚未观看";
                                     item.ep_color = "#d26585";
                                 }

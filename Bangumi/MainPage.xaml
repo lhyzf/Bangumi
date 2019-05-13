@@ -12,7 +12,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 
-    <Grid>
+    <Grid Background="{ThemeResource SystemControlAcrylicWindowBrush}">
         <muxc:NavigationView x:Name="NavView"
                              Loaded="NavView_Loaded"
                              ItemInvoked="NavView_ItemInvoked"

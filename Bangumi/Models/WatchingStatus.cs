@@ -18,9 +18,19 @@ namespace Bangumi.Models
         public int lasttouch { get; set; }
         public string url { get; set; }
         public string image { get; set; }
-        public List<SimpleEp> eps { get; set; }
         private string _ep_color { get; set; }
+        private int _next_ep { get; set; }
+        public List<SimpleEp> eps { get; set; }
 
+        public int next_ep
+        {
+            get { return _next_ep; }
+            set
+            {
+                _next_ep = value;
+                OnPropertyChanged();
+            }
+        }
         public string ep_color
         {
             get { return _ep_color; }

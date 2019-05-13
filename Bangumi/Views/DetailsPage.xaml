@@ -13,7 +13,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid Background="{ThemeResource SystemControlAcrylicWindowBrush}">
         <GridView Name="EpsGridView" 
                   ItemsSource="{x:Bind ViewModel.eps}" 
                   Padding="10,0,10,5">
@@ -51,7 +51,8 @@
                                 <Button Name="CollectionButton"
                                         IsEnabled="{x:Bind common:Converters.Not(ViewModel.IsCollectionStatusLoading), Mode=OneWay}"
                                         Foreground="#d26585"
-                                        Background="{ThemeResource SystemAltHighColor}">
+                                        Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
+                                        Style="{StaticResource ButtonRevealStyle}">
                                     <Button.Flyout>
                                         <MenuFlyout>
                                             <MenuFlyoutItem Text="想看" 
@@ -80,7 +81,8 @@
                                 </Button>
                                 <Button Name="CollectionAdvanceButton" 
                                         FontFamily="Segoe MDL2 Assets" 
-                                        Background="{ThemeResource SystemAltHighColor}"
+                                        Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
+                                        Style="{StaticResource ButtonRevealStyle}"
                                         Click="CollectionAdvanceButton_Click"
                                         IsEnabled="{x:Bind common:Converters.Not(ViewModel.IsRateLoading), Mode=OneWay}"
                                         Margin="5,0,0,0">
@@ -112,7 +114,8 @@
                           Padding="5" 
                           Height="68"
                           Width="{Binding ElementName=MyWidth,Path=Width}"
-                          Background="{ThemeResource SystemChromeLowColor}" >
+                          BorderThickness="0.5"
+                          BorderBrush="{ThemeResource SystemControlBackgroundListMediumRevealBorderBrush}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="*"/>
