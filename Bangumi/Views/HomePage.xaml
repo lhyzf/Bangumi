@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid Background="{ThemeResource SystemControlAcrylicWindowBrush}">
         <GridView Name="MyGridView" 
                   Padding="12,0,12,6"
                   ItemsSource="{x:Bind ViewModel.watchingCollection}" 
@@ -65,11 +65,13 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Text="{x:Bind name_cn}" 
                                        FontSize="14" 
                                        Foreground="#d26585"
-                                       TextWrapping="Wrap" />
+                                       TextTrimming="WordEllipsis"
+                                       TextWrapping="NoWrap"/>
                             <TextBlock Grid.Row="1"
                                        Text="{x:Bind name}" 
                                        FontSize="12" 
@@ -79,11 +81,26 @@
                             <TextBlock Grid.Row="2"
                                        FontSize="12" 
                                        Foreground="{x:Bind ep_color, Mode=OneWay}"
-                                       TextWrapping="Wrap">
+                                       TextTrimming="WordEllipsis"
+                                       TextWrapping="NoWrap">
                                 <Run Text="{x:Bind watched_eps, Mode=OneWay}"/>
                                 <Run Text="/"/>
                                 <Run Text="{x:Bind eps_count, Mode=OneWay}"/>
                             </TextBlock>
+                            <Button Grid.Row="3"
+                                    HorizontalAlignment="Right"
+                                    Click="NextEpButton_Click"
+                                    Padding="8,3"
+                                    Margin="-6,0"
+                                    BorderThickness="1"
+                                    Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
+                                    Style="{StaticResource ButtonRevealStyle}">
+                                <TextBlock FontSize="12" 
+                                           Foreground="{x:Bind ep_color, Mode=OneWay}">
+                                    <Run Text="EP."/>
+                                    <Run Text="{x:Bind next_ep, Mode=OneWay}"/>
+                                </TextBlock>
+                            </Button>
                         </Grid>
                     </Grid>
                 </DataTemplate>

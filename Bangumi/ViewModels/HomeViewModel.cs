@@ -4,6 +4,7 @@ using Bangumi.Helper;
 using Bangumi.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Bangumi.ViewModels
 {
@@ -15,7 +16,7 @@ namespace Bangumi.ViewModels
         }
 
         public ObservableCollection<WatchingStatus> watchingCollection { get; private set; } = new ObservableCollection<WatchingStatus>();
-        
+
         private bool _isLoading;
         public bool IsLoading
         {
@@ -53,6 +54,25 @@ namespace Bangumi.ViewModels
                 Message = "请先登录！";
             }
             IsLoading = false;
+        }
+
+        public async void UpdateEpStatus(WatchingStatus item)
+        {
+            if (item != null)
+            {
+                IsLoading = true;
+                if (await BangumiFacade.UpdateProgressAsync(item.eps[item.next_ep - 1].id.ToString(), BangumiFacade.EpStatusEnum.watched))
+                {
+                    item.eps[item.next_ep - 1].status = "看过";
+                    item.next_ep++;
+                    item.watched_eps = "看到第" + item.eps.Where(e => e.status == "看过").Count() + "话";
+                    if (item.eps.Where(e => e.status == "看过").Count() < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
+                        item.ep_color = "#d26585";
+                    else
+                        item.ep_color = "Gray";
+                }
+                IsLoading = false;
+            }
         }
 
 

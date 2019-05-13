@@ -49,8 +49,16 @@ namespace Bangumi.Views
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             double UseableWidth = MyGridView.ActualWidth - MyGridView.Padding.Left - MyGridView.Padding.Right;
-            if (UseableWidth < 0) return;
-            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 220);
+            if (UseableWidth <= 0) return;
+            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 235);
+        }
+
+        // 将下一话标记为看过
+        private void NextEpButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Windows.UI.Xaml.Controls.Button)sender;
+            var item = (WatchingStatus)button.DataContext;
+            ViewModel.UpdateEpStatus(item);
         }
     }
 }
