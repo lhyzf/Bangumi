@@ -56,7 +56,7 @@ namespace Bangumi.ViewModels
                 }
                 else
                 {
-                    Message = "网络连接失败，请重试！";
+                    Message = "获取用户进度失败，请重试或重新登录！";
                 }
             }
             else
