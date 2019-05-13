@@ -425,22 +425,20 @@ namespace Bangumi.ViewModels
                 // 显示章节
                 if (subject.eps != null)
                 {
-                    eps.Clear();
-                    foreach (var ep in subject.eps.OrderBy(c => c.type))
+                    if (eps.Count == 0)
                     {
-                        if (string.IsNullOrEmpty(ep.name_cn))
+                        foreach (var ep in subject.eps.OrderBy(c => c.type))
                         {
-                            ep.name_cn = ep.name;
+                            if (ep.type == 0)
+                            {
+                                ep.sort = "第 " + ep.sort + " 话";
+                            }
+                            else
+                            {
+                                ep.sort = GetEpisodeType(ep.type) + " " + ep.sort;
+                            }
+                            eps.Add(ep);
                         }
-                        if (ep.type == 0)
-                        {
-                            ep.sort = "第 " + ep.sort + " 话";
-                        }
-                        else
-                        {
-                            ep.sort = GetEpisodeType(ep.type) + " " + ep.sort;
-                        }
-                        eps.Add(ep);
                     }
                 }
                 IsDetailLoading = false;
@@ -451,7 +449,7 @@ namespace Bangumi.ViewModels
                     Progress progress = await BangumiFacade.GetProgressesAsync(SubjectId);
                     if (progress != null)
                     {
-                        foreach (var ep in eps)
+                        foreach (var ep in eps) //用户观看状态
                         {
                             foreach (var p in progress.eps)
                             {
@@ -592,7 +590,7 @@ namespace Bangumi.ViewModels
             return result;
         }
 
-        private string GetEpisodeType(int n)
+        public string GetEpisodeType(int n)
         {
             string type = "";
             switch (n)

@@ -154,7 +154,7 @@
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>
-        
+
         <ProgressBar Name="MyProgressBar"
                      Visibility="{x:Bind ViewModel.IsUpdating, Mode=OneWay}"
                      IsIndeterminate="True"

@@ -40,6 +40,27 @@ namespace Bangumi.Views
                 ViewModel.SubjectId = p.subject_id.ToString();
                 ViewModel.ImageSource = p.image;
                 ViewModel.Name_cn = p.name_cn;
+                if (p.eps != null)
+                {
+                    foreach (var ep in p.eps)
+                    {
+                        var newEp = new Ep();
+                        newEp.id = ep.id;
+                        newEp.sort = ep.sort;
+                        newEp.status = ep.status;
+                        newEp.type = ep.type;
+                        newEp.name_cn = ep.name;
+                        if (newEp.type == 0)
+                        {
+                            newEp.sort = "第 " + newEp.sort + " 话";
+                        }
+                        else
+                        {
+                            newEp.sort = ViewModel.GetEpisodeType(newEp.type) + " " + newEp.sort;
+                        }
+                        ViewModel.eps.Add(newEp);
+                    }
+                }
             }
             else if (e.Parameter.GetType() == typeof(Subject))
             {

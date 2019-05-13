@@ -137,13 +137,14 @@ namespace Bangumi.Facades
                             var progress = await GetProgressesAsync(item.subject_id.ToString());
 
                             item.eps = new List<SimpleEp>();
-                            foreach (var ep in subject.eps)
+                            foreach (var ep in subject.eps.OrderBy(c => c.type))
                             {
                                 SimpleEp simpleEp = new SimpleEp();
                                 simpleEp.id = ep.id;
                                 simpleEp.sort = ep.sort;
                                 simpleEp.status = ep.status;
                                 simpleEp.type = ep.type;
+                                simpleEp.name = ep.name_cn;
                                 item.eps.Add(simpleEp);
                             }
                             if (item.eps.Where(e => e.status == "NA").Count() == 0)
@@ -157,6 +158,18 @@ namespace Bangumi.Facades
                                     item.ep_color = "#d26585";
                                 else
                                     item.ep_color = "Gray";
+                                foreach (var ep in item.eps) //用户观看状态
+                                {
+                                    foreach (var p in progress.eps)
+                                    {
+                                        if (p.id == ep.id)
+                                        {
+                                            ep.status = p.status.cn_name;
+                                            progress.eps.Remove(p);
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                             else
                             {
@@ -167,7 +180,7 @@ namespace Bangumi.Facades
                         }
                         else
                         {
-                            if (watching.subject.eps_count != 0 && item.eps.Count != watching.subject.eps_count)
+                            if (item.lasttouch != watching.lasttouch)
                             {
                                 var subject = await GetSubjectEpsAsync(item.subject_id.ToString());
                                 item.eps.Clear();
@@ -178,6 +191,7 @@ namespace Bangumi.Facades
                                     simpleEp.sort = ep.sort;
                                     simpleEp.status = ep.status;
                                     simpleEp.type = ep.type;
+                                    simpleEp.name = ep.name_cn;
                                     item.eps.Add(simpleEp);
                                 }
                                 if (item.eps.Where(e => e.status == "NA").Count() == 0)
@@ -185,9 +199,6 @@ namespace Bangumi.Facades
                                 else
                                     item.eps_count = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
 
-                            }
-                            if (item.lasttouch != watching.lasttouch)
-                            {
                                 var progress = await GetProgressesAsync(item.subject_id.ToString());
                                 if (progress != null)
                                 {
@@ -196,12 +207,25 @@ namespace Bangumi.Facades
                                         item.ep_color = "#d26585";
                                     else
                                         item.ep_color = "Gray";
+                                    foreach (var ep in item.eps) //用户观看状态
+                                    {
+                                        foreach (var p in progress.eps)
+                                        {
+                                            if (p.id == ep.id)
+                                            {
+                                                ep.status = p.status.cn_name;
+                                                progress.eps.Remove(p);
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                                 else
                                 {
                                     item.watched_eps = "尚未观看";
                                     item.ep_color = "#d26585";
                                 }
+
                                 item.lasttouch = watching.lasttouch;
                             }
                         }
@@ -597,7 +621,13 @@ namespace Bangumi.Facades
                     var result = JsonConvert.DeserializeObject<Subject>(response);
                     result.name = System.Net.WebUtility.HtmlDecode(result.name);
                     result.name_cn = System.Net.WebUtility.HtmlDecode(result.name_cn);
-
+                    foreach (var ep in result.eps)
+                    {
+                        if (string.IsNullOrEmpty(ep.name_cn))
+                        {
+                            ep.name_cn = ep.name;
+                        }
+                    }
                     return result;
                 }
                 return null;
