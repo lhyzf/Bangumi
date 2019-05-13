@@ -29,11 +29,25 @@ namespace Bangumi.Helper
                     return await reader.ReadToEndAsync();
                 }
             }
+            catch (WebException ex)
+            {
+                HttpWebResponse response = (HttpWebResponse)ex.Response;
+                if (response != null)
+                {
+                    Debug.WriteLine("response.StatusCode:" + response.StatusCode);
+                    throw ex;
+                }
+                else
+                {
+                    Debug.WriteLine("Unknown network error.");
+                    throw new Exception();
+                }
+            }
             catch (Exception e)
             {
                 Debug.WriteLine("Network request fail.(Get)");
                 Debug.WriteLine(e.Message);
-                return null;
+                throw e;
             }
         }
 
@@ -59,11 +73,25 @@ namespace Bangumi.Helper
                     return await reader.ReadToEndAsync();
                 }
             }
+            catch (WebException ex)
+            {
+                HttpWebResponse response = (HttpWebResponse)ex.Response;
+                if (response != null)
+                {
+                    Debug.WriteLine("response.StatusCode:" + response.StatusCode);
+                    throw ex;
+                }
+                else
+                {
+                    Debug.WriteLine("Unknown network error.");
+                    throw new Exception();
+                }
+            }
             catch (Exception e)
             {
                 Debug.WriteLine("Network request fail.(Post)");
                 Debug.WriteLine(e.Message);
-                return null;
+                throw e;
             }
 
         }

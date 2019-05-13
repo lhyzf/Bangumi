@@ -94,7 +94,7 @@ namespace Bangumi.Helper
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine(e.Message);
             }
         }
 
@@ -128,7 +128,7 @@ namespace Bangumi.Helper
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine(e.Message);
             }
         }
 
@@ -157,9 +157,20 @@ namespace Bangumi.Helper
                         await RefreshAccessToken();
                 }
             }
+            catch (WebException ex)
+            {
+                HttpWebResponse response = (HttpWebResponse)ex.Response;
+                Debug.WriteLine("response.StatusCode:" + response.StatusCode);
+                if(response.StatusCode==HttpStatusCode.Unauthorized)
+                {
+                    var msgDialog = new Windows.UI.Popups.MessageDialog("登录已过期，请重新登录！") { Title = "登录失效！" };
+                    msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                    await msgDialog.ShowAsync();
+                }
+            }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine(e.Message);
             }
         }
 

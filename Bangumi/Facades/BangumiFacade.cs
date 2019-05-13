@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Bangumi.Facades
@@ -64,9 +65,10 @@ namespace Bangumi.Facades
                 else
                     return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("PopulateSubjectCollectionAsync Error.");
+                Debug.WriteLine(e.Message);
                 return false;
             }
         }
@@ -252,7 +254,7 @@ namespace Bangumi.Facades
             catch (Exception e)
             {
                 Debug.WriteLine("PopulateWatchingListAsync Error.");
-                Debug.WriteLine(e);
+                Debug.WriteLine(e.Message);
                 return false;
             }
         }
@@ -306,9 +308,10 @@ namespace Bangumi.Facades
                 else
                     return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("PopulateBangumiCalendarAsync Error.");
+                Debug.WriteLine(e.Message);
                 return false;
             }
         }
@@ -349,10 +352,11 @@ namespace Bangumi.Facades
                 }
                 return null;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("GetSubjectCollectionAsync Error.");
-                return null;
+                Debug.WriteLine(e.Message);
+                throw e;
             }
         }
 
@@ -376,10 +380,11 @@ namespace Bangumi.Facades
                 }
                 return null;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("GetCollectionStatusAsync Error.");
-                return null;
+                Debug.WriteLine(e.Message);
+                throw e;
             }
         }
 
@@ -402,10 +407,11 @@ namespace Bangumi.Facades
                 }
                 return null;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("GetProgressesAsync Error.");
-                return null;
+                Debug.WriteLine(e.Message);
+                throw e;
             }
         }
 
@@ -446,9 +452,10 @@ namespace Bangumi.Facades
                 }
                 return null;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("GetWatchingListAsync Error.");
+                Debug.WriteLine(e.Message);
                 return null;
             }
         }
@@ -481,9 +488,10 @@ namespace Bangumi.Facades
                 }
                 return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("UpdateCollectionStatusAsync Error.");
+                Debug.WriteLine(e.Message);
                 return false;
             }
         }
@@ -511,9 +519,10 @@ namespace Bangumi.Facades
                 }
                 return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("UpdateProgressBatchAsync Error.");
+                Debug.WriteLine(e.Message);
                 return false;
             }
         }
@@ -537,9 +546,10 @@ namespace Bangumi.Facades
                 }
                 return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("UpdateProgressAsync Error.");
+                Debug.WriteLine(e.Message);
                 return false;
             }
         }
@@ -585,9 +595,10 @@ namespace Bangumi.Facades
                 }
                 return null;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("GetSearchResultAsync Error.");
+                Debug.WriteLine(e.Message);
                 return null;
             }
         }
@@ -610,9 +621,10 @@ namespace Bangumi.Facades
                 }
                 return null;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("GetSubjectEpsAsync Error.");
+                Debug.WriteLine(e.Message);
                 return null;
             }
         }
@@ -644,9 +656,10 @@ namespace Bangumi.Facades
                 }
                 return null;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("GetSubjectAsync Error.");
+                Debug.WriteLine(e.Message);
                 return null;
             }
         }
@@ -687,9 +700,10 @@ namespace Bangumi.Facades
                 }
                 return null;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Debug.WriteLine("GetBangumiCalendarAsync Error.");
+                Debug.WriteLine(e.Message);
                 return null;
             }
         }
