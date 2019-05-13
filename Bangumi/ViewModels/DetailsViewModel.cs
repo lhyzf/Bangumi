@@ -6,6 +6,7 @@ using Bangumi.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -304,7 +305,7 @@ namespace Bangumi.ViewModels
             try
             {
                 CollectionStatus collectionStatus = await BangumiFacade.GetCollectionStatusAsync(SubjectId);
-                if (collectionStatus.status != null)
+                if (collectionStatus != null && collectionStatus.status != null)
                 {
                     CollectionStatusText = collectionStatus.status.name;
                     myRate = collectionStatus.rating;
@@ -317,9 +318,7 @@ namespace Bangumi.ViewModels
             }
             catch (Exception e)
             {
-                var msgDialog = new Windows.UI.Popups.MessageDialog(e.Message) { Title = "Error" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
+                Debug.WriteLine(e.Message);
             }
         }
 
@@ -334,142 +333,144 @@ namespace Bangumi.ViewModels
                 IsDetailLoading = true;
                 // 获取条目信息
                 var subject = await BangumiFacade.GetSubjectAsync(SubjectId);
-                // 条目标题
-                if (string.IsNullOrEmpty(Name_cn))
-                {
-                    Name_cn = string.IsNullOrEmpty(subject.name_cn) ? subject.name : subject.name_cn;
-                }
-                // 条目图片
-                if (ImageSource.Equals(NoImageUri) && subject.images != null)
-                {
-                    ImageSource = subject.images.common;
-                }
-                // 放送日期
-                if (string.IsNullOrEmpty(Air_date))
-                {
-                    Air_date = subject.air_date;
-                    Air_weekday = subject.air_weekday;
-                    AirWeekdayName = GetWeekday(subject.air_weekday);
-                }
-                // 条目简介
-                if (!string.IsNullOrEmpty(subject.summary))
-                {
-                    Summary = subject.summary.Length > 80 ? (subject.summary.Substring(0, 80) + "...") : subject.summary;
-                }
-                else
-                {
-                    Summary = "暂无简介";
-                }
 
-                // 更多资料
-                name = subject.name;
-                moreSummary = string.IsNullOrEmpty(subject.summary) ? "暂无简介" : subject.summary;
-                moreInfo = "作品分类：" + GetSubjectTypeCn((BangumiFacade.SubjectType)subject.type);
-                moreInfo += "\n放送开始：" + subject.air_date;
-                moreInfo += "\n放送星期：" + GetWeekday(subject.air_weekday);
-                moreInfo += "\n话数：" + subject.eps_count;
-                // 角色
-                if (subject.crt != null)
+                if (subject != null)
                 {
-                    foreach (var crt in subject.crt)
+                    // 条目标题
+                    if (string.IsNullOrEmpty(Name_cn))
                     {
-                        moreCharacters += string.Format("{0}：", string.IsNullOrEmpty(crt.name_cn) ? crt.name : crt.name_cn);
-                        if (crt.actors != null)
-                        {
-                            foreach (var actor in crt.actors)
-                            {
-                                moreCharacters += actor.name + "、";
-                            }
-                            moreCharacters = moreCharacters.TrimEnd('、');
-                        }
-                        else
-                        {
-                            moreCharacters += "暂无资料";
-                        }
-                        moreCharacters += "\n";
+                        Name_cn = string.IsNullOrEmpty(subject.name_cn) ? subject.name : subject.name_cn;
                     }
-                    moreCharacters = moreCharacters.TrimEnd('\n');
-                }
-                else
-                {
-                    moreCharacters += "暂无资料";
-                }
-                // 演职人员
-                if (subject.staff != null)
-                {
-                    var sd = new Dictionary<string, string>();
-                    foreach (var staff in subject.staff)
+                    // 条目图片
+                    if (ImageSource.Equals(NoImageUri) && subject.images != null)
                     {
-                        foreach (var job in staff.jobs)
-                        {
-                            if (!sd.ContainsKey(job))
-                            {
-                                sd.Add(job, string.IsNullOrEmpty(staff.name_cn) ? staff.name : staff.name_cn);
-                            }
-                            else
-                            {
-                                sd[job] += string.Format("、{0}", string.IsNullOrEmpty(staff.name_cn) ? staff.name : staff.name_cn);
-                            }
-                        }
+                        ImageSource = subject.images.common;
                     }
-                    foreach (var s in sd)
+                    // 放送日期
+                    if (string.IsNullOrEmpty(Air_date))
                     {
-                        moreStaff += string.Format("{0}：{1}\n", s.Key, s.Value);
+                        Air_date = subject.air_date;
+                        Air_weekday = subject.air_weekday;
+                        AirWeekdayName = GetWeekday(subject.air_weekday);
                     }
-                    moreStaff = moreStaff.TrimEnd('\n');
-                }
-                else
-                {
-                    moreStaff += "暂无资料";
-                }
-                // 显示章节
-                if (subject.eps != null)
-                {
-                    if (eps.Count == 0)
+                    // 条目简介
+                    if (!string.IsNullOrEmpty(subject.summary))
                     {
-                        foreach (var ep in subject.eps.OrderBy(c => c.type))
-                        {
-                            if (ep.type == 0)
-                            {
-                                ep.sort = "第 " + ep.sort + " 话";
-                            }
-                            else
-                            {
-                                ep.sort = GetEpisodeType(ep.type) + " " + ep.sort;
-                            }
-                            eps.Add(ep);
-                        }
+                        Summary = subject.summary.Length > 80 ? (subject.summary.Substring(0, 80) + "...") : subject.summary;
                     }
-                }
-                IsDetailLoading = false;
+                    else
+                    {
+                        Summary = "暂无简介";
+                    }
 
-                // 显示用户章节状态
-                if (OAuthHelper.IsLogin)
-                {
-                    Progress progress = await BangumiFacade.GetProgressesAsync(SubjectId);
-                    if (progress != null)
+                    // 更多资料
+                    name = subject.name;
+                    moreSummary = string.IsNullOrEmpty(subject.summary) ? "暂无简介" : subject.summary;
+                    moreInfo = "作品分类：" + GetSubjectTypeCn((BangumiFacade.SubjectType)subject.type);
+                    moreInfo += "\n放送开始：" + subject.air_date;
+                    moreInfo += "\n放送星期：" + GetWeekday(subject.air_weekday);
+                    moreInfo += "\n话数：" + subject.eps_count;
+                    // 角色
+                    if (subject.crt != null)
                     {
-                        foreach (var ep in eps) //用户观看状态
+                        foreach (var crt in subject.crt)
                         {
-                            foreach (var p in progress.eps)
+                            moreCharacters += string.Format("{0}：", string.IsNullOrEmpty(crt.name_cn) ? crt.name : crt.name_cn);
+                            if (crt.actors != null)
                             {
-                                if (p.id == ep.id)
+                                foreach (var actor in crt.actors)
                                 {
-                                    ep.status = p.status.cn_name;
-                                    progress.eps.Remove(p);
-                                    break;
+                                    moreCharacters += actor.name + "、";
+                                }
+                                moreCharacters = moreCharacters.TrimEnd('、');
+                            }
+                            else
+                            {
+                                moreCharacters += "暂无资料";
+                            }
+                            moreCharacters += "\n";
+                        }
+                        moreCharacters = moreCharacters.TrimEnd('\n');
+                    }
+                    else
+                    {
+                        moreCharacters += "暂无资料";
+                    }
+                    // 演职人员
+                    if (subject.staff != null)
+                    {
+                        var sd = new Dictionary<string, string>();
+                        foreach (var staff in subject.staff)
+                        {
+                            foreach (var job in staff.jobs)
+                            {
+                                if (!sd.ContainsKey(job))
+                                {
+                                    sd.Add(job, string.IsNullOrEmpty(staff.name_cn) ? staff.name : staff.name_cn);
+                                }
+                                else
+                                {
+                                    sd[job] += string.Format("、{0}", string.IsNullOrEmpty(staff.name_cn) ? staff.name : staff.name_cn);
+                                }
+                            }
+                        }
+                        foreach (var s in sd)
+                        {
+                            moreStaff += string.Format("{0}：{1}\n", s.Key, s.Value);
+                        }
+                        moreStaff = moreStaff.TrimEnd('\n');
+                    }
+                    else
+                    {
+                        moreStaff += "暂无资料";
+                    }
+                    // 显示章节
+                    if (subject.eps != null)
+                    {
+                        if (eps.Count == 0)
+                        {
+                            foreach (var ep in subject.eps.OrderBy(c => c.type))
+                            {
+                                if (ep.type == 0)
+                                {
+                                    ep.sort = "第 " + ep.sort + " 话";
+                                }
+                                else
+                                {
+                                    ep.sort = GetEpisodeType(ep.type) + " " + ep.sort;
+                                }
+                                eps.Add(ep);
+                            }
+                        }
+                    }
+                    IsDetailLoading = false;
+
+                    // 显示用户章节状态
+                    if (OAuthHelper.IsLogin)
+                    {
+                        Progress progress = await BangumiFacade.GetProgressesAsync(SubjectId);
+                        if (progress != null)
+                        {
+                            foreach (var ep in eps) //用户观看状态
+                            {
+                                foreach (var p in progress.eps)
+                                {
+                                    if (p.id == ep.id)
+                                    {
+                                        ep.status = p.status.cn_name;
+                                        progress.eps.Remove(p);
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
+                    IsLoading = false;
                 }
-                IsLoading = false;
             }
             catch (Exception e)
             {
-                var msgDialog = new Windows.UI.Popups.MessageDialog(e.Message) { Title = "Error" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
+                Debug.WriteLine(e.Message);
             }
             finally
             {
