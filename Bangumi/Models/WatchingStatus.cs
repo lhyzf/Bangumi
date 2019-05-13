@@ -62,6 +62,6 @@ namespace Bangumi.Models
         public int type { get; set; }
         public string sort { get; set; }
         public string status { get; set; }
-
+        public string name { get; set; }
     }
 }
