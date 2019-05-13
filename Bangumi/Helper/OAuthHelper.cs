@@ -125,13 +125,6 @@ namespace Bangumi.Helper
                     // 将信息写入本地文件
                     await WriteTokens(result);
                 }
-                else
-                {
-                    //授权信息已失效，要求重新登录
-                    IsLogin = false;
-                    await Authorize();
-                    await CheckTokens();
-                }
             }
             catch (Exception e)
             {

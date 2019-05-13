@@ -41,24 +41,28 @@ namespace Bangumi.Facades
                 }
 
                 var subjectCollections = await GetSubjectCollectionAsync(subjectType);
-
-                //清空原数据
-                subjectCollection.Clear();
-
-                if (subjectCollections != null && subjectCollections.collects != null && !subjectCollection.Equals(subjectCollections.collects))
+                if (subjectCollections != null)
                 {
                     //清空原数据
                     subjectCollection.Clear();
-                    foreach (var type in subjectCollections.collects)
+
+                    if (subjectCollections != null && subjectCollections.collects != null && !subjectCollection.Equals(subjectCollections.collects))
                     {
-                        subjectCollection.Add(type);
+                        //清空原数据
+                        subjectCollection.Clear();
+                        foreach (var type in subjectCollections.collects)
+                        {
+                            subjectCollection.Add(type);
+                        }
                     }
+
+                    //将对象序列化并存储到文件
+                    await FileHelper.WriteToTempFile(JsonConvert.SerializeObject(subjectCollection), subjectType + "temp");
+
+                    return true;
                 }
-
-                //将对象序列化并存储到文件
-                await FileHelper.WriteToTempFile(JsonConvert.SerializeObject(subjectCollection), subjectType + "temp");
-
-                return true;
+                else
+                    return false;
             }
             catch (Exception)
             {
@@ -240,25 +244,31 @@ namespace Bangumi.Facades
                 }
 
                 var bangumiCalendarList = await GetBangumiCalendarAsync();
-                //清空原数据
-                bangumiCollection.Clear();
-                int day = GetDayOfWeek();
-                foreach (var bangumiCalendar in bangumiCalendarList)
+
+                if (bangumiCalendarList != null)
                 {
-                    if (bangumiCalendar.weekday.id <= day)
+                    //清空原数据
+                    bangumiCollection.Clear();
+                    int day = GetDayOfWeek();
+                    foreach (var bangumiCalendar in bangumiCalendarList)
                     {
-                        bangumiCollection.Add(bangumiCalendar);
+                        if (bangumiCalendar.weekday.id <= day)
+                        {
+                            bangumiCollection.Add(bangumiCalendar);
+                        }
+                        else
+                        {
+                            bangumiCollection.Insert(bangumiCollection.Count - day, bangumiCalendar);
+                        }
                     }
-                    else
-                    {
-                        bangumiCollection.Insert(bangumiCollection.Count - day, bangumiCalendar);
-                    }
+
+                    //将对象序列化并存储到文件
+                    await FileHelper.WriteToTempFile(JsonConvert.SerializeObject(bangumiCollection), "calendartemp");
+
+                    return true;
                 }
-
-                //将对象序列化并存储到文件
-                await FileHelper.WriteToTempFile(JsonConvert.SerializeObject(bangumiCollection), "calendartemp");
-
-                return true;
+                else
+                    return false;
             }
             catch (Exception)
             {
