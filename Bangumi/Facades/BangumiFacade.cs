@@ -27,33 +27,30 @@ namespace Bangumi.Facades
         {
             try
             {
-                //清空原数据
-                subjectCollection.Clear();
-
-                //从文件反序列化
-                var PreCollection = JsonConvert.DeserializeObject<List<Collect>>(await FileHelper.ReadFromTempFile(subjectType + "temp"));
-                if (PreCollection != null)
+                if (subjectCollection.Count == 0)
                 {
-                    foreach (var type in PreCollection)
+                    //从文件反序列化
+                    var PreCollection = JsonConvert.DeserializeObject<List<Collect>>(await FileHelper.ReadFromTempFile(subjectType + "temp"));
+                    if (PreCollection != null)
                     {
-                        subjectCollection.Add(type);
+                        foreach (var type in PreCollection)
+                        {
+                            subjectCollection.Add(type);
+                        }
                     }
                 }
 
                 var subjectCollections = await GetSubjectCollectionAsync(subjectType);
+
+                //清空原数据
+                subjectCollection.Clear();
+
                 if (subjectCollections != null && subjectCollections.collects != null && !subjectCollection.Equals(subjectCollections.collects))
                 {
                     //清空原数据
                     subjectCollection.Clear();
                     foreach (var type in subjectCollections.collects)
                     {
-                        foreach (var item in type.list)
-                        {
-                            if (string.IsNullOrEmpty(item.subject.name_cn))
-                            {
-                                item.subject.name_cn = item.subject.name;
-                            }
-                        }
                         subjectCollection.Add(type);
                     }
                 }
@@ -106,66 +103,36 @@ namespace Bangumi.Facades
 
                 foreach (var watching in watchingList)
                 {
-                    //若在看含有原来没有的条目则新增
+                    //若在看含有原来没有的条目则新增,之后再细化
                     var item = watchingListCollection.Where(e => e.subject_id == watching.subject_id).FirstOrDefault();
                     if (item == null)
                     {
                         WatchingStatus watchingStatus = new WatchingStatus();
-                        if (string.IsNullOrEmpty(watching.subject.name_cn))
-                        {
-                            watching.subject.name_cn = watching.subject.name;
-                        }
-                        if (watching.subject.images == null)
-                        {
-                            watching.subject.images = new Images { common = NoImageUri };
-                        }
-
                         watchingStatus.name = watching.subject.name;
                         watchingStatus.name_cn = watching.subject.name_cn;
                         watchingStatus.image = watching.subject.images.common;
                         watchingStatus.subject_id = watching.subject_id;
-                        watchingStatus.lasttouch = watching.lasttouch;
                         watchingStatus.url = watching.subject.url;
+                        watchingStatus.ep_color = "Gray";
+                        watchingStatus.lasttouch = 0;
+                        watchingStatus.watched_eps = watching.ep_status.ToString();
+                        watchingStatus.eps_count = watching.subject.eps_count.ToString();
 
-                        //获取EP详细信息
-                        var subject = await GetSubjectEpsAsync(watchingStatus.subject_id.ToString());
-                        var progress = await GetProgressesAsync(watchingStatus.subject_id.ToString());
-
-                        watchingStatus.eps = new List<SimpleEp>();
-                        foreach (var ep in subject.eps)
-                        {
-                            SimpleEp simpleEp = new SimpleEp();
-                            simpleEp.id = ep.id;
-                            simpleEp.sort = ep.sort;
-                            simpleEp.status = ep.status;
-                            simpleEp.type = ep.type;
-                            watchingStatus.eps.Add(simpleEp);
-                        }
-                        if (watchingStatus.eps.Where(e => e.status == "NA").Count() == 0)
-                            watchingStatus.eps_count = "全" + watchingStatus.eps.Count + "话";
-                        else
-                            watchingStatus.eps_count = "更新到第" + (watchingStatus.eps.Count - watchingStatus.eps.Where(e => e.status == "NA").Count()) + "话";
-                        if (progress != null)
-                        {
-                            watchingStatus.watched_eps = "看到第" + progress.eps.Count + "话";
-                            if (progress.eps.Count < (watchingStatus.eps.Count - watchingStatus.eps.Where(e => e.status == "NA").Count()))
-                                watchingStatus.ep_color = "#d26585";
-                            else
-                                watchingStatus.ep_color = "Gray";
-                        }
-                        else
-                        {
-                            watchingStatus.watched_eps = "尚未观看";
-                            watchingStatus.ep_color = "#d26585";
-                        }
                         watchingListCollection.Add(watchingStatus);
                     }
-                    else
+                }
+                foreach (var watching in watchingList)
+                {
+                    var item = watchingListCollection.Where(e => e.subject_id == watching.subject_id).FirstOrDefault();
+                    if (item != null)
                     {
-                        if (watching.subject.eps_count != 0 && item.eps.Count != watching.subject.eps_count)
+                        if (item.lasttouch == 0)
                         {
+                            //获取EP详细信息
                             var subject = await GetSubjectEpsAsync(item.subject_id.ToString());
-                            item.eps.Clear();
+                            var progress = await GetProgressesAsync(item.subject_id.ToString());
+
+                            item.eps = new List<SimpleEp>();
                             foreach (var ep in subject.eps)
                             {
                                 SimpleEp simpleEp = new SimpleEp();
@@ -179,11 +146,6 @@ namespace Bangumi.Facades
                                 item.eps_count = "全" + item.eps.Count + "话";
                             else
                                 item.eps_count = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
-
-                        }
-                        if (item.lasttouch != watching.lasttouch)
-                        {
-                            var progress = await GetProgressesAsync(item.subject_id.ToString());
                             if (progress != null)
                             {
                                 item.watched_eps = "看到第" + progress.eps.Count + "话";
@@ -198,6 +160,46 @@ namespace Bangumi.Facades
                                 item.ep_color = "#d26585";
                             }
                             item.lasttouch = watching.lasttouch;
+                        }
+                        else
+                        {
+                            if (watching.subject.eps_count != 0 && item.eps.Count != watching.subject.eps_count)
+                            {
+                                var subject = await GetSubjectEpsAsync(item.subject_id.ToString());
+                                item.eps.Clear();
+                                foreach (var ep in subject.eps)
+                                {
+                                    SimpleEp simpleEp = new SimpleEp();
+                                    simpleEp.id = ep.id;
+                                    simpleEp.sort = ep.sort;
+                                    simpleEp.status = ep.status;
+                                    simpleEp.type = ep.type;
+                                    item.eps.Add(simpleEp);
+                                }
+                                if (item.eps.Where(e => e.status == "NA").Count() == 0)
+                                    item.eps_count = "全" + item.eps.Count + "话";
+                                else
+                                    item.eps_count = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
+
+                            }
+                            if (item.lasttouch != watching.lasttouch)
+                            {
+                                var progress = await GetProgressesAsync(item.subject_id.ToString());
+                                if (progress != null)
+                                {
+                                    item.watched_eps = "看到第" + progress.eps.Count + "话";
+                                    if (progress.eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
+                                        item.ep_color = "#d26585";
+                                    else
+                                        item.ep_color = "Gray";
+                                }
+                                else
+                                {
+                                    item.watched_eps = "尚未观看";
+                                    item.ep_color = "#d26585";
+                                }
+                                item.lasttouch = watching.lasttouch;
+                            }
                         }
                     }
                 }
@@ -224,13 +226,16 @@ namespace Bangumi.Facades
         {
             try
             {
-                //从文件反序列化
-                var PreCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await FileHelper.ReadFromTempFile("calendartemp"));
-                if (PreCalendar != null)
+                if (bangumiCollection.Count == 0)
                 {
-                    foreach (var item in PreCalendar)
+                    //从文件反序列化
+                    var PreCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await FileHelper.ReadFromTempFile("calendartemp"));
+                    if (PreCalendar != null)
                     {
-                        bangumiCollection.Add(item);
+                        foreach (var item in PreCalendar)
+                        {
+                            bangumiCollection.Add(item);
+                        }
                     }
                 }
 
@@ -240,17 +245,6 @@ namespace Bangumi.Facades
                 int day = GetDayOfWeek();
                 foreach (var bangumiCalendar in bangumiCalendarList)
                 {
-                    foreach (var item in bangumiCalendar.items)
-                    {
-                        if (string.IsNullOrEmpty(item.name_cn))
-                        {
-                            item.name_cn = item.name;
-                        }
-                        if (item.images == null)
-                        {
-                            item.images = new Images { common = NoImageUri };
-                        }
-                    }
                     if (bangumiCalendar.weekday.id <= day)
                     {
                         bangumiCollection.Add(bangumiCalendar);
@@ -291,6 +285,20 @@ namespace Bangumi.Facades
                 if (response != null)
                 {
                     var result = JsonConvert.DeserializeObject<List<SubjectCollection>>(response);
+                    foreach (var type in result.ElementAt(0).collects)
+                    {
+                        foreach (var item in type.list)
+                        {
+                            if (string.IsNullOrEmpty(item.subject.name_cn))
+                            {
+                                item.subject.name_cn = item.subject.name;
+                            }
+                            else
+                            {
+                                item.subject.name_cn = System.Net.WebUtility.HtmlDecode(item.subject.name_cn);
+                            }
+                        }
+                    }
                     return result.ElementAt(0);
                 }
                 return null;
@@ -372,6 +380,22 @@ namespace Bangumi.Facades
                     JsonSerializerSettings jsonSerializerSetting = new JsonSerializerSettings();
                     jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "subject_id", "ep_status", "subject", "name_cn", "images", "common", "eps_count", "lasttouch" });
                     var result = JsonConvert.DeserializeObject<List<Watching>>(response, jsonSerializerSetting);
+                    foreach (var watching in result)
+                    {
+                        watching.subject.name = System.Net.WebUtility.HtmlDecode(watching.subject.name);
+                        if (string.IsNullOrEmpty(watching.subject.name_cn))
+                        {
+                            watching.subject.name_cn = watching.subject.name;
+                        }
+                        else
+                        {
+                            watching.subject.name_cn = System.Net.WebUtility.HtmlDecode(watching.subject.name_cn);
+                        }
+                        if (watching.subject.images == null)
+                        {
+                            watching.subject.images = new Images { common = NoImageUri };
+                        }
+                    }
                     return result;
                 }
                 return null;
@@ -496,9 +520,14 @@ namespace Bangumi.Facades
                     {
                         foreach (var item in result.list)
                         {
+                            item.name = System.Net.WebUtility.HtmlDecode(item.name);
                             if (string.IsNullOrEmpty(item.name_cn))
                             {
                                 item.name_cn = item.name;
+                            }
+                            else
+                            {
+                                item.name_cn = System.Net.WebUtility.HtmlDecode(item.name_cn);
                             }
                             if (item.images == null)
                             {
@@ -556,6 +585,9 @@ namespace Bangumi.Facades
                 if (response != null)
                 {
                     var result = JsonConvert.DeserializeObject<Subject>(response);
+                    result.name = System.Net.WebUtility.HtmlDecode(result.name);
+                    result.name_cn = System.Net.WebUtility.HtmlDecode(result.name_cn);
+
                     return result;
                 }
                 return null;
@@ -580,6 +612,25 @@ namespace Bangumi.Facades
                 if (response != null)
                 {
                     var result = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(response);
+                    foreach (var bangumiCalendar in result)
+                    {
+                        foreach (var item in bangumiCalendar.items)
+                        {
+                            item.name = System.Net.WebUtility.HtmlDecode(item.name);
+                            if (string.IsNullOrEmpty(item.name_cn))
+                            {
+                                item.name_cn = item.name;
+                            }
+                            else
+                            {
+                                item.name_cn = System.Net.WebUtility.HtmlDecode(item.name_cn);
+                            }
+                            if (item.images == null)
+                            {
+                                item.images = new Images { common = NoImageUri };
+                            }
+                        }
+                    }
                     return result;
                 }
                 return null;

@@ -51,8 +51,7 @@
 
         <Pivot Name="WeekPivot" 
                Grid.Row="1" 
-               ItemsSource="{x:Bind ViewModel.bangumiCollection}" 
-               IsHeaderItemsCarouselEnabled="False">
+               ItemsSource="{x:Bind ViewModel.bangumiCollection}" >
             <Pivot.HeaderTemplate>
                 <DataTemplate x:DataType="data:BangumiTimeLine">
                     <StackPanel>
