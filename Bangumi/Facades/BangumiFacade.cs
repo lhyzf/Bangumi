@@ -241,21 +241,6 @@ namespace Bangumi.Facades
                     }
                 }
 
-                // 对条目进行排序
-                var order = new List<WatchingStatus>();
-                order.AddRange(watchingListCollection.OrderBy(p => p.watched_eps).OrderBy(p => p.ep_color));
-                for (int i = 0; i < order.Count; i++)
-                {
-                    if (order[i].subject_id != watchingListCollection[i].subject_id)
-                    {
-                        watchingListCollection.RemoveAt(i);
-                        watchingListCollection.Insert(i, order[i]);
-                    }
-                }
-
-                //将对象序列化并存储到文件
-                await FileHelper.WriteToTempFile(JsonConvert.SerializeObject(watchingListCollection), "hometemp");
-
                 return true;
             }
             catch (Exception e)

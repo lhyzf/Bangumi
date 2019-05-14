@@ -2,7 +2,9 @@
 using Bangumi.Facades;
 using Bangumi.Helper;
 using Bangumi.Models;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -43,6 +45,7 @@ namespace Bangumi.ViewModels
                 if (await BangumiFacade.PopulateWatchingListAsync(watchingCollection))
                 {
                     Message = "更新时间：" + DateTime.Now;
+                    CollectionSorting();
                 }
                 else
                 {
@@ -56,6 +59,7 @@ namespace Bangumi.ViewModels
             IsLoading = false;
         }
 
+        // 更新下一章章节状态为已看
         public async void UpdateEpStatus(WatchingStatus item)
         {
             if (item != null)
@@ -73,11 +77,32 @@ namespace Bangumi.ViewModels
                         item.ep_color = "#d26585";
                     else
                         item.ep_color = "Gray";
+
+                    CollectionSorting();
                 }
                 IsLoading = false;
             }
         }
 
+        // 对条目进行排序并保存到本地临时文件
+        private async void CollectionSorting()
+        {
+            // 对条目进行排序
+            var order = new List<WatchingStatus>();
+            order.AddRange(watchingCollection.OrderBy(p => p.watched_eps).OrderBy(p => p.ep_color));
+            for (int i = 0; i < order.Count; i++)
+            {
+                if (order[i].subject_id != watchingCollection[i].subject_id)
+                {
+                    watchingCollection.RemoveAt(i);
+                    watchingCollection.Insert(i, order[i]);
+                }
+            }
+
+            //将对象序列化并存储到文件
+            await FileHelper.WriteToTempFile(JsonConvert.SerializeObject(watchingCollection), "hometemp");
+
+        }
 
     }
 }
