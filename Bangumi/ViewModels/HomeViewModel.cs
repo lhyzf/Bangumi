@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Bangumi.ViewModels
 {
@@ -45,7 +46,7 @@ namespace Bangumi.ViewModels
                 if (await BangumiFacade.PopulateWatchingListAsync(watchingCollection))
                 {
                     Message = "更新时间：" + DateTime.Now;
-                    CollectionSorting();
+                    await CollectionSorting();
                 }
                 else
                 {
@@ -78,14 +79,14 @@ namespace Bangumi.ViewModels
                     else
                         item.ep_color = "Gray";
 
-                    CollectionSorting();
+                    await CollectionSorting();
                 }
                 IsLoading = false;
             }
         }
 
         // 对条目进行排序并保存到本地临时文件
-        private async void CollectionSorting()
+        private async Task CollectionSorting()
         {
             // 对条目进行排序
             var order = new List<WatchingStatus>();
@@ -94,8 +95,16 @@ namespace Bangumi.ViewModels
             {
                 if (order[i].subject_id != watchingCollection[i].subject_id)
                 {
-                    watchingCollection.RemoveAt(i);
-                    watchingCollection.Insert(i, order[i]);
+                    for (int j = i + 1; j < order.Count; j++)
+                    {
+                        if (order[i].subject_id == watchingCollection[j].subject_id)
+                        {
+                            watchingCollection.Move(j, i);
+                            //watchingCollection.RemoveAt(j);
+                            //watchingCollection.Insert(i, order[i]);
+                            break;
+                        }
+                    }
                 }
             }
 
