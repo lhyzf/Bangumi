@@ -61,10 +61,13 @@ namespace Bangumi.ViewModels
             if (item != null)
             {
                 IsLoading = true;
-                if (await BangumiFacade.UpdateProgressAsync(item.eps[item.next_ep - 1].id.ToString(), BangumiFacade.EpStatusEnum.watched))
+                if (item.next_ep != 0 && await BangumiFacade.UpdateProgressAsync(item.eps[item.next_ep - 1].id.ToString(), BangumiFacade.EpStatusEnum.watched))
                 {
                     item.eps[item.next_ep - 1].status = "看过";
-                    item.next_ep++;
+                    if (item.eps.Count == item.eps.Where(e => e.status == "看过").Count())
+                        item.next_ep = 0;
+                    else
+                        item.next_ep++;
                     item.watched_eps = "看到第" + item.eps.Where(e => e.status == "看过").Count() + "话";
                     if (item.eps.Where(e => e.status == "看过").Count() < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                         item.ep_color = "#d26585";

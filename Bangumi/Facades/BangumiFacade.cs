@@ -206,7 +206,10 @@ namespace Bangumi.Facades
                                 var progress = await GetProgressesAsync(item.subject_id.ToString());
                                 if (progress != null)
                                 {
-                                    item.next_ep = progress.eps.Count + 1;
+                                    if (item.eps.Count == progress.eps.Count)
+                                        item.next_ep = 0;
+                                    else
+                                        item.next_ep = progress.eps.Count + 1;
                                     item.watched_eps = "看到第" + progress.eps.Count + "话";
                                     if (progress.eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                                         item.ep_color = "#d26585";
