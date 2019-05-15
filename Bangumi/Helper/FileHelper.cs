@@ -10,7 +10,7 @@ namespace Bangumi.Helper
     class FileHelper
     {
         public static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-        public static StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
+        public static StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
         /// <summary>
         /// 写入文件。
         /// </summary>
@@ -87,9 +87,9 @@ namespace Bangumi.Helper
         /// <param name="userFileName"></param>
         /// <param name="encrytion"></param>
         /// <returns></returns>
-        public static async Task<bool> WriteToTempFile(string msg, string fileName)
+        public static async Task<bool> WriteToCacheFile(string msg, string fileName)
         {
-            StorageFile storageFile = await tempFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+            StorageFile storageFile = await cacheFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
             try
             {
                 await FileIO.WriteTextAsync(storageFile, msg);
@@ -108,11 +108,11 @@ namespace Bangumi.Helper
         /// <param name="userFileName"></param>
         /// <param name="encrytion"></param>
         /// <returns></returns>
-        public static async Task<string> ReadFromTempFile(string fileName)
+        public static async Task<string> ReadFromCacheFile(string fileName)
         {
             try
             {
-                StorageFile storageFile = await tempFolder.GetFileAsync(fileName);
+                StorageFile storageFile = await cacheFolder.GetFileAsync(fileName);
                 return await FileIO.ReadTextAsync(storageFile);
             }
             catch (FileNotFoundException)
