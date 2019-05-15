@@ -46,7 +46,9 @@ namespace Bangumi.ViewModels
                 if (await BangumiFacade.PopulateWatchingListAsync(watchingCollection))
                 {
                     Message = "更新时间：" + DateTime.Now;
-                    await CollectionSorting();
+                    CollectionSorting();
+                    //将对象序列化并存储到文件
+                    await FileHelper.WriteToTempFile(JsonConvert.SerializeObject(watchingCollection), "hometemp");
                 }
                 else
                 {
@@ -79,14 +81,16 @@ namespace Bangumi.ViewModels
                     else
                         item.ep_color = "Gray";
 
-                    await CollectionSorting();
+                    //将对象序列化并存储到文件
+                    await FileHelper.WriteToTempFile(JsonConvert.SerializeObject(watchingCollection), "hometemp");
+
                 }
                 IsLoading = false;
             }
         }
 
-        // 对条目进行排序并保存到本地临时文件
-        private async Task CollectionSorting()
+        // 对条目进行排序
+        private void CollectionSorting()
         {
             // 对条目进行排序
             var order = new List<WatchingStatus>();
@@ -107,10 +111,6 @@ namespace Bangumi.ViewModels
                     }
                 }
             }
-
-            //将对象序列化并存储到文件
-            await FileHelper.WriteToTempFile(JsonConvert.SerializeObject(watchingCollection), "hometemp");
-
         }
 
     }
