@@ -48,7 +48,7 @@ namespace Bangumi.ViewModels
                     Message = "更新时间：" + DateTime.Now;
                     CollectionSorting();
                     //将对象序列化并存储到文件
-                    await FileHelper.WriteToTempFile(JsonConvert.SerializeObject(watchingCollection), "hometemp");
+                    await FileHelper.WriteToCacheFile(JsonConvert.SerializeObject(watchingCollection), "JsonCache\\home");
                 }
                 else
                 {
@@ -82,7 +82,7 @@ namespace Bangumi.ViewModels
                         item.ep_color = "Gray";
 
                     //将对象序列化并存储到文件
-                    await FileHelper.WriteToTempFile(JsonConvert.SerializeObject(watchingCollection), "hometemp");
+                    await FileHelper.WriteToCacheFile(JsonConvert.SerializeObject(watchingCollection), "JsonCache\\home");
 
                 }
                 IsLoading = false;

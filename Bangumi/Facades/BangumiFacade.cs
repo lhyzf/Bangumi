@@ -31,7 +31,7 @@ namespace Bangumi.Facades
                 if (subjectCollection.Count == 0)
                 {
                     //从文件反序列化
-                    var PreCollection = JsonConvert.DeserializeObject<List<Collect>>(await FileHelper.ReadFromTempFile(subjectType + "temp"));
+                    var PreCollection = JsonConvert.DeserializeObject<List<Collect>>(await FileHelper.ReadFromCacheFile("JsonCache\\" + subjectType));
                     if (PreCollection != null)
                     {
                         foreach (var type in PreCollection)
@@ -58,7 +58,7 @@ namespace Bangumi.Facades
                     }
 
                     //将对象序列化并存储到文件
-                    await FileHelper.WriteToTempFile(JsonConvert.SerializeObject(subjectCollection), subjectType + "temp");
+                    await FileHelper.WriteToCacheFile(JsonConvert.SerializeObject(subjectCollection), "JsonCache\\" + subjectType);
 
                     return true;
                 }
@@ -83,7 +83,7 @@ namespace Bangumi.Facades
             try
             {
                 //从文件反序列化
-                var PreWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await FileHelper.ReadFromTempFile("hometemp"));
+                var PreWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await FileHelper.ReadFromCacheFile("JsonCache\\home"));
                 if (PreWatchings != null)
                 {
                     foreach (var sub in PreWatchings)
@@ -263,7 +263,7 @@ namespace Bangumi.Facades
                 if (bangumiCollection.Count == 0)
                 {
                     //从文件反序列化
-                    var PreCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await FileHelper.ReadFromTempFile("calendartemp"));
+                    var PreCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await FileHelper.ReadFromCacheFile("JsonCache\\calendar"));
                     if (PreCalendar != null)
                     {
                         foreach (var item in PreCalendar)
@@ -293,7 +293,7 @@ namespace Bangumi.Facades
                     }
 
                     //将对象序列化并存储到文件
-                    await FileHelper.WriteToTempFile(JsonConvert.SerializeObject(bangumiCollection), "calendartemp");
+                    await FileHelper.WriteToCacheFile(JsonConvert.SerializeObject(bangumiCollection), "JsonCache\\calendar");
 
                     return true;
                 }

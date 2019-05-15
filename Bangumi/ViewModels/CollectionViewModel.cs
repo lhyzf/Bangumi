@@ -56,7 +56,7 @@ namespace Bangumi.ViewModels
                 }
                 else
                 {
-                    Message = "获取用户进度失败，请重试或重新登录！";
+                    Message = "获取用户收藏失败，请重试或重新登录！";
                 }
             }
             else
