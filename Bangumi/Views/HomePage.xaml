@@ -10,9 +10,9 @@
     SizeChanged="Page_SizeChanged"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource SystemControlAcrylicWindowBrush}">
 
-    <Grid Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+    <Grid>
         <GridView Name="MyGridView" 
                   Padding="12,0,12,6"
                   ItemsSource="{x:Bind ViewModel.watchingCollection}" 

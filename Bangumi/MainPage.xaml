@@ -9,11 +9,24 @@
     mc:Ignorable="d"
     xmlns:helper="using:Bangumi.Helper"
     RequestedTheme="{x:Bind helper:SettingHelper.MyTheme}"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource SystemControlAcrylicWindowBrush}">
 
 
-    <Grid Background="{ThemeResource SystemControlAcrylicWindowBrush}">
-        <muxc:NavigationView x:Name="NavView"
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" 
+              Name="GridTitleBar"
+              Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Bangumi UWP" VerticalAlignment="Center"  Margin="10,0" />
+        </Grid>
+        <muxc:NavigationView Grid.Row="1" x:Name="NavView"
                              Loaded="NavView_Loaded"
                              ItemInvoked="NavView_ItemInvoked"
                              BackRequested="NavView_BackRequested"
@@ -73,7 +86,10 @@
                        NavigationFailed="ContentFrame_NavigationFailed"/>
             <!--</ScrollViewer>-->
         </muxc:NavigationView>
-        <ProgressRing Name="MyProgressRing" Height="50" Width="50"></ProgressRing>
+        <ProgressRing Name="MyProgressRing" 
+                      Grid.RowSpan="2"
+                      Height="50" 
+                      Width="50"/>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
