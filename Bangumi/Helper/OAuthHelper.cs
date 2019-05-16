@@ -217,7 +217,6 @@ namespace Bangumi.Helper
         public static async Task DeleteTokens()
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFolder jsonCacheFolder = await ApplicationData.Current.LocalCacheFolder.GetFolderAsync("JsonCache");
             StorageFile File = await localFolder.CreateFileAsync(getOAuthFileName(OAuthFile.access_token),
                 CreationCollisionOption.ReplaceExisting);
             await File.DeleteAsync();
@@ -227,7 +226,6 @@ namespace Bangumi.Helper
             File = await localFolder.CreateFileAsync(getOAuthFileName(OAuthFile.user_id),
                 CreationCollisionOption.ReplaceExisting);
             await File.DeleteAsync();
-            await jsonCacheFolder.DeleteAsync();// 删除用户缓存文件
         }
 
         public static string getOAuthFileName(OAuthFile fileName)
