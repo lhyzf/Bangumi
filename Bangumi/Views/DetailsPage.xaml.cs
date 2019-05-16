@@ -34,6 +34,9 @@ namespace Bangumi.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            // 启用标题栏的后退按钮
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+
             if (e.Parameter.GetType() == typeof(WatchingStatus))
             {
                 var p = (WatchingStatus)e.Parameter;
@@ -77,7 +80,7 @@ namespace Bangumi.Views
                 ViewModel.SubjectId = e.Parameter.ToString();
                 ViewModel.ImageSource = ViewModel.NoImageUri;
             }
-
+            
             ViewModel.LoadDetails();
             ViewModel.LoadCollectionStatus();
         }

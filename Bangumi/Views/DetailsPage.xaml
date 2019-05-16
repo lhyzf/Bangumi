@@ -11,9 +11,9 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     SizeChanged="Page_SizeChanged"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource SystemControlAcrylicWindowBrush}">
 
-    <Grid Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+    <Grid>
         <GridView Name="EpsGridView" 
                   ItemsSource="{x:Bind ViewModel.eps}" 
                   Padding="10,0,10,5">

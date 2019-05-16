@@ -8,9 +8,9 @@
     Loaded="Page_Loaded"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource SystemControlAcrylicWindowBrush}">
 
-    <Grid Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+    <Grid>
         <Pivot>
             <PivotItem Header="设置">
                 <StackPanel Padding="0,10,0,0">

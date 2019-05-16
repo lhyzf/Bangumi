@@ -4,9 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.System;
 using Windows.System.Profile;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -30,14 +32,15 @@ namespace Bangumi
         public MainPage()
         {
             this.InitializeComponent();
+            CostomTitleBar();
+
             // 设置窗口的最小大小
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(200, 100));
-            // 启用标题栏的后退按钮
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             // Handle keyboard and mouse navigation requests
             this.systemNavigationManager = SystemNavigationManager.GetForCurrentView();
             systemNavigationManager.BackRequested += SystemNavigationManager_BackRequested;
+            NavView.AlwaysShowHeader = false; // 
 
             //检测鼠标点击前进后退键
             Window.Current.CoreWindow.PointerPressed +=
@@ -61,6 +64,50 @@ namespace Bangumi
                 UserItem.Content = "登录";
                 UserIcon.Glyph = "\uEE57";
             }
+        }
+
+        /// <summary>
+        /// 自定义标题栏
+        /// </summary>
+        private void CostomTitleBar()
+        {
+            // 将内容拓展到标题栏
+            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            coreTitleBar.ExtendViewIntoTitleBar = true;
+            Window.Current.SetTitleBar(GridTitleBar);
+            coreTitleBar.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+            ActualThemeChanged += MainPage_ActualThemeChanged;
+        }
+
+        
+        /// <summary>
+        /// 在主题颜色改变时调用，设置标题栏按钮颜色
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void MainPage_ActualThemeChanged(FrameworkElement sender, object args)
+        {
+            // 设置标题栏按钮颜色
+            var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
+            appTitleBar.ButtonBackgroundColor = Colors.Transparent;
+            if (ActualTheme == ElementTheme.Light)
+                appTitleBar.ButtonForegroundColor = Colors.Black;
+            else
+                appTitleBar.ButtonForegroundColor = Colors.White;
+        }
+
+        /// <summary>
+        /// 在标题栏布局变化时调用，修改左侧与右侧空白区域
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            GridTitleBar.Padding = new Thickness(
+                sender.SystemOverlayLeftInset,
+                0,
+                sender.SystemOverlayRightInset,
+                0);
         }
 
         private void ContentFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
@@ -102,7 +149,7 @@ namespace Bangumi
             // here to load the home page.
             NavView_Navigate("home", new EntranceNavigationTransitionInfo());
 
-            if(AnalyticsInfo.VersionInfo.DeviceFamily== "Windows.Desktop")
+            if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
             {
                 // Add keyboard accelerators for backwards navigation.
                 var goBack = new KeyboardAccelerator { Key = VirtualKey.GoBack };
@@ -239,6 +286,9 @@ namespace Bangumi
 
         private void On_Navigated(object sender, NavigationEventArgs e)
         {
+            // 禁用标题栏的后退按钮
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+
             NavView.IsBackEnabled = ContentFrame.CanGoBack;
 
             if (ContentFrame.SourcePageType == typeof(SettingsPage))
