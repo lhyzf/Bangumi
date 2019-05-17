@@ -71,15 +71,22 @@ namespace Bangumi
         /// </summary>
         private void CostomTitleBar()
         {
-            // 将内容拓展到标题栏
-            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-            coreTitleBar.ExtendViewIntoTitleBar = true;
-            Window.Current.SetTitleBar(GridTitleBar);
-            coreTitleBar.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
-            ActualThemeChanged += MainPage_ActualThemeChanged;
+            if (AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
+            {
+                // 将内容拓展到标题栏
+                var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+                coreTitleBar.ExtendViewIntoTitleBar = true;
+                Window.Current.SetTitleBar(GridTitleBar);
+                coreTitleBar.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+                ActualThemeChanged += MainPage_ActualThemeChanged;
+            }
+            else
+            {
+                GridTitleBar.Visibility = Visibility.Collapsed;
+            }
         }
 
-        
+
         /// <summary>
         /// 在主题颜色改变时调用，设置标题栏按钮颜色
         /// </summary>

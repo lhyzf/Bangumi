@@ -9,9 +9,10 @@
     xmlns:common="using:Bangumi.Common"
     xmlns:sys="using:System"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:helper="using:Bangumi.Helper"
     SizeChanged="Page_SizeChanged"
     mc:Ignorable="d"
-    Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+    Background="{x:Bind common:Converters.ArylicBGEnable(helper:SettingHelper.AcrylicBG)}">
 
     <Grid>
         <GridView Name="EpsGridView" 
@@ -114,8 +115,9 @@
                           Padding="5" 
                           Height="68"
                           Width="{Binding ElementName=MyWidth,Path=Width}"
+                          Background="Transparent"
                           BorderThickness="0.5"
-                          BorderBrush="{ThemeResource SystemControlBackgroundListMediumRevealBorderBrush}">
+                          BorderBrush="{ThemeResource SystemControlBackgroundListMediumBrush}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="*"/>

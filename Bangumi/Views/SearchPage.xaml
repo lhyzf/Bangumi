@@ -7,10 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:Bangumi.Models"
     xmlns:common="using:Bangumi.Common"
+    xmlns:helper="using:Bangumi.Helper"
     SizeChanged="Page_SizeChanged"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d"
-    Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+    Background="{x:Bind common:Converters.ArylicBGEnable(helper:SettingHelper.AcrylicBG)}">
 
     <Grid>
         <Grid.RowDefinitions>

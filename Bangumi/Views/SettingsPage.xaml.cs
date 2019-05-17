@@ -32,6 +32,7 @@ namespace Bangumi.Views
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             EpsBatchToggleSwitch.IsOn = SettingHelper.EpsBatch == true;
+            AcrylicBGToggleSwitch.IsOn = SettingHelper.AcrylicBG == true;
             ThemePanel.Children.Cast<RadioButton>().FirstOrDefault(c => c?.Tag?.ToString() == SettingHelper.MyTheme.ToString()).IsChecked = true;
             try
             {
@@ -93,6 +94,22 @@ namespace Bangumi.Views
             }
         }
 
+        private void AcrylicBGToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            ToggleSwitch toggleSwitch = sender as ToggleSwitch;
+            if (toggleSwitch != null)
+            {
+                if (toggleSwitch.IsOn == true)
+                {
+                    SettingHelper.AcrylicBG = true;
+                }
+                else
+                {
+                    SettingHelper.AcrylicBG = false;
+                }
+            }
+        }
+
         private async void DeleteTempFileButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -110,5 +127,6 @@ namespace Bangumi.Views
                 DeleteTempFileButton.IsEnabled = false;
             }
         }
+
     }
 }
