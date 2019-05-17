@@ -24,6 +24,18 @@ namespace Bangumi.Helper
             }
         }
 
+        public static bool? AcrylicBG
+        {
+            set
+            {
+                localSettings.Values["AcrylicBG"] = value;
+            }
+            get
+            {
+                return localSettings.Values["AcrylicBG"] as bool?;
+            }
+        }
+
         public static ElementTheme MyTheme
         {
             set

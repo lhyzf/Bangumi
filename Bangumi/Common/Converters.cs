@@ -1,4 +1,5 @@
 ﻿using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace Bangumi.Common
 {
@@ -34,6 +35,14 @@ namespace Bangumi.Common
         /// </summary>
         public static Visibility CollapsedIfNullOrEmpty(string value) =>
             string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible;
+
+        public static Brush ArylicBGEnable(bool? value)
+        {
+            if (value == true)
+                return (Brush)Application.Current.Resources["SystemControlAcrylicWindowBrush"];
+            else
+                return (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"];
+        }
 
         public static string GetSubjectTypeName(int type)
         {
