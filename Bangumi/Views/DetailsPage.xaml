@@ -9,10 +9,9 @@
     xmlns:common="using:Bangumi.Common"
     xmlns:sys="using:System"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    xmlns:helper="using:Bangumi.Helper"
     SizeChanged="Page_SizeChanged"
     mc:Ignorable="d"
-    Background="{x:Bind common:Converters.ArylicBGEnable(helper:SettingHelper.AcrylicBG)}">
+    Background="Transparent">
 
     <Grid>
         <GridView Name="EpsGridView" 

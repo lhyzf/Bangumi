@@ -5,53 +5,16 @@
     xmlns:local="using:Bangumi.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:common="using:Bangumi.Common"
-    xmlns:helper="using:Bangumi.Helper"
     Loaded="Page_Loaded"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d"
-    Background="{x:Bind common:Converters.ArylicBGEnable(helper:SettingHelper.AcrylicBG)}">
+    Background="Transparent">
 
     <Grid>
         <Pivot>
             <PivotItem Header="设置">
                 <StackPanel Padding="0,10,0,0">
                     
-                    <!-- 主题模式 -->
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
-                                    Margin="0,4,5,0"
-                                    FontWeight="Normal"
-                                    Text="主题模式" />
-                        <TextBlock Text="*重启生效" 
-                                   VerticalAlignment="Bottom"
-                                   FontSize="12"/>
-                    </StackPanel>
-                    <StackPanel Name="ThemePanel" Margin="0,10,0,0">
-                        <RadioButton Tag="Light" Checked="OnThemeRadioButtonChecked" Content="亮" />
-                        <RadioButton Tag="Dark" Checked="OnThemeRadioButtonChecked" Content="暗" />
-                        <RadioButton Tag="Default" Checked="OnThemeRadioButtonChecked" Content="使用系统设置" />
-                    </StackPanel>
-                    <ToggleSwitch Name="AcrylicBGToggleSwitch"
-                                  OnContent="开启" 
-                                  OffContent="关闭"
-                                  FontSize="16"
-                                  Toggled="AcrylicBGToggleSwitch_Toggled">
-                        <ToggleSwitch.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
-                                       Text="背景使用亚克力模糊"
-                                       Margin="0,4,5,0"
-                                       FontWeight="Normal"
-                                       TextWrapping="Wrap" />
-                                <TextBlock Text="*重启生效" 
-                                   VerticalAlignment="Bottom"
-                                   FontSize="12"/>
-                            </StackPanel>
-                        </ToggleSwitch.Header>
-                    </ToggleSwitch>
-
-
                     <!-- 看过逻辑 -->
                     <ToggleSwitch Name="EpsBatchToggleSwitch"
                                   OnContent="开启" 

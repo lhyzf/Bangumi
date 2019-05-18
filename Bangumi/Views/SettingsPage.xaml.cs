@@ -32,8 +32,6 @@ namespace Bangumi.Views
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             EpsBatchToggleSwitch.IsOn = SettingHelper.EpsBatch == true;
-            AcrylicBGToggleSwitch.IsOn = SettingHelper.AcrylicBG == true;
-            ThemePanel.Children.Cast<RadioButton>().FirstOrDefault(c => c?.Tag?.ToString() == SettingHelper.MyTheme.ToString()).IsChecked = true;
             try
             {
                 // 计算文件夹中文件大小
@@ -68,44 +66,6 @@ namespace Bangumi.Views
                 else
                 {
                     SettingHelper.EpsBatch = false;
-                }
-            }
-        }
-
-        // 修改应用主题颜色
-        private void OnThemeRadioButtonChecked(object sender, RoutedEventArgs e)
-        {
-            var selectedTheme = ((RadioButton)sender)?.Tag?.ToString();
-
-            if (selectedTheme != null)
-            {
-                if (selectedTheme == "Dark")
-                {
-                    SettingHelper.MyTheme = ElementTheme.Dark;
-                }
-                else if (selectedTheme == "Light")
-                {
-                    SettingHelper.MyTheme = ElementTheme.Light;
-                }
-                else
-                {
-                    SettingHelper.MyTheme = ElementTheme.Default;
-                }
-            }
-        }
-
-        private void AcrylicBGToggleSwitch_Toggled(object sender, RoutedEventArgs e)
-        {
-            ToggleSwitch toggleSwitch = sender as ToggleSwitch;
-            if (toggleSwitch != null)
-            {
-                if (toggleSwitch.IsOn == true)
-                {
-                    SettingHelper.AcrylicBG = true;
-                }
-                else
-                {
-                    SettingHelper.AcrylicBG = false;
                 }
             }
         }
