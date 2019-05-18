@@ -7,10 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
-    xmlns:helper="using:Bangumi.Helper"
-    xmlns:common="using:Bangumi.Common"
-    RequestedTheme="{x:Bind helper:SettingHelper.MyTheme}"
-    Background="{x:Bind common:Converters.ArylicBGEnable(helper:SettingHelper.AcrylicBG)}">
+    Background="{ThemeResource SystemControlAltLowAcrylicWindowBrush}">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -33,8 +30,7 @@
                              BackRequested="NavView_BackRequested"
                              IsBackButtonVisible="Collapsed"
                              CompactModeThresholdWidth="600"
-                             OpenPaneLength="200"
-                             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                             OpenPaneLength="200">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Tag="home" 
                                          Icon="Home" 

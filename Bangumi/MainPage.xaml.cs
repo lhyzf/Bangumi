@@ -28,10 +28,12 @@ namespace Bangumi
     public sealed partial class MainPage : Page
     {
         SystemNavigationManager systemNavigationManager;
+        public static MainPage rootPage;
 
         public MainPage()
         {
             this.InitializeComponent();
+            rootPage = this;
             CostomTitleBar();
 
             // 设置窗口的最小大小
@@ -78,6 +80,8 @@ namespace Bangumi
                 coreTitleBar.ExtendViewIntoTitleBar = true;
                 Window.Current.SetTitleBar(GridTitleBar);
                 coreTitleBar.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+
+                MainPage_ActualThemeChanged(GridTitleBar,"");
                 ActualThemeChanged += MainPage_ActualThemeChanged;
             }
             else
@@ -85,7 +89,6 @@ namespace Bangumi
                 GridTitleBar.Visibility = Visibility.Collapsed;
             }
         }
-
 
         /// <summary>
         /// 在主题颜色改变时调用，设置标题栏按钮颜色
@@ -97,6 +100,7 @@ namespace Bangumi
             // 设置标题栏按钮颜色
             var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
             appTitleBar.ButtonBackgroundColor = Colors.Transparent;
+            appTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
             if (ActualTheme == ElementTheme.Light)
                 appTitleBar.ButtonForegroundColor = Colors.Black;
             else

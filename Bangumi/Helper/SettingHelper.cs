@@ -23,36 +23,6 @@ namespace Bangumi.Helper
                 return localSettings.Values["EpsBatch"] as bool?;
             }
         }
-
-        public static bool? AcrylicBG
-        {
-            set
-            {
-                localSettings.Values["AcrylicBG"] = value;
-            }
-            get
-            {
-                return localSettings.Values["AcrylicBG"] as bool?;
-            }
-        }
-
-        public static ElementTheme MyTheme
-        {
-            set
-            {
-                localSettings.Values["Theme"] = value.ToString();
-            }
-            get
-            {
-                string theme = localSettings.Values["Theme"] as string;
-                if (theme == "Dark")
-                    return ElementTheme.Dark;
-                else if (theme == "Light")
-                    return ElementTheme.Light;
-                else
-                    return ElementTheme.Default;
-            }
-        }
         
     }
 }

@@ -36,14 +36,6 @@ namespace Bangumi.Common
         public static Visibility CollapsedIfNullOrEmpty(string value) =>
             string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible;
 
-        public static Brush ArylicBGEnable(bool? value)
-        {
-            if (value == true)
-                return (Brush)Application.Current.Resources["SystemControlAcrylicWindowBrush"];
-            else
-                return (Brush)Application.Current.Resources["ApplicationPageBackgroundThemeBrush"];
-        }
-
         public static string GetSubjectTypeName(int type)
         {
             string cn = "";
