@@ -53,7 +53,7 @@ namespace Bangumi.Views
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            double UseableWidth = CollectionPivot.ActualWidth - 24;
+            double UseableWidth = CollectionSemanticZoom.ActualWidth - 24;
             MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 220);
         }
     }

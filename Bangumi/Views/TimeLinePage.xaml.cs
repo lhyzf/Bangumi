@@ -47,7 +47,7 @@ namespace Bangumi.Views
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            double UseableWidth = WeekPivot.ActualWidth - 24;
+            double UseableWidth = TimeLineSemanticZoom.ActualWidth - 24;
             MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
         }
 

@@ -8,17 +8,18 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Data;
 
 namespace Bangumi.ViewModels
 {
-   public class CollectionViewModel : ViewModelBase
+    public class CollectionViewModel : ViewModelBase
     {
         public CollectionViewModel()
         {
             IsLoading = false;
         }
 
-        public ObservableCollection<Collect> subjectCollection { get; private set; } = new ObservableCollection<Collect>();
+        public ObservableCollection<Collect> subjectCollection { get; set; } = new ObservableCollection<Collect>();
 
         private bool _isLoading;
         public bool IsLoading

@@ -7,10 +7,56 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:Bangumi.Models"
     xmlns:common="using:Bangumi.Common"
+    xmlns:wuxdata="using:Windows.UI.Xaml.Data"
     SizeChanged="Page_SizeChanged"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d"
     Background="Transparent">
+    <Page.Resources>
+        <CollectionViewSource x:Name="cvsGroups" Source="{x:Bind ViewModel.subjectCollection}" IsSourceGrouped="True" ItemsPath="list"/>
+
+        <DataTemplate x:Key="ZoomedInTemplate" x:DataType="data:SList">
+            <Grid Width="{Binding ElementName=MyWidth,Path=Width}"
+                  Padding="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="{x:Bind subject.images.common}" 
+                       Height="75" 
+                       Width="75" 
+                       Stretch="UniformToFill" />
+                <Grid Grid.Column="1"
+                      Padding="6,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{x:Bind subject.name_cn}" 
+                               FontSize="14" 
+                               Foreground="#d26585"
+                               TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="1"
+                               Text="{x:Bind subject.name}" 
+                               FontSize="12"
+                               Foreground="Gray"
+                               TextTrimming="WordEllipsis"/>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ZoomedInGroupHeaderTemplate" x:DataType="data:Collect">
+            <TextBlock Text="{x:Bind status.name}" 
+                       Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                       Style="{StaticResource SubtitleTextBlockStyle}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ZoomedOutTemplate" x:DataType="wuxdata:ICollectionViewGroup">
+            <TextBlock Text="{x:Bind ((data:Collect)Group).status.name}" 
+                       Style="{StaticResource SubtitleTextBlockStyle}" 
+                       TextWrapping="Wrap" />
+        </DataTemplate>
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -60,59 +106,30 @@
         <Border Name="MyWidth"
                     Visibility="Collapsed"/>
 
-        <Pivot Name="CollectionPivot" 
-               Grid.Row="1" 
-               ItemsSource="{x:Bind ViewModel.subjectCollection}" 
-               IsHeaderItemsCarouselEnabled="False">
-            <Pivot.HeaderTemplate>
-                <DataTemplate x:DataType="data:Collect">
-                    <StackPanel>
-                        <!--<TextBlock Text="3-1" FontSize="14" HorizontalAlignment="Center"/>-->
-                        <TextBlock Text="{x:Bind status.name}" 
-                                   HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </DataTemplate>
-            </Pivot.HeaderTemplate>
-            <Pivot.ItemTemplate>
-                <DataTemplate x:DataType="data:Collect">
-                    <GridView ItemsSource="{x:Bind list}" 
-                              Padding="0,0,0,40"
-                              IsItemClickEnabled="True" 
-                              ItemClick="GridView_ItemClick">
-                        <GridView.ItemTemplate>
-                            <DataTemplate x:DataType="data:SList">
-                                <Grid Width="{Binding ElementName=MyWidth,Path=Width}"
-                                      Padding="5">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Image Source="{x:Bind subject.images.common}" 
-                                           Height="75" 
-                                           Width="75" 
-                                           Stretch="UniformToFill" />
-                                    <Grid Grid.Column="1"
-                                          Padding="6,0">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="auto"/>
-                                            <RowDefinition Height="auto"/>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Text="{x:Bind subject.name_cn}" 
-                                                   FontSize="14" 
-                                                   Foreground="#d26585"
-                                                   TextWrapping="Wrap" />
-                                        <TextBlock Grid.Row="1"
-                                                   Text="{x:Bind subject.name}" 
-                                                   FontSize="12"
-                                                   Foreground="Gray"
-                                                   TextTrimming="WordEllipsis"/>
-                                    </Grid>
-                                </Grid>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                    </GridView>
-                </DataTemplate>
-            </Pivot.ItemTemplate>
-        </Pivot>
+        <SemanticZoom Name="CollectionSemanticZoom" 
+                      Grid.Row="1">
+            <SemanticZoom.ZoomedInView>
+                <GridView ItemsSource="{x:Bind cvsGroups.View}" 
+                          Padding="12,0,12,40"
+                          ScrollViewer.IsHorizontalScrollChainingEnabled="False"
+                          IsItemClickEnabled="True" 
+                          ItemClick="GridView_ItemClick"
+                          ItemTemplate="{StaticResource ZoomedInTemplate}">
+                    <GridView.GroupStyle>
+                        <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}"/>
+                    </GridView.GroupStyle>
+                </GridView>
+            </SemanticZoom.ZoomedInView>
+
+            <SemanticZoom.ZoomedOutView>
+                <ListView ItemsSource="{x:Bind cvsGroups.View.CollectionGroups}"
+                          Padding="12,0,12,40"
+                          SelectionMode="None"
+                          ScrollViewer.IsHorizontalScrollChainingEnabled="False"
+                          ItemTemplate="{StaticResource ZoomedOutTemplate}">
+                </ListView>
+            </SemanticZoom.ZoomedOutView>
+        </SemanticZoom>
+
     </Grid>
 </Page>
