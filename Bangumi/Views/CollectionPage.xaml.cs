@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -47,7 +48,7 @@ namespace Bangumi.Views
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var selectedItem = (SList)e.ClickedItem;
-            Frame.Navigate(typeof(DetailsPage), selectedItem.subject);
+            MainPage.rootFrame.Navigate(typeof(DetailsPage), selectedItem.subject, new DrillInNavigationTransitionInfo());
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)

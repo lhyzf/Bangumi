@@ -7,12 +7,14 @@ using System;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media.Animation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -28,12 +30,43 @@ namespace Bangumi.Views
         public SearchPage()
         {
             this.InitializeComponent();
+            CostomTitleBar();
+        }
+
+        /// <summary>
+        /// 自定义标题栏
+        /// </summary>
+        private void CostomTitleBar()
+        {
+            if (AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
+            {
+                var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+                coreTitleBar.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+            }
+            else
+            {
+                GridTitleBar.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        /// <summary>
+        /// 在标题栏布局变化时调用，修改左侧与右侧空白区域
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            GridTitleBar.Padding = new Thickness(
+                sender.SystemOverlayLeftInset,
+                0,
+                sender.SystemOverlayRightInset,
+                0);
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var selectedItem = (Subject)e.ClickedItem;
-            Frame.Navigate(typeof(DetailsPage), selectedItem);
+            MainPage.rootFrame.Navigate(typeof(DetailsPage), selectedItem, new DrillInNavigationTransitionInfo());
         }
 
         private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -143,7 +176,13 @@ namespace Bangumi.Views
             MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 250);
         }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            Window.Current.SetTitleBar(GridTitleBar);
+            // 启用标题栏的后退按钮
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
-
+            MainPage.rootPage.MyCommandBar.Visibility = Visibility.Collapsed;
+        }
     }
 }

@@ -65,6 +65,7 @@
                 <DataTemplate x:DataType="data:BangumiTimeLine">
                     <GridView ItemsSource="{x:Bind items}" 
                               IsItemClickEnabled="True" 
+                              Padding="0,0,0,40"
                               ItemClick="GridView_ItemClick">
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="data:Subject">

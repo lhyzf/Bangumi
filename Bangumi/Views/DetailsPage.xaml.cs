@@ -7,7 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Windows.ApplicationModel.Core;
+using Windows.System.Profile;
+using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -23,21 +27,63 @@ namespace Bangumi.Views
     /// </summary>
     public sealed partial class DetailsPage : Page
     {
-        public DetailsViewModel ViewModel { get; } = new DetailsViewModel();
+        public DetailsViewModel ViewModel { get; set; } = new DetailsViewModel();
 
         public DetailsPage()
         {
             this.InitializeComponent();
+            CostomTitleBar();
+        }
+
+        /// <summary>
+        /// 自定义标题栏
+        /// </summary>
+        private void CostomTitleBar()
+        {
+            if (AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
+            {
+                var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+                coreTitleBar.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+            }
+            else
+            {
+                GridTitleBar.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        /// <summary>
+        /// 在标题栏布局变化时调用，修改左侧与右侧空白区域
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            GridTitleBar.Padding = new Thickness(
+                sender.SystemOverlayLeftInset,
+                0,
+                sender.SystemOverlayRightInset,
+                0);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            // 启用标题栏的后退按钮
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-
+            bool needReLoad = false;
+            if (e.NavigationMode == NavigationMode.New)
+            {
+                needReLoad = true;
+            }
             if (e.Parameter.GetType() == typeof(WatchingStatus))
             {
                 var p = (WatchingStatus)e.Parameter;
+                if (ViewModel.SubjectId == p.subject_id.ToString())
+                {
+                    return;
+                }
+                else
+                {
+                    needReLoad = true;
+                    ViewModel.InitViewModel();
+                }
                 ViewModel.SubjectId = p.subject_id.ToString();
                 ViewModel.ImageSource = p.image;
                 ViewModel.Name_cn = p.name_cn;
@@ -66,6 +112,15 @@ namespace Bangumi.Views
             else if (e.Parameter.GetType() == typeof(Subject))
             {
                 var p = (Subject)e.Parameter;
+                if (ViewModel.SubjectId == p.id.ToString())
+                {
+                    return;
+                }
+                else
+                {
+                    needReLoad = true;
+                    ViewModel.InitViewModel();
+                }
                 ViewModel.SubjectId = p.id.ToString();
                 ViewModel.ImageSource = p.images.common;
                 ViewModel.Name_cn = p.name_cn;
@@ -75,12 +130,24 @@ namespace Bangumi.Views
             }
             else if (e.Parameter.GetType() == typeof(Int32))
             {
+                if (ViewModel.SubjectId == e.Parameter.ToString())
+                {
+                    return;
+                }
+                else
+                {
+                    needReLoad = true;
+                    ViewModel.InitViewModel();
+                }
                 ViewModel.SubjectId = e.Parameter.ToString();
                 ViewModel.ImageSource = ViewModel.NoImageUri;
             }
-            
-            ViewModel.LoadDetails();
-            ViewModel.LoadCollectionStatus();
+
+            if (needReLoad)
+            {
+                ViewModel.LoadDetails();
+                ViewModel.LoadCollectionStatus();
+            }
         }
 
 
@@ -213,6 +280,7 @@ namespace Bangumi.Views
         /// </summary>
         private async void MoreInfoButton_Click(object sender, RoutedEventArgs e)
         {
+
             SubjectMoreInfoContentDialog subjectMoreInfoContentDialog = new SubjectMoreInfoContentDialog()
             {
                 name = ViewModel.name,
@@ -232,6 +300,15 @@ namespace Bangumi.Views
         {
             double UseableWidth = EpsGridView.ActualWidth - EpsGridView.Padding.Left - EpsGridView.Padding.Right;
             MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            Window.Current.SetTitleBar(GridTitleBar);
+            // 启用标题栏的后退按钮
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+
+            MainPage.rootPage.MyCommandBar.Visibility = Visibility.Visible;
         }
 
     }

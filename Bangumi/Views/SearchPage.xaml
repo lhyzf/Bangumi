@@ -8,6 +8,7 @@
     xmlns:data="using:Bangumi.Models"
     xmlns:common="using:Bangumi.Common"
     SizeChanged="Page_SizeChanged"
+    Loaded="Page_Loaded"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d"
     Background="Transparent">
@@ -15,24 +16,38 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Grid Grid.Row="0" 
+              Height="32"
+              Name="GridTitleBar"
+              Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="搜索" 
+                       VerticalAlignment="Center"  
+                       Margin="10,0" />
+        </Grid>
 
         <AutoSuggestBox Name="SearchBox" 
+                        Grid.Row="1"
                         Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}"
                         PlaceholderText="关键字|Subject ID"
                         QueryIcon="Find"
                         ItemsSource="{x:Bind ViewModel.Suggestions}"
                         TextChanged="AutoSuggestBox_TextChanged"
                         QuerySubmitted="AutoSuggestBox_QuerySubmitted"
-                        Margin="10,0"/>
+                        Margin="10,10,10,0"/>
 
         <Border Name="MyWidth"
                 Visibility="Collapsed"/>
 
         <Pivot Name="TypePivot" 
                SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
-               Grid.Row="1"
+               Grid.Row="2"
                SelectionChanged="TypePivot_SelectionChanged">
             <PivotItem Margin="0">
                 <PivotItem.Header>
