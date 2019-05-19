@@ -7,85 +7,39 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
+    NavigationCacheMode="Enabled"
+    Loaded="Page_Loaded"
     Background="{ThemeResource SystemControlAltLowAcrylicWindowBrush}">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0" 
-              Height="32"
-              Name="GridTitleBar"
-              Background="Transparent">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="Bangumi UWP" VerticalAlignment="Center"  Margin="10,0" />
-        </Grid>
-        <muxc:NavigationView Grid.Row="1" x:Name="NavView"
-                             Loaded="NavView_Loaded"
-                             ItemInvoked="NavView_ItemInvoked"
-                             BackRequested="NavView_BackRequested"
-                             IsBackButtonVisible="Collapsed"
-                             CompactModeThresholdWidth="600"
-                             OpenPaneLength="200">
-            <muxc:NavigationView.MenuItems>
-                <muxc:NavigationViewItem Tag="home" 
-                                         Icon="Home" 
-                                         Content="进度"/>
-                <muxc:NavigationViewItem Tag="collection" 
-                                         Content="收藏">
-                    <muxc:NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" 
-                                  Glyph="&#xE734;"/>
-                    </muxc:NavigationViewItem.Icon>
-                </muxc:NavigationViewItem>
-                <muxc:NavigationViewItem Tag="timeLine" 
-                                         Content="时间表">
-                    <muxc:NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" 
-                                  Glyph="&#xE8C0;"/>
-                    </muxc:NavigationViewItem.Icon>
-                </muxc:NavigationViewItem>
-                <muxc:NavigationViewItem Tag="index" 
-                                         Content="索引"
-                                         Visibility="Collapsed">
-                    <muxc:NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" 
-                                  Glyph="&#xF0E2;"/>
-                    </muxc:NavigationViewItem.Icon>
-                </muxc:NavigationViewItem>
-                <muxc:NavigationViewItem Tag="search" 
-                                         Content="搜索">
-                    <muxc:NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" 
-                                  Glyph="&#xE721;"/>
-                    </muxc:NavigationViewItem.Icon>
-                </muxc:NavigationViewItem>
-            </muxc:NavigationView.MenuItems>
-            <muxc:NavigationView.PaneFooter>
-                <muxc:NavigationViewItem Name="UserItem" 
-                                         Tag="user" 
-                                         Content="登录" 
-                                         Tapped="NavigationViewItem_Tapped">
-                    <muxc:NavigationViewItem.Icon>
+        <Frame Name="MyFrame" />
+
+        <CommandBar x:Name="MyCommandBar"
+                    x:FieldModifier="public"
+                    VerticalAlignment="Bottom"
+                    RequestedTheme="Dark"
+                    Background="{ThemeResource SystemControlAltMediumLowAcrylicElementMediumBrush}">
+            <AppBarButton Icon="Find" 
+                          Label="搜索"
+                          Click="SearchButton_Click"/>
+            <AppBarButton Icon="Setting" 
+                          Label="设置"
+                          Click="SettingButton_Click"/>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Name="LoginButton"
+                              Label="登录"
+                              Click="LoginButton_Click">
+                    <AppBarButton.Icon>
                         <FontIcon Name="UserIcon" 
                                   FontFamily="Segoe MDL2 Assets" 
                                   Glyph="&#xEE57;"/>
-                    </muxc:NavigationViewItem.Icon>
-                </muxc:NavigationViewItem>
-            </muxc:NavigationView.PaneFooter>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
 
-            <!--<ScrollViewer>-->
-                <Frame x:Name="ContentFrame" 
-                       IsTabStop="True"
-                       NavigationFailed="ContentFrame_NavigationFailed"/>
-            <!--</ScrollViewer>-->
-        </muxc:NavigationView>
+        
         <ProgressRing Name="MyProgressRing" 
-                      Grid.RowSpan="2"
                       Height="50" 
                       Width="50"/>
 
@@ -93,8 +47,8 @@
             <VisualStateGroup>
                 <VisualState>
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger
-                        MinWindowWidth="{x:Bind NavView.CompactModeThresholdWidth}"/>
+                        <!--<AdaptiveTrigger
+                        MinWindowWidth="{x:Bind NavView.CompactModeThresholdWidth}"/>-->
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <!-- Leave the next line for left-only navigation. -->

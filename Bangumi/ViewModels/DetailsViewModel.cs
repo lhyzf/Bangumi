@@ -18,13 +18,10 @@ namespace Bangumi.ViewModels
     {
         public DetailsViewModel()
         {
-            IsLoading = true;
-            IsCollectionStatusLoading = true;
-            IsDetailLoading = true;
-            IsRateLoading = true;
+            InitViewModel();
         }
 
-        public string NoImageUri = Constants.noImageUri;
+        public string NoImageUri;
         public ObservableCollection<Ep> eps { get; private set; } = new ObservableCollection<Ep>();
 
         private bool _isLoading;
@@ -76,55 +73,54 @@ namespace Bangumi.ViewModels
             set => Set(ref _imageSource, value);
         }
 
-        private string _name_cn = "";
+        private string _name_cn;
         public string Name_cn
         {
             get => _name_cn;
             set => Set(ref _name_cn, value);
         }
 
-        private string _air_date = "";
+        private string _air_date;
         public string Air_date
         {
             get => _air_date;
             set => Set(ref _air_date, value);
         }
 
-        private int _air_weekday = 0;
+        private int _air_weekday;
         public int Air_weekday
         {
             get => _air_weekday;
             set => Set(ref _air_weekday, value);
         }
 
-        private string _airWeekdayName = "";
+        private string _airWeekdayName;
         public string AirWeekdayName
         {
             get => _airWeekdayName;
             set => Set(ref _airWeekdayName, value);
         }
 
-        private string _summary = "";
+        private string _summary;
         public string Summary
         {
             get => _summary;
             set => Set(ref _summary, value);
         }
 
-        private string _collectionStatusText = "收藏";
+        private string _collectionStatusText;
         public string CollectionStatusText
         {
             get => _collectionStatusText;
             set => Set(ref _collectionStatusText, value);
         }
 
-        private string _collectionStatusIcon = "\uE006";
+        private string _collectionStatusIcon;
         public string CollectionStatusIcon
         {
             get => _collectionStatusIcon;
             set => Set(ref _collectionStatusIcon, value);
         }
-
 
         // 更多资料用
         public string name;
@@ -138,7 +134,22 @@ namespace Bangumi.ViewModels
         public string myComment;
         public bool myPrivacy;
 
-
+        public void InitViewModel()
+        {
+            IsLoading = true;
+            IsCollectionStatusLoading = true;
+            IsDetailLoading = true;
+            IsRateLoading = true;
+            NoImageUri = Constants.noImageUri;
+            Name_cn = "";
+            Air_date = "";
+            Air_weekday = 0;
+            AirWeekdayName = "";
+            Summary = "";
+            CollectionStatusText = "收藏";
+            CollectionStatusIcon = "\uE006";
+            eps.Clear();
+        }
 
         public async void EditMyRate()
         {

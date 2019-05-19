@@ -29,24 +29,21 @@ namespace Bangumi
     {
         SystemNavigationManager systemNavigationManager;
         public static MainPage rootPage;
-
+        public static Frame rootFrame;
+        public bool hasDialog = false;
         public MainPage()
         {
             this.InitializeComponent();
             rootPage = this;
-            CostomTitleBar();
-
+            rootFrame = MyFrame;
             // 设置窗口的最小大小
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(200, 100));
 
-            // Handle keyboard and mouse navigation requests
             this.systemNavigationManager = SystemNavigationManager.GetForCurrentView();
             systemNavigationManager.BackRequested += SystemNavigationManager_BackRequested;
-            NavView.AlwaysShowHeader = false; // 
+            Window.Current.CoreWindow.PointerPressed += CoreWindow_PointerPressed;
 
-            //检测鼠标点击前进后退键
-            Window.Current.CoreWindow.PointerPressed +=
-                this.CoreWindow_PointerPressed;
+            CostomTitleBar();
         }
 
         /// <summary>
@@ -58,12 +55,12 @@ namespace Bangumi
             bool result = await OAuthHelper.CheckTokens();
             if (result)
             {
-                UserItem.Content = "注销";
+                LoginButton.Label = "注销";
                 UserIcon.Glyph = "\uE7E8";
             }
             else
             {
-                UserItem.Content = "登录";
+                LoginButton.Label = "登录";
                 UserIcon.Glyph = "\uEE57";
             }
         }
@@ -78,15 +75,8 @@ namespace Bangumi
                 // 将内容拓展到标题栏
                 var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
                 coreTitleBar.ExtendViewIntoTitleBar = true;
-                Window.Current.SetTitleBar(GridTitleBar);
-                coreTitleBar.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
 
-                MainPage_ActualThemeChanged(GridTitleBar,"");
                 ActualThemeChanged += MainPage_ActualThemeChanged;
-            }
-            else
-            {
-                GridTitleBar.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -108,86 +98,13 @@ namespace Bangumi
         }
 
         /// <summary>
-        /// 在标题栏布局变化时调用，修改左侧与右侧空白区域
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
-        {
-            GridTitleBar.Padding = new Thickness(
-                sender.SystemOverlayLeftInset,
-                0,
-                sender.SystemOverlayRightInset,
-                0);
-        }
-
-        private void ContentFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
-        {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
-        }
-
-        // List of ValueTuple holding the Navigation Tag and the relative Navigation Page
-        private readonly List<(string Tag, Type Page)> _pages = new List<(string Tag, Type Page)>
-        {
-            ("home", typeof(HomePage)),
-            ("collection", typeof(CollectionPage)),
-            ("timeLine", typeof(TimeLinePage)),
-            ("index", typeof(IndexPage)),
-            ("search", typeof(SearchPage)),
-        };
-
-        private async void NavView_Loaded(object sender, RoutedEventArgs e)
-        {
-            await UpdataUserStatus();
-
-            // You can also add items in code.
-            //NavView.MenuItems.Add(new muxc.NavigationViewItemSeparator());
-            //NavView.MenuItems.Add(new muxc.NavigationViewItem
-            //{
-            //    Content = "My content",
-            //    Icon = new SymbolIcon((Symbol)0xF1AD),
-            //    Tag = "content"
-            //});
-            //_pages.Add(("content", typeof(MyContentPage)));
-
-            // Add handler for ContentFrame navigation.
-            ContentFrame.Navigated += On_Navigated;
-
-            // NavView doesn't load any page by default, so load home page.
-            NavView.SelectedItem = NavView.MenuItems[0];
-            // If navigation occurs on SelectionChanged, this isn't needed.
-            // Because we use ItemInvoked to navigate, we need to call Navigate
-            // here to load the home page.
-            NavView_Navigate("home", new EntranceNavigationTransitionInfo());
-
-            if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
-            {
-                // Add keyboard accelerators for backwards navigation.
-                var goBack = new KeyboardAccelerator { Key = VirtualKey.GoBack };
-                goBack.Invoked += BackInvoked;
-                this.KeyboardAccelerators.Add(goBack);
-
-                // ALT routes here
-                var altLeft = new KeyboardAccelerator
-                {
-                    Key = VirtualKey.Left,
-                    Modifiers = VirtualKeyModifiers.Menu
-                };
-                altLeft.Invoked += BackInvoked;
-                this.KeyboardAccelerators.Add(altLeft);
-            }
-
-        }
-
-        /// <summary>
         /// 鼠标后退键返回上一页。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void CoreWindow_PointerPressed(CoreWindow sender,
-            PointerEventArgs e)
+        private void CoreWindow_PointerPressed(CoreWindow sender, PointerEventArgs args)
         {
-            var properties = e.CurrentPoint.Properties;
+            var properties = args.CurrentPoint.Properties;
 
             // Ignore button chords with the left, right, and middle buttons
             if (properties.IsLeftButtonPressed || properties.IsRightButtonPressed ||
@@ -199,63 +116,9 @@ namespace Bangumi
             bool forwardPressed = properties.IsXButton2Pressed;
             if (backPressed ^ forwardPressed)
             {
-                e.Handled = true;
-                if (backPressed) this.On_BackRequested();
+                if (backPressed)
+                    args.Handled = On_BackRequested();
                 // if (forwardPressed) this.TryGoForward();
-            }
-        }
-
-        private void NavView_ItemInvoked(muxc.NavigationView sender,
-                                         muxc.NavigationViewItemInvokedEventArgs args)
-        {
-            if (args.IsSettingsInvoked == true)
-            {
-                NavView_Navigate("settings", args.RecommendedNavigationTransitionInfo);
-            }
-            else if (args.InvokedItemContainer != null)
-            {
-                var navItemTag = args.InvokedItemContainer.Tag.ToString();
-                NavView_Navigate(navItemTag, args.RecommendedNavigationTransitionInfo);
-            }
-        }
-
-        /* NavView_SelectionChanged is not used in this example, but is shown for completeness.
-             You will typically handle either ItemInvoked or SelectionChanged to perform navigation,
-             but not both. */
-        private void NavView_SelectionChanged(muxc.NavigationView sender,
-                                              muxc.NavigationViewSelectionChangedEventArgs args)
-        {
-            if (args.IsSettingsSelected == true)
-            {
-                NavView_Navigate("settings", args.RecommendedNavigationTransitionInfo);
-            }
-            else if (args.SelectedItemContainer != null)
-            {
-                var navItemTag = args.SelectedItemContainer.Tag.ToString();
-                NavView_Navigate(navItemTag, args.RecommendedNavigationTransitionInfo);
-            }
-        }
-
-        private void NavView_Navigate(string navItemTag, NavigationTransitionInfo transitionInfo)
-        {
-            Type _page = null;
-            if (navItemTag == "settings")
-            {
-                _page = typeof(SettingsPage);
-            }
-            else
-            {
-                var item = _pages.FirstOrDefault(p => p.Tag.Equals(navItemTag));
-                _page = item.Page;
-            }
-            // Get the page type before navigation so you can prevent duplicate
-            // entries in the backstack.
-            var preNavPageType = ContentFrame.CurrentSourcePageType;
-
-            // Only navigate if the selected page isn't currently loaded.
-            if (!(_page is null) && !Type.Equals(preNavPageType, _page))
-            {
-                ContentFrame.Navigate(_page, null, transitionInfo);
             }
         }
 
@@ -267,63 +130,34 @@ namespace Bangumi
             }
         }
 
-        private void NavView_BackRequested(muxc.NavigationView sender,
-                                           muxc.NavigationViewBackRequestedEventArgs args)
-        {
-            On_BackRequested();
-        }
-
-        private void BackInvoked(KeyboardAccelerator sender,
-                                 KeyboardAcceleratorInvokedEventArgs args)
-        {
-            On_BackRequested();
-            args.Handled = true;
-        }
-
+        // 页面向后导航
         private bool On_BackRequested()
         {
-            if (!ContentFrame.CanGoBack)
+            if (!MainPage.rootFrame.CanGoBack)
                 return false;
 
             // Don't go back if the nav pane is overlayed.
-            if (NavView.IsPaneOpen &&
-                (NavView.DisplayMode == muxc.NavigationViewDisplayMode.Compact ||
-                 NavView.DisplayMode == muxc.NavigationViewDisplayMode.Minimal))
+            if (hasDialog)
                 return false;
 
-            ContentFrame.GoBack();
+            MainPage.rootFrame.GoBack();
             return true;
         }
 
-        private void On_Navigated(object sender, NavigationEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            // 禁用标题栏的后退按钮
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            await UpdataUserStatus();
+            rootFrame.Navigate(typeof(HomePage));
+        }
 
-            NavView.IsBackEnabled = ContentFrame.CanGoBack;
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            rootFrame.Navigate(typeof(SearchPage), null, new DrillInNavigationTransitionInfo());
+        }
 
-            if (ContentFrame.SourcePageType == typeof(SettingsPage))
-            {
-                // SettingsItem is not part of NavView.MenuItems, and doesn't have a Tag.
-                NavView.SelectedItem = (muxc.NavigationViewItem)NavView.SettingsItem;
-                NavView.Header = "设置";
-            }
-            else if (ContentFrame.SourcePageType == typeof(DetailsPage))
-            {
-                NavView.SelectedItem = null;
-                NavView.Header = "详情";
-            }
-            else if (ContentFrame.SourcePageType != null)
-            {
-                var item = _pages.FirstOrDefault(p => p.Page == e.SourcePageType);
-
-                NavView.SelectedItem = NavView.MenuItems
-                    .OfType<muxc.NavigationViewItem>()
-                    .First(n => n.Tag.Equals(item.Tag));
-
-                NavView.Header =
-                    ((muxc.NavigationViewItem)NavView.SelectedItem)?.Content?.ToString();
-            }
+        private void SettingButton_Click(object sender, RoutedEventArgs e)
+        {
+            rootFrame.Navigate(typeof(SettingsPage), null, new DrillInNavigationTransitionInfo());
         }
 
         /// <summary>
@@ -331,9 +165,9 @@ namespace Bangumi
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void NavigationViewItem_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            if (UserItem.Content.ToString() == "登录")
+            if (LoginButton.Label == "登录")
             {
                 MyProgressRing.IsActive = true;
                 MyProgressRing.Visibility = Visibility.Visible;
@@ -345,7 +179,7 @@ namespace Bangumi
                 await Task.Delay(500);
                 await UpdataUserStatus();
             }
-            else if (UserItem.Content.ToString() == "注销")
+            else if (LoginButton.Label == "注销")
             {
                 string choice = "";
                 var msgDialog = new Windows.UI.Popups.MessageDialog("确定要退出登录吗？") { Title = "注销" };

@@ -17,39 +17,49 @@ namespace Bangumi.Views
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class TimeLinePage : Page
+    public sealed partial class ProgressPage : Page
     {
-        public TimeLineViewModel ViewModel { get; } = new TimeLineViewModel();
+        public HomeViewModel ViewModel { get; } = new HomeViewModel();
 
-        public TimeLinePage()
+        public ProgressPage()
         {
             this.InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (ViewModel.bangumiCollection.Count == 0 && !ViewModel.IsLoading)
+            if (ViewModel.watchingCollection.Count == 0 && !ViewModel.IsLoading)
             {
-                ViewModel.LoadTimeLine();
+                ViewModel.LoadWatchingList();
             }
         }
 
+
         private void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
-            ViewModel.LoadTimeLine();
+            ViewModel.LoadWatchingList();
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var selectedItem = (Subject)e.ClickedItem;
+            var selectedItem = (WatchingStatus)e.ClickedItem;
             MainPage.rootFrame.Navigate(typeof(DetailsPage), selectedItem, new DrillInNavigationTransitionInfo());
+            //Frame.Navigate(typeof(DetailsPage), selectedItem);
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            double UseableWidth = WeekPivot.ActualWidth - 24;
-            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
+            double UseableWidth = MyGridView.ActualWidth - MyGridView.Padding.Left - MyGridView.Padding.Right;
+            if (UseableWidth <= 0) return;
+            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 235);
         }
 
+        // 将下一话标记为看过
+        private void NextEpButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Windows.UI.Xaml.Controls.Button)sender;
+            var item = (WatchingStatus)button.DataContext;
+            ViewModel.UpdateEpStatus(item);
+        }
     }
 }

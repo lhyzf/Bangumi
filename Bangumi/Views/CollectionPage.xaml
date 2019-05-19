@@ -76,6 +76,7 @@
             <Pivot.ItemTemplate>
                 <DataTemplate x:DataType="data:Collect">
                     <GridView ItemsSource="{x:Bind list}" 
+                              Padding="0,0,0,40"
                               IsItemClickEnabled="True" 
                               ItemClick="GridView_ItemClick">
                         <GridView.ItemTemplate>

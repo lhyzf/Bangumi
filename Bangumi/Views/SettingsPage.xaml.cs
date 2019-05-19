@@ -1,7 +1,10 @@
 ﻿using Bangumi.Helper;
 using System;
 using System.Linq;
+using Windows.ApplicationModel.Core;
 using Windows.Storage;
+using Windows.System.Profile;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -27,10 +30,46 @@ namespace Bangumi.Views
         public SettingsPage()
         {
             this.InitializeComponent();
+            CostomTitleBar();
+        }
+
+        /// <summary>
+        /// 自定义标题栏
+        /// </summary>
+        private void CostomTitleBar()
+        {
+            if (AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
+            {
+                var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+                coreTitleBar.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+            }
+            else
+            {
+                GridTitleBar.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        /// <summary>
+        /// 在标题栏布局变化时调用，修改左侧与右侧空白区域
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            GridTitleBar.Padding = new Thickness(
+                sender.SystemOverlayLeftInset,
+                0,
+                sender.SystemOverlayRightInset,
+                0);
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            Window.Current.SetTitleBar(GridTitleBar);
+            // 启用标题栏的后退按钮
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            MainPage.rootPage.MyCommandBar.Visibility = Visibility.Collapsed;
+
             EpsBatchToggleSwitch.IsOn = SettingHelper.EpsBatch == true;
             try
             {

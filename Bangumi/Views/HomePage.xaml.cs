@@ -1,12 +1,22 @@
-﻿using Bangumi.Facades;
-using Bangumi.Helper;
-using Bangumi.Models;
-using Bangumi.ViewModels;
-using System;
-using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Core;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Windows.System.Profile;
+using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -18,46 +28,53 @@ namespace Bangumi.Views
     /// </summary>
     public sealed partial class HomePage : Page
     {
-        public HomeViewModel ViewModel { get; } = new HomeViewModel();
-
         public HomePage()
         {
             this.InitializeComponent();
+            HomePageFrame.Navigate(typeof(ProgressPage), null, new SuppressNavigationTransitionInfo());
+            CollectionPageFrame.Navigate(typeof(CollectionPage), null, new SuppressNavigationTransitionInfo());
+            TimeLinePageFrame.Navigate(typeof(TimeLinePage), null, new SuppressNavigationTransitionInfo());
+            CostomTitleBar();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        /// <summary>
+        /// 自定义标题栏
+        /// </summary>
+        private void CostomTitleBar()
         {
-            if (ViewModel.watchingCollection.Count == 0 && !ViewModel.IsLoading)
+            if (AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
             {
-                ViewModel.LoadWatchingList();
+                var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+                coreTitleBar.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+            }
+            else
+            {
+                GridTitleBar.Visibility = Visibility.Collapsed;
             }
         }
 
-
-        private void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        /// <summary>
+        /// 在标题栏布局变化时调用，修改左侧与右侧空白区域
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
-            ViewModel.LoadWatchingList();
+            GridTitleBar.Padding = new Thickness(
+                0,
+                0,
+                sender.SystemOverlayRightInset,
+                0);
         }
 
-        private void GridView_ItemClick(object sender, ItemClickEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            var selectedItem = (WatchingStatus)e.ClickedItem;
-            Frame.Navigate(typeof(DetailsPage), selectedItem);
-        }
+            Window.Current.SetTitleBar(GridTitleBar);
+            // 禁用标题栏的后退按钮
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
 
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            double UseableWidth = MyGridView.ActualWidth - MyGridView.Padding.Left - MyGridView.Padding.Right;
-            if (UseableWidth <= 0) return;
-            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 235);
-        }
+            MainPage.rootPage.MyCommandBar.Visibility = Visibility.Visible;
 
-        // 将下一话标记为看过
-        private void NextEpButton_Click(object sender, RoutedEventArgs e)
-        {
-            var button = (Windows.UI.Xaml.Controls.Button)sender;
-            var item = (WatchingStatus)button.DataContext;
-            ViewModel.UpdateEpStatus(item);
         }
     }
 }
