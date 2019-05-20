@@ -64,6 +64,8 @@ namespace Bangumi.Views
             if (AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
             {
                 var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+
+                CoreTitleBar_LayoutMetricsChanged(coreTitleBar, "");
                 coreTitleBar.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
             }
             else
