@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     NavigationCacheMode="Enabled"
     Loaded="Page_Loaded"
-    Background="{ThemeResource SystemControlAltLowAcrylicWindowBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
         <Frame Name="MyFrame" />
@@ -22,6 +22,10 @@
             <AppBarButton Icon="Find" 
                           Label="搜索"
                           Click="SearchButton_Click"/>
+            <AppBarButton Name="RefreshAppBarButton" 
+                          x:FieldModifier="public"
+                          Icon="Refresh" 
+                          Label="刷新"/>
             <AppBarButton Icon="Setting" 
                           Label="设置"
                           Click="SettingButton_Click"/>

@@ -309,7 +309,18 @@ namespace Bangumi.Views
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             MainPage.rootPage.MyCommandBar.Visibility = Visibility.Visible;
+            MainPage.rootPage.RefreshAppBarButton.Click += DetailPageRefresh;
         }
 
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            MainPage.rootPage.RefreshAppBarButton.Click -= DetailPageRefresh;
+        }
+
+        private void DetailPageRefresh(object sender, RoutedEventArgs e)
+        {
+            ViewModel.LoadDetails();
+            ViewModel.LoadCollectionStatus();
+        }
     }
 }

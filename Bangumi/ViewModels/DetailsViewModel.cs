@@ -137,6 +137,7 @@ namespace Bangumi.ViewModels
         public void InitViewModel()
         {
             IsLoading = true;
+            MainPage.rootPage.RefreshAppBarButton.IsEnabled = false;
             IsCollectionStatusLoading = true;
             IsDetailLoading = true;
             IsRateLoading = true;
@@ -476,7 +477,6 @@ namespace Bangumi.ViewModels
                             }
                         }
                     }
-                    IsLoading = false;
                 }
             }
             catch (Exception e)
@@ -486,6 +486,7 @@ namespace Bangumi.ViewModels
             finally
             {
                 IsLoading = false;
+                MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
             }
         }
 

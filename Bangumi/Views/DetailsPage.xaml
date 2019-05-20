@@ -12,8 +12,9 @@
     NavigationCacheMode="Enabled"
     SizeChanged="Page_SizeChanged"
     Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded"
     mc:Ignorable="d"
-    Background="{ThemeResource SystemControlAltLowAcrylicWindowBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -28,9 +29,25 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="{x:Bind ViewModel.Name_cn}" 
+            <TextBlock Text="{x:Bind ViewModel.Name_cn,Mode=OneWay}" 
+                       Grid.Column="0"
                        VerticalAlignment="Center"  
-                       Margin="10,0" />
+                       Margin="10,0"
+                       TextTrimming="CharacterEllipsis"/>
+            <ProgressRing Name="MyProgressRing"
+                          Grid.Column="1"
+                          Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                          VerticalAlignment="Center"
+                          IsActive="True"
+                          Width="20"
+                          Height="20" >
+                <ProgressRing.RenderTransform>
+                    <CompositeTransform CenterX="10"
+                                        CenterY="10"
+                                        ScaleX="0.75" 
+                                        ScaleY="0.75"/>
+                </ProgressRing.RenderTransform>
+            </ProgressRing>
         </Grid>
         <GridView Name="EpsGridView" 
                   Grid.Row="1"
@@ -183,15 +200,9 @@
                      Visibility="{x:Bind ViewModel.IsUpdating, Mode=OneWay}"
                      IsIndeterminate="True"
                      VerticalAlignment="Top"/>
-        <ProgressRing Name="MyProgressRing"
-                      Grid.RowSpan="2"
-                      Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                      IsActive="True"
-                      Width="50"
-                      Height="50"/>
 
         <Border Name="MyWidth"
-                            Visibility="Collapsed"/>
+                Visibility="Collapsed"/>
 
     </Grid>
 </Page>

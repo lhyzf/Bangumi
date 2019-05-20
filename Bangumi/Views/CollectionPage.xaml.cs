@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
@@ -26,22 +27,31 @@ namespace Bangumi.Views
             this.InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            MainPage.rootPage.RefreshAppBarButton.Click += CollectionPageRefresh;
             if (ViewModel.subjectCollection.Count == 0 && !ViewModel.IsLoading)
             {
                 ViewModel.LoadCollectionList();
             }
         }
 
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            MainPage.rootPage.RefreshAppBarButton.Click -= CollectionPageRefresh;
+        }
+
+        private void CollectionPageRefresh(object sender, RoutedEventArgs e)
+        {
+            var button = sender as AppBarButton;
+            var tag = button.Tag;
+            if (tag.Equals("收藏"))
+                ViewModel.LoadCollectionList();
+        }
+
         private void TypeCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ViewModel.SelectedIndex = TypeCombobox.SelectedIndex;
-            ViewModel.LoadCollectionList();
-        }
-
-        private void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
-        {
             ViewModel.LoadCollectionList();
         }
 
@@ -56,5 +66,6 @@ namespace Bangumi.Views
             double UseableWidth = CollectionSemanticZoom.ActualWidth - 24;
             MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 220);
         }
+
     }
 }

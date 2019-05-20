@@ -26,17 +26,26 @@ namespace Bangumi.Views
             this.InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            MainPage.rootPage.RefreshAppBarButton.Click += TimeLinePageRefresh;
             if (ViewModel.bangumiCollection.Count == 0 && !ViewModel.IsLoading)
             {
                 ViewModel.LoadTimeLine();
             }
         }
 
-        private void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.LoadTimeLine();
+            MainPage.rootPage.RefreshAppBarButton.Click -= TimeLinePageRefresh;
+        }
+
+        private void TimeLinePageRefresh(object sender, RoutedEventArgs e)
+        {
+            var button = sender as AppBarButton;
+            var tag = button.Tag;
+            if (tag.Equals("时间表"))
+                ViewModel.LoadTimeLine();
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)

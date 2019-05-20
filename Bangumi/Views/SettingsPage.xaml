@@ -15,16 +15,17 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" 
-                      Height="32"
-                      Name="GridTitleBar"
-                      Background="Transparent">
+              Height="32"
+              Name="GridTitleBar"
+              Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock Text="设置" 
-                               VerticalAlignment="Center"  
-                               Margin="10,0" />
+                       VerticalAlignment="Center"  
+                       Margin="10,0"
+                       TextTrimming="CharacterEllipsis"/>
         </Grid>
         <Pivot Grid.Row="1">
             <PivotItem Header="设置">

@@ -9,44 +9,17 @@
     xmlns:common="using:Bangumi.Common"
     SizeChanged="Page_SizeChanged"
     NavigationCacheMode="Enabled"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded"
     mc:Ignorable="d"
     Background="Transparent">
 
     <Grid>
         <GridView Name="MyGridView" 
-                  Padding="12,0,12,46"
+                  Padding="12,6,12,46"
                   ItemsSource="{x:Bind ViewModel.watchingCollection}" 
                   IsItemClickEnabled="True" 
                   ItemClick="GridView_ItemClick">
-            <GridView.Header>
-                <StackPanel Orientation="Horizontal" 
-                            Height="20">
-                    <TextBlock Text="{x:Bind ViewModel.Message, Mode=OneWay}"/>
-                    <ProgressRing Name="MyProgressRing" 
-                                  Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                                  HorizontalAlignment="Left" 
-                                  IsActive="True"
-                                  Height="20" 
-                                  Width="20" 
-                                  VerticalAlignment="Top" 
-                                  RenderTransformOrigin="0.5,0.5" >
-                        <ProgressRing.RenderTransform>
-                            <CompositeTransform ScaleX="0.5" 
-                                                ScaleY="0.5"/>
-                        </ProgressRing.RenderTransform>
-                    </ProgressRing>
-                    <TextBlock Name="ClickToRefresh" 
-                               Visibility="{x:Bind common:Converters.CollapsedIf(ViewModel.IsLoading), Mode=OneWay}"
-                               VerticalAlignment="Center" 
-                               Padding="5,0" >
-                        <Hyperlink UnderlineStyle="None" 
-                                   FontFamily="Segoe MDL2 Assets" 
-                                   Click="Hyperlink_Click" >
-                            &#xE72C;
-                        </Hyperlink>
-                    </TextBlock>
-                </StackPanel>
-            </GridView.Header>
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="data:WatchingStatus">
                     <Grid Padding="5"

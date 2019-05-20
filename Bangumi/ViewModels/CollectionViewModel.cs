@@ -2,6 +2,7 @@
 using Bangumi.Facades;
 using Bangumi.Helper;
 using Bangumi.Models;
+using Bangumi.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -51,6 +52,8 @@ namespace Bangumi.ViewModels
             if (OAuthHelper.IsLogin)
             {
                 IsLoading = true;
+                HomePage.homePage.isLoading = IsLoading;
+                MainPage.rootPage.RefreshAppBarButton.IsEnabled = false;
                 if (await BangumiFacade.PopulateSubjectCollectionAsync(subjectCollection, subjectType))
                 {
                     Message = "更新时间：" + DateTime.Now;
@@ -65,6 +68,8 @@ namespace Bangumi.ViewModels
                 Message = "请先登录！";
             }
             IsLoading = false;
+            HomePage.homePage.isLoading = IsLoading;
+            MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
         }
 
         private BangumiFacade.SubjectType GetSubjectType()

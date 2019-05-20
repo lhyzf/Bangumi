@@ -67,6 +67,9 @@ namespace Bangumi.Facades
             }
             catch (Exception e)
             {
+                var msgDialog = new Windows.UI.Popups.MessageDialog("获取用户收藏失败！\n" + e.Message) { Title = "错误！" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
                 Debug.WriteLine("PopulateSubjectCollectionAsync Error.");
                 Debug.WriteLine(e.Message);
                 return false;
@@ -374,6 +377,9 @@ namespace Bangumi.Facades
             }
             catch (Exception e)
             {
+                var msgDialog = new Windows.UI.Popups.MessageDialog("获取收藏状态失败！\n" + e.Message) { Title = "错误！" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
                 Debug.WriteLine("GetCollectionStatusAsync Error.");
                 Debug.WriteLine(e.Message);
                 throw e;
@@ -401,6 +407,9 @@ namespace Bangumi.Facades
             }
             catch (Exception e)
             {
+                var msgDialog = new Windows.UI.Popups.MessageDialog("获取收视进度失败！\n" + e.Message) { Title = "错误！" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
                 Debug.WriteLine("GetProgressesAsync Error.");
                 Debug.WriteLine(e.Message);
                 throw e;
@@ -408,7 +417,7 @@ namespace Bangumi.Facades
         }
 
         /// <summary>
-        /// 获取用户收视进度。
+        /// 获取用户收视列表。
         /// </summary>
         /// <returns></returns>
         private static async Task<List<Watching>> GetWatchingListAsync()
@@ -446,6 +455,9 @@ namespace Bangumi.Facades
             }
             catch (Exception e)
             {
+                var msgDialog = new Windows.UI.Popups.MessageDialog("获取收视列表失败！\n" + e.Message) { Title = "错误！" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
                 Debug.WriteLine("GetWatchingListAsync Error.");
                 Debug.WriteLine(e.Message);
                 return null;
@@ -482,6 +494,7 @@ namespace Bangumi.Facades
             }
             catch (Exception e)
             {
+
                 Debug.WriteLine("UpdateCollectionStatusAsync Error.");
                 Debug.WriteLine(e.Message);
                 return false;
@@ -589,6 +602,9 @@ namespace Bangumi.Facades
             }
             catch (Exception e)
             {
+                var msgDialog = new Windows.UI.Popups.MessageDialog("获取搜索结果失败！\n" + e.Message) { Title = "错误！" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
                 Debug.WriteLine("GetSearchResultAsync Error.");
                 Debug.WriteLine(e.Message);
                 return null;
@@ -615,6 +631,9 @@ namespace Bangumi.Facades
             }
             catch (Exception e)
             {
+                var msgDialog = new Windows.UI.Popups.MessageDialog("获取章节信息失败！\n" + e.Message) { Title = "错误！" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
                 Debug.WriteLine("GetSubjectEpsAsync Error.");
                 Debug.WriteLine(e.Message);
                 return null;
@@ -650,6 +669,9 @@ namespace Bangumi.Facades
             }
             catch (Exception e)
             {
+                var msgDialog = new Windows.UI.Popups.MessageDialog("获取条目详情失败！\n" + e.Message) { Title = "错误！" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
                 Debug.WriteLine("GetSubjectAsync Error.");
                 Debug.WriteLine(e.Message);
                 return null;
@@ -694,6 +716,9 @@ namespace Bangumi.Facades
             }
             catch (Exception e)
             {
+                var msgDialog = new Windows.UI.Popups.MessageDialog("获取时间表失败！\n" + e.Message) { Title = "错误！" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
                 Debug.WriteLine("GetBangumiCalendarAsync Error.");
                 Debug.WriteLine(e.Message);
                 return null;
