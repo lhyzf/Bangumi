@@ -150,7 +150,7 @@
     <Compile Include="Models\WatchingStatus.cs" />
     <Compile Include="ViewModels\CollectionViewModel.cs" />
     <Compile Include="ViewModels\DetailsViewModel.cs" />
-    <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="ViewModels\ProgressViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
     <Compile Include="ViewModels\TimeLineViewModel.cs" />
     <Compile Include="Views\CollectionPage.xaml.cs">

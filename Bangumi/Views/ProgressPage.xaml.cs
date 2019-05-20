@@ -19,25 +19,33 @@ namespace Bangumi.Views
     /// </summary>
     public sealed partial class ProgressPage : Page
     {
-        public HomeViewModel ViewModel { get; } = new HomeViewModel();
+        public ProgressViewModel ViewModel { get; } = new ProgressViewModel();
 
         public ProgressPage()
         {
             this.InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            MainPage.rootPage.RefreshAppBarButton.Click += ProgressPageRefresh;
             if (ViewModel.watchingCollection.Count == 0 && !ViewModel.IsLoading)
             {
                 ViewModel.LoadWatchingList();
             }
         }
 
-
-        private void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.LoadWatchingList();
+            MainPage.rootPage.RefreshAppBarButton.Click -= ProgressPageRefresh;
+        }
+
+        private void ProgressPageRefresh(object sender, RoutedEventArgs e)
+        {
+            var button = sender as AppBarButton;
+            var tag = button.Tag;
+            if(tag.Equals("进度"))
+                ViewModel.LoadWatchingList();
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
@@ -61,5 +69,6 @@ namespace Bangumi.Views
             var item = (WatchingStatus)button.DataContext;
             ViewModel.UpdateEpStatus(item);
         }
+
     }
 }

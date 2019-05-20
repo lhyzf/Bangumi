@@ -40,7 +40,7 @@ namespace Bangumi.Helper
                 else
                 {
                     Debug.WriteLine("Unknown network error.");
-                    throw new Exception();
+                    throw new Exception("Unknown network error.");
                 }
             }
             catch (Exception e)
@@ -84,7 +84,7 @@ namespace Bangumi.Helper
                 else
                 {
                     Debug.WriteLine("Unknown network error.");
-                    throw new Exception();
+                    throw new Exception("Unknown network error.");
                 }
             }
             catch (Exception e)

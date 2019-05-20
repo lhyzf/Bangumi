@@ -1,6 +1,7 @@
 ﻿using Bangumi.Common;
 using Bangumi.Facades;
 using Bangumi.Models;
+using Bangumi.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -39,6 +40,8 @@ namespace Bangumi.ViewModels
         public async void LoadTimeLine()
         {
             IsLoading = true;
+            HomePage.homePage.isLoading = IsLoading;
+            MainPage.rootPage.RefreshAppBarButton.IsEnabled = false;
             if (await BangumiFacade.PopulateBangumiCalendarAsync(bangumiCollection))
             {
                 Message = "更新时间：" + DateTime.Now;
@@ -48,6 +51,8 @@ namespace Bangumi.ViewModels
                 Message = "网络连接失败，请重试！";
             }
             IsLoading = false;
+            HomePage.homePage.isLoading = IsLoading;
+            MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
         }
 
 

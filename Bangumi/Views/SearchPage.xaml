@@ -29,7 +29,8 @@
             </Grid.ColumnDefinitions>
             <TextBlock Text="搜索" 
                        VerticalAlignment="Center"  
-                       Margin="10,0" />
+                       Margin="10,0"
+                       TextTrimming="CharacterEllipsis"/>
         </Grid>
 
         <AutoSuggestBox Name="SearchBox" 

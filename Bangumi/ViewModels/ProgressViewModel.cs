@@ -2,6 +2,7 @@
 using Bangumi.Facades;
 using Bangumi.Helper;
 using Bangumi.Models;
+using Bangumi.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace Bangumi.ViewModels
 {
-    public class HomeViewModel : ViewModelBase
+    public class ProgressViewModel : ViewModelBase
     {
-        public HomeViewModel()
+        public ProgressViewModel()
         {
             IsLoading = false;
         }
@@ -43,6 +44,8 @@ namespace Bangumi.ViewModels
             if (OAuthHelper.IsLogin)
             {
                 IsLoading = true;
+                HomePage.homePage.isLoading = IsLoading;
+                MainPage.rootPage.RefreshAppBarButton.IsEnabled = false;
                 if (await BangumiFacade.PopulateWatchingListAsync(watchingCollection))
                 {
                     Message = "更新时间：" + DateTime.Now;
@@ -60,6 +63,8 @@ namespace Bangumi.ViewModels
                 Message = "请先登录！";
             }
             IsLoading = false;
+            HomePage.homePage.isLoading = IsLoading;
+            MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
         }
 
         // 更新下一章章节状态为已看
@@ -67,7 +72,6 @@ namespace Bangumi.ViewModels
         {
             if (item != null)
             {
-                IsLoading = true;
                 if (item.next_ep != 0 && await BangumiFacade.UpdateProgressAsync(item.eps[item.next_ep - 1].id.ToString(), BangumiFacade.EpStatusEnum.watched))
                 {
                     item.eps[item.next_ep - 1].status = "看过";
@@ -85,7 +89,6 @@ namespace Bangumi.ViewModels
                     await FileHelper.WriteToCacheFile(JsonConvert.SerializeObject(watchingCollection), "JsonCache\\home");
 
                 }
-                IsLoading = false;
             }
         }
 

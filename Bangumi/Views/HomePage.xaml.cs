@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -26,14 +28,31 @@ namespace Bangumi.Views
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class HomePage : Page
+    public sealed partial class HomePage : Page, INotifyPropertyChanged
     {
+        public bool _isLoading = false;
+        public bool isLoading
+        {
+            get { return _isLoading; }
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName]string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public static HomePage homePage;
+
         public HomePage()
         {
             this.InitializeComponent();
-            HomePageFrame.Navigate(typeof(ProgressPage), null, new SuppressNavigationTransitionInfo());
-            CollectionPageFrame.Navigate(typeof(CollectionPage), null, new SuppressNavigationTransitionInfo());
-            TimeLinePageFrame.Navigate(typeof(TimeLinePage), null, new SuppressNavigationTransitionInfo());
+            homePage = this;
             CostomTitleBar();
         }
 
@@ -74,7 +93,32 @@ namespace Bangumi.Views
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
 
             MainPage.rootPage.MyCommandBar.Visibility = Visibility.Visible;
+            MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
+        }
 
+        private void HomePagePivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var pivot = sender as Pivot;
+            var pivotItem = pivot.SelectedItem as PivotItem;
+            var frame = pivotItem.Content as Frame;
+            MainPage.rootPage.RefreshAppBarButton.Tag = pivotItem.Header;
+            if (frame.Content == null)
+            {
+                switch (pivotItem.Header)
+                {
+                    case "进度":
+                        ProgressPageFrame.Navigate(typeof(ProgressPage), null, new SuppressNavigationTransitionInfo());
+                        break;
+                    case "收藏":
+                        CollectionPageFrame.Navigate(typeof(CollectionPage), null, new SuppressNavigationTransitionInfo());
+                        break;
+                    case "时间表":
+                        TimeLinePageFrame.Navigate(typeof(TimeLinePage), null, new SuppressNavigationTransitionInfo());
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }

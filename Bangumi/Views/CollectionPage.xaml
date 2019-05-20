@@ -10,6 +10,8 @@
     xmlns:wuxdata="using:Windows.UI.Xaml.Data"
     SizeChanged="Page_SizeChanged"
     NavigationCacheMode="Enabled"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded"
     mc:Ignorable="d"
     Background="Transparent">
     <Page.Resources>
@@ -59,49 +61,6 @@
     </Page.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" 
-                    Height="20"
-                    Margin="10,0">
-            <TextBlock Text="{x:Bind ViewModel.Message, Mode=OneWay}"/>
-            <ProgressRing Name="MyProgressRing" 
-                          Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                          IsActive="True"
-                          HorizontalAlignment="Left" 
-                          Height="20" 
-                          Width="20" 
-                          VerticalAlignment="Top" 
-                          RenderTransformOrigin="0.5,0.5" >
-                <ProgressRing.RenderTransform>
-                    <CompositeTransform ScaleX="0.5" 
-                                        ScaleY="0.5"/>
-                </ProgressRing.RenderTransform>
-            </ProgressRing>
-            <TextBlock Name="ClickToRefresh" 
-                       Visibility="{x:Bind common:Converters.CollapsedIf(ViewModel.IsLoading), Mode=OneWay}"
-                       VerticalAlignment="Center" 
-                       Padding="5,0" >
-                <Hyperlink UnderlineStyle="None" 
-                           FontFamily="Segoe MDL2 Assets" 
-                           Click="Hyperlink_Click" >
-                    &#xE72C;
-                </Hyperlink>
-            </TextBlock>
-        </StackPanel>
-        <ComboBox Name="TypeCombobox" 
-                  HorizontalAlignment="Right"
-                  SelectedIndex="0"
-                  SelectionChanged="TypeCombobox_SelectionChanged"
-                  Margin="10,0">
-            <ComboBoxItem Content="动画" />
-            <ComboBoxItem Content="书籍" />
-            <ComboBoxItem Content="音乐" />
-            <ComboBoxItem Content="游戏" />
-            <ComboBoxItem Content="三次元" />
-        </ComboBox>
 
         <Border Name="MyWidth"
                     Visibility="Collapsed"/>
@@ -130,6 +89,18 @@
                 </ListView>
             </SemanticZoom.ZoomedOutView>
         </SemanticZoom>
+        
+        <ComboBox Name="TypeCombobox" 
+                  HorizontalAlignment="Right"
+                  SelectedIndex="0"
+                  SelectionChanged="TypeCombobox_SelectionChanged"
+                  Margin="0,5,24,0">
+            <ComboBoxItem Content="动画"/>
+            <ComboBoxItem Content="书籍" />
+            <ComboBoxItem Content="音乐" />
+            <ComboBoxItem Content="游戏" />
+            <ComboBoxItem Content="三次元" />
+        </ComboBox>
 
     </Grid>
 </Page>
