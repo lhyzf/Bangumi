@@ -75,7 +75,12 @@ namespace Bangumi
                 // 将内容拓展到标题栏
                 var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
                 coreTitleBar.ExtendViewIntoTitleBar = true;
+                // 设置标题栏按钮部分背景颜色
+                var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
+                appTitleBar.ButtonBackgroundColor = Colors.Transparent;
+                appTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
+                MainPage_ActualThemeChanged(null, "");
                 ActualThemeChanged += MainPage_ActualThemeChanged;
             }
         }
@@ -87,10 +92,8 @@ namespace Bangumi
         /// <param name="args"></param>
         private void MainPage_ActualThemeChanged(FrameworkElement sender, object args)
         {
-            // 设置标题栏按钮颜色
+            // 主题颜色改变时设置标题栏按钮颜色
             var appTitleBar = ApplicationView.GetForCurrentView().TitleBar;
-            appTitleBar.ButtonBackgroundColor = Colors.Transparent;
-            appTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
             if (ActualTheme == ElementTheme.Light)
                 appTitleBar.ButtonForegroundColor = Colors.Black;
             else
