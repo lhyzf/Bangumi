@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.System.Profile;
+using Windows.System.Threading;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,6 +27,7 @@ namespace Bangumi.Views
     public sealed partial class SearchPage : Page
     {
         public SearchViewModel ViewModel { get; } = new SearchViewModel();
+        ThreadPoolTimer DelayTimer;
 
         public SearchPage()
         {
@@ -73,9 +75,22 @@ namespace Bangumi.Views
         {
             if (AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
             {
-                if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+                 if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
                 {
-                    ViewModel.GetSearchSuggestions();
+                    if (DelayTimer != null && DelayTimer.Delay != TimeSpan.Zero)
+                        DelayTimer.Cancel();
+                    TimeSpan delay = TimeSpan.FromMilliseconds(1000);
+                    DelayTimer = ThreadPoolTimer.CreateTimer(
+                        (source) =>
+                        {
+                            Dispatcher.RunAsync(
+                                CoreDispatcherPriority.High,
+                                () =>
+                                {
+                                    ViewModel.GetSearchSuggestions();
+                                });
+                        },
+                        delay);
                 }
             }
         }

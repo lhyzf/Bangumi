@@ -54,7 +54,6 @@ namespace Bangumi.ViewModels
         };
 
 
-        public bool SuggestDelay = false;
         public string[] PreSearch = new string[6];
 
         /// <summary>
@@ -62,20 +61,14 @@ namespace Bangumi.ViewModels
         /// </summary>
         public async void GetSearchSuggestions()
         {
-            if (SuggestDelay)
-            {
-                return;
-            }
-            SuggestDelay = true;
             if (!string.IsNullOrEmpty(SearchText))
             {
                 var result = await BangumiFacade.GetSearchResultAsync(SearchText, "", 0, 10);
-                Suggestions.Clear();
                 if (SearchText == PreSearch[SelectedIndex])
                 {
-                    SuggestDelay = false;
                     return;
                 }
+                Suggestions.Clear();
                 if (result != null)
                 {
                     foreach (var item in result.list)
@@ -84,8 +77,6 @@ namespace Bangumi.ViewModels
                     }
                 }
             }
-            await Task.Delay(200);
-            SuggestDelay = false;
         }
 
         /// <summary>

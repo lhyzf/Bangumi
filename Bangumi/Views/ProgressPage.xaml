@@ -14,70 +14,72 @@
     mc:Ignorable="d"
     Background="Transparent">
 
+    <Page.Resources>
+        <DataTemplate x:Key="ProgressSubjectTemplate" x:DataType="data:WatchingStatus">
+            <Grid Padding="5"
+                    Width="{Binding ElementName=MyWidth,Path=Width}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="{x:Bind image}" 
+                        Height="75" 
+                        Width="75" 
+                        Stretch="UniformToFill" />
+                <Grid Grid.Column="1"
+                        Padding="6,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{x:Bind name_cn}" 
+                                FontSize="14" 
+                                Foreground="#d26585"
+                                TextTrimming="WordEllipsis"
+                                TextWrapping="NoWrap"/>
+                    <TextBlock Grid.Row="1"
+                                Text="{x:Bind name}" 
+                                FontSize="12" 
+                                Foreground="Gray"
+                                TextTrimming="WordEllipsis"
+                                TextWrapping="NoWrap"/>
+                    <TextBlock Grid.Row="2"
+                                FontSize="12" 
+                                Foreground="{x:Bind ep_color, Mode=OneWay}"
+                                TextTrimming="WordEllipsis"
+                                TextWrapping="NoWrap">
+                        <Run Text="{x:Bind watched_eps, Mode=OneWay}"/>
+                        <Run Text="/"/>
+                        <Run Text="{x:Bind eps_count, Mode=OneWay}"/>
+                    </TextBlock>
+                    <Button Grid.Row="3"
+                            HorizontalAlignment="Right"
+                            Click="NextEpButton_Click"
+                            Padding="8,3"
+                            Margin="-6,0"
+                            BorderThickness="1"
+                            Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
+                            Style="{StaticResource ButtonRevealStyle}">
+                        <TextBlock FontSize="12" 
+                                    Foreground="{x:Bind ep_color, Mode=OneWay}">
+                            <Run Text="EP."/>
+                            <Run Text="{x:Bind next_ep, Mode=OneWay}"/>
+                        </TextBlock>
+                    </Button>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
     <Grid>
         <GridView Name="MyGridView" 
                   Padding="12,6,12,46"
                   ItemsSource="{x:Bind ViewModel.watchingCollection}" 
                   IsItemClickEnabled="True" 
-                  ItemClick="GridView_ItemClick">
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="data:WatchingStatus">
-                    <Grid Padding="5"
-                          Width="{Binding ElementName=MyWidth,Path=Width}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Image Source="{x:Bind image}" 
-                               Height="75" 
-                               Width="75" 
-                               Stretch="UniformToFill" />
-                        <Grid Grid.Column="1"
-                              Padding="6,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="auto"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Text="{x:Bind name_cn}" 
-                                       FontSize="14" 
-                                       Foreground="#d26585"
-                                       TextTrimming="WordEllipsis"
-                                       TextWrapping="NoWrap"/>
-                            <TextBlock Grid.Row="1"
-                                       Text="{x:Bind name}" 
-                                       FontSize="12" 
-                                       Foreground="Gray"
-                                       TextTrimming="WordEllipsis"
-                                       TextWrapping="NoWrap"/>
-                            <TextBlock Grid.Row="2"
-                                       FontSize="12" 
-                                       Foreground="{x:Bind ep_color, Mode=OneWay}"
-                                       TextTrimming="WordEllipsis"
-                                       TextWrapping="NoWrap">
-                                <Run Text="{x:Bind watched_eps, Mode=OneWay}"/>
-                                <Run Text="/"/>
-                                <Run Text="{x:Bind eps_count, Mode=OneWay}"/>
-                            </TextBlock>
-                            <Button Grid.Row="3"
-                                    HorizontalAlignment="Right"
-                                    Click="NextEpButton_Click"
-                                    Padding="8,3"
-                                    Margin="-6,0"
-                                    BorderThickness="1"
-                                    Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
-                                    Style="{StaticResource ButtonRevealStyle}">
-                                <TextBlock FontSize="12" 
-                                           Foreground="{x:Bind ep_color, Mode=OneWay}">
-                                    <Run Text="EP."/>
-                                    <Run Text="{x:Bind next_ep, Mode=OneWay}"/>
-                                </TextBlock>
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </DataTemplate>
-            </GridView.ItemTemplate>
+                  ItemClick="GridView_ItemClick"
+                  ItemTemplate="{StaticResource ProgressSubjectTemplate}">
         </GridView>
         
         <Border Name="MyWidth"

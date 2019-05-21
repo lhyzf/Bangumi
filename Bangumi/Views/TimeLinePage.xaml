@@ -30,7 +30,7 @@
                         Width="75" 
                         Stretch="UniformToFill" />
                 <Grid Grid.Column="1"
-                        Padding="5,0">
+                        Padding="6,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
@@ -38,12 +38,12 @@
                     <TextBlock Text="{x:Bind name_cn}" 
                                 FontSize="14" 
                                 Foreground="#d26585"
-                                TextWrapping="Wrap" />
+                               TextTrimming="CharacterEllipsis"/>
                     <TextBlock Grid.Row="1"
                                 Text="{x:Bind name}" 
                                 FontSize="12"
                                 Foreground="Gray"
-                                TextTrimming="WordEllipsis"/>
+                                TextTrimming="CharacterEllipsis"/>
                 </Grid>
             </Grid>
         </DataTemplate>

@@ -16,6 +16,57 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <DataTemplate x:Name="EpTemplate" x:DataType="data:Ep">
+            <Grid Tapped="Eps_Tapped" 
+                    RightTapped="Eps_RightTapped"
+                    Padding="5" 
+                    Height="68"
+                    Width="{Binding ElementName=MyWidth,Path=Width}"
+                    Background="Transparent"
+                    BorderThickness="0.5"
+                    BorderBrush="{ThemeResource SystemControlBackgroundListMediumBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid>
+                    <TextBlock Text="{x:Bind sort}" 
+                                FontSize="14" />
+                    <TextBlock Grid.Column="1" 
+                                x:Phase="2"
+                                Text="{x:Bind status,Mode=OneWay}" 
+                                FontSize="12" 
+                                Foreground="#d26585"
+                                HorizontalAlignment="Right"/>
+                </Grid>
+                <TextBlock Grid.Row="1"
+                            x:Phase="1"
+                            Text="{x:Bind name_cn}" 
+                            FontSize="14" 
+                            HorizontalAlignment="Left"
+                            TextWrapping="Wrap"
+                            TextTrimming="WordEllipsis"/>
+
+                <FlyoutBase.AttachedFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Click="WatchedMenuFlyoutItem_Click" 
+                                        Text="看过"/>
+                        <MenuFlyoutItem Click="WatchedToMenuFlyoutItem_Click" 
+                                        IsEnabled="True" 
+                                        Text="看到"/>
+                        <MenuFlyoutItem Click="QueueMenuFlyoutItem_Click" 
+                                        Text="想看"/>
+                        <MenuFlyoutItem Click="DropMenuFlyoutItem_Click" 
+                                        Text="抛弃"/>
+                        <MenuFlyoutItem Click="RemoveMenuFlyoutItem_Click" 
+                                        Text="未看"/>
+                    </MenuFlyout>
+                </FlyoutBase.AttachedFlyout>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
@@ -52,7 +103,8 @@
         <GridView Name="EpsGridView" 
                   Grid.Row="1"
                   ItemsSource="{x:Bind ViewModel.eps}" 
-                  Padding="10,5,10,45">
+                  Padding="10,5,10,45"
+                  ItemTemplate="{StaticResource EpTemplate}">
             <GridView.Header>
                 <StackPanel Orientation="Vertical" >
                     <Grid>
@@ -143,56 +195,6 @@
                                      Foreground="#d26585"/>
                 </StackPanel>
             </GridView.Header>
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="data:Ep">
-                    <Grid Tapped="Eps_Tapped" 
-                          RightTapped="Eps_RightTapped"
-                          Padding="5" 
-                          Height="68"
-                          Width="{Binding ElementName=MyWidth,Path=Width}"
-                          Background="Transparent"
-                          BorderThickness="0.5"
-                          BorderBrush="{ThemeResource SystemControlBackgroundListMediumBrush}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Grid>
-                            <TextBlock Text="{x:Bind sort}" 
-                                       FontSize="14" />
-                            <TextBlock Grid.Column="1" 
-                                       x:Phase="2"
-                                       Text="{x:Bind status,Mode=OneWay}" 
-                                       FontSize="12" 
-                                       Foreground="#d26585"
-                                       HorizontalAlignment="Right"/>
-                        </Grid>
-                        <TextBlock Grid.Row="1"
-                                   x:Phase="1"
-                                   Text="{x:Bind name_cn}" 
-                                   FontSize="14" 
-                                   HorizontalAlignment="Left"
-                                   TextWrapping="Wrap"
-                                   TextTrimming="WordEllipsis"/>
-
-                        <FlyoutBase.AttachedFlyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Click="WatchedMenuFlyoutItem_Click" 
-                                                Text="看过"/>
-                                <MenuFlyoutItem Click="WatchedToMenuFlyoutItem_Click" 
-                                                IsEnabled="True" 
-                                                Text="看到"/>
-                                <MenuFlyoutItem Click="QueueMenuFlyoutItem_Click" 
-                                                Text="想看"/>
-                                <MenuFlyoutItem Click="DropMenuFlyoutItem_Click" 
-                                                Text="抛弃"/>
-                                <MenuFlyoutItem Click="RemoveMenuFlyoutItem_Click" 
-                                                Text="未看"/>
-                            </MenuFlyout>
-                        </FlyoutBase.AttachedFlyout>
-                    </Grid>
-                </DataTemplate>
-            </GridView.ItemTemplate>
         </GridView>
 
         <ProgressBar Name="MyProgressBar"
