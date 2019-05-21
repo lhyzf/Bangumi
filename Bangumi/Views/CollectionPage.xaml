@@ -14,6 +14,7 @@
     Unloaded="Page_Unloaded"
     mc:Ignorable="d"
     Background="Transparent">
+    
     <Page.Resources>
         <CollectionViewSource x:Name="cvsGroups" Source="{x:Bind ViewModel.subjectCollection}" IsSourceGrouped="True" ItemsPath="list"/>
 
@@ -37,12 +38,12 @@
                     <TextBlock Text="{x:Bind subject.name_cn}" 
                                FontSize="14" 
                                Foreground="#d26585"
-                               TextWrapping="Wrap" />
+                               TextTrimming="CharacterEllipsis"/>
                     <TextBlock Grid.Row="1"
                                Text="{x:Bind subject.name}" 
                                FontSize="12"
                                Foreground="Gray"
-                               TextTrimming="WordEllipsis"/>
+                               TextTrimming="CharacterEllipsis"/>
                 </Grid>
             </Grid>
         </DataTemplate>

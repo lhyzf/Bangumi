@@ -13,6 +13,74 @@
     mc:Ignorable="d"
     Background="Transparent">
 
+    <Page.Resources>
+        <DataTemplate x:Key="SubjectWithTypeTemplate" x:DataType="data:Subject">
+            <Grid Padding="5"
+                    Width="{Binding ElementName=MyWidth,Path=Width}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="{x:Bind images.common}" 
+                        Height="75" 
+                        Width="75" 
+                        Stretch="UniformToFill" />
+                <Grid Grid.Column="1"
+                        Padding="6,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{x:Bind name_cn}" 
+                                FontSize="14" 
+                                Foreground="#d26585"
+                                TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Grid.Row="1"
+                                Text="{x:Bind name}" 
+                                FontSize="12" 
+                                Foreground="Gray"
+                                TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Grid.Row="2"
+                                Text="{x:Bind common:Converters.GetSubjectTypeName(type)}" 
+                                FontSize="12" 
+                                Foreground="Gray"
+                                TextTrimming="CharacterEllipsis"/>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="SubjectTemplate" x:DataType="data:Subject">
+            <Grid Padding="5"
+                    Width="{Binding ElementName=MyWidth,Path=Width}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="{x:Bind images.common}" 
+                        Height="75" 
+                        Width="75" 
+                        Stretch="UniformToFill" />
+                <Grid Grid.Column="1"
+                        Padding="6,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{x:Bind name_cn}" 
+                                FontSize="14" 
+                                Foreground="#d26585"
+                                TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Grid.Row="1"
+                                Text="{x:Bind name}" 
+                                FontSize="12" 
+                                Foreground="Gray"
+                                TextTrimming="CharacterEllipsis"/>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -61,7 +129,8 @@
                           IsItemClickEnabled="True" 
                           ItemClick="GridView_ItemClick"
                           IncrementalLoadingTrigger="Edge"
-                          DataFetchSize="1">
+                          DataFetchSize="1"
+                          ItemTemplate="{StaticResource SubjectWithTypeTemplate}">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[0], Mode=OneWay}"
@@ -77,46 +146,6 @@
                                    LineHeight="30"
                                    HorizontalAlignment="Center"/>
                     </GridView.Footer>
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="data:Subject">
-                            <Grid Padding="5"
-                                  Width="{Binding ElementName=MyWidth,Path=Width}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Source="{x:Bind images.common}" 
-                                       Height="75" 
-                                       Width="75" 
-                                       Stretch="UniformToFill" />
-                                <Grid Grid.Column="1"
-                                      Padding="6,0">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="auto"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Text="{x:Bind name_cn}" 
-                                               FontSize="14" 
-                                               Foreground="#d26585"
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                    <TextBlock Grid.Row="1"
-                                               Text="{x:Bind name}" 
-                                               FontSize="12" 
-                                               Foreground="Gray"
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                    <TextBlock Grid.Row="2"
-                                               Text="{x:Bind common:Converters.GetSubjectTypeName(type)}" 
-                                               FontSize="12" 
-                                               Foreground="Gray"
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
                 </GridView>
             </PivotItem>
             <PivotItem Margin="0">
@@ -130,7 +159,8 @@
                           IsItemClickEnabled="True" 
                           ItemClick="GridView_ItemClick"
                           IncrementalLoadingTrigger="Edge"
-                          DataFetchSize="1">
+                          DataFetchSize="1"
+                          ItemTemplate="{StaticResource SubjectTemplate}">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[1], Mode=OneWay}"
@@ -146,39 +176,6 @@
                                    LineHeight="30"
                                    HorizontalAlignment="Center"/>
                     </GridView.Footer>
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="data:Subject">
-                            <Grid Padding="5"
-                                  Width="{Binding ElementName=MyWidth,Path=Width}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Source="{x:Bind images.common}" 
-                                       Height="75" 
-                                       Width="75" 
-                                       Stretch="UniformToFill" />
-                                <Grid Grid.Column="1"
-                                      Padding="6,0">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="auto"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Text="{x:Bind name_cn}" 
-                                               FontSize="14" 
-                                               Foreground="#d26585"
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                    <TextBlock Grid.Row="1"
-                                               Text="{x:Bind name}" 
-                                               FontSize="12" 
-                                               Foreground="Gray"
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
                 </GridView>
             </PivotItem>
             <PivotItem Margin="0">
@@ -192,7 +189,8 @@
                           IsItemClickEnabled="True" 
                           ItemClick="GridView_ItemClick"
                           IncrementalLoadingTrigger="Edge"
-                          DataFetchSize="1">
+                          DataFetchSize="1"
+                          ItemTemplate="{StaticResource SubjectTemplate}">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[2], Mode=OneWay}"
@@ -208,39 +206,6 @@
                                    LineHeight="30"
                                    HorizontalAlignment="Center"/>
                     </GridView.Footer>
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="data:Subject">
-                            <Grid Padding="5"
-                                  Width="{Binding ElementName=MyWidth,Path=Width}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Source="{x:Bind images.common}" 
-                                       Height="75" 
-                                       Width="75" 
-                                       Stretch="UniformToFill" />
-                                <Grid Grid.Column="1"
-                                      Padding="6,0">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="auto"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Text="{x:Bind name_cn}" 
-                                               FontSize="14" 
-                                               Foreground="#d26585"
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                    <TextBlock Grid.Row="1"
-                                               Text="{x:Bind name}" 
-                                               FontSize="12" 
-                                               Foreground="Gray"
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
                 </GridView>
             </PivotItem>
             <PivotItem Margin="0">
@@ -254,7 +219,8 @@
                           IsItemClickEnabled="True" 
                           ItemClick="GridView_ItemClick"
                           IncrementalLoadingTrigger="Edge"
-                          DataFetchSize="1">
+                          DataFetchSize="1"
+                          ItemTemplate="{StaticResource SubjectTemplate}">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[3], Mode=OneWay}"
@@ -270,39 +236,6 @@
                                    LineHeight="30"
                                    HorizontalAlignment="Center"/>
                     </GridView.Footer>
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="data:Subject">
-                            <Grid Padding="5"
-                                  Width="{Binding ElementName=MyWidth,Path=Width}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Source="{x:Bind images.common}" 
-                                       Height="75" 
-                                       Width="75" 
-                                       Stretch="UniformToFill" />
-                                <Grid Grid.Column="1"
-                                      Padding="6,0">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="auto"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Text="{x:Bind name_cn}" 
-                                               FontSize="14" 
-                                               Foreground="#d26585"
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                    <TextBlock Grid.Row="1"
-                                               Text="{x:Bind name}" 
-                                               FontSize="12" 
-                                               Foreground="Gray"
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
                 </GridView>
             </PivotItem>
             <PivotItem Margin="0">
@@ -316,7 +249,8 @@
                           IsItemClickEnabled="True" 
                           ItemClick="GridView_ItemClick"
                           IncrementalLoadingTrigger="Edge"
-                          DataFetchSize="1">
+                          DataFetchSize="1"
+                          ItemTemplate="{StaticResource SubjectTemplate}">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[4], Mode=OneWay}"
@@ -332,39 +266,6 @@
                                    LineHeight="30"
                                    HorizontalAlignment="Center"/>
                     </GridView.Footer>
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="data:Subject">
-                            <Grid Padding="5"
-                                  Width="{Binding ElementName=MyWidth,Path=Width}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Source="{x:Bind images.common}" 
-                                       Height="75" 
-                                       Width="75" 
-                                       Stretch="UniformToFill" />
-                                <Grid Grid.Column="1"
-                                      Padding="6,0">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="auto"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Text="{x:Bind name_cn}" 
-                                               FontSize="14" 
-                                               Foreground="#d26585"
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                    <TextBlock Grid.Row="1"
-                                               Text="{x:Bind name}" 
-                                               FontSize="12" 
-                                               Foreground="Gray"
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
                 </GridView>
             </PivotItem>
             <PivotItem Margin="0">
@@ -378,7 +279,8 @@
                           IsItemClickEnabled="True" 
                           ItemClick="GridView_ItemClick"
                           IncrementalLoadingTrigger="Edge"
-                          DataFetchSize="1">
+                          DataFetchSize="1"
+                          ItemTemplate="{StaticResource SubjectTemplate}">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[5], Mode=OneWay}"
@@ -394,39 +296,6 @@
                                    LineHeight="30"
                                    HorizontalAlignment="Center"/>
                     </GridView.Footer>
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="data:Subject">
-                            <Grid Padding="5"
-                                  Width="{Binding ElementName=MyWidth,Path=Width}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Image Source="{x:Bind images.common}" 
-                                       Height="75" 
-                                       Width="75" 
-                                       Stretch="UniformToFill" />
-                                <Grid Grid.Column="1"
-                                      Padding="6,0">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="auto"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Text="{x:Bind name_cn}" 
-                                               FontSize="14" 
-                                               Foreground="#d26585"
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                    <TextBlock Grid.Row="1"
-                                               Text="{x:Bind name}" 
-                                               FontSize="12" 
-                                               Foreground="Gray"
-                                               TextTrimming="WordEllipsis"
-                                               TextWrapping="NoWrap"/>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
                 </GridView>
             </PivotItem>
         </Pivot>
