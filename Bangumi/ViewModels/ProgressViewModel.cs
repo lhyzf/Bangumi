@@ -72,6 +72,7 @@ namespace Bangumi.ViewModels
         {
             if (item != null)
             {
+                item.isUpdating = true;
                 if (item.next_ep != 0 && await BangumiFacade.UpdateProgressAsync(item.eps[item.next_ep - 1].id.ToString(), BangumiFacade.EpStatusEnum.watched))
                 {
                     item.eps[item.next_ep - 1].status = "看过";
@@ -89,6 +90,7 @@ namespace Bangumi.ViewModels
                     await FileHelper.WriteToCacheFile(JsonConvert.SerializeObject(watchingCollection), "JsonCache\\home");
 
                 }
+                item.isUpdating = false;
             }
         }
 
@@ -97,7 +99,7 @@ namespace Bangumi.ViewModels
         {
             // 对条目进行排序
             var order = new List<WatchingStatus>();
-            order.AddRange(watchingCollection.OrderBy(p => p.watched_eps).OrderBy(p => p.ep_color));
+            order.AddRange(watchingCollection.OrderBy(p => p.lasttouch).OrderBy(p=>p.watched_eps).OrderBy(p => p.ep_color));
             for (int i = 0; i < order.Count; i++)
             {
                 if (order[i].subject_id != watchingCollection[i].subject_id)
