@@ -20,6 +20,7 @@ namespace Bangumi.Models
         public string image { get; set; }
         private string _ep_color { get; set; }
         private int _next_ep { get; set; }
+        private bool _isUpdating { get; set; }
         public List<SimpleEp> eps { get; set; }
 
         public int next_ep
@@ -28,6 +29,15 @@ namespace Bangumi.Models
             set
             {
                 _next_ep = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool isUpdating
+        {
+            get { return _isUpdating; }
+            set
+            {
+                _isUpdating = value;
                 OnPropertyChanged();
             }
         }

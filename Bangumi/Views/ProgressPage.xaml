@@ -17,7 +17,7 @@
     <Page.Resources>
         <DataTemplate x:Key="ProgressSubjectTemplate" x:DataType="data:WatchingStatus">
             <Grid Padding="5"
-                    Width="{Binding ElementName=MyWidth,Path=Width}">
+                  Width="{Binding ElementName=MyWidth,Path=Width}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
@@ -27,47 +27,71 @@
                         Width="75" 
                         Stretch="UniformToFill" />
                 <Grid Grid.Column="1"
-                        Padding="6,0">
+                        Padding="5,0,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <TextBlock Text="{x:Bind name_cn}" 
-                                FontSize="14" 
-                                Foreground="#d26585"
-                                TextTrimming="WordEllipsis"
-                                TextWrapping="NoWrap"/>
+                               FontSize="14" 
+                               VerticalAlignment="Center"
+                               Foreground="#d26585"
+                               TextTrimming="CharacterEllipsis"/>
                     <TextBlock Grid.Row="1"
-                                Text="{x:Bind name}" 
-                                FontSize="12" 
-                                Foreground="Gray"
-                                TextTrimming="WordEllipsis"
-                                TextWrapping="NoWrap"/>
+                               Text="{x:Bind name}" 
+                               VerticalAlignment="Center"
+                               FontSize="12" 
+                               Foreground="Gray"
+                               TextTrimming="CharacterEllipsis"/>
                     <TextBlock Grid.Row="2"
-                                FontSize="12" 
-                                Foreground="{x:Bind ep_color, Mode=OneWay}"
-                                TextTrimming="WordEllipsis"
-                                TextWrapping="NoWrap">
+                               FontSize="12" 
+                               VerticalAlignment="Center"
+                               Foreground="{x:Bind ep_color, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis">
                         <Run Text="{x:Bind watched_eps, Mode=OneWay}"/>
                         <Run Text="/"/>
                         <Run Text="{x:Bind eps_count, Mode=OneWay}"/>
                     </TextBlock>
-                    <Button Grid.Row="3"
-                            HorizontalAlignment="Right"
-                            Click="NextEpButton_Click"
-                            Padding="8,3"
-                            Margin="-6,0"
-                            BorderThickness="1"
-                            Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
-                            Style="{StaticResource ButtonRevealStyle}">
-                        <TextBlock FontSize="12" 
-                                    Foreground="{x:Bind ep_color, Mode=OneWay}">
-                            <Run Text="EP."/>
-                            <Run Text="{x:Bind next_ep, Mode=OneWay}"/>
-                        </TextBlock>
-                    </Button>
+                    <Grid Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Button Grid.Column="3"
+                                Click="NextEpButton_Click"
+                                Padding="8,3"
+                                VerticalAlignment="Bottom"
+                                BorderThickness="1"
+                                Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
+                                Style="{StaticResource ButtonRevealStyle}">
+                                <TextBlock FontSize="12" 
+                                           Foreground="{x:Bind ep_color, Mode=OneWay}"
+                                           VerticalAlignment="Center">
+                                    <Run Text="EP."/>
+                                    <Run Text="{x:Bind next_ep, Mode=OneWay}"/>
+                                </TextBlock>
+                        </Button>
+                    </Grid>
+                    <ProgressRing IsActive="True"
+                                  Visibility="{x:Bind isUpdating,Mode=OneWay}"
+                                  Grid.RowSpan="4"
+                                  VerticalAlignment="Top"
+                                  HorizontalAlignment="Right"
+                                  Width="20" 
+                                  Height="20" >
+                        <ProgressRing.RenderTransform>
+                            <CompositeTransform CenterX="10"
+                                                CenterY="10"
+                                                ScaleX="0.6" 
+                                                ScaleY="0.6"/>
+                        </ProgressRing.RenderTransform>
+                    </ProgressRing>
+
                 </Grid>
             </Grid>
         </DataTemplate>

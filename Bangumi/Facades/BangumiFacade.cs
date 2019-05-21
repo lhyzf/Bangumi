@@ -135,6 +135,7 @@ namespace Bangumi.Facades
                     var item = watchingListCollection.Where(e => e.subject_id == watching.subject_id).FirstOrDefault();
                     if (item != null)
                     {
+                        item.isUpdating = true;
                         if (item.lasttouch == 0)
                         {
                             //获取EP详细信息
@@ -242,6 +243,7 @@ namespace Bangumi.Facades
                             }
                         }
                     }
+                    item.isUpdating = false;
                 }
 
                 return true;
