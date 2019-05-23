@@ -149,6 +149,17 @@ namespace Bangumi.ViewModels
             Summary = "";
             CollectionStatusText = "收藏";
             CollectionStatusIcon = "\uE006";
+            // 更多资料用
+            name = "";
+            moreInfo = "";
+            moreSummary = "";
+            moreCharacters = "";
+            moreStaff = "";
+            // 评分、吐槽用
+            myRate = 0;
+            myComment = "";
+            myPrivacy = false;
+
             eps.Clear();
         }
 
