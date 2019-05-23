@@ -185,10 +185,15 @@ namespace Bangumi.Views
             ViewModel.SearchResultCollection.OnLoadMoreCompleted += ViewModel.OnLoadMoreCompleted;
         }
 
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        /// <summary>
+        /// 在调整窗口大小时计算item的宽度。
+        /// </summary>
+        protected override Size MeasureOverride(Size availableSize)
         {
-            double UseableWidth = TypePivot.ActualWidth - 20;
-            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 250);
+            double UseableWidth = availableSize.Width - 20;
+            if (UseableWidth > 0)
+                MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
+            return base.MeasureOverride(availableSize);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

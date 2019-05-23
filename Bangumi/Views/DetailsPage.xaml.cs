@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.ApplicationModel.Core;
+using Windows.Foundation;
 using Windows.System.Profile;
 using Windows.UI;
 using Windows.UI.Core;
@@ -296,10 +297,12 @@ namespace Bangumi.Views
         /// <summary>
         /// 在调整窗口大小时计算item的宽度。
         /// </summary>
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        protected override Size MeasureOverride(Size availableSize)
         {
-            double UseableWidth = EpsGridView.ActualWidth - EpsGridView.Padding.Left - EpsGridView.Padding.Right;
-            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
+            double UseableWidth = availableSize.Width - EpsGridView.Padding.Left - EpsGridView.Padding.Right;
+            if (UseableWidth > 0)
+                MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
+            return base.MeasureOverride(availableSize);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

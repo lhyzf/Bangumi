@@ -8,7 +8,6 @@
     xmlns:data="using:Bangumi.Models"
     xmlns:common="using:Bangumi.Common"
     xmlns:wuxdata="using:Windows.UI.Xaml.Data"
-    SizeChanged="Page_SizeChanged"
     NavigationCacheMode="Enabled"
     Loaded="Page_Loaded"
     Unloaded="Page_Unloaded"
