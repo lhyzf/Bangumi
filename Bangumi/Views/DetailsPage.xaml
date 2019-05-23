@@ -10,7 +10,6 @@
     xmlns:sys="using:System"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     NavigationCacheMode="Enabled"
-    SizeChanged="Page_SizeChanged"
     Loaded="Page_Loaded"
     Unloaded="Page_Unloaded"
     mc:Ignorable="d"

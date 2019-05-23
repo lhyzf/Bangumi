@@ -4,6 +4,7 @@ using Bangumi.Models;
 using Bangumi.ViewModels;
 using System;
 using System.Collections.ObjectModel;
+using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -61,11 +62,15 @@ namespace Bangumi.Views
             MainPage.rootFrame.Navigate(typeof(DetailsPage), selectedItem.subject, new DrillInNavigationTransitionInfo());
         }
 
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        /// <summary>
+        /// 在调整窗口大小时计算item的宽度。
+        /// </summary>
+        protected override Size MeasureOverride(Size availableSize)
         {
-            double UseableWidth = CollectionSemanticZoom.ActualWidth - 24;
-            MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 220);
+            double UseableWidth = availableSize.Width - 24;
+            if (UseableWidth > 0)
+                MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
+            return base.MeasureOverride(availableSize);
         }
-
     }
 }
