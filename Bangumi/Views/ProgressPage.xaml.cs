@@ -75,5 +75,12 @@ namespace Bangumi.Views
             ViewModel.UpdateEpStatus(item);
         }
 
+        // 修改收藏状态
+        private void CollectionButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Windows.UI.Xaml.Controls.Button)sender;
+            var item = (WatchingStatus)button.DataContext;
+            ViewModel.EditCollectionStatus(item);
+        }
     }
 }
