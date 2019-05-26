@@ -11,7 +11,6 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     NavigationCacheMode="Enabled"
     Loaded="Page_Loaded"
-    Unloaded="Page_Unloaded"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -67,6 +66,36 @@
     </Page.Resources>
     
     <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BangumiImage.Width" Value="75"/>
+                        <Setter Target="BangumiImage.Height" Value="107"/>
+                        <Setter Target="NameTextBlock.FontSize" Value="16"/>
+                        <Setter Target="air_dateTextBlock.FontSize" Value="14"/>
+                        <Setter Target="air_weekdayTextBlock.FontSize" Value="14"/>
+                        <Setter Target="SummaryTextBlock.FontSize" Value="14"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="400" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BangumiImage.Width" Value="150"/>
+                        <Setter Target="BangumiImage.Height" Value="214"/>
+                        <Setter Target="NameTextBlock.FontSize" Value="24"/>
+                        <Setter Target="air_dateTextBlock.FontSize" Value="16"/>
+                        <Setter Target="air_weekdayTextBlock.FontSize" Value="16"/>
+                        <Setter Target="SummaryTextBlock.FontSize" Value="18"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="*"/>
@@ -111,10 +140,8 @@
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Image Name="BangumiImage" 
-                               Source="{x:Bind ViewModel.ImageSource, Mode=OneWay}"
-                               Height="214" 
-                               Width="150" />
+                        <Image x:Name="BangumiImage" 
+                               Source="{x:Bind ViewModel.ImageSource, Mode=OneWay}"/>
                         <StackPanel Orientation="Vertical" 
                                     Grid.Column="1"
                                     Margin="10,0">
@@ -122,69 +149,21 @@
                                        IsTextSelectionEnabled="True"
                                        Text="{x:Bind ViewModel.Name_cn, Mode=OneWay}"
                                        TextWrapping="Wrap"
-                                       FontSize="23" 
                                        Foreground="#d26585" />
                             <TextBlock Name="air_dateTextBlock" 
                                        Text="{x:Bind sys:String.Format('开播时间：{0}',ViewModel.Air_date), Mode=OneWay}" 
-                                       FontSize="15" 
                                        Foreground="#666666" 
                                        Margin="0,2,0,0" />
                             <TextBlock Name="air_weekdayTextBlock" 
                                        Text="{x:Bind sys:String.Format('更新时间：{0}',ViewModel.AirWeekdayName), Mode=OneWay}" 
-                                       FontSize="15" 
                                        Foreground="#666666" 
                                        Margin="0,2,0,0" />
-                            <StackPanel Orientation="Horizontal">
-                                <Button Name="CollectionButton"
-                                        IsEnabled="{x:Bind common:Converters.Not(ViewModel.IsCollectionStatusLoading), Mode=OneWay}"
-                                        Foreground="#d26585"
-                                        Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
-                                        Style="{StaticResource ButtonRevealStyle}">
-                                    <Button.Flyout>
-                                        <MenuFlyout>
-                                            <MenuFlyoutItem Text="想看" 
-                                                            Click="WishCollectionFlyoutItem_Click" />
-                                            <MenuFlyoutItem Text="看过"
-                                                            Click="WatchedCollectionFlyoutItem_Click"/>
-                                            <MenuFlyoutItem Text="在看"
-                                                            Click="DoingCollectionFlyoutItem_Click"/>
-                                            <MenuFlyoutItem Text="搁置"
-                                                            Click="OnHoldCollectionFlyoutItem_Click"/>
-                                            <MenuFlyoutItem Text="抛弃"
-                                                            Click="DropCollectionFlyoutItem_Click"/>
-                                            <MenuFlyoutItem Text="删除"
-                                                            Visibility="Collapsed"
-                                                            Click="RemoveCollectionFlyoutItem_Click"/>
-                                        </MenuFlyout>
-                                    </Button.Flyout>
-                                    <StackPanel Orientation="Horizontal">
-                                        <FontIcon Name="CollectionButtonIcon" 
-                                                  FontFamily="Segoe MDL2 Assets" 
-                                                  Glyph="{x:Bind ViewModel.CollectionStatusIcon, Mode=OneWay}" 
-                                                  Margin="0,0,5,0"/>
-                                        <TextBlock Name="CollectionButtonText" 
-                                                   Text="{x:Bind ViewModel.CollectionStatusText, Mode=OneWay}" />
-                                    </StackPanel>
-                                </Button>
-                                <Button Name="CollectionAdvanceButton" 
-                                        FontFamily="Segoe MDL2 Assets" 
-                                        Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
-                                        Style="{StaticResource ButtonRevealStyle}"
-                                        Click="CollectionAdvanceButton_Click"
-                                        IsEnabled="{x:Bind common:Converters.Not(ViewModel.IsRateLoading), Mode=OneWay}"
-                                        Margin="5,0,0,0">
-                                    <FontIcon FontFamily="Segoe MDL2 Assets" 
-                                              Glyph="&#xE70F;"/>
-                                </Button>
-                            </StackPanel>
                         </StackPanel>
                     </Grid>
                     <TextBlock Name="SummaryTextBlock" 
                                Text="{x:Bind ViewModel.Summary, Mode=OneWay}"
                                IsTextSelectionEnabled="True"
-                               FontSize="18" 
                                TextWrapping="Wrap" 
-                               LineHeight="30" 
                                Margin="0,5,0,0" />
                     <HyperlinkButton Name="MoreInfoHyperLink"
                                      Content="更多资料"

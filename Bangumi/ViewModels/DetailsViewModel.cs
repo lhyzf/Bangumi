@@ -108,6 +108,18 @@ namespace Bangumi.ViewModels
             set => Set(ref _summary, value);
         }
 
+
+        // 更多资料用
+        public string name;
+        public string moreInfo;
+        public string moreSummary;
+        public string moreCharacters;
+        public string moreStaff;
+
+        // 收藏状态，评分，吐槽
+        public int myRate;
+        public string myComment;
+        public bool myPrivacy;
         private string _collectionStatusText;
         public string CollectionStatusText
         {
@@ -122,18 +134,6 @@ namespace Bangumi.ViewModels
             set => Set(ref _collectionStatusIcon, value);
         }
 
-        // 更多资料用
-        public string name;
-        public string moreInfo;
-        public string moreSummary;
-        public string moreCharacters;
-        public string moreStaff;
-
-        // 评分、吐槽用
-        public int myRate;
-        public string myComment;
-        public bool myPrivacy;
-
         public void InitViewModel()
         {
             IsLoading = true;
@@ -147,15 +147,15 @@ namespace Bangumi.ViewModels
             Air_weekday = 0;
             AirWeekdayName = "";
             Summary = "";
-            CollectionStatusText = "收藏";
-            CollectionStatusIcon = "\uE006";
             // 更多资料用
             name = "";
             moreInfo = "";
             moreSummary = "";
             moreCharacters = "";
             moreStaff = "";
-            // 评分、吐槽用
+            // 收藏状态，评分，吐槽
+            CollectionStatusText = "收藏";
+            CollectionStatusIcon = "\uE006";
             myRate = 0;
             myComment = "";
             myPrivacy = false;
@@ -163,19 +163,20 @@ namespace Bangumi.ViewModels
             eps.Clear();
         }
 
-        public async void EditMyRate()
+        public async void EditCollectionStatus()
         {
             CollectionEditContentDialog collectionEditContentDialog = new CollectionEditContentDialog()
             {
                 rate = myRate,
                 comment = myComment,
                 privacy = myPrivacy,
+                collectionStatus = CollectionStatusText
             };
             if (ContentDialogResult.Primary == await collectionEditContentDialog.ShowAsync())
             {
                 IsUpdating = true;
                 IsRateLoading = true;
-                if (await BangumiFacade.UpdateCollectionStatusAsync(SubjectId, GetStatusEnum(), collectionEditContentDialog.comment,
+                if (await BangumiFacade.UpdateCollectionStatusAsync(SubjectId, GetStatusEnum(collectionEditContentDialog.collectionStatus), collectionEditContentDialog.comment,
                      collectionEditContentDialog.rate.ToString(), collectionEditContentDialog.privacy == true ? "1" : "0"))
                 {
                     LoadCollectionStatus();
@@ -606,10 +607,10 @@ namespace Bangumi.ViewModels
             return result;
         }
 
-        public BangumiFacade.CollectionStatusEnum GetStatusEnum()
+        public BangumiFacade.CollectionStatusEnum GetStatusEnum(string status)
         {
             BangumiFacade.CollectionStatusEnum result;
-            switch (CollectionStatusText)
+            switch (status)
             {
                 case "想看":
                     result = BangumiFacade.CollectionStatusEnum.wish;
