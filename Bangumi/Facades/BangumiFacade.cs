@@ -188,7 +188,7 @@ namespace Bangumi.Facades
                         }
                         else
                         {
-                            if (item.lasttouch != watching.lasttouch)
+                            if (item.lasttouch != watching.lasttouch || watching.subject.air_weekday == 0 || watching.subject.air_weekday == GetDayOfWeek() + 1)
                             {
                                 var subject = await GetSubjectEpsAsync(item.subject_id.ToString());
                                 item.eps.Clear();
@@ -433,7 +433,7 @@ namespace Bangumi.Facades
                 {
                     // 反序列化指定名称的变量
                     JsonSerializerSettings jsonSerializerSetting = new JsonSerializerSettings();
-                    jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "subject_id", "ep_status", "subject", "name_cn", "images", "common", "eps_count", "lasttouch" });
+                    jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "subject_id", "ep_status", "subject", "name_cn", "images", "common", "eps_count", "lasttouch", "air_weekday" });
                     var result = JsonConvert.DeserializeObject<List<Watching>>(response, jsonSerializerSetting);
                     foreach (var watching in result)
                     {
@@ -658,13 +658,14 @@ namespace Bangumi.Facades
                     var result = JsonConvert.DeserializeObject<Subject>(response);
                     result.name = System.Net.WebUtility.HtmlDecode(result.name);
                     result.name_cn = System.Net.WebUtility.HtmlDecode(result.name_cn);
-                    foreach (var ep in result.eps)
-                    {
-                        if (string.IsNullOrEmpty(ep.name_cn))
+                    if (result.eps != null)
+                        foreach (var ep in result.eps)
                         {
-                            ep.name_cn = ep.name;
+                            if (string.IsNullOrEmpty(ep.name_cn))
+                            {
+                                ep.name_cn = ep.name;
+                            }
                         }
-                    }
                     return result;
                 }
                 return null;

@@ -8,6 +8,7 @@
     xmlns:data="using:Bangumi.Models"
     xmlns:wuxdata="using:Windows.UI.Xaml.Data"
     xmlns:common="using:Bangumi.Common"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     Loaded="Page_Loaded"
     Unloaded="Page_Unloaded"
     NavigationCacheMode="Enabled"
@@ -24,9 +25,9 @@
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Source="{x:Bind images.common}" 
-                        Height="75" 
-                        Width="75" 
+                <Image Source="{x:Bind images.common}"
+                        Height="75"
+                        Width="75"
                         Stretch="UniformToFill" />
                 <Grid Grid.Column="1"
                         Padding="6,0">
@@ -34,12 +35,12 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="{x:Bind name_cn}" 
-                                FontSize="14" 
+                    <TextBlock Text="{x:Bind name_cn}"
+                                FontSize="14"
                                 Foreground="#d26585"
                                TextTrimming="CharacterEllipsis"/>
                     <TextBlock Grid.Row="1"
-                                Text="{x:Bind name}" 
+                                Text="{x:Bind name}"
                                 FontSize="12"
                                 Foreground="Gray"
                                 TextTrimming="CharacterEllipsis"/>
@@ -48,14 +49,14 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ZoomedInGroupHeaderTemplate"  x:DataType="data:BangumiTimeLine">
-            <TextBlock Text="{x:Bind weekday.cn}" 
+            <TextBlock Text="{x:Bind weekday.cn}"
                        Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                        Style="{StaticResource SubtitleTextBlockStyle}"/>
         </DataTemplate>
 
         <DataTemplate x:Key="ZoomedOutTemplate"  x:DataType="wuxdata:ICollectionViewGroup">
-            <TextBlock Text="{x:Bind ((data:BangumiTimeLine)Group).weekday.cn}" 
-                       Style="{StaticResource SubtitleTextBlockStyle}" 
+            <TextBlock Text="{x:Bind ((data:BangumiTimeLine)Group).weekday.cn}"
+                       Style="{StaticResource SubtitleTextBlockStyle}"
                        TextWrapping="Wrap" />
         </DataTemplate>
 
@@ -66,13 +67,13 @@
         <Border Name="MyWidth"
                 Visibility="Collapsed"/>
 
-        <SemanticZoom Name="TimeLineSemanticZoom" 
+        <SemanticZoom Name="TimeLineSemanticZoom"
                       Grid.Row="1">
             <SemanticZoom.ZoomedInView>
-                <GridView ItemsSource="{x:Bind cvsGroups.View}" 
+                <GridView ItemsSource="{x:Bind cvsGroups.View}"
                           Padding="12,0,12,40"
                           ScrollViewer.IsHorizontalScrollChainingEnabled="False"
-                          IsItemClickEnabled="True" 
+                          IsItemClickEnabled="True"
                           ItemClick="GridView_ItemClick"
                           ItemTemplate="{StaticResource ZoomedInTemplate}">
                     <GridView.GroupStyle>
