@@ -16,6 +16,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
@@ -209,7 +210,7 @@ namespace Bangumi.Views
         }
 
         /// <summary>
-        /// 修改章节状态弹出菜单，无视章节状态。
+        /// 右键修改章节状态弹出菜单，无视章节状态。
         /// </summary>
         private void Eps_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
@@ -217,63 +218,6 @@ namespace Bangumi.Views
             {
                 FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
             }
-        }
-
-        /// <summary>
-        /// 收藏想看。
-        /// </summary>
-        private void WishCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.UpdateCollectionStatus(BangumiFacade.CollectionStatusEnum.wish);
-        }
-
-        /// <summary>
-        /// 收藏看过。
-        /// </summary>
-        private void WatchedCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.UpdateCollectionStatus(BangumiFacade.CollectionStatusEnum.collect);
-        }
-
-        /// <summary>
-        /// 收藏在看。
-        /// </summary>
-        private void DoingCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.UpdateCollectionStatus(BangumiFacade.CollectionStatusEnum.@do);
-        }
-
-        /// <summary>
-        /// 收藏搁置。
-        /// </summary>
-        private void OnHoldCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.UpdateCollectionStatus(BangumiFacade.CollectionStatusEnum.on_hold);
-        }
-
-        /// <summary>
-        /// 收藏抛弃。
-        /// </summary>
-        private void DropCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.UpdateCollectionStatus(BangumiFacade.CollectionStatusEnum.dropped);
-        }
-
-        /// <summary>
-        /// 收藏删除。
-        /// 未提供 API。
-        /// </summary>
-        private void RemoveCollectionFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        /// <summary>
-        /// 编辑评分和吐槽。
-        /// </summary>
-        private void CollectionAdvanceButton_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.EditMyRate();
         }
 
         /// <summary>
@@ -311,12 +255,41 @@ namespace Bangumi.Views
             // 启用标题栏的后退按钮
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
+            // 设置刷新按钮可见以及事件绑定
             MainPage.rootPage.MyCommandBar.Visibility = Visibility.Visible;
             MainPage.rootPage.RefreshAppBarButton.Click += DetailPageRefresh;
+
+            // 设置收藏按钮可见以及属性绑定、事件绑定
+            Binding LabelBinding = new Binding
+            {
+                Source = ViewModel,
+                Path = new PropertyPath("CollectionStatusText"),
+            };
+            MainPage.rootPage.CollectionAppBarButton.SetBinding(AppBarButton.LabelProperty, LabelBinding);
+            Binding GlyphBinding = new Binding
+            {
+                Source = ViewModel,
+                Path = new PropertyPath("CollectionStatusIcon"),
+            };
+            MainPage.rootPage.CollectionAppBarButtonFontIcon.SetBinding(FontIcon.GlyphProperty, GlyphBinding);
+            MainPage.rootPage.CollectionAppBarButton.Click += CollectionAppBarButton_Click;
+            MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Visible;
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// 编辑评分和吐槽。
+        /// </summary>
+        private void CollectionAppBarButton_Click(object sender, RoutedEventArgs e)
         {
+            ViewModel.EditCollectionStatus();
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            // 设置收藏按钮隐藏以及解除事件绑定
+            MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Collapsed;
+            MainPage.rootPage.CollectionAppBarButton.Click -= CollectionAppBarButton_Click;
+            // 设置刷新按钮隐藏以及解除事件绑定
             MainPage.rootPage.RefreshAppBarButton.Click -= DetailPageRefresh;
         }
 

@@ -22,6 +22,7 @@ namespace Bangumi.ContentDialogs
         public int rate { get; set; }
         public string comment { get; set; }
         public bool privacy { get; set; }
+        public string collectionStatus { get; set; }
 
         public CollectionEditContentDialog()
         {
@@ -37,6 +38,16 @@ namespace Bangumi.ContentDialogs
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+        }
+
+        private void StatusRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            collectionStatus = (sender as RadioButton).Tag.ToString();
+        }
+
+        private void ContentDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            StatusPanel.Children.Cast<RadioButton>().FirstOrDefault(c => c?.Tag?.ToString() == collectionStatus).IsChecked = true;
         }
     }
 }

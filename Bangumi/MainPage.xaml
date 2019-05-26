@@ -19,6 +19,17 @@
                     VerticalAlignment="Bottom"
                     RequestedTheme="Dark"
                     Background="{ThemeResource SystemControlAltMediumLowAcrylicElementMediumBrush}">
+            <AppBarButton Name="CollectionAppBarButton"
+                          x:FieldModifier="public"
+                          IsEnabled="{Binding ElementName=RefreshAppBarButton,Path=IsEnabled}"
+                          Label="收藏"
+                          Visibility="Collapsed">
+                <FontIcon Name="CollectionAppBarButtonFontIcon" 
+                          x:FieldModifier="public"
+                          FontFamily="Segoe MDL2 Assets" 
+                          Glyph="&#xE006;"/>
+            </AppBarButton>
+            <AppBarSeparator Visibility="{Binding ElementName=CollectionAppBarButton,Path=Visibility}" />
             <AppBarButton Icon="Find" 
                           Label="搜索"
                           Click="SearchButton_Click"/>

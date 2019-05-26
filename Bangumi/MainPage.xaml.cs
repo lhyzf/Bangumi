@@ -37,7 +37,7 @@ namespace Bangumi
             rootPage = this;
             rootFrame = MyFrame;
             // 设置窗口的最小大小
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(200, 100));
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(300, 200));
 
             this.systemNavigationManager = SystemNavigationManager.GetForCurrentView();
             systemNavigationManager.BackRequested += SystemNavigationManager_BackRequested;
