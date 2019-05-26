@@ -209,7 +209,10 @@ namespace Bangumi.ViewModels
                             ep.status = "抛弃";
                             break;
                         case BangumiFacade.EpStatusEnum.remove:
-                            ep.status = "";
+                            if (DateTime.Parse(ep.airdate) < DateTime.Now)
+                                ep.status = "Air";
+                            else
+                                ep.status = "NA";
                             break;
                         default:
                             break;
@@ -450,6 +453,7 @@ namespace Bangumi.ViewModels
                     // 显示章节
                     if (subject.eps != null)
                     {
+                        // 在无章节信息时添加
                         if (eps.Count == 0)
                         {
                             foreach (var ep in subject.eps.OrderBy(c => c.type))
@@ -465,6 +469,21 @@ namespace Bangumi.ViewModels
                                 eps.Add(ep);
                             }
                         }
+                        // 在有章节信息时覆盖
+                        else
+                        {
+                            foreach (var ep in subject.eps)
+                            {
+                                var oldEp = eps.Where(e => e.id == ep.id).FirstOrDefault();
+                                oldEp.name = ep.name;
+                                oldEp.name_cn = ep.name_cn;
+                                oldEp.url = ep.url;
+                                oldEp.duration = ep.duration;
+                                oldEp.airdate = ep.airdate;
+                                oldEp.desc = ep.desc;
+                                oldEp.comment = ep.comment;
+                            }
+                        }
                     }
                     IsDetailLoading = false;
 
@@ -476,14 +495,14 @@ namespace Bangumi.ViewModels
                         {
                             foreach (var ep in eps) //用户观看状态
                             {
-                                foreach (var p in progress.eps)
+                                var prog = progress.eps.Where(p => p.id == ep.id).FirstOrDefault();
+                                if (prog != null)
                                 {
-                                    if (p.id == ep.id)
-                                    {
-                                        ep.status = p.status.cn_name;
-                                        progress.eps.Remove(p);
-                                        break;
-                                    }
+                                    ep.status = prog.status.cn_name;
+                                }
+                                else
+                                {
+                                    ep.status = subject.eps.Where(e => e.id == ep.id).FirstOrDefault().status;
                                 }
                             }
                         }

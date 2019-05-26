@@ -97,9 +97,28 @@ namespace Bangumi.ViewModels
         // 对条目进行排序
         private void CollectionSorting()
         {
-            // 对条目进行排序
             var order = new List<WatchingStatus>();
-            order.AddRange(watchingCollection.OrderBy(p => p.lasttouch).OrderBy(p=>p.watched_eps).OrderBy(p => p.ep_color));
+            order.AddRange(watchingCollection.OrderBy(p => p.lasttouch).OrderBy(p => p.ep_color));
+            for (int i = 0; i < order.Count; i++)
+            {
+                if (order[i].watched_eps == "尚未观看")
+                {
+                    for (int j = i + 1; j < order.Count; j++)
+                    {
+                        if (order[j].ep_color == "Gray")
+                        {
+                            order.Insert(j, order[i]);
+                            order.Remove(order[i]);
+                            i--;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
             for (int i = 0; i < order.Count; i++)
             {
                 if (order[i].subject_id != watchingCollection[i].subject_id)
@@ -109,8 +128,6 @@ namespace Bangumi.ViewModels
                         if (order[i].subject_id == watchingCollection[j].subject_id)
                         {
                             watchingCollection.Move(j, i);
-                            //watchingCollection.RemoveAt(j);
-                            //watchingCollection.Insert(i, order[i]);
                             break;
                         }
                     }
