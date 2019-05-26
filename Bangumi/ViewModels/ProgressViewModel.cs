@@ -1,4 +1,5 @@
 ﻿using Bangumi.Common;
+using Bangumi.ContentDialogs;
 using Bangumi.Facades;
 using Bangumi.Helper;
 using Bangumi.Models;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 
 namespace Bangumi.ViewModels
 {
@@ -35,11 +37,32 @@ namespace Bangumi.ViewModels
             set => Set(ref _message, value);
         }
 
+        // 更新收藏状态、评分、吐槽
+        public async void EditCollectionStatus(WatchingStatus status)
+        {
+            CollectionEditContentDialog collectionEditContentDialog = new CollectionEditContentDialog()
+            {
+                rate = 0,
+                comment = "",
+                privacy = false,
+                collectionStatus = "在看"
+            };
+            if (ContentDialogResult.Primary == await collectionEditContentDialog.ShowAsync())
+            {
+                status.isUpdating = true;
+                if (await BangumiFacade.UpdateCollectionStatusAsync(status.subject_id.ToString(), DetailsViewModel.GetStatusEnum(collectionEditContentDialog.collectionStatus), collectionEditContentDialog.comment,
+                     collectionEditContentDialog.rate.ToString(), collectionEditContentDialog.privacy == true ? "1" : "0"))
+                {
+                    await LoadWatchingList();
+                }
+                status.isUpdating = false;
+            }
+        }
 
         /// <summary>
         /// 刷新收视进度列表。
         /// </summary>
-        public async void LoadWatchingList()
+        public async Task LoadWatchingList()
         {
             if (OAuthHelper.IsLogin)
             {

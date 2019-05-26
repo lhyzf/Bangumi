@@ -163,6 +163,7 @@ namespace Bangumi.ViewModels
             eps.Clear();
         }
 
+        // 更新收藏状态、评分、吐槽
         public async void EditCollectionStatus()
         {
             CollectionEditContentDialog collectionEditContentDialog = new CollectionEditContentDialog()
@@ -183,7 +184,6 @@ namespace Bangumi.ViewModels
                 }
                 IsUpdating = false;
             }
-
         }
 
         /// <summary>
@@ -607,7 +607,7 @@ namespace Bangumi.ViewModels
             return result;
         }
 
-        public BangumiFacade.CollectionStatusEnum GetStatusEnum(string status)
+        public static BangumiFacade.CollectionStatusEnum GetStatusEnum(string status)
         {
             BangumiFacade.CollectionStatusEnum result;
             switch (status)

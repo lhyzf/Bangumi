@@ -55,12 +55,32 @@
                     </TextBlock>
                     <Grid Grid.Row="3">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
                         
+                        <Button Grid.Column="0"
+                                Click="CollectionButton_Click"
+                                Padding="8,1"
+                                VerticalAlignment="Bottom"
+                                BorderThickness="1"
+                                Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
+                                Style="{StaticResource ButtonRevealStyle}">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" 
+                                      Glyph="&#xE00B;" 
+                                      Foreground="{x:Bind ep_color, Mode=OneWay}"
+                                      Margin="0">
+                                <FontIcon.RenderTransform>
+                                    <CompositeTransform CenterX="10"
+                                                        CenterY="10"
+                                                        ScaleX="0.6" 
+                                                        ScaleY="0.6"/>
+                                </FontIcon.RenderTransform>
+                            </FontIcon>
+                        </Button>
+
                         <Button Grid.Column="3"
                                 Click="NextEpButton_Click"
                                 Padding="8,3"
