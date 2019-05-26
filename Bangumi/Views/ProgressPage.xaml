@@ -103,6 +103,14 @@
                   IsItemClickEnabled="True" 
                   ItemClick="GridView_ItemClick"
                   ItemTemplate="{StaticResource ProgressSubjectTemplate}">
+            <GridView.ItemContainerTransitions>
+                <TransitionCollection>
+                    <RepositionThemeTransition IsStaggeringEnabled="False" />
+                    <EntranceThemeTransition IsStaggeringEnabled="True" />
+                    <AddDeleteThemeTransition />
+                    <ContentThemeTransition />
+                </TransitionCollection>
+            </GridView.ItemContainerTransitions>
         </GridView>
         
         <Border Name="MyWidth"

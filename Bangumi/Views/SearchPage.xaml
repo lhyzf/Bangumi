@@ -145,6 +145,11 @@
                                    LineHeight="30"
                                    HorizontalAlignment="Center"/>
                     </GridView.Footer>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition IsStaggeringEnabled="False" />
+                        </TransitionCollection>
+                    </GridView.ItemContainerTransitions>
                 </GridView>
             </PivotItem>
             <PivotItem Margin="0">
@@ -175,6 +180,11 @@
                                    LineHeight="30"
                                    HorizontalAlignment="Center"/>
                     </GridView.Footer>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition IsStaggeringEnabled="False" />
+                        </TransitionCollection>
+                    </GridView.ItemContainerTransitions>
                 </GridView>
             </PivotItem>
             <PivotItem Margin="0">
@@ -205,6 +215,11 @@
                                    LineHeight="30"
                                    HorizontalAlignment="Center"/>
                     </GridView.Footer>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition IsStaggeringEnabled="False" />
+                        </TransitionCollection>
+                    </GridView.ItemContainerTransitions>
                 </GridView>
             </PivotItem>
             <PivotItem Margin="0">
@@ -235,6 +250,11 @@
                                    LineHeight="30"
                                    HorizontalAlignment="Center"/>
                     </GridView.Footer>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition IsStaggeringEnabled="False" />
+                        </TransitionCollection>
+                    </GridView.ItemContainerTransitions>
                 </GridView>
             </PivotItem>
             <PivotItem Margin="0">
@@ -265,6 +285,11 @@
                                    LineHeight="30"
                                    HorizontalAlignment="Center"/>
                     </GridView.Footer>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition IsStaggeringEnabled="False" />
+                        </TransitionCollection>
+                    </GridView.ItemContainerTransitions>
                 </GridView>
             </PivotItem>
             <PivotItem Margin="0">
@@ -295,6 +320,11 @@
                                    LineHeight="30"
                                    HorizontalAlignment="Center"/>
                     </GridView.Footer>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition IsStaggeringEnabled="False" />
+                        </TransitionCollection>
+                    </GridView.ItemContainerTransitions>
                 </GridView>
             </PivotItem>
         </Pivot>
