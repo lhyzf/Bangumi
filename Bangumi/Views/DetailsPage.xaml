@@ -194,6 +194,11 @@
                                      Foreground="#d26585"/>
                 </StackPanel>
             </GridView.Header>
+            <GridView.ItemContainerTransitions>
+                <TransitionCollection>
+                    <RepositionThemeTransition IsStaggeringEnabled="False" />
+                </TransitionCollection>
+            </GridView.ItemContainerTransitions>
         </GridView>
 
         <ProgressBar Name="MyProgressBar"

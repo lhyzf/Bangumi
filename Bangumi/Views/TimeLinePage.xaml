@@ -79,6 +79,11 @@
                     <GridView.GroupStyle>
                         <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}"/>
                     </GridView.GroupStyle>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition IsStaggeringEnabled="False" />
+                        </TransitionCollection>
+                    </GridView.ItemContainerTransitions>
                 </GridView>
             </SemanticZoom.ZoomedInView>
 
