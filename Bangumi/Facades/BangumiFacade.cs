@@ -188,7 +188,7 @@ namespace Bangumi.Facades
                         }
                         else
                         {
-                            if (item.lasttouch != watching.lasttouch || watching.subject.air_weekday == 0 || watching.subject.air_weekday == GetDayOfWeek() + 1)
+                            if (item.watched_eps != "尚未观看" && (item.lasttouch != watching.lasttouch || watching.subject.air_weekday == 0 || watching.subject.air_weekday == GetDayOfWeek() + 1))
                             {
                                 var subject = await GetSubjectEpsAsync(item.subject_id.ToString());
                                 item.eps.Clear();

@@ -18,33 +18,31 @@
         <CollectionViewSource x:Name="cvsGroups" Source="{x:Bind ViewModel.subjectCollection}" IsSourceGrouped="True" ItemsPath="list"/>
 
         <DataTemplate x:Key="ZoomedInTemplate" x:DataType="data:SList">
-            <Grid Width="{Binding ElementName=MyWidth,Path=Width}"
-                  Padding="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Image Source="{x:Bind subject.images.common}" 
+            <RelativePanel Width="{Binding ElementName=MyWidth,Path=Width}"
+                           Padding="5">
+                <Image Name="BangumiImage"
+                       Source="{x:Bind subject.images.common}" 
+                       RelativePanel.AlignLeftWithPanel="True"
+                       RelativePanel.AlignTopWithPanel="True"
+                       x:Phase="2"
                        Height="75" 
                        Width="75" 
+                       Margin="0,0,6,0"
                        Stretch="UniformToFill" />
-                <Grid Grid.Column="1"
-                      Padding="6,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="{x:Bind subject.name_cn}" 
-                               FontSize="14" 
-                               Foreground="#d26585"
-                               TextTrimming="CharacterEllipsis"/>
-                    <TextBlock Grid.Row="1"
-                               Text="{x:Bind subject.name}" 
-                               FontSize="12"
-                               Foreground="Gray"
-                               TextTrimming="CharacterEllipsis"/>
-                </Grid>
-            </Grid>
+                <TextBlock Name="TitleTextBlock" Text="{x:Bind subject.name_cn}" 
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.AlignTopWithPanel="True"
+                           FontSize="14" 
+                           Foreground="#d26585"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Text="{x:Bind subject.name}" 
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.Below="TitleTextBlock"
+                           x:Phase="1"
+                           FontSize="12"
+                           Foreground="Gray"
+                           TextTrimming="CharacterEllipsis"/>
+            </RelativePanel>
         </DataTemplate>
 
         <DataTemplate x:Key="ZoomedInGroupHeaderTemplate" x:DataType="data:Collect">

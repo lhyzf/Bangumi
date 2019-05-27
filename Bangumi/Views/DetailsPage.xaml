@@ -16,35 +16,34 @@
 
     <Page.Resources>
         <DataTemplate x:Name="EpTemplate" x:DataType="data:Ep">
-            <Grid Tapped="Eps_Tapped" 
-                    RightTapped="Eps_RightTapped"
-                    Padding="5" 
-                    Height="68"
-                    Width="{Binding ElementName=MyWidth,Path=Width}"
-                    Background="Transparent"
-                    BorderThickness="0.5"
-                    BorderBrush="{ThemeResource SystemControlBackgroundListMediumBrush}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid>
-                    <TextBlock Text="{x:Bind sort}" 
-                                FontSize="14" />
-                    <TextBlock Grid.Column="1" 
-                                x:Phase="2"
-                                Text="{x:Bind status,Mode=OneWay}" 
-                                FontSize="12" 
-                                Foreground="#d26585"
-                                HorizontalAlignment="Right"/>
-                </Grid>
+            <RelativePanel Tapped="Eps_Tapped" 
+                           RightTapped="Eps_RightTapped"
+                           Padding="5" 
+                           Height="68"
+                           Width="{Binding ElementName=MyWidth,Path=Width}"
+                           Background="Transparent"
+                           BorderThickness="0.5"
+                           BorderBrush="{ThemeResource SystemControlBackgroundListMediumBrush}">
+                <TextBlock Name="SortTextBlock"
+                           Text="{x:Bind sort}" 
+                           RelativePanel.AlignLeftWithPanel="True"
+                           RelativePanel.AlignTopWithPanel="True"
+                           FontSize="14" />
+                <TextBlock Grid.Column="1"
+                           Text="{x:Bind status,Mode=OneWay}" 
+                           x:Phase="2"
+                           RelativePanel.AlignRightWithPanel="True"
+                           RelativePanel.AlignTopWithPanel="True"
+                           FontSize="12" 
+                           Foreground="#d26585"/>
                 <TextBlock Grid.Row="1"
-                            x:Phase="1"
-                            Text="{x:Bind name_cn}" 
-                            FontSize="14" 
-                            HorizontalAlignment="Left"
-                            TextWrapping="Wrap"
-                            TextTrimming="WordEllipsis"/>
+                           Text="{x:Bind name_cn}" 
+                           x:Phase="1"
+                           RelativePanel.AlignLeftWithPanel="True"
+                           RelativePanel.Below="SortTextBlock"
+                           FontSize="14" 
+                           TextWrapping="Wrap"
+                           TextTrimming="CharacterEllipsis"/>
 
                 <FlyoutBase.AttachedFlyout>
                     <MenuFlyout>
@@ -61,7 +60,7 @@
                                         Text="未看"/>
                     </MenuFlyout>
                 </FlyoutBase.AttachedFlyout>
-            </Grid>
+            </RelativePanel>
         </DataTemplate>
     </Page.Resources>
     
@@ -79,6 +78,7 @@
                         <Setter Target="air_dateTextBlock.FontSize" Value="14"/>
                         <Setter Target="air_weekdayTextBlock.FontSize" Value="14"/>
                         <Setter Target="SummaryTextBlock.FontSize" Value="14"/>
+                        <Setter Target="MoreInfoHyperLink.FontSize" Value="14"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Wide">
@@ -92,6 +92,7 @@
                         <Setter Target="air_dateTextBlock.FontSize" Value="16"/>
                         <Setter Target="air_weekdayTextBlock.FontSize" Value="16"/>
                         <Setter Target="SummaryTextBlock.FontSize" Value="18"/>
+                        <Setter Target="MoreInfoHyperLink.FontSize" Value="16"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -134,34 +135,35 @@
                   Padding="10,5,10,45"
                   ItemTemplate="{StaticResource EpTemplate}">
             <GridView.Header>
-                <StackPanel Orientation="Vertical" >
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Image x:Name="BangumiImage" 
-                               Source="{x:Bind ViewModel.ImageSource, Mode=OneWay}"/>
-                        <StackPanel Orientation="Vertical" 
-                                    Grid.Column="1"
-                                    Margin="10,0">
-                            <TextBlock Name="NameTextBlock" 
-                                       IsTextSelectionEnabled="True"
-                                       Text="{x:Bind ViewModel.Name_cn, Mode=OneWay}"
-                                       TextWrapping="Wrap"
-                                       Foreground="#d26585" />
-                            <TextBlock Name="air_dateTextBlock" 
-                                       Text="{x:Bind sys:String.Format('开播时间：{0}',ViewModel.Air_date), Mode=OneWay}" 
-                                       Foreground="#666666" 
-                                       Margin="0,2,0,0" />
-                            <TextBlock Name="air_weekdayTextBlock" 
-                                       Text="{x:Bind sys:String.Format('更新时间：{0}',ViewModel.AirWeekdayName), Mode=OneWay}" 
-                                       Foreground="#666666" 
-                                       Margin="0,2,0,0" />
-                        </StackPanel>
-                    </Grid>
+                <RelativePanel>
+                    <Image x:Name="BangumiImage" 
+                           Source="{x:Bind ViewModel.ImageSource, Mode=OneWay}"
+                           RelativePanel.AlignLeftWithPanel="True"
+                           RelativePanel.AlignTopWithPanel="True"
+                           Margin="0,0,5,0"/>
+                    <TextBlock Name="NameTextBlock" 
+                               Text="{x:Bind ViewModel.Name_cn, Mode=OneWay}"
+                               RelativePanel.RightOf="BangumiImage"
+                               RelativePanel.AlignTopWithPanel="True"
+                               IsTextSelectionEnabled="True"
+                               TextWrapping="Wrap"
+                               Foreground="#d26585" />
+                    <TextBlock Name="air_dateTextBlock" 
+                               Text="{x:Bind sys:String.Format('开播时间：{0}',ViewModel.Air_date), Mode=OneWay}" 
+                               RelativePanel.RightOf="BangumiImage"
+                               RelativePanel.Below="NameTextBlock"
+                               Foreground="#666666" 
+                               Margin="0,2,0,0" />
+                    <TextBlock Name="air_weekdayTextBlock" 
+                               Text="{x:Bind sys:String.Format('更新时间：{0}',ViewModel.AirWeekdayName), Mode=OneWay}" 
+                               RelativePanel.RightOf="BangumiImage"
+                               RelativePanel.Below="air_dateTextBlock"
+                               Foreground="#666666" 
+                               Margin="0,2,0,0" />
                     <TextBlock Name="SummaryTextBlock" 
                                Text="{x:Bind ViewModel.Summary, Mode=OneWay}"
+                               RelativePanel.AlignLeftWithPanel="True"
+                               RelativePanel.Below="BangumiImage"
                                IsTextSelectionEnabled="True"
                                TextWrapping="Wrap" 
                                Margin="0,5,0,0" />
@@ -169,9 +171,11 @@
                                      Content="更多资料"
                                      Click="MoreInfoButton_Click"
                                      Visibility="{x:Bind common:Converters.CollapsedIf(ViewModel.IsDetailLoading), Mode=OneWay}"
-                                     FontSize="16"
+                                     RelativePanel.AlignLeftWithPanel="True"
+                                     RelativePanel.Below="SummaryTextBlock"
+                                     Padding="0,0,0,10"
                                      Foreground="#d26585"/>
-                </StackPanel>
+                </RelativePanel>
             </GridView.Header>
             <GridView.ItemContainerTransitions>
                 <TransitionCollection>
