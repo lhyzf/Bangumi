@@ -27,12 +27,13 @@ namespace Bangumi.Views
             this.InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             MainPage.rootPage.RefreshAppBarButton.Click += ProgressPageRefresh;
             if (ViewModel.watchingCollection.Count == 0 && !ViewModel.IsLoading)
             {
-                ViewModel.LoadWatchingList();
+                await ViewModel.LoadWatchingList();
+                MyGridView.ScrollIntoView(ViewModel.watchingCollection[0]);
             }
         }
 
@@ -41,12 +42,15 @@ namespace Bangumi.Views
             MainPage.rootPage.RefreshAppBarButton.Click -= ProgressPageRefresh;
         }
 
-        private void ProgressPageRefresh(object sender, RoutedEventArgs e)
+        private async void ProgressPageRefresh(object sender, RoutedEventArgs e)
         {
             var button = sender as AppBarButton;
             var tag = button.Tag;
             if (tag.Equals("进度"))
-                ViewModel.LoadWatchingList();
+            {
+                await ViewModel.LoadWatchingList();
+                MyGridView.ScrollIntoView(ViewModel.watchingCollection[0]);
+            }
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
