@@ -89,24 +89,24 @@ namespace Bangumi.Views
                 }
                 ViewModel.SubjectId = p.subject_id.ToString();
                 ViewModel.ImageSource = p.image;
-                ViewModel.Name_cn = p.name_cn;
+                ViewModel.NameCn = p.name_cn;
                 if (p.eps != null)
                 {
                     foreach (var ep in p.eps)
                     {
                         var newEp = new Ep();
-                        newEp.id = ep.id;
-                        newEp.sort = ep.sort;
-                        newEp.status = ep.status;
-                        newEp.type = ep.type;
-                        newEp.name_cn = ep.name;
-                        if (newEp.type == 0)
+                        newEp.Id = ep.id;
+                        newEp.Sort = ep.sort;
+                        newEp.Status = ep.status;
+                        newEp.Type = ep.type;
+                        newEp.NameCn = ep.name;
+                        if (newEp.Type == 0)
                         {
-                            newEp.sort = "第 " + newEp.sort + " 话";
+                            newEp.Sort = "第 " + newEp.Sort + " 话";
                         }
                         else
                         {
-                            newEp.sort = ViewModel.GetEpisodeType(newEp.type) + " " + newEp.sort;
+                            newEp.Sort = ViewModel.GetEpisodeType(newEp.Type) + " " + newEp.Sort;
                         }
                         ViewModel.eps.Add(newEp);
                     }
@@ -115,7 +115,7 @@ namespace Bangumi.Views
             else if (e.Parameter.GetType() == typeof(Subject))
             {
                 var p = (Subject)e.Parameter;
-                if (ViewModel.SubjectId == p.id.ToString())
+                if (ViewModel.SubjectId == p.Id.ToString())
                 {
                     return;
                 }
@@ -124,12 +124,11 @@ namespace Bangumi.Views
                     needReLoad = true;
                     ViewModel.InitViewModel();
                 }
-                ViewModel.SubjectId = p.id.ToString();
-                ViewModel.ImageSource = p.images.common;
-                ViewModel.Name_cn = p.name_cn;
-                ViewModel.Air_date = p.air_date;
-                ViewModel.Air_weekday = p.air_weekday;
-                ViewModel.AirWeekdayName = ViewModel.GetWeekday(ViewModel.Air_weekday);
+                ViewModel.SubjectId = p.Id.ToString();
+                ViewModel.ImageSource = p.Images.Common;
+                ViewModel.NameCn = p.NameCn;
+                ViewModel.AirDate = p.AirDate;
+                ViewModel.AirWeekday = p.AirWeekday;
             }
             else if (e.Parameter.GetType() == typeof(Int32))
             {
@@ -143,13 +142,11 @@ namespace Bangumi.Views
                     ViewModel.InitViewModel();
                 }
                 ViewModel.SubjectId = e.Parameter.ToString();
-                ViewModel.ImageSource = ViewModel.NoImageUri;
             }
 
             if (needReLoad)
             {
                 ViewModel.LoadDetails();
-                ViewModel.LoadCollectionStatus();
             }
         }
 
@@ -160,7 +157,7 @@ namespace Bangumi.Views
         private void WatchedMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var ep = EpsGridView.SelectedItem as Ep;
-            ViewModel.UpdateEpStatus(ep, BangumiFacade.EpStatusEnum.watched);
+            ViewModel.UpdateEpStatus(ep, EpStatusEnum.watched);
         }
 
         /// <summary>
@@ -169,7 +166,7 @@ namespace Bangumi.Views
         private void WatchedToMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var ep = EpsGridView.SelectedItem as Ep;
-            ViewModel.UpdateEpStatusBatch(ep, BangumiFacade.EpStatusEnum.watched);
+            ViewModel.UpdateEpStatusBatch(ep, EpStatusEnum.watched);
         }
 
         /// <summary>
@@ -178,7 +175,7 @@ namespace Bangumi.Views
         private void QueueMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var ep = EpsGridView.SelectedItem as Ep;
-            ViewModel.UpdateEpStatus(ep, BangumiFacade.EpStatusEnum.queue);
+            ViewModel.UpdateEpStatus(ep, EpStatusEnum.queue);
         }
 
         /// <summary>
@@ -187,7 +184,7 @@ namespace Bangumi.Views
         private void DropMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var ep = EpsGridView.SelectedItem as Ep;
-            ViewModel.UpdateEpStatus(ep, BangumiFacade.EpStatusEnum.drop);
+            ViewModel.UpdateEpStatus(ep, EpStatusEnum.drop);
         }
 
         /// <summary>
@@ -196,7 +193,7 @@ namespace Bangumi.Views
         private void RemoveMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var ep = EpsGridView.SelectedItem as Ep;
-            ViewModel.UpdateEpStatus(ep, BangumiFacade.EpStatusEnum.remove);
+            ViewModel.UpdateEpStatus(ep, EpStatusEnum.remove);
         }
 
         /// <summary>
@@ -204,7 +201,7 @@ namespace Bangumi.Views
         /// </summary>
         private void Eps_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (OAuthHelper.IsLogin && !ViewModel.IsLoading && ((Ep)EpsGridView.SelectedItem).status != "NA")
+            if (OAuthHelper.IsLogin && !ViewModel.IsLoading && ((Ep)EpsGridView.SelectedItem).Status != "NA")
             {
                 FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
             }
@@ -224,19 +221,9 @@ namespace Bangumi.Views
         /// <summary>
         /// 更多资料。
         /// </summary>
-        private async void MoreInfoButton_Click(object sender, RoutedEventArgs e)
+        private void MoreInfoButton_Click(object sender, RoutedEventArgs e)
         {
-
-            SubjectMoreInfoContentDialog subjectMoreInfoContentDialog = new SubjectMoreInfoContentDialog()
-            {
-                name = ViewModel.name,
-                info = ViewModel.moreInfo,
-                summary = ViewModel.moreSummary,
-                characters = ViewModel.moreCharacters,
-                staff = ViewModel.moreStaff,
-            };
-            subjectMoreInfoContentDialog.Title = ViewModel.Name_cn;
-            await subjectMoreInfoContentDialog.ShowAsync();
+            ViewModel.ShowMoreInfo();
         }
 
         /// <summary>
@@ -297,7 +284,6 @@ namespace Bangumi.Views
         private void DetailPageRefresh(object sender, RoutedEventArgs e)
         {
             ViewModel.LoadDetails();
-            ViewModel.LoadCollectionStatus();
         }
     }
 }

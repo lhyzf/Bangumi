@@ -32,6 +32,7 @@ namespace Bangumi.ContentDialogs
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            MainPage.rootPage.hasDialog = false;
         }
 
     }

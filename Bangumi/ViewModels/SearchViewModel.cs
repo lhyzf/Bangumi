@@ -5,9 +5,11 @@ using Bangumi.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Core;
@@ -63,18 +65,23 @@ namespace Bangumi.ViewModels
         {
             if (!string.IsNullOrEmpty(SearchText))
             {
-                var result = await BangumiFacade.GetSearchResultAsync(SearchText, "", 0, 10);
-                if (SearchText == PreSearch[SelectedIndex])
+                try
                 {
-                    return;
-                }
-                Suggestions.Clear();
-                if (result != null)
-                {
-                    foreach (var item in result.list)
+                    Debug.WriteLine("开始获取搜索建议");
+                    var result = await BangumiFacade.GetSearchResultAsync(SearchText, "", 0, 10);
+                    if (SearchText == PreSearch[SelectedIndex])
                     {
-                        Suggestions.Add(item.name_cn);
+                        return;
                     }
+                    Suggestions.Clear();
+                    foreach (var item in result.Results)
+                    {
+                        Suggestions.Add(item.NameCn);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("获取搜索建议失败！\n" + e.Message);
                 }
             }
         }
@@ -154,6 +161,7 @@ namespace Bangumi.ViewModels
         int ItemsCount = 0;
         private string keyword;
         private string type;
+        bool IsSearching = false;
 
         public SearchResultIncrementalLoadingCollection(string keyword, string type, int index)
         {
@@ -167,42 +175,62 @@ namespace Bangumi.ViewModels
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
             var dispatcher = Window.Current.Dispatcher;
+            //var tokenSource = new CancellationTokenSource();
+            //var token = tokenSource.Token;
             return AsyncInfo.Run(async cancelToken =>
             {
-                System.Diagnostics.Debug.WriteLine("Loading {0}/{1} items", offset + 20, max);
-                await Task.WhenAll(Task.Delay(1000), dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-                {
-                    // 加载开始事件
-                    if (this.OnLoadMoreStarted != null)
+                //if (!token.IsCancellationRequested)
+                //{
+                    await Task.WhenAll(Task.Delay(1000), dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                     {
-                        this.OnLoadMoreStarted(index);
-                    }
-                    SearchResult result = await BangumiFacade.GetSearchResultAsync(keyword, type, offset, 20);
-                    if (result != null)
-                    {
-                        max = result.results;
-                        foreach (Subject item in result.list)
+                        if (IsSearching)
+                            return;
+                        try
                         {
-                            Add(item);
-                        }
-                        if (!HasMoreItems)
-                        {
-                            System.Diagnostics.Debug.WriteLine("Loading complete.");
-                        }
-                        ItemsCount += result.list.Count;
-                    }
-                    offset += 20;
-                    // 加载完成事件
-                    if (this.OnLoadMoreCompleted != null)
-                    {
-                        if (offset > max)
-                        {
-                            offset = max;
-                        }
-                        this.OnLoadMoreCompleted(index, ItemsCount, HasMoreItems);
-                    }
-                }).AsTask());
+                            IsSearching = true;
+                            Debug.WriteLine("Loading {0}/{1} items ({2})", offset + 20, max, type);
+                            // 加载开始事件
+                            if (this.OnLoadMoreStarted != null)
+                            {
+                                this.OnLoadMoreStarted(index);
+                            }
+                            SearchResult result = await BangumiFacade.GetSearchResultAsync(keyword, type, offset, 20);
+                            max = result.ResultCount;
+                            foreach (Subject item in result.Results)
+                            {
+                                Add(item);
+                            }
+                            if (!HasMoreItems)
+                            {
+                                System.Diagnostics.Debug.WriteLine("Loading complete.");
+                            }
+                            ItemsCount += result.Results.Count;
+                            offset += 20;
 
+                        }
+                        catch (Exception e)
+                        {
+                            var msgDialog = new Windows.UI.Popups.MessageDialog("获取搜索结果失败！\n" + e.Message) { Title = "错误！" };
+                            msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                            await msgDialog.ShowAsync();
+                        }
+                        finally
+                        {
+                            // 加载完成事件
+                            if (this.OnLoadMoreCompleted != null)
+                            {
+                                if (offset > max)
+                                {
+                                    offset = max;
+                                }
+                                this.OnLoadMoreCompleted(index, ItemsCount, HasMoreItems);
+                            }
+                            IsSearching = false;
+                        }
+                    }).AsTask());
+
+
+                //}
                 return new LoadMoreItemsResult { Count = count };
             });
         }

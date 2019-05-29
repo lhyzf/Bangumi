@@ -3,6 +3,7 @@ using Bangumi.ContentDialogs;
 using Bangumi.Facades;
 using Bangumi.Helper;
 using Bangumi.Models;
+using Bangumi.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,7 +22,6 @@ namespace Bangumi.ViewModels
             InitViewModel();
         }
 
-        public string NoImageUri;
         public ObservableCollection<Ep> eps { get; private set; } = new ObservableCollection<Ep>();
 
         private bool _isLoading;
@@ -29,27 +29,6 @@ namespace Bangumi.ViewModels
         {
             get => _isLoading;
             set => Set(ref _isLoading, value);
-        }
-
-        private bool _isCollectionStatusLoading;
-        public bool IsCollectionStatusLoading
-        {
-            get => _isCollectionStatusLoading;
-            set => Set(ref _isCollectionStatusLoading, value);
-        }
-
-        private bool _isRateLoading;
-        public bool IsRateLoading
-        {
-            get => _isRateLoading;
-            set => Set(ref _isRateLoading, value);
-        }
-
-        private bool _isDetailLoading;
-        public bool IsDetailLoading
-        {
-            get => _isDetailLoading;
-            set => Set(ref _isDetailLoading, value);
         }
 
         private bool _isUpdating;
@@ -66,7 +45,7 @@ namespace Bangumi.ViewModels
             set => Set(ref _subjectId, value);
         }
 
-        private string _imageSource = "";
+        private string _imageSource = "ms-appx:///Assets/NoImage.png";
         public string ImageSource
         {
             get => _imageSource;
@@ -74,31 +53,24 @@ namespace Bangumi.ViewModels
         }
 
         private string _name_cn;
-        public string Name_cn
+        public string NameCn
         {
             get => _name_cn;
             set => Set(ref _name_cn, value);
         }
 
         private string _air_date;
-        public string Air_date
+        public string AirDate
         {
             get => _air_date;
             set => Set(ref _air_date, value);
         }
 
         private int _air_weekday;
-        public int Air_weekday
+        public int AirWeekday
         {
             get => _air_weekday;
             set => Set(ref _air_weekday, value);
-        }
-
-        private string _airWeekdayName;
-        public string AirWeekdayName
-        {
-            get => _airWeekdayName;
-            set => Set(ref _airWeekdayName, value);
         }
 
         private string _summary;
@@ -136,16 +108,10 @@ namespace Bangumi.ViewModels
 
         public void InitViewModel()
         {
-            IsLoading = true;
-            MainPage.rootPage.RefreshAppBarButton.IsEnabled = false;
-            IsCollectionStatusLoading = true;
-            IsDetailLoading = true;
-            IsRateLoading = true;
-            NoImageUri = Constants.noImageUri;
-            Name_cn = "";
-            Air_date = "";
-            Air_weekday = 0;
-            AirWeekdayName = "";
+            IsLoading = false;
+            NameCn = "";
+            AirDate = "";
+            AirWeekday = 0;
             Summary = "";
             // 更多资料用
             name = "";
@@ -163,7 +129,10 @@ namespace Bangumi.ViewModels
             eps.Clear();
         }
 
-        // 更新收藏状态、评分、吐槽
+
+        /// <summary>
+        /// 更新收藏状态、评分、吐槽
+        /// </summary>
         public async void EditCollectionStatus()
         {
             CollectionEditContentDialog collectionEditContentDialog = new CollectionEditContentDialog()
@@ -173,17 +142,66 @@ namespace Bangumi.ViewModels
                 privacy = myPrivacy,
                 collectionStatus = CollectionStatusText
             };
+            MainPage.rootPage.hasDialog = true;
             if (ContentDialogResult.Primary == await collectionEditContentDialog.ShowAsync())
             {
+                MainPage.rootPage.hasDialog = false;
                 IsUpdating = true;
-                IsRateLoading = true;
-                if (await BangumiFacade.UpdateCollectionStatusAsync(SubjectId, GetStatusEnum(collectionEditContentDialog.collectionStatus), collectionEditContentDialog.comment,
-                     collectionEditContentDialog.rate.ToString(), collectionEditContentDialog.privacy == true ? "1" : "0"))
+                if (await BangumiFacade.UpdateCollectionStatusAsync(SubjectId,
+                    BangumiConverters.GetCollectionStatusEnum(collectionEditContentDialog.collectionStatus), collectionEditContentDialog.comment,
+                    collectionEditContentDialog.rate.ToString(), collectionEditContentDialog.privacy == true ? "1" : "0"))
                 {
-                    LoadCollectionStatus();
+                    myRate = collectionEditContentDialog.rate;
+                    myComment = collectionEditContentDialog.comment;
+                    myPrivacy = collectionEditContentDialog.privacy;
+                    CollectionStatusText = collectionEditContentDialog.collectionStatus;
+                    SetCollectionButton();
+                    if (collectionEditContentDialog.collectionStatus == CollectionStatusEnum.collect.GetValue() && SettingHelper.EpsBatch == true)
+                    {
+                        int epId = 0;
+                        string epsId = string.Empty;
+                        foreach (var episode in eps)
+                        {
+                            if (eps.IndexOf(episode) == eps.Count - 1)
+                            {
+                                epsId += episode.Id.ToString();
+                                epId = episode.Id;
+                                break;
+                            }
+                            else
+                            {
+                                epsId += episode.Id.ToString() + ",";
+                            }
+                        }
+                        if (await BangumiFacade.UpdateProgressBatchAsync(epId, EpStatusEnum.watched, epsId))
+                        {
+                            foreach (var episode in eps)
+                            {
+                                episode.Status = "看过";
+                            }
+                        }
+                    }
                 }
                 IsUpdating = false;
             }
+        }
+
+        /// <summary>
+        /// 显示更多资料
+        /// </summary>
+        public async void ShowMoreInfo()
+        {
+            SubjectMoreInfoContentDialog subjectMoreInfoContentDialog = new SubjectMoreInfoContentDialog()
+            {
+                name = name,
+                info = moreInfo,
+                summary = moreSummary,
+                characters = moreCharacters,
+                staff = moreStaff,
+            };
+            subjectMoreInfoContentDialog.Title = NameCn;
+            MainPage.rootPage.hasDialog = true;
+            await subjectMoreInfoContentDialog.ShowAsync();
         }
 
         /// <summary>
@@ -191,32 +209,23 @@ namespace Bangumi.ViewModels
         /// </summary>
         /// <param name="ep"></param>
         /// <param name="status">状态</param>
-        public async void UpdateEpStatus(Ep ep, BangumiFacade.EpStatusEnum status)
+        public async void UpdateEpStatus(Ep ep, EpStatusEnum status)
         {
             if (ep != null)
             {
                 IsUpdating = true;
-                if (await BangumiFacade.UpdateProgressAsync(ep.id.ToString(), status))
+                if (await BangumiFacade.UpdateProgressAsync(ep.Id.ToString(), status))
                 {
-                    switch (status)
+                    if (!string.IsNullOrEmpty(status.GetValue()))
                     {
-                        case BangumiFacade.EpStatusEnum.watched:
-                            ep.status = "看过";
-                            break;
-                        case BangumiFacade.EpStatusEnum.queue:
-                            ep.status = "想看";
-                            break;
-                        case BangumiFacade.EpStatusEnum.drop:
-                            ep.status = "抛弃";
-                            break;
-                        case BangumiFacade.EpStatusEnum.remove:
-                            if (DateTime.Parse(ep.airdate) < DateTime.Now)
-                                ep.status = "Air";
-                            else
-                                ep.status = "NA";
-                            break;
-                        default:
-                            break;
+                        ep.Status = status.GetValue();
+                    }
+                    else
+                    {
+                        if (DateTime.Parse(ep.AirDate) < DateTime.Now)
+                            ep.Status = "Air";
+                        else
+                            ep.Status = "NA";
                     }
                 }
                 IsUpdating = false;
@@ -224,34 +233,34 @@ namespace Bangumi.ViewModels
         }
 
         /// <summary>
-        /// 批量更新章节状态
+        /// 批量更新章节状态为看过
         /// </summary>
         /// <param name="ep"></param>
         /// <param name="status">状态</param>
-        public async void UpdateEpStatusBatch(Ep ep, BangumiFacade.EpStatusEnum status)
+        public async void UpdateEpStatusBatch(Ep ep, EpStatusEnum status)
         {
-            if (ep != null && status == BangumiFacade.EpStatusEnum.watched)
+            if (ep != null && status == EpStatusEnum.watched)
             {
                 IsUpdating = true;
                 string epsId = string.Empty;
                 foreach (var episode in eps)
                 {
-                    if (episode.id == ep.id)
+                    if (episode.Id == ep.Id)
                     {
-                        epsId += episode.id.ToString();
+                        epsId += episode.Id.ToString();
                         break;
                     }
                     else
                     {
-                        epsId += episode.id.ToString() + ",";
+                        epsId += episode.Id.ToString() + ",";
                     }
                 }
-                if (await BangumiFacade.UpdateProgressBatchAsync(ep.id, status, epsId))
+                if (await BangumiFacade.UpdateProgressBatchAsync(ep.Id, status, epsId))
                 {
                     foreach (var episode in eps)
                     {
-                        episode.status = "看过";
-                        if (episode.id == ep.id)
+                        episode.Status = "看过";
+                        if (episode.Id == ep.Id)
                         {
                             break;
                         }
@@ -262,47 +271,7 @@ namespace Bangumi.ViewModels
         }
 
         /// <summary>
-        /// 更新收藏状态
-        /// </summary>
-        /// <param name="status">状态</param>
-        public async void UpdateCollectionStatus(BangumiFacade.CollectionStatusEnum status)
-        {
-            IsUpdating = true;
-            if (await BangumiFacade.UpdateCollectionStatusAsync(SubjectId, status))
-            {
-                if (status == BangumiFacade.CollectionStatusEnum.collect && SettingHelper.EpsBatch == true)
-                {
-                    int epId = 0;
-                    string epsId = string.Empty;
-                    foreach (var episode in eps)
-                    {
-                        if (eps.IndexOf(episode) == eps.Count - 1)
-                        {
-                            epsId += episode.id.ToString();
-                            epId = episode.id;
-                            break;
-                        }
-                        else
-                        {
-                            epsId += episode.id.ToString() + ",";
-                        }
-                    }
-                    if (await BangumiFacade.UpdateProgressBatchAsync(epId, BangumiFacade.EpStatusEnum.watched, epsId))
-                    {
-                        foreach (var episode in eps)
-                        {
-                            episode.status = "看过";
-                        }
-                    }
-                }
-                CollectionStatusText = GetStatusName(status);
-                SetCollectionButton();
-            }
-            IsUpdating = false;
-        }
-
-        /// <summary>
-        /// 设置收藏按钮
+        /// 设置收藏按钮的图标
         /// </summary>
         private void SetCollectionButton()
         {
@@ -321,69 +290,33 @@ namespace Bangumi.ViewModels
         }
 
         /// <summary>
-        /// 获取收藏、评分和吐槽信息。
-        /// </summary>
-        public async void LoadCollectionStatus()
-        {
-            if (!OAuthHelper.IsLogin)
-            {
-                return;
-            }
-            try
-            {
-                CollectionStatus collectionStatus = await BangumiFacade.GetCollectionStatusAsync(SubjectId);
-                if (collectionStatus != null && collectionStatus.status != null)
-                {
-                    CollectionStatusText = collectionStatus.status.name;
-                    myRate = collectionStatus.rating;
-                    myComment = collectionStatus.comment;
-                    myPrivacy = collectionStatus.@private == "1" ? true : false;
-                }
-                SetCollectionButton();
-                IsCollectionStatusLoading = false;
-                IsRateLoading = false;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
-        }
-
-        /// <summary>
-        /// 加载详情和章节。
+        /// 加载详情和章节，
+        /// 用户进度，收藏状态。
         /// </summary>
         public async void LoadDetails()
         {
+            if (IsLoading)
+                return;
             try
             {
                 IsLoading = true;
-                IsDetailLoading = true;
+                MainPage.rootPage.RefreshAppBarButton.IsEnabled = false;
                 // 获取条目信息
                 var subject = await BangumiFacade.GetSubjectAsync(SubjectId);
 
                 if (subject != null)
                 {
                     // 条目标题
-                    if (string.IsNullOrEmpty(Name_cn))
-                    {
-                        Name_cn = string.IsNullOrEmpty(subject.name_cn) ? subject.name : subject.name_cn;
-                    }
+                    NameCn = string.IsNullOrEmpty(subject.NameCn) ? subject.Name : subject.NameCn;
                     // 条目图片
-                    if (ImageSource.Equals(NoImageUri) && subject.images != null)
-                    {
-                        ImageSource = subject.images.common;
-                    }
+                    ImageSource = subject.Images?.Common;
                     // 放送日期
-                    if (string.IsNullOrEmpty(Air_date))
-                    {
-                        Air_date = subject.air_date;
-                        Air_weekday = subject.air_weekday;
-                        AirWeekdayName = GetWeekday(subject.air_weekday);
-                    }
+                    AirDate = subject.AirDate;
+                    AirWeekday = subject.AirWeekday;
                     // 条目简介
-                    if (!string.IsNullOrEmpty(subject.summary))
+                    if (!string.IsNullOrEmpty(subject.Summary))
                     {
-                        Summary = subject.summary.Length > 80 ? (subject.summary.Substring(0, 80) + "...") : subject.summary;
+                        Summary = subject.Summary.Length > 80 ? (subject.Summary.Substring(0, 80) + "...") : subject.Summary;
                     }
                     else
                     {
@@ -391,23 +324,23 @@ namespace Bangumi.ViewModels
                     }
 
                     // 更多资料
-                    name = subject.name;
-                    moreSummary = string.IsNullOrEmpty(subject.summary) ? "暂无简介" : subject.summary;
-                    moreInfo = "作品分类：" + GetSubjectTypeCn((BangumiFacade.SubjectType)subject.type);
-                    moreInfo += "\n放送开始：" + subject.air_date;
-                    moreInfo += "\n放送星期：" + GetWeekday(subject.air_weekday);
-                    moreInfo += "\n话数：" + subject.eps_count;
+                    name = subject.Name;
+                    moreSummary = string.IsNullOrEmpty(subject.Summary) ? "暂无简介" : subject.Summary;
+                    moreInfo = "作品分类：" + ((SubjectTypeEnum)subject.Type).GetValue();
+                    moreInfo += "\n放送开始：" + subject.AirDate;
+                    moreInfo += "\n放送星期：" + Converters.GetWeekday(subject.AirWeekday);
+                    moreInfo += "\n话数：" + subject.EpsCount;
                     // 角色
-                    if (subject.crt != null)
+                    if (subject.Characters != null)
                     {
-                        foreach (var crt in subject.crt)
+                        foreach (var crt in subject.Characters)
                         {
-                            moreCharacters += string.Format("{0}：", string.IsNullOrEmpty(crt.name_cn) ? crt.name : crt.name_cn);
-                            if (crt.actors != null)
+                            moreCharacters += string.Format("{0}：", string.IsNullOrEmpty(crt.NameCn) ? crt.Name : crt.NameCn);
+                            if (crt.Actors != null)
                             {
-                                foreach (var actor in crt.actors)
+                                foreach (var actor in crt.Actors)
                                 {
-                                    moreCharacters += actor.name + "、";
+                                    moreCharacters += actor.Name + "、";
                                 }
                                 moreCharacters = moreCharacters.TrimEnd('、');
                             }
@@ -424,20 +357,20 @@ namespace Bangumi.ViewModels
                         moreCharacters += "暂无资料";
                     }
                     // 演职人员
-                    if (subject.staff != null)
+                    if (subject.Staff != null)
                     {
                         var sd = new Dictionary<string, string>();
-                        foreach (var staff in subject.staff)
+                        foreach (var staff in subject.Staff)
                         {
-                            foreach (var job in staff.jobs)
+                            foreach (var job in staff.Jobs)
                             {
                                 if (!sd.ContainsKey(job))
                                 {
-                                    sd.Add(job, string.IsNullOrEmpty(staff.name_cn) ? staff.name : staff.name_cn);
+                                    sd.Add(job, string.IsNullOrEmpty(staff.NameCn) ? staff.Name : staff.NameCn);
                                 }
                                 else
                                 {
-                                    sd[job] += string.Format("、{0}", string.IsNullOrEmpty(staff.name_cn) ? staff.name : staff.name_cn);
+                                    sd[job] += string.Format("、{0}", string.IsNullOrEmpty(staff.NameCn) ? staff.Name : staff.NameCn);
                                 }
                             }
                         }
@@ -452,20 +385,20 @@ namespace Bangumi.ViewModels
                         moreStaff += "暂无资料";
                     }
                     // 显示章节
-                    if (subject.eps != null)
+                    if (subject.Eps != null)
                     {
                         // 在无章节信息时添加
                         if (eps.Count == 0)
                         {
-                            foreach (var ep in subject.eps.OrderBy(c => c.type))
+                            foreach (var ep in subject.Eps.OrderBy(c => c.Type))
                             {
-                                if (ep.type == 0)
+                                if (ep.Type == 0)
                                 {
-                                    ep.sort = "第 " + ep.sort + " 话";
+                                    ep.Sort = "第 " + ep.Sort + " 话";
                                 }
                                 else
                                 {
-                                    ep.sort = GetEpisodeType(ep.type) + " " + ep.sort;
+                                    ep.Sort = GetEpisodeType(ep.Type) + " " + ep.Sort;
                                 }
                                 eps.Add(ep);
                             }
@@ -473,46 +406,57 @@ namespace Bangumi.ViewModels
                         // 在有章节信息时覆盖
                         else
                         {
-                            foreach (var ep in subject.eps)
+                            foreach (var ep in subject.Eps)
                             {
-                                var oldEp = eps.Where(e => e.id == ep.id).FirstOrDefault();
-                                oldEp.name = ep.name;
-                                oldEp.name_cn = ep.name_cn;
-                                oldEp.url = ep.url;
-                                oldEp.duration = ep.duration;
-                                oldEp.airdate = ep.airdate;
-                                oldEp.desc = ep.desc;
-                                oldEp.comment = ep.comment;
+                                var oldEp = eps.Where(e => e.Id == ep.Id).FirstOrDefault();
+                                oldEp.Name = ep.Name;
+                                oldEp.NameCn = ep.NameCn;
+                                oldEp.Url = ep.Url;
+                                oldEp.Duration = ep.Duration;
+                                oldEp.AirDate = ep.AirDate;
+                                oldEp.Desc = ep.Desc;
+                                oldEp.Comment = ep.Comment;
                             }
                         }
                     }
-                    IsDetailLoading = false;
 
-                    // 显示用户章节状态
+                    // 确认用户登录状态
                     if (OAuthHelper.IsLogin)
                     {
+                        // 显示用户章节状态
                         Progress progress = await BangumiFacade.GetProgressesAsync(SubjectId);
-                        if (progress != null)
+                        foreach (var ep in eps) //用户观看状态
                         {
-                            foreach (var ep in eps) //用户观看状态
+                            var prog = progress?.Eps?.Where(p => p.Id == ep.Id).FirstOrDefault();
+                            if (prog != null)
                             {
-                                var prog = progress.eps.Where(p => p.id == ep.id).FirstOrDefault();
-                                if (prog != null)
-                                {
-                                    ep.status = prog.status.cn_name;
-                                }
-                                else
-                                {
-                                    ep.status = subject.eps.Where(e => e.id == ep.id).FirstOrDefault().status;
-                                }
+                                ep.Status = prog.Status.CnName;
+                            }
+                            else
+                            {
+                                ep.Status = subject.Eps.Where(e => e.Id == ep.Id).FirstOrDefault().Status;
                             }
                         }
+
+                        // 获取收藏、评分和吐槽信息。
+                        SubjectStatus2 collectionStatus = await BangumiFacade.GetCollectionStatusAsync(SubjectId);
+                        if (collectionStatus?.Status != null)
+                        {
+                            CollectionStatusText = collectionStatus.Status.Name;
+                            myRate = collectionStatus.Rating;
+                            myComment = collectionStatus.Comment;
+                            myPrivacy = collectionStatus.Private == "1" ? true : false;
+                        }
+                        SetCollectionButton();
+
                     }
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e.Message);
+                var msgDialog = new Windows.UI.Popups.MessageDialog("加载详情失败！\n" + e.Message) { Title = "错误！" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
             }
             finally
             {
@@ -522,150 +466,29 @@ namespace Bangumi.ViewModels
         }
 
 
-        private string GetSubjectTypeCn(BangumiFacade.SubjectType type)
-        {
-            string cn = "";
-            switch (type)
-            {
-                case BangumiFacade.SubjectType.book:
-                    cn = "书籍";
-                    break;
-                case BangumiFacade.SubjectType.anime:
-                    cn = "动画";
-                    break;
-                case BangumiFacade.SubjectType.music:
-                    cn = "音乐";
-                    break;
-                case BangumiFacade.SubjectType.game:
-                    cn = "游戏";
-                    break;
-                case BangumiFacade.SubjectType.real:
-                    cn = "三次元";
-                    break;
-                default:
-                    break;
-            }
-            return cn;
-        }
-
-        public string GetWeekday(int day)
-        {
-            var weekday = "";
-            switch (day)
-            {
-                case 1:
-                    weekday = "星期一";
-                    break;
-                case 2:
-                    weekday = "星期二";
-                    break;
-                case 3:
-                    weekday = "星期三";
-                    break;
-                case 4:
-                    weekday = "星期四";
-                    break;
-                case 5:
-                    weekday = "星期五";
-                    break;
-                case 6:
-                    weekday = "星期六";
-                    break;
-                case 7:
-                    weekday = "星期日";
-                    break;
-                default:
-                    break;
-            }
-            return weekday;
-        }
-
-        private string GetStatusName(BangumiFacade.CollectionStatusEnum status)
-        {
-            string result;
-            switch (status)
-            {
-                case BangumiFacade.CollectionStatusEnum.wish:
-                    result = "想看";
-                    break;
-                case BangumiFacade.CollectionStatusEnum.collect:
-                    result = "看过";
-                    break;
-                case BangumiFacade.CollectionStatusEnum.@do:
-                    result = "在看";
-                    break;
-                case BangumiFacade.CollectionStatusEnum.on_hold:
-                    result = "搁置";
-                    break;
-                case BangumiFacade.CollectionStatusEnum.dropped:
-                    result = "抛弃";
-                    break;
-                default:
-                    result = "收藏";
-                    break;
-            }
-            return result;
-        }
-
-        public static BangumiFacade.CollectionStatusEnum GetStatusEnum(string status)
-        {
-            BangumiFacade.CollectionStatusEnum result;
-            switch (status)
-            {
-                case "想看":
-                    result = BangumiFacade.CollectionStatusEnum.wish;
-                    break;
-                case "看过":
-                    result = BangumiFacade.CollectionStatusEnum.collect;
-                    break;
-                case "在看":
-                    result = BangumiFacade.CollectionStatusEnum.@do;
-                    break;
-                case "搁置":
-                    result = BangumiFacade.CollectionStatusEnum.on_hold;
-                    break;
-                case "抛弃":
-                    result = BangumiFacade.CollectionStatusEnum.dropped;
-                    break;
-                default:
-                    result = BangumiFacade.CollectionStatusEnum.@do;
-                    break;
-            }
-            return result;
-        }
-
+        // 获取章节类型
         public string GetEpisodeType(int n)
         {
-            string type = "";
             switch (n)
             {
                 case 0:
-                    type = "本篇";
-                    break;
+                    return "本篇";
                 case 1:
-                    type = "特别篇";
-                    break;
+                    return "特别篇";
                 case 2:
-                    type = "OP";
-                    break;
+                    return "OP";
                 case 3:
-                    type = "ED";
-                    break;
+                    return "ED";
                 case 4:
-                    type = "预告/宣传/广告";
-                    break;
+                    return "预告/宣传/广告";
                 case 5:
-                    type = "MAD";
-                    break;
+                    return "MAD";
                 case 6:
-                    type = "其他";
-                    break;
+                    return "其他";
                 default:
-                    break;
+                    return "";
             }
-            return type;
         }
-
 
     }
 }

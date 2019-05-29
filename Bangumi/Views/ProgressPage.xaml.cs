@@ -30,10 +30,9 @@ namespace Bangumi.Views
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             MainPage.rootPage.RefreshAppBarButton.Click += ProgressPageRefresh;
-            if (ViewModel.watchingCollection.Count == 0 && !ViewModel.IsLoading)
+            if (ViewModel.WatchingCollection.Count == 0 && !ViewModel.IsLoading)
             {
-                await ViewModel.LoadWatchingList();
-                MyGridView.ScrollIntoView(ViewModel.watchingCollection[0]);
+                await ViewModel.LoadWatchingListAsync();
             }
         }
 
@@ -48,8 +47,7 @@ namespace Bangumi.Views
             var tag = button.Tag;
             if (tag.Equals("进度"))
             {
-                await ViewModel.LoadWatchingList();
-                MyGridView.ScrollIntoView(ViewModel.watchingCollection[0]);
+                await ViewModel.LoadWatchingListAsync();
             }
         }
 
@@ -57,7 +55,6 @@ namespace Bangumi.Views
         {
             var selectedItem = (WatchingStatus)e.ClickedItem;
             MainPage.rootFrame.Navigate(typeof(DetailsPage), selectedItem, new DrillInNavigationTransitionInfo());
-            //Frame.Navigate(typeof(DetailsPage), selectedItem);
         }
 
         /// <summary>
@@ -76,7 +73,7 @@ namespace Bangumi.Views
         {
             var button = (Windows.UI.Xaml.Controls.Button)sender;
             var item = (WatchingStatus)button.DataContext;
-            ViewModel.UpdateEpStatus(item);
+            ViewModel.UpdateNextEpStatus(item);
         }
 
         // 修改收藏状态

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bangumi.Models
+namespace Bangumi.Services
 {
     public static class Constants
     {
@@ -12,8 +12,7 @@ namespace Bangumi.Models
         public const string client_id = "";
         public const string client_secret = "";
         public const string redirect_url = "";
-        public const string baseUrl = "https://api.bgm.tv";
-        public const string noImageUri = "ms-appx:///Assets/NoImage.png";
+        public const string NoImageUri = "ms-appx:///Assets/NoImage.png";
 
     }
 }

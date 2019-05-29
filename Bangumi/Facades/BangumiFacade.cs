@@ -1,5 +1,7 @@
 ﻿using Bangumi.Helper;
 using Bangumi.Models;
+using Bangumi.Services;
+using Bangumi.ViewModels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -12,97 +14,36 @@ using System.Threading.Tasks;
 
 namespace Bangumi.Facades
 {
-    public class BangumiFacade
+    public static class BangumiFacade
     {
-        private const string baseUrl = Constants.baseUrl;
-        private const string client_id = Constants.client_id;
-        private const string NoImageUri = Constants.noImageUri;
-
-        /// <summary>
-        /// 显示用户选定类别收藏信息。
-        /// </summary>
-        /// <param name="subjectCollection"></param>
-        /// <param name="subjectType"></param>
-        /// <returns></returns>
-        public static async Task<bool> PopulateSubjectCollectionAsync(ObservableCollection<Collect> subjectCollection, SubjectType subjectType)
-        {
-            try
-            {
-                if (subjectCollection.Count == 0)
-                {
-                    //从文件反序列化
-                    var PreCollection = JsonConvert.DeserializeObject<List<Collect>>(await FileHelper.ReadFromCacheFile("JsonCache\\" + subjectType));
-                    if (PreCollection != null)
-                    {
-                        foreach (var type in PreCollection)
-                        {
-                            subjectCollection.Add(type);
-                        }
-                    }
-                }
-
-                var subjectCollections = await GetSubjectCollectionAsync(subjectType);
-                if (subjectCollections != null)
-                {
-                    //清空原数据
-                    subjectCollection.Clear();
-
-                    if (subjectCollections != null && subjectCollections.collects != null && !subjectCollection.Equals(subjectCollections.collects))
-                    {
-                        //清空原数据
-                        subjectCollection.Clear();
-                        foreach (var type in subjectCollections.collects)
-                        {
-                            subjectCollection.Add(type);
-                        }
-                    }
-
-                    //将对象序列化并存储到文件
-                    await FileHelper.WriteToCacheFile(JsonConvert.SerializeObject(subjectCollection), "JsonCache\\" + subjectType);
-
-                    return true;
-                }
-                else
-                    return false;
-            }
-            catch (Exception e)
-            {
-                var msgDialog = new Windows.UI.Popups.MessageDialog("获取用户收藏失败！\n" + e.Message) { Title = "错误！" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
-                Debug.WriteLine("PopulateSubjectCollectionAsync Error.");
-                Debug.WriteLine(e.Message);
-                return false;
-            }
-        }
-
         /// <summary>
         /// 显示用户收视进度列表。
         /// </summary>
         /// <param name="watchingListCollection"></param>
         /// <returns></returns>
-        public static async Task<bool> PopulateWatchingListAsync(ObservableCollection<WatchingStatus> watchingListCollection)
+        public static async Task PopulateWatchingListAsync(ObservableCollection<WatchingStatus> watchingListCollection)
         {
             try
             {
                 //从文件反序列化
-                var PreWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await FileHelper.ReadFromCacheFile("JsonCache\\home"));
+                var PreWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await FileHelper.ReadFromCacheFileAsync("JsonCache\\home"));
                 if (PreWatchings != null)
                 {
                     foreach (var sub in PreWatchings)
                     {
+                        // 将Collection中没有的添加进去
                         if (watchingListCollection.Where(e => e.subject_id == sub.subject_id).Count() == 0)
                             watchingListCollection.Add(sub);
                     }
                 }
 
-                var watchingList = await GetWatchingListAsync();
+                var watchingList = await BangumiHttpWrapper.GetWatchingListAsync(OAuthHelper.UserIdString);
 
                 var deletedItems = new List<WatchingStatus>(); //标记要删除的条目
                 foreach (var sub in watchingListCollection)
                 {
                     //根据最新的进度删除原有条目
-                    if (watchingList.Where(e => e.subject_id == sub.subject_id).Count() == 0)
+                    if (watchingList.Where(e => e.SubjectId == sub.subject_id).Count() == 0)
                         deletedItems.Add(sub);
                 }
                 foreach (var item in deletedItems) //删除条目
@@ -113,44 +54,45 @@ namespace Bangumi.Facades
                 foreach (var watching in watchingList)
                 {
                     //若在看含有原来没有的条目则新增,之后再细化
-                    var item = watchingListCollection.Where(e => e.subject_id == watching.subject_id).FirstOrDefault();
+                    var item = watchingListCollection.Where(e => e.subject_id == watching.SubjectId).FirstOrDefault();
                     if (item == null)
                     {
                         WatchingStatus watchingStatus = new WatchingStatus();
-                        watchingStatus.name = watching.subject.name;
-                        watchingStatus.name_cn = watching.subject.name_cn;
-                        watchingStatus.image = watching.subject.images.common;
-                        watchingStatus.subject_id = watching.subject_id;
-                        watchingStatus.url = watching.subject.url;
+                        watchingStatus.name = watching.Subject.Name;
+                        watchingStatus.name_cn = watching.Subject.NameCn;
+                        watchingStatus.image = watching.Subject.Images.Common;
+                        watchingStatus.subject_id = watching.SubjectId;
+                        watchingStatus.url = watching.Subject.Url;
                         watchingStatus.ep_color = "Gray";
                         watchingStatus.lasttouch = 0;
-                        watchingStatus.watched_eps = watching.ep_status.ToString();
-                        watchingStatus.eps_count = watching.subject.eps_count.ToString();
+                        watchingStatus.watched_eps = watching.EpStatus.ToString();
+                        watchingStatus.eps_count = watching.Subject.EpsCount.ToString();
 
                         watchingListCollection.Add(watchingStatus);
                     }
                 }
                 foreach (var watching in watchingList)
                 {
-                    var item = watchingListCollection.Where(e => e.subject_id == watching.subject_id).FirstOrDefault();
+                    var item = watchingListCollection.Where(e => e.subject_id == watching.SubjectId).FirstOrDefault();
                     if (item != null)
                     {
                         item.isUpdating = true;
+                        // 首次更新
                         if (item.lasttouch == 0)
                         {
-                            //获取EP详细信息
-                            var subject = await GetSubjectEpsAsync(item.subject_id.ToString());
-                            var progress = await GetProgressesAsync(item.subject_id.ToString());
+                            // 获取EP详细信息
+                            var subject = await BangumiHttpWrapper.GetSubjectEpsAsync(item.subject_id.ToString());
+                            var progress = await BangumiHttpWrapper.GetProgressesAsync(OAuthHelper.UserIdString, OAuthHelper.AccessTokenString, item.subject_id.ToString());
 
                             item.eps = new List<SimpleEp>();
-                            foreach (var ep in subject.eps.OrderBy(c => c.type))
+                            foreach (var ep in subject.Eps.OrderBy(c => c.Type))
                             {
                                 SimpleEp simpleEp = new SimpleEp();
-                                simpleEp.id = ep.id;
-                                simpleEp.sort = ep.sort;
-                                simpleEp.status = ep.status;
-                                simpleEp.type = ep.type;
-                                simpleEp.name = ep.name_cn;
+                                simpleEp.id = ep.Id;
+                                simpleEp.sort = ep.Sort;
+                                simpleEp.status = ep.Status;
+                                simpleEp.type = ep.Type;
+                                simpleEp.name = ep.NameCn;
                                 item.eps.Add(simpleEp);
                             }
                             if (item.eps.Where(e => e.status == "NA").Count() == 0)
@@ -159,20 +101,20 @@ namespace Bangumi.Facades
                                 item.eps_count = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
                             if (progress != null)
                             {
-                                item.next_ep = progress.eps.Count + 1;
-                                item.watched_eps = "看到第" + progress.eps.Count + "话";
-                                if (progress.eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
+                                item.next_ep = progress.Eps.Count + 1;
+                                item.watched_eps = "看到第" + progress.Eps.Count + "话";
+                                if (progress.Eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                                     item.ep_color = "#d26585";
                                 else
                                     item.ep_color = "Gray";
                                 foreach (var ep in item.eps) //用户观看状态
                                 {
-                                    foreach (var p in progress.eps)
+                                    foreach (var p in progress.Eps)
                                     {
-                                        if (p.id == ep.id)
+                                        if (p.Id == ep.id)
                                         {
-                                            ep.status = p.status.cn_name;
-                                            progress.eps.Remove(p);
+                                            ep.status = p.Status.CnName;
+                                            progress.Eps.Remove(p);
                                             break;
                                         }
                                     }
@@ -184,22 +126,23 @@ namespace Bangumi.Facades
                                 item.watched_eps = "尚未观看";
                                 item.ep_color = "#d26585";
                             }
-                            item.lasttouch = watching.lasttouch;
+                            item.lasttouch = watching.LastTouch;
                         }
                         else
                         {
-                            if (item.watched_eps != "尚未观看" && (item.lasttouch != watching.lasttouch || watching.subject.air_weekday == 0 || watching.subject.air_weekday == GetDayOfWeek() + 1))
+                            // 对条目有 修改 或 当天更新 或 未知更新星期 的进行更新
+                            if (item.lasttouch != watching.LastTouch || watching.Subject.AirWeekday == GetDayOfWeek() + 1 || watching.Subject.AirWeekday == 0)
                             {
-                                var subject = await GetSubjectEpsAsync(item.subject_id.ToString());
+                                var subject = await BangumiHttpWrapper.GetSubjectEpsAsync(item.subject_id.ToString());
                                 item.eps.Clear();
-                                foreach (var ep in subject.eps)
+                                foreach (var ep in subject.Eps)
                                 {
                                     SimpleEp simpleEp = new SimpleEp();
-                                    simpleEp.id = ep.id;
-                                    simpleEp.sort = ep.sort;
-                                    simpleEp.status = ep.status;
-                                    simpleEp.type = ep.type;
-                                    simpleEp.name = ep.name_cn;
+                                    simpleEp.id = ep.Id;
+                                    simpleEp.sort = ep.Sort;
+                                    simpleEp.status = ep.Status;
+                                    simpleEp.type = ep.Type;
+                                    simpleEp.name = ep.NameCn;
                                     item.eps.Add(simpleEp);
                                 }
                                 if (item.eps.Where(e => e.status == "NA").Count() == 0)
@@ -207,27 +150,31 @@ namespace Bangumi.Facades
                                 else
                                     item.eps_count = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
 
-                                var progress = await GetProgressesAsync(item.subject_id.ToString());
+                                var progress = await BangumiHttpWrapper.GetProgressesAsync(OAuthHelper.UserIdString, OAuthHelper.AccessTokenString, item.subject_id.ToString());
                                 if (progress != null)
                                 {
-                                    if (item.eps.Count == progress.eps.Count)
+                                    if (item.eps.Count == progress.Eps.Count)
                                         item.next_ep = 0;
                                     else
-                                        item.next_ep = progress.eps.Count + 1;
-                                    item.watched_eps = "看到第" + progress.eps.Count + "话";
-                                    if (progress.eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
+                                        item.next_ep = progress.Eps.Count + 1;
+                                    item.watched_eps = "看到第" + progress.Eps.Count + "话";
+                                    if (progress.Eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                                         item.ep_color = "#d26585";
                                     else
                                         item.ep_color = "Gray";
                                     foreach (var ep in item.eps) //用户观看状态
                                     {
-                                        foreach (var p in progress.eps)
+                                        foreach (var p in progress.Eps)
                                         {
-                                            if (p.id == ep.id)
+                                            if (p.Id == ep.id)
                                             {
-                                                ep.status = p.status.cn_name;
-                                                progress.eps.Remove(p);
+                                                ep.status = p.Status.CnName;
+                                                progress.Eps.Remove(p);
                                                 break;
+                                            }
+                                            else
+                                            {
+
                                             }
                                         }
                                     }
@@ -239,20 +186,63 @@ namespace Bangumi.Facades
                                     item.ep_color = "#d26585";
                                 }
 
-                                item.lasttouch = watching.lasttouch;
+                                item.lasttouch = watching.LastTouch;
                             }
                         }
+                        item.isUpdating = false;
                     }
-                    item.isUpdating = false;
                 }
-
-                return true;
             }
             catch (Exception e)
             {
-                Debug.WriteLine("PopulateWatchingListAsync Error.");
+                foreach (var item in watchingListCollection.Where(i => i.isUpdating == true))
+                {
+                    item.isUpdating = false;
+                }
+                Debug.WriteLine("显示用户收视进度列表失败。");
                 Debug.WriteLine(e.Message);
-                return false;
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// 显示用户选定类别收藏信息。
+        /// </summary>
+        /// <param name="subjectCollection"></param>
+        /// <param name="subjectType"></param>
+        /// <returns></returns>
+        public static async Task PopulateSubjectCollectionAsync(ObservableCollection<Collection> subjectCollection, SubjectTypeEnum subjectType)
+        {
+            try
+            {
+                //从文件反序列化
+                var PreCollection = JsonConvert.DeserializeObject<List<Collection>>(await FileHelper.ReadFromCacheFileAsync("JsonCache\\" + subjectType));
+                if (PreCollection != null)
+                {
+                    subjectCollection.Clear();
+                    foreach (var type in PreCollection)
+                    {
+                        subjectCollection.Add(type);
+                    }
+                }
+
+                var subjectCollections = await BangumiHttpWrapper.GetSubjectCollectionAsync(OAuthHelper.UserIdString, subjectType);
+
+                //清空原数据
+                subjectCollection.Clear();
+                foreach (var type in subjectCollections.Collects)
+                {
+                    subjectCollection.Add(type);
+                }
+
+                //将对象序列化并存储到文件
+                await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(subjectCollection), "JsonCache\\" + subjectType);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("显示用户选定类别收藏信息失败。");
+                Debug.WriteLine(e.Message);
+                throw e;
             }
         }
 
@@ -261,97 +251,68 @@ namespace Bangumi.Facades
         /// </summary>
         /// <param name="bangumiCollection"></param>
         /// <returns></returns>
-        public static async Task<bool> PopulateBangumiCalendarAsync(ObservableCollection<BangumiTimeLine> bangumiCollection)
+        public static async Task PopulateBangumiCalendarAsync(ObservableCollection<BangumiTimeLine> bangumiCollection, bool force = false)
         {
             try
             {
-                if (bangumiCollection.Count == 0)
+                //从文件反序列化
+                var PreCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await FileHelper.ReadFromCacheFileAsync("JsonCache\\calendar"));
+                if (PreCalendar != null)
                 {
-                    //从文件反序列化
-                    var PreCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await FileHelper.ReadFromCacheFile("JsonCache\\calendar"));
-                    if (PreCalendar != null)
-                    {
-                        foreach (var item in PreCalendar)
-                        {
-                            bangumiCollection.Add(item);
-                        }
-                    }
-                }
-
-                var bangumiCalendarList = await GetBangumiCalendarAsync();
-
-                if (bangumiCalendarList != null)
-                {
-                    //清空原数据
                     bangumiCollection.Clear();
-                    int day = GetDayOfWeek();
-                    foreach (var bangumiCalendar in bangumiCalendarList)
+                    foreach (var item in PreCalendar)
                     {
-                        if (bangumiCalendar.weekday.id <= day)
-                        {
-                            bangumiCollection.Add(bangumiCalendar);
-                        }
-                        else
-                        {
-                            bangumiCollection.Insert(bangumiCollection.Count - day, bangumiCalendar);
-                        }
+                        bangumiCollection.Add(item);
                     }
-
-                    //将对象序列化并存储到文件
-                    await FileHelper.WriteToCacheFile(JsonConvert.SerializeObject(bangumiCollection), "JsonCache\\calendar");
-
-                    return true;
+                    // 非强制加载，若缓存与当天为同一星期几则不请求新数据。
+                    if (!force && bangumiCollection[0].Weekday.Id == GetDayOfWeek() + 1)
+                    {
+                        return;
+                    }
                 }
-                else
-                    return false;
+
+                var bangumiCalendarList = await BangumiHttpWrapper.GetBangumiCalendarAsync();
+
+                //清空原数据
+                bangumiCollection.Clear();
+                int day = GetDayOfWeek();
+                foreach (var bangumiCalendar in bangumiCalendarList)
+                {
+                    if (bangumiCalendar.Weekday.Id <= day)
+                    {
+                        bangumiCollection.Add(bangumiCalendar);
+                    }
+                    else
+                    {
+                        bangumiCollection.Insert(bangumiCollection.Count - day, bangumiCalendar);
+                    }
+                }
+
+                //将对象序列化并存储到文件
+                await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(bangumiCollection), "JsonCache\\calendar");
             }
             catch (Exception e)
             {
-                Debug.WriteLine("PopulateBangumiCalendarAsync Error.");
+                Debug.WriteLine("显示时间表失败。");
                 Debug.WriteLine(e.Message);
-                return false;
+                throw e;
             }
         }
 
         /// <summary>
-        /// 获取指定类别收藏信息。
+        /// 获取指定条目详情。
         /// </summary>
-        /// <param name="subjectType"></param>
+        /// <param name="subjectId"></param>
         /// <returns></returns>
-        private static async Task<SubjectCollection> GetSubjectCollectionAsync(SubjectType subjectType)
+        public static async Task<Subject> GetSubjectAsync(string subjectId)
         {
-            string url = string.Format("{0}/user/{1}/collections/{2}?app_id={3}&max_results=25", baseUrl, OAuthHelper.UserIdString, subjectType, client_id);
             try
             {
-                string response = await HttpHelper.GetAsync(url);
-                if (response == "null")
-                {
-                    return new SubjectCollection();
-                }
-                if (response != null)
-                {
-                    var result = JsonConvert.DeserializeObject<List<SubjectCollection>>(response);
-                    foreach (var type in result.ElementAt(0).collects)
-                    {
-                        foreach (var item in type.list)
-                        {
-                            if (string.IsNullOrEmpty(item.subject.name_cn))
-                            {
-                                item.subject.name_cn = item.subject.name;
-                            }
-                            else
-                            {
-                                item.subject.name_cn = System.Net.WebUtility.HtmlDecode(item.subject.name_cn);
-                            }
-                        }
-                    }
-                    return result.ElementAt(0);
-                }
-                return null;
+                return await BangumiHttpWrapper.GetSubjectAsync(subjectId);
             }
             catch (Exception e)
             {
-                Debug.WriteLine("GetSubjectCollectionAsync Error.");
+                Debug.WriteLine("获取指定条目详情失败。");
                 Debug.WriteLine(e.Message);
                 throw e;
             }
@@ -362,27 +323,15 @@ namespace Bangumi.Facades
         /// </summary>
         /// <param name="subjectId"></param>
         /// <returns></returns>
-        public static async Task<CollectionStatus> GetCollectionStatusAsync(string subjectId)
+        public static async Task<SubjectStatus2> GetCollectionStatusAsync(string subjectId)
         {
-            string token = OAuthHelper.AccessTokenString;
-            string url = string.Format("{0}/collection/{1}?access_token={2}", baseUrl, subjectId, token);
-
             try
             {
-                string response = await HttpHelper.GetAsync(url);
-                if (response != null)
-                {
-                    var result = JsonConvert.DeserializeObject<CollectionStatus>(response);
-                    return result;
-                }
-                return null;
+                return await BangumiHttpWrapper.GetCollectionStatusAsync(OAuthHelper.AccessTokenString, subjectId);
             }
             catch (Exception e)
             {
-                var msgDialog = new Windows.UI.Popups.MessageDialog("获取收藏状态失败！\n" + e.Message) { Title = "错误！" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
-                Debug.WriteLine("GetCollectionStatusAsync Error.");
+                Debug.WriteLine("获取指定条目收藏信息失败。");
                 Debug.WriteLine(e.Message);
                 throw e;
             }
@@ -395,110 +344,60 @@ namespace Bangumi.Facades
         /// <returns></returns>
         public static async Task<Progress> GetProgressesAsync(string subjectId)
         {
-            string token = OAuthHelper.AccessTokenString;
-            string url = string.Format("{0}/user/{1}/progress?subject_id={2}&access_token={3}", baseUrl, OAuthHelper.UserIdString, subjectId, token);
             try
             {
-                string response = await HttpHelper.GetAsync(url);
-                if (response != null)
-                {
-                    var result = JsonConvert.DeserializeObject<Progress>(response);
-                    return result;
-                }
-                return null;
+                return await BangumiHttpWrapper.GetProgressesAsync(OAuthHelper.UserIdString, OAuthHelper.AccessTokenString, subjectId);
             }
             catch (Exception e)
             {
-                var msgDialog = new Windows.UI.Popups.MessageDialog("获取收视进度失败！\n" + e.Message) { Title = "错误！" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
-                Debug.WriteLine("GetProgressesAsync Error.");
+                Debug.WriteLine("获取用户指定条目收视进度失败。");
                 Debug.WriteLine(e.Message);
                 throw e;
             }
         }
 
         /// <summary>
-        /// 获取用户收视列表。
+        /// 获取搜索结果。
         /// </summary>
+        /// <param name="keyWord"></param>
+        /// <param name="type"></param>
+        /// <param name="start"></param>
+        /// <param name="n"></param>
         /// <returns></returns>
-        private static async Task<List<Watching>> GetWatchingListAsync()
+        public static async Task<SearchResult> GetSearchResultAsync(string searchText, string type, int start, int n)
         {
-            string token = OAuthHelper.AccessTokenString;
-            string url = string.Format("{0}/user/{1}/collection?cat=watching&responseGroup=medium", baseUrl, OAuthHelper.UserIdString);
             try
             {
-                string response = await HttpHelper.GetAsync(url);
-                if (response != null)
-                {
-                    // 反序列化指定名称的变量
-                    JsonSerializerSettings jsonSerializerSetting = new JsonSerializerSettings();
-                    jsonSerializerSetting.ContractResolver = new JsonPropertyContractResolver(new List<string> { "name", "subject_id", "ep_status", "subject", "name_cn", "images", "common", "eps_count", "lasttouch", "air_weekday" });
-                    var result = JsonConvert.DeserializeObject<List<Watching>>(response, jsonSerializerSetting);
-                    foreach (var watching in result)
-                    {
-                        watching.subject.name = System.Net.WebUtility.HtmlDecode(watching.subject.name);
-                        if (string.IsNullOrEmpty(watching.subject.name_cn))
-                        {
-                            watching.subject.name_cn = watching.subject.name;
-                        }
-                        else
-                        {
-                            watching.subject.name_cn = System.Net.WebUtility.HtmlDecode(watching.subject.name_cn);
-                        }
-                        if (watching.subject.images == null)
-                        {
-                            watching.subject.images = new Images { common = NoImageUri };
-                        }
-                    }
-                    return result;
-                }
-                return null;
+                return await BangumiHttpWrapper.GetSearchResultAsync(searchText, type, start, n);
             }
             catch (Exception e)
             {
-                var msgDialog = new Windows.UI.Popups.MessageDialog("获取收视列表失败！\n" + e.Message) { Title = "错误！" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
-                Debug.WriteLine("GetWatchingListAsync Error.");
+                Debug.WriteLine("获取搜索结果失败。");
                 Debug.WriteLine(e.Message);
-                return null;
+                throw e;
             }
         }
 
-        /// <summary>
-        /// 更新指定条目收藏状态。
-        /// </summary>
-        /// <param name="subjectId"></param>
-        /// <param name="collectionStatusEnum"></param>
-        /// <param name="comment"></param>
-        /// <param name="rating"></param>
-        /// <param name="privace"></param>
-        /// <returns></returns>
-        public static async Task<bool> UpdateCollectionStatusAsync(string subjectId, CollectionStatusEnum collectionStatusEnum,
-            string comment = "", string rating = "", string privace = "0")
-        {
-            string token = OAuthHelper.AccessTokenString;
-            string url = string.Format("{0}/collection/{1}/update?access_token={2}", baseUrl, subjectId, token);
-            string postData = "status=" + collectionStatusEnum.ToString();
-            postData += "&comment=" + comment;
-            postData += "&rating=" + rating;
-            postData += "&privacy=" + privace;
 
+
+
+        /// <summary>
+        /// 更新收视进度。
+        /// </summary>
+        /// <param name="ep"></param>
+        /// <param name="status"></param>
+        /// <returns>更新是否成功</returns>
+        public static async Task<bool> UpdateProgressAsync(string ep, EpStatusEnum status)
+        {
             try
             {
-                string response = await HttpHelper.PostAsync(url, postData);
-                if (response != null && response.Contains(string.Format("\"type\":\"{0}\"", collectionStatusEnum.ToString())))
-                {
-                    return true;
-                }
-                return false;
+                return await BangumiHttpWrapper.UpdateProgressAsync(OAuthHelper.AccessTokenString, ep, status);
             }
             catch (Exception e)
             {
-
-                Debug.WriteLine("UpdateCollectionStatusAsync Error.");
-                Debug.WriteLine(e.Message);
+                var msgDialog = new Windows.UI.Popups.MessageDialog("更新收视进度失败！\n" + e.Message) { Title = "错误！" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
                 return false;
             }
         }
@@ -513,299 +412,72 @@ namespace Bangumi.Facades
         /// <returns></returns>
         public static async Task<bool> UpdateProgressBatchAsync(int ep, EpStatusEnum status, string epsId)
         {
-            string token = OAuthHelper.AccessTokenString;
-            string url = string.Format("{0}/ep/{1}/status/{2}?access_token={3}", baseUrl, ep, status, token);
-            string postData = "ep_id=" + epsId;
-
             try
             {
-                string response = await HttpHelper.PostAsync(url, postData);
-                if (response != null && response.Contains("\"error\":\"OK\""))
-                {
-                    return true;
-                }
-                return false;
+                return await BangumiHttpWrapper.UpdateProgressBatchAsync(OAuthHelper.AccessTokenString, ep, status, epsId);
             }
             catch (Exception e)
             {
-                Debug.WriteLine("UpdateProgressBatchAsync Error.");
-                Debug.WriteLine(e.Message);
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// 更新收视进度。
-        /// </summary>
-        /// <param name="ep"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        public static async Task<bool> UpdateProgressAsync(string ep, EpStatusEnum status)
-        {
-            string token = OAuthHelper.AccessTokenString;
-            string url = string.Format("{0}/ep/{1}/status/{2}?access_token={3}", baseUrl, ep, status, token);
-            try
-            {
-                string response = await HttpHelper.GetAsync(url);
-                if (response != null && response.Contains("\"error\":\"OK\""))
-                {
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("UpdateProgressAsync Error.");
-                Debug.WriteLine(e.Message);
-                return false;
-            }
-        }
-
-        // ----------------- 获取信息，不涉及用户 ----------------------
-        /// <summary>
-        /// 搜索。
-        /// </summary>
-        /// <param name="keyWord"></param>
-        /// <param name="type"></param>
-        /// <param name="start"></param>
-        /// <param name="n"></param>
-        /// <returns></returns>
-        public static async Task<SearchResult> GetSearchResultAsync(string keyWord, string type, int start, int n)
-        {
-            string url = string.Format("{0}/search/subject/{1}?type={2}&responseGroup=small&start={3}&max_results={4}", baseUrl, keyWord, type, start, n);
-            try
-            {
-                string response = await HttpHelper.GetAsync(url);
-                if (response != null && !response.StartsWith("<!DOCTYPE html>"))
-                {
-                    var result = JsonConvert.DeserializeObject<SearchResult>(response);
-                    if (result != null && result.list != null)
-                    {
-                        foreach (var item in result.list)
-                        {
-                            item.name = System.Net.WebUtility.HtmlDecode(item.name);
-                            if (string.IsNullOrEmpty(item.name_cn))
-                            {
-                                item.name_cn = item.name;
-                            }
-                            else
-                            {
-                                item.name_cn = System.Net.WebUtility.HtmlDecode(item.name_cn);
-                            }
-                            if (item.images == null)
-                            {
-                                item.images = new Images { common = NoImageUri };
-                            }
-                        }
-                        return result;
-                    }
-                }
-                return null;
-            }
-            catch (Exception e)
-            {
-                var msgDialog = new Windows.UI.Popups.MessageDialog("获取搜索结果失败！\n" + e.Message) { Title = "错误！" };
+                var msgDialog = new Windows.UI.Popups.MessageDialog("更新收藏状态失败！\n" + e.Message) { Title = "错误！" };
                 msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
                 await msgDialog.ShowAsync();
-                Debug.WriteLine("GetSearchResultAsync Error.");
-                Debug.WriteLine(e.Message);
-                return null;
+                return false;
             }
         }
 
         /// <summary>
-        /// 获取指定条目所有章节。
+        /// 更新收藏状态
         /// </summary>
         /// <param name="subjectId"></param>
-        /// <returns></returns>
-        public static async Task<Subject> GetSubjectEpsAsync(string subjectId)
+        /// <param name="collectionStatusEnum"></param>
+        /// <param name="comment"></param>
+        /// <param name="rating"></param>
+        /// <param name="privace"></param>
+        /// <returns>更新是否成功</returns>
+        public static async Task<bool> UpdateCollectionStatusAsync(string subjectId,
+            CollectionStatusEnum collectionStatusEnum, string comment = "", string rating = "", string privace = "0")
         {
-            string url = string.Format("{0}/subject/{1}/ep", baseUrl, subjectId);
             try
             {
-                string response = await HttpHelper.GetAsync(url);
-                if (response != null)
-                {
-                    var result = JsonConvert.DeserializeObject<Subject>(response);
-                    return result;
-                }
-                return null;
+                return await BangumiHttpWrapper.UpdateCollectionStatusAsync(OAuthHelper.AccessTokenString,
+                    subjectId, collectionStatusEnum, comment, rating, privace);
             }
             catch (Exception e)
             {
-                var msgDialog = new Windows.UI.Popups.MessageDialog("获取章节信息失败！\n" + e.Message) { Title = "错误！" };
+                var msgDialog = new Windows.UI.Popups.MessageDialog("更新收藏状态失败！\n" + e.Message) { Title = "错误！" };
                 msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
                 await msgDialog.ShowAsync();
-                Debug.WriteLine("GetSubjectEpsAsync Error.");
-                Debug.WriteLine(e.Message);
-                return null;
+                return false;
             }
         }
 
-        /// <summary>
-        /// 获取指定条目详情。
-        /// </summary>
-        /// <param name="subjectId"></param>
-        /// <returns></returns>
-        public static async Task<Subject> GetSubjectAsync(string subjectId)
-        {
-            string url = string.Format("{0}/subject/{1}?responseGroup=large", baseUrl, subjectId);
-            try
-            {
-                string response = await HttpHelper.GetAsync(url);
-                if (response != null)
-                {
-                    var result = JsonConvert.DeserializeObject<Subject>(response);
-                    result.name = System.Net.WebUtility.HtmlDecode(result.name);
-                    result.name_cn = System.Net.WebUtility.HtmlDecode(result.name_cn);
-                    if (result.eps != null)
-                        foreach (var ep in result.eps)
-                        {
-                            if (string.IsNullOrEmpty(ep.name_cn))
-                            {
-                                ep.name_cn = ep.name;
-                            }
-                        }
-                    return result;
-                }
-                return null;
-            }
-            catch (Exception e)
-            {
-                var msgDialog = new Windows.UI.Popups.MessageDialog("获取条目详情失败！\n" + e.Message) { Title = "错误！" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
-                Debug.WriteLine("GetSubjectAsync Error.");
-                Debug.WriteLine(e.Message);
-                return null;
-            }
-        }
 
-        /// <summary>
-        /// 获取时间表。
-        /// </summary>
-        /// <returns></returns>
-        private static async Task<List<BangumiTimeLine>> GetBangumiCalendarAsync()
-        {
-            string url = string.Format("{0}/calendar", baseUrl);
-            try
-            {
-                string response = await HttpHelper.GetAsync(url);
-                if (response != null)
-                {
-                    var result = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(response);
-                    foreach (var bangumiCalendar in result)
-                    {
-                        foreach (var item in bangumiCalendar.items)
-                        {
-                            item.name = System.Net.WebUtility.HtmlDecode(item.name);
-                            if (string.IsNullOrEmpty(item.name_cn))
-                            {
-                                item.name_cn = item.name;
-                            }
-                            else
-                            {
-                                item.name_cn = System.Net.WebUtility.HtmlDecode(item.name_cn);
-                            }
-                            if (item.images == null)
-                            {
-                                item.images = new Images { common = NoImageUri };
-                            }
-                        }
-                    }
-                    return result;
-                }
-                return null;
-            }
-            catch (Exception e)
-            {
-                var msgDialog = new Windows.UI.Popups.MessageDialog("获取时间表失败！\n" + e.Message) { Title = "错误！" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
-                Debug.WriteLine("GetBangumiCalendarAsync Error.");
-                Debug.WriteLine(e.Message);
-                return null;
-            }
-        }
 
-        private static int GetDayOfWeek()
+
+        // 获取当天星期几
+        public static int GetDayOfWeek()
         {
-            int day = 0;
             switch (DateTime.Now.DayOfWeek)
             {
                 case DayOfWeek.Monday:
-                    day = 0;
-                    break;
+                    return 0;
                 case DayOfWeek.Tuesday:
-                    day = 1;
-                    break;
+                    return 1;
                 case DayOfWeek.Wednesday:
-                    day = 2;
-                    break;
+                    return 2;
                 case DayOfWeek.Thursday:
-                    day = 3;
-                    break;
+                    return 3;
                 case DayOfWeek.Friday:
-                    day = 4;
-                    break;
+                    return 4;
                 case DayOfWeek.Saturday:
-                    day = 5;
-                    break;
+                    return 5;
                 case DayOfWeek.Sunday:
-                    day = 6;
-                    break;
+                    return 6;
                 default:
-                    break;
+                    return 0;
             }
-            return day;
         }
-
-        #region Enum
-        public enum EpStatusEnum
-        {
-            watched,
-            queue,
-            drop,
-            remove,
-        }
-
-        public enum CollectionStatusEnum
-        {
-            wish,
-            collect,
-            @do,
-            on_hold,
-            dropped,
-            no,
-        }
-
-        public enum SubjectType : int
-        {
-            book = 1,
-            anime = 2,
-            music = 3,
-            game = 4,
-            real = 6,
-        }
-        #endregion
 
     }
-
-    /// <summary>
-    /// 重写Newtonsoft.Json的DefaultContractResolver类。
-    /// 重写CreateProperties方法，反序列化指定名称的变量。
-    /// </summary>
-    public class JsonPropertyContractResolver : DefaultContractResolver
-    {
-        IEnumerable<string> lstInclude; public JsonPropertyContractResolver(IEnumerable<string> includeProperties)
-        {
-            lstInclude = includeProperties;
-        }
-        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-        {
-            return base.CreateProperties(type, memberSerialization).ToList().FindAll(p => lstInclude.Contains(p.PropertyName));//需要输出的属性  
-        }
-    }
-
 
 }

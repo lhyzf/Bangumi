@@ -18,7 +18,7 @@ namespace Bangumi.ViewModels
             IsLoading = false;
         }
 
-        public ObservableCollection<BangumiTimeLine> bangumiCollection { get; private set; } = new ObservableCollection<BangumiTimeLine>();
+        public ObservableCollection<BangumiTimeLine> BangumiCollection { get; private set; } = new ObservableCollection<BangumiTimeLine>();
 
         private bool _isLoading;
         public bool IsLoading
@@ -27,32 +27,30 @@ namespace Bangumi.ViewModels
             set => Set(ref _isLoading, value);
         }
 
-        private string _message;
-        public string Message
-        {
-            get => _message;
-            set => Set(ref _message, value);
-        }
-
         /// <summary>
         /// 刷新时间表。
         /// </summary>
-        public async void LoadTimeLine()
+        public async void LoadTimeLine(bool force = false)
         {
-            IsLoading = true;
-            HomePage.homePage.isLoading = IsLoading;
-            MainPage.rootPage.RefreshAppBarButton.IsEnabled = false;
-            if (await BangumiFacade.PopulateBangumiCalendarAsync(bangumiCollection))
+            try
             {
-                Message = "更新时间：" + DateTime.Now;
+                IsLoading = true;
+                HomePage.homePage.isLoading = IsLoading;
+                MainPage.rootPage.RefreshAppBarButton.IsEnabled = false;
+                await BangumiFacade.PopulateBangumiCalendarAsync(BangumiCollection, force);
             }
-            else
+            catch (Exception e)
             {
-                Message = "网络连接失败，请重试！";
+                var msgDialog = new Windows.UI.Popups.MessageDialog("获取时间表失败！\n" + e.Message) { Title = "错误！" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
             }
-            IsLoading = false;
-            HomePage.homePage.isLoading = IsLoading;
-            MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
+            finally
+            {
+                IsLoading = false;
+                HomePage.homePage.isLoading = IsLoading;
+                MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
+            }
         }
 
 

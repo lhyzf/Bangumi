@@ -17,7 +17,7 @@
             <RelativePanel Width="{Binding ElementName=MyWidth,Path=Width}"
                            Padding="5">
                 <Image Name="BangumiImage"
-                       Source="{x:Bind images.common}" 
+                       Source="{x:Bind Images.Common}" 
                        RelativePanel.AlignLeftWithPanel="True"
                        RelativePanel.AlignTopWithPanel="True"
                        x:Phase="2"
@@ -25,13 +25,13 @@
                        Width="75" 
                        Margin="0,0,6,0"
                        Stretch="UniformToFill" />
-                <TextBlock Name="TitleTextBlock" Text="{x:Bind name_cn}" 
+                <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.AlignTopWithPanel="True"
                            FontSize="14" 
                            Foreground="#d26585"
                            TextTrimming="CharacterEllipsis"/>
-                <TextBlock Name="SubTitleTextBlock" Text="{x:Bind name}" 
+                <TextBlock Name="SubTitleTextBlock" Text="{x:Bind Name}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.Below="TitleTextBlock"
                            x:Phase="1"
@@ -39,7 +39,7 @@
                            Foreground="Gray"
                            TextTrimming="CharacterEllipsis"/>
                 <TextBlock Grid.Row="2"
-                           Text="{x:Bind common:Converters.GetSubjectTypeName(type)}" 
+                           Text="{x:Bind common:Converters.GetSubjectTypeName(Type)}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.Below="SubTitleTextBlock"
                            x:Phase="1"
@@ -53,7 +53,7 @@
             <RelativePanel Width="{Binding ElementName=MyWidth,Path=Width}"
                            Padding="5">
                 <Image Name="BangumiImage"
-                       Source="{x:Bind images.common}" 
+                       Source="{x:Bind Images.Common}" 
                        RelativePanel.AlignLeftWithPanel="True"
                        RelativePanel.AlignTopWithPanel="True"
                        x:Phase="2"
@@ -61,13 +61,13 @@
                        Width="75" 
                        Margin="0,0,6,0"
                        Stretch="UniformToFill" />
-                <TextBlock Name="TitleTextBlock" Text="{x:Bind name_cn}" 
+                <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.AlignTopWithPanel="True"
                            FontSize="14" 
                            Foreground="#d26585"
                            TextTrimming="CharacterEllipsis"/>
-                <TextBlock Text="{x:Bind name}" 
+                <TextBlock Text="{x:Bind Name}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.Below="TitleTextBlock"
                            x:Phase="1"
@@ -106,7 +106,7 @@
                         ItemsSource="{x:Bind ViewModel.Suggestions}"
                         TextChanged="AutoSuggestBox_TextChanged"
                         QuerySubmitted="AutoSuggestBox_QuerySubmitted"
-                        Margin="10,10,10,0"/>
+                        Margin="10,10,10,0" />
 
         <Border Name="MyWidth"
                 Visibility="Collapsed"/>

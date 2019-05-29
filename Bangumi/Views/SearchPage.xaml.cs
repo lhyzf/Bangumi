@@ -81,9 +81,9 @@ namespace Bangumi.Views
                         DelayTimer.Cancel();
                     TimeSpan delay = TimeSpan.FromMilliseconds(1000);
                     DelayTimer = ThreadPoolTimer.CreateTimer(
-                        (source) =>
+                        async (source) =>
                         {
-                            Dispatcher.RunAsync(
+                            await Dispatcher.RunAsync(
                                 CoreDispatcherPriority.High,
                                 () =>
                                 {
