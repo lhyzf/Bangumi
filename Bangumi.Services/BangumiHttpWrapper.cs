@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Bangumi.Services
@@ -11,7 +12,10 @@ namespace Bangumi.Services
     public static class BangumiHttpWrapper
     {
         private const string BaseUrl = "https://api.bgm.tv";
-        private const string client_id = Constants.ClientId;
+        private const string OAuthBaseUrl = "https://bgm.tv/oauth";
+        private const string ClientId = Constants.ClientId;
+        private const string ClientSecret = Constants.ClientSecret;
+        private const string RedirectUrl = Constants.RedirectUrl;
         private const string NoImageUri = Constants.NoImageUri;
 
         /// <summary>
@@ -21,7 +25,7 @@ namespace Bangumi.Services
         /// <returns></returns>
         public static async Task<Collection2> GetSubjectCollectionAsync(string userIdString, SubjectTypeEnum subjectType)
         {
-            string url = string.Format("{0}/user/{1}/collections/{2}?app_id={3}&max_results=25", BaseUrl, userIdString, subjectType, client_id);
+            string url = string.Format("{0}/user/{1}/collections/{2}?app_id={3}&max_results=25", BaseUrl, userIdString, subjectType, ClientId);
             try
             {
                 string response = await HttpHelper.GetAsync(url);
@@ -43,7 +47,6 @@ namespace Bangumi.Services
             catch (Exception e)
             {
                 Debug.WriteLine("GetSubjectCollectionAsync Error.");
-                Debug.WriteLine(e.Message);
                 throw e;
             }
         }
@@ -65,7 +68,6 @@ namespace Bangumi.Services
             catch (Exception e)
             {
                 Debug.WriteLine("GetCollectionStatusAsync Error.");
-                Debug.WriteLine(e.Message);
                 throw e;
             }
         }
@@ -86,7 +88,6 @@ namespace Bangumi.Services
             catch (Exception e)
             {
                 Debug.WriteLine("GetProgressesAsync Error.");
-                Debug.WriteLine(e.Message);
                 throw e;
             }
         }
@@ -117,7 +118,6 @@ namespace Bangumi.Services
             catch (Exception e)
             {
                 Debug.WriteLine("GetWatchingListAsync Error.");
-                Debug.WriteLine(e.Message);
                 throw e;
             }
         }
@@ -156,7 +156,6 @@ namespace Bangumi.Services
             catch (Exception e)
             {
                 Debug.WriteLine("UpdateCollectionStatusAsync Error.");
-                Debug.WriteLine(e.Message);
                 throw e;
             }
         }
@@ -182,7 +181,6 @@ namespace Bangumi.Services
             catch (Exception e)
             {
                 Debug.WriteLine("UpdateProgressAsync Error.");
-                Debug.WriteLine(e.Message);
                 throw e;
             }
         }
@@ -212,7 +210,6 @@ namespace Bangumi.Services
             catch (Exception e)
             {
                 Debug.WriteLine("UpdateProgressBatchAsync Error.");
-                Debug.WriteLine(e.Message);
                 throw e;
             }
         }
@@ -234,7 +231,6 @@ namespace Bangumi.Services
             catch (Exception e)
             {
                 Debug.WriteLine("GetSubjectEpsAsync Error.");
-                Debug.WriteLine(e.Message);
                 throw e;
             }
         }
@@ -263,7 +259,6 @@ namespace Bangumi.Services
             catch (Exception e)
             {
                 Debug.WriteLine("GetSubjectAsync Error.");
-                Debug.WriteLine(e.Message);
                 throw e;
             }
         }
@@ -296,7 +291,6 @@ namespace Bangumi.Services
             catch (Exception e)
             {
                 Debug.WriteLine("GetBangumiCalendarAsync Error.");
-                Debug.WriteLine(e.Message);
                 throw e;
             }
         }
@@ -336,10 +330,95 @@ namespace Bangumi.Services
             catch (Exception e)
             {
                 Debug.WriteLine("GetSearchResultAsync Error.");
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// 使用 code 换取 Access Token。
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public static async Task<AccessToken> GetAccessToken(string code)
+        {
+            string url = $"{OAuthBaseUrl}/access_token";
+            string postData = "grant_type=authorization_code";
+            postData += "&client_id=" + ClientId;
+            postData += "&client_secret=" + ClientSecret;
+            postData += "&code=" + code;
+            postData += "&redirect_uri=" + RedirectUrl;
+            try
+            {
+                string response = await HttpHelper.PostAsync(url, postData);
+                return JsonConvert.DeserializeObject<AccessToken>(response);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("GetAccessToken Error.");
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// 刷新授权有效期。
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<AccessToken> RefreshAccessToken(AccessToken token)
+        {
+            string url = $"{OAuthBaseUrl}/access_token";
+            string postData = "grant_type=refresh_token";
+            postData += "&client_id=" + ClientId;
+            postData += "&client_secret=" + ClientSecret;
+            postData += "&refresh_token=" + token.RefreshToken;
+            postData += "&redirect_uri=" + RedirectUrl;
+            try
+            {
+                string response = await HttpHelper.PostAsync(url, postData);
+                return JsonConvert.DeserializeObject<AccessToken>(response);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("RefreshAccessToken Error.");
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// 查询授权信息，并在满足条件时刷新Token。
+        /// </summary>
+        public static async Task<AccessToken> CheckAccessToken(AccessToken token)
+        {
+            string url = string.Format("{0}/token_status?access_token={1}", OAuthBaseUrl, token.Token);
+
+            try
+            {
+                string response = await HttpHelper.PostAsync(url);
+                if (string.IsNullOrEmpty(response))
+                {
+                    return await RefreshAccessToken(token);
+                }
+                else
+                {
+                    var result = JsonConvert.DeserializeObject<AccessToken>(response);
+                    // C# 时间戳为 1/10000000 秒，从0001年1月1日开始；js 时间戳为秒，从1970年1月1日开始
+                    // 获取两天后的时间戳，离过期不足两天时或过期后更新 access_token
+                    var aa = (DateTime.Now.AddDays(2).ToUniversalTime().Ticks - new DateTime(1970, 1, 1).Ticks) / 10000000;
+                    if (result.Expires < aa)
+                        return await RefreshAccessToken(token);
+                }
+                return token;
+            }
+            catch (WebException ex)
+            {
+                throw ex;
+            }
+            catch (Exception e)
+            {
                 Debug.WriteLine(e.Message);
                 throw e;
             }
         }
+
 
     }
 }

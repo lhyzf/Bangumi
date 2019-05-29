@@ -46,11 +46,13 @@
         <Pivot Grid.Row="1"
                Name="HomePagePivot"
                SelectionChanged="HomePagePivot_SelectionChanged">
-            <PivotItem Header="进度"
+            <PivotItem Name="ProgressItem" 
+                       Header="进度"
                        Margin="0">
                 <Frame Name="ProgressPageFrame" />
             </PivotItem>
-            <PivotItem Header="收藏"
+            <PivotItem Name="CollectionItem"
+                       Header="收藏"
                        Margin="0">
                 <Frame Name="CollectionPageFrame"/>
             </PivotItem>

@@ -37,7 +37,7 @@ namespace Bangumi.Facades
                     }
                 }
 
-                var watchingList = await BangumiHttpWrapper.GetWatchingListAsync(OAuthHelper.UserIdString);
+                var watchingList = await BangumiHttpWrapper.GetWatchingListAsync(OAuthHelper.MyToken.UserId);
 
                 var deletedItems = new List<WatchingStatus>(); //标记要删除的条目
                 foreach (var sub in watchingListCollection)
@@ -82,7 +82,7 @@ namespace Bangumi.Facades
                         {
                             // 获取EP详细信息
                             var subject = await BangumiHttpWrapper.GetSubjectEpsAsync(item.subject_id.ToString());
-                            var progress = await BangumiHttpWrapper.GetProgressesAsync(OAuthHelper.UserIdString, OAuthHelper.AccessTokenString, item.subject_id.ToString());
+                            var progress = await BangumiHttpWrapper.GetProgressesAsync(OAuthHelper.MyToken.UserId, OAuthHelper.MyToken.Token, item.subject_id.ToString());
 
                             item.eps = new List<SimpleEp>();
                             foreach (var ep in subject.Eps.OrderBy(c => c.Type))
@@ -150,7 +150,7 @@ namespace Bangumi.Facades
                                 else
                                     item.eps_count = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
 
-                                var progress = await BangumiHttpWrapper.GetProgressesAsync(OAuthHelper.UserIdString, OAuthHelper.AccessTokenString, item.subject_id.ToString());
+                                var progress = await BangumiHttpWrapper.GetProgressesAsync(OAuthHelper.MyToken.UserId, OAuthHelper.MyToken.Token, item.subject_id.ToString());
                                 if (progress != null)
                                 {
                                     if (item.eps.Count == progress.Eps.Count)
@@ -226,7 +226,7 @@ namespace Bangumi.Facades
                     }
                 }
 
-                var subjectCollections = await BangumiHttpWrapper.GetSubjectCollectionAsync(OAuthHelper.UserIdString, subjectType);
+                var subjectCollections = await BangumiHttpWrapper.GetSubjectCollectionAsync(OAuthHelper.MyToken.UserId, subjectType);
 
                 //清空原数据
                 subjectCollection.Clear();
@@ -327,7 +327,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.GetCollectionStatusAsync(OAuthHelper.AccessTokenString, subjectId);
+                return await BangumiHttpWrapper.GetCollectionStatusAsync(OAuthHelper.MyToken.Token, subjectId);
             }
             catch (Exception e)
             {
@@ -346,7 +346,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.GetProgressesAsync(OAuthHelper.UserIdString, OAuthHelper.AccessTokenString, subjectId);
+                return await BangumiHttpWrapper.GetProgressesAsync(OAuthHelper.MyToken.UserId, OAuthHelper.MyToken.Token, subjectId);
             }
             catch (Exception e)
             {
@@ -391,7 +391,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.UpdateProgressAsync(OAuthHelper.AccessTokenString, ep, status);
+                return await BangumiHttpWrapper.UpdateProgressAsync(OAuthHelper.MyToken.Token, ep, status);
             }
             catch (Exception e)
             {
@@ -414,7 +414,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.UpdateProgressBatchAsync(OAuthHelper.AccessTokenString, ep, status, epsId);
+                return await BangumiHttpWrapper.UpdateProgressBatchAsync(OAuthHelper.MyToken.Token, ep, status, epsId);
             }
             catch (Exception e)
             {
@@ -439,7 +439,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.UpdateCollectionStatusAsync(OAuthHelper.AccessTokenString,
+                return await BangumiHttpWrapper.UpdateCollectionStatusAsync(OAuthHelper.MyToken.Token,
                     subjectId, collectionStatusEnum, comment, rating, privace);
             }
             catch (Exception e)

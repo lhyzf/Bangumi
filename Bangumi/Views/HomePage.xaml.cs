@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bangumi.Helper;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -96,6 +97,28 @@ namespace Bangumi.Views
 
             MainPage.rootPage.MyCommandBar.Visibility = Visibility.Visible;
             MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
+
+            if (OAuthHelper.IsLogin)
+            {
+                if (!HomePagePivot.Items.Cast<PivotItem>().Any(p => p.Name == "CollectionItem"))
+                {
+                    HomePagePivot.Items.Insert(0, CollectionItem);
+                }
+                if (!HomePagePivot.Items.Cast<PivotItem>().Any(p => p.Name == "ProgressItem"))
+                {
+                    HomePagePivot.Items.Insert(0, ProgressItem);
+                }
+                HomePagePivot.SelectedIndex = 0;
+                ProgressPageFrame.Navigate(typeof(ProgressPage), null, new SuppressNavigationTransitionInfo());
+                CollectionPageFrame.Navigate(typeof(CollectionPage), null, new SuppressNavigationTransitionInfo());
+                TimeLinePageFrame.Navigate(typeof(TimeLinePage), null, new SuppressNavigationTransitionInfo());
+            }
+            else
+            {
+                HomePagePivot.Items.Remove(ProgressItem);
+                HomePagePivot.Items.Remove(CollectionItem);
+                TimeLinePageFrame.Navigate(typeof(TimeLinePage), null, new SuppressNavigationTransitionInfo());
+            }
         }
 
         private void HomePagePivot_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -58,11 +58,14 @@ namespace Bangumi
             {
                 LoginButton.Label = "注销";
                 UserIcon.Glyph = "\uE7E8";
+                rootFrame.Navigate(typeof(HomePage));
             }
             else
             {
                 LoginButton.Label = "登录";
                 UserIcon.Glyph = "\uEE57";
+                rootFrame.Navigate(typeof(LoginPage));
+                MyCommandBar.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -151,7 +154,6 @@ namespace Bangumi
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             await UpdataUserStatusAsync();
-            rootFrame.Navigate(typeof(HomePage));
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -173,14 +175,6 @@ namespace Bangumi
         {
             if (LoginButton.Label == "登录")
             {
-                MyProgressRing.IsActive = true;
-                MyProgressRing.Visibility = Visibility.Visible;
-                Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 10);
-                await OAuthHelper.Authorize();
-                Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 10);
-                MyProgressRing.IsActive = false;
-                MyProgressRing.Visibility = Visibility.Collapsed;
-                await Task.Delay(500);
                 await UpdataUserStatusAsync();
             }
             else if (LoginButton.Label == "注销")
