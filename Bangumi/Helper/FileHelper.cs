@@ -18,7 +18,7 @@ namespace Bangumi.Helper
         /// <param name="userFileName"></param>
         /// <param name="encrytion"></param>
         /// <returns></returns>
-        public static async Task<bool> WriteToFile(string msg, string fileName, bool encrytion = false)
+        public static async Task<bool> WriteToFileAsync(string msg, string fileName, bool encrytion = false)
         {
             StorageFile storageFile = await localFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
             try
@@ -47,7 +47,7 @@ namespace Bangumi.Helper
         /// <param name="userFileName"></param>
         /// <param name="encrytion"></param>
         /// <returns></returns>
-        public static async Task<string> ReadFromFile(string fileName, bool encrytion = false)
+        public static async Task<string> ReadFromFileAsync(string fileName, bool encrytion = false)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace Bangumi.Helper
                 if (encrytion)
                 {
                     IBuffer buffMsg = await FileIO.ReadBufferAsync(storageFile);
-                    return await EncryptionHelper.TokenDecryption(buffMsg);
+                    return await EncryptionHelper.TokenDecryptionAsync(buffMsg);
                 }
                 else
                 {
@@ -87,7 +87,7 @@ namespace Bangumi.Helper
         /// <param name="userFileName"></param>
         /// <param name="encrytion"></param>
         /// <returns></returns>
-        public static async Task<bool> WriteToCacheFile(string msg, string fileName)
+        public static async Task<bool> WriteToCacheFileAsync(string msg, string fileName)
         {
             StorageFile storageFile = await cacheFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
             try
@@ -108,7 +108,7 @@ namespace Bangumi.Helper
         /// <param name="userFileName"></param>
         /// <param name="encrytion"></param>
         /// <returns></returns>
-        public static async Task<string> ReadFromCacheFile(string fileName)
+        public static async Task<string> ReadFromCacheFileAsync(string fileName)
         {
             try
             {

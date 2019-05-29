@@ -16,13 +16,13 @@
     Background="Transparent">
 
     <Page.Resources>
-        <CollectionViewSource x:Name="cvsGroups" Source="{x:Bind ViewModel.bangumiCollection}" IsSourceGrouped="True" ItemsPath="items"/>
+        <CollectionViewSource x:Name="cvsGroups" Source="{x:Bind ViewModel.BangumiCollection}" IsSourceGrouped="True" ItemsPath="Items"/>
 
         <DataTemplate x:Key="ZoomedInTemplate" x:DataType="data:Subject">
             <RelativePanel Width="{Binding ElementName=MyWidth,Path=Width}"
                            Padding="5">
                 <Image Name="BangumiImage"
-                       Source="{x:Bind images.common}" 
+                       Source="{x:Bind Images.Common}" 
                        RelativePanel.AlignLeftWithPanel="True"
                        RelativePanel.AlignTopWithPanel="True"
                        x:Phase="2"
@@ -30,13 +30,13 @@
                        Width="75" 
                        Margin="0,0,6,0"
                        Stretch="UniformToFill" />
-                <TextBlock Name="TitleTextBlock" Text="{x:Bind name_cn}" 
+                <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.AlignTopWithPanel="True"
                            FontSize="14" 
                            Foreground="#d26585"
                            TextTrimming="CharacterEllipsis"/>
-                <TextBlock Text="{x:Bind name}" 
+                <TextBlock Text="{x:Bind Name}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.Below="TitleTextBlock"
                            x:Phase="1"
@@ -47,13 +47,13 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ZoomedInGroupHeaderTemplate"  x:DataType="data:BangumiTimeLine">
-            <TextBlock Text="{x:Bind weekday.cn}"
+            <TextBlock Text="{x:Bind Weekday.Chinese}"
                        Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                        Style="{StaticResource SubtitleTextBlockStyle}"/>
         </DataTemplate>
 
         <DataTemplate x:Key="ZoomedOutTemplate"  x:DataType="wuxdata:ICollectionViewGroup">
-            <TextBlock Text="{x:Bind ((data:BangumiTimeLine)Group).weekday.cn}"
+            <TextBlock Text="{x:Bind ((data:BangumiTimeLine)Group).Weekday.Chinese}"
                        Style="{StaticResource SubtitleTextBlockStyle}"
                        TextWrapping="Wrap" />
         </DataTemplate>

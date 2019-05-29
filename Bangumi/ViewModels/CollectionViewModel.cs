@@ -20,7 +20,7 @@ namespace Bangumi.ViewModels
             IsLoading = false;
         }
 
-        public ObservableCollection<Collect> subjectCollection { get; set; } = new ObservableCollection<Collect>();
+        public ObservableCollection<Collection> SubjectCollection { get; set; } = new ObservableCollection<Collection>();
 
         private bool _isLoading;
         public bool IsLoading
@@ -36,66 +36,57 @@ namespace Bangumi.ViewModels
             set => Set(ref _selectedIndex, value);
         }
 
-        private string _message;
-        public string Message
-        {
-            get => _message;
-            set => Set(ref _message, value);
-        }
-
         /// <summary>
         /// 刷新收藏列表，API限制每类最多25条。
         /// </summary>
         public async void LoadCollectionList()
         {
-            var subjectType = GetSubjectType();
-            if (OAuthHelper.IsLogin)
+            try
             {
-                IsLoading = true;
-                HomePage.homePage.isLoading = IsLoading;
-                MainPage.rootPage.RefreshAppBarButton.IsEnabled = false;
-                if (await BangumiFacade.PopulateSubjectCollectionAsync(subjectCollection, subjectType))
+                var subjectType = GetSubjectType();
+                if (OAuthHelper.IsLogin)
                 {
-                    Message = "更新时间：" + DateTime.Now;
+                    IsLoading = true;
+                    HomePage.homePage.isLoading = IsLoading;
+                    MainPage.rootPage.RefreshAppBarButton.IsEnabled = false;
+                    await BangumiFacade.PopulateSubjectCollectionAsync(SubjectCollection, subjectType);
                 }
                 else
                 {
-                    Message = "获取用户收藏失败，请重试或重新登录！";
+                    //Message = "请先登录！";
                 }
             }
-            else
+            catch (Exception e)
             {
-                Message = "请先登录！";
+                var msgDialog = new Windows.UI.Popups.MessageDialog("获取用户收藏失败！\n" + e.Message) { Title = "错误！" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                await msgDialog.ShowAsync();
             }
-            IsLoading = false;
-            HomePage.homePage.isLoading = IsLoading;
-            MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
+            finally
+            {
+                IsLoading = false;
+                HomePage.homePage.isLoading = IsLoading;
+                MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
+            }
         }
 
-        private BangumiFacade.SubjectType GetSubjectType()
+        private SubjectTypeEnum GetSubjectType()
         {
-            BangumiFacade.SubjectType subjectType = BangumiFacade.SubjectType.anime;
             switch (SelectedIndex)
             {
                 case 0:
-                    subjectType = BangumiFacade.SubjectType.anime;
-                    break;
+                    return SubjectTypeEnum.anime;
                 case 1:
-                    subjectType = BangumiFacade.SubjectType.book;
-                    break;
+                    return SubjectTypeEnum.book;
                 case 2:
-                    subjectType = BangumiFacade.SubjectType.music;
-                    break;
+                    return SubjectTypeEnum.music;
                 case 3:
-                    subjectType = BangumiFacade.SubjectType.game;
-                    break;
+                    return SubjectTypeEnum.game;
                 case 4:
-                    subjectType = BangumiFacade.SubjectType.real;
-                    break;
+                    return SubjectTypeEnum.real;
                 default:
-                    break;
+                    return SubjectTypeEnum.anime;
             }
-            return subjectType;
         }
 
 

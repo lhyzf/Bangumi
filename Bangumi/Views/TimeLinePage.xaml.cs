@@ -30,7 +30,7 @@ namespace Bangumi.Views
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             MainPage.rootPage.RefreshAppBarButton.Click += TimeLinePageRefresh;
-            if (ViewModel.bangumiCollection.Count == 0 && !ViewModel.IsLoading)
+            if (ViewModel.BangumiCollection.Count == 0 && !ViewModel.IsLoading)
             {
                 ViewModel.LoadTimeLine();
             }
@@ -46,7 +46,7 @@ namespace Bangumi.Views
             var button = sender as AppBarButton;
             var tag = button.Tag;
             if (tag.Equals("时间表"))
-                ViewModel.LoadTimeLine();
+                ViewModel.LoadTimeLine(true);
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)

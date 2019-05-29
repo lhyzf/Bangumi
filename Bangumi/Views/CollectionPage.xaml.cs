@@ -31,7 +31,7 @@ namespace Bangumi.Views
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             MainPage.rootPage.RefreshAppBarButton.Click += CollectionPageRefresh;
-            if (ViewModel.subjectCollection.Count == 0 && !ViewModel.IsLoading)
+            if (ViewModel.SubjectCollection.Count == 0 && !ViewModel.IsLoading)
             {
                 ViewModel.LoadCollectionList();
             }
@@ -58,8 +58,8 @@ namespace Bangumi.Views
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var selectedItem = (SList)e.ClickedItem;
-            MainPage.rootFrame.Navigate(typeof(DetailsPage), selectedItem.subject, new DrillInNavigationTransitionInfo());
+            var selectedItem = (Subject2)e.ClickedItem;
+            MainPage.rootFrame.Navigate(typeof(DetailsPage), selectedItem.Subject, new DrillInNavigationTransitionInfo());
         }
 
         /// <summary>

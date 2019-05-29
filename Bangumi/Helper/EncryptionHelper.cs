@@ -39,7 +39,7 @@ namespace Bangumi.Helper
         /// </summary>
         /// <param name="buffProtected"></param>
         /// <returns></returns>
-        public static async Task<string> TokenDecryption(IBuffer buffProtected)
+        public static async Task<string> TokenDecryptionAsync(IBuffer buffProtected)
         {
             // Create a DataProtectionProvider object.
             DataProtectionProvider Provider = new DataProtectionProvider();

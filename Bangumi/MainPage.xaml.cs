@@ -31,6 +31,7 @@ namespace Bangumi
         public static MainPage rootPage;
         public static Frame rootFrame;
         public bool hasDialog = false;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -50,7 +51,7 @@ namespace Bangumi
         /// 根据用户登录状态改变用户图标。
         /// </summary>
         /// <returns></returns>
-        private async Task UpdataUserStatus()
+        private async Task UpdataUserStatusAsync()
         {
             bool result = await OAuthHelper.CheckTokens();
             if (result)
@@ -149,7 +150,7 @@ namespace Bangumi
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await UpdataUserStatus();
+            await UpdataUserStatusAsync();
             rootFrame.Navigate(typeof(HomePage));
         }
 
@@ -180,7 +181,7 @@ namespace Bangumi
                 MyProgressRing.IsActive = false;
                 MyProgressRing.Visibility = Visibility.Collapsed;
                 await Task.Delay(500);
-                await UpdataUserStatus();
+                await UpdataUserStatusAsync();
             }
             else if (LoginButton.Label == "注销")
             {
@@ -191,8 +192,8 @@ namespace Bangumi
                 await msgDialog.ShowAsync();
                 if (choice == "确定")
                 {
-                    await OAuthHelper.DeleteTokens();
-                    await UpdataUserStatus();
+                    OAuthHelper.DeleteTokens();
+                    await UpdataUserStatusAsync();
                 }
             }
         }

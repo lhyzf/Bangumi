@@ -15,13 +15,13 @@
     Background="Transparent">
     
     <Page.Resources>
-        <CollectionViewSource x:Name="cvsGroups" Source="{x:Bind ViewModel.subjectCollection}" IsSourceGrouped="True" ItemsPath="list"/>
+        <CollectionViewSource x:Name="cvsGroups" Source="{x:Bind ViewModel.SubjectCollection}" IsSourceGrouped="True" ItemsPath="Items"/>
 
-        <DataTemplate x:Key="ZoomedInTemplate" x:DataType="data:SList">
+        <DataTemplate x:Key="ZoomedInTemplate" x:DataType="data:Subject2">
             <RelativePanel Width="{Binding ElementName=MyWidth,Path=Width}"
                            Padding="5">
                 <Image Name="BangumiImage"
-                       Source="{x:Bind subject.images.common}" 
+                       Source="{x:Bind Subject.Images.Common}" 
                        RelativePanel.AlignLeftWithPanel="True"
                        RelativePanel.AlignTopWithPanel="True"
                        x:Phase="2"
@@ -29,13 +29,13 @@
                        Width="75" 
                        Margin="0,0,6,0"
                        Stretch="UniformToFill" />
-                <TextBlock Name="TitleTextBlock" Text="{x:Bind subject.name_cn}" 
+                <TextBlock Name="TitleTextBlock" Text="{x:Bind Subject.NameCn}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.AlignTopWithPanel="True"
                            FontSize="14" 
                            Foreground="#d26585"
                            TextTrimming="CharacterEllipsis"/>
-                <TextBlock Text="{x:Bind subject.name}" 
+                <TextBlock Text="{x:Bind Subject.Name}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.Below="TitleTextBlock"
                            x:Phase="1"
@@ -45,16 +45,20 @@
             </RelativePanel>
         </DataTemplate>
 
-        <DataTemplate x:Key="ZoomedInGroupHeaderTemplate" x:DataType="data:Collect">
-            <TextBlock Text="{x:Bind status.name}" 
-                       Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
-                       Style="{StaticResource SubtitleTextBlockStyle}"/>
+        <DataTemplate x:Key="ZoomedInGroupHeaderTemplate" x:DataType="data:Collection">
+            <TextBlock Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                       Style="{StaticResource SubtitleTextBlockStyle}">
+                <Run Text="{x:Bind Status.Name}"/>
+                <Run Text="("/><Run Text="{x:Bind Count}"/><Run Text=")"/>
+            </TextBlock>
         </DataTemplate>
 
         <DataTemplate x:Key="ZoomedOutTemplate" x:DataType="wuxdata:ICollectionViewGroup">
-            <TextBlock Text="{x:Bind ((data:Collect)Group).status.name}" 
-                       Style="{StaticResource SubtitleTextBlockStyle}" 
-                       TextWrapping="Wrap" />
+            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" 
+                       TextWrapping="Wrap" >                
+                <Run Text="{x:Bind ((data:Collection)Group).Status.Name}"/>
+                <Run Text="("/><Run Text="{x:Bind ((data:Collection)Group).Count}"/><Run Text=")"/>
+            </TextBlock>
         </DataTemplate>
     </Page.Resources>
 

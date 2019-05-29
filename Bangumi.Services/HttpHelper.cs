@@ -9,9 +9,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bangumi.Helper
+namespace Bangumi.Services
 {
-    class HttpHelper
+    public static class HttpHelper
     {
         /// <summary>
         /// 使用 Get 方法获取数据。
@@ -35,13 +35,8 @@ namespace Bangumi.Helper
                 if (response != null)
                 {
                     Debug.WriteLine("response.StatusCode:" + response.StatusCode);
-                    throw ex;
                 }
-                else
-                {
-                    Debug.WriteLine("Unknown network error.");
-                    throw new Exception("Unknown network error.");
-                }
+                throw ex;
             }
             catch (Exception e)
             {
@@ -79,13 +74,8 @@ namespace Bangumi.Helper
                 if (response != null)
                 {
                     Debug.WriteLine("response.StatusCode:" + response.StatusCode);
-                    throw ex;
                 }
-                else
-                {
-                    Debug.WriteLine("Unknown network error.");
-                    throw new Exception("Unknown network error.");
-                }
+                throw ex;
             }
             catch (Exception e)
             {

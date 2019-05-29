@@ -25,19 +25,19 @@
                            BorderThickness="0.5"
                            BorderBrush="{ThemeResource SystemControlBackgroundListMediumBrush}">
                 <TextBlock Name="SortTextBlock"
-                           Text="{x:Bind sort}" 
+                           Text="{x:Bind Sort}" 
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignTopWithPanel="True"
                            FontSize="14" />
                 <TextBlock Grid.Column="1"
-                           Text="{x:Bind status,Mode=OneWay}" 
+                           Text="{x:Bind Status,Mode=OneWay}" 
                            x:Phase="2"
                            RelativePanel.AlignRightWithPanel="True"
                            RelativePanel.AlignTopWithPanel="True"
                            FontSize="12" 
                            Foreground="#d26585"/>
                 <TextBlock Grid.Row="1"
-                           Text="{x:Bind name_cn}" 
+                           Text="{x:Bind NameCn}" 
                            x:Phase="1"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="SortTextBlock"
@@ -109,7 +109,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="{x:Bind ViewModel.Name_cn,Mode=OneWay}" 
+            <TextBlock Text="{x:Bind ViewModel.NameCn,Mode=OneWay}" 
                        Grid.Column="0"
                        VerticalAlignment="Center"  
                        Margin="10,0"
@@ -142,24 +142,26 @@
                            RelativePanel.AlignTopWithPanel="True"
                            Margin="0,0,5,0"/>
                     <TextBlock Name="NameTextBlock" 
-                               Text="{x:Bind ViewModel.Name_cn, Mode=OneWay}"
+                               Text="{x:Bind ViewModel.NameCn, Mode=OneWay}"
                                RelativePanel.RightOf="BangumiImage"
                                RelativePanel.AlignTopWithPanel="True"
                                IsTextSelectionEnabled="True"
                                TextWrapping="Wrap"
                                Foreground="#d26585" />
                     <TextBlock Name="air_dateTextBlock" 
-                               Text="{x:Bind sys:String.Format('开播时间：{0}',ViewModel.Air_date), Mode=OneWay}" 
+                               Text="{x:Bind sys:String.Format('开播时间：{0}',ViewModel.AirDate), Mode=OneWay}" 
                                RelativePanel.RightOf="BangumiImage"
                                RelativePanel.Below="NameTextBlock"
                                Foreground="#666666" 
                                Margin="0,2,0,0" />
                     <TextBlock Name="air_weekdayTextBlock" 
-                               Text="{x:Bind sys:String.Format('更新时间：{0}',ViewModel.AirWeekdayName), Mode=OneWay}" 
+                               Text="更新时间：" 
                                RelativePanel.RightOf="BangumiImage"
                                RelativePanel.Below="air_dateTextBlock"
                                Foreground="#666666" 
-                               Margin="0,2,0,0" />
+                               Margin="0,2,0,0" >
+                        <Run Text="{x:Bind common:Converters.GetWeekday(ViewModel.AirWeekday), Mode=OneWay}"/>
+                    </TextBlock>
                     <TextBlock Name="SummaryTextBlock" 
                                Text="{x:Bind ViewModel.Summary, Mode=OneWay}"
                                RelativePanel.AlignLeftWithPanel="True"
@@ -170,7 +172,7 @@
                     <HyperlinkButton Name="MoreInfoHyperLink"
                                      Content="更多资料"
                                      Click="MoreInfoButton_Click"
-                                     Visibility="{x:Bind common:Converters.CollapsedIf(ViewModel.IsDetailLoading), Mode=OneWay}"
+                                     Visibility="{x:Bind common:Converters.CollapsedIf(ViewModel.IsLoading), Mode=OneWay}"
                                      RelativePanel.AlignLeftWithPanel="True"
                                      RelativePanel.Below="SummaryTextBlock"
                                      Padding="0,0,0,10"

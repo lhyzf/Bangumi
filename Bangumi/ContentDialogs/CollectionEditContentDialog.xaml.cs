@@ -31,6 +31,7 @@ namespace Bangumi.ContentDialogs
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            MainPage.rootPage.hasDialog = false;
             rate = (int)RateSlider.Value;
             comment = CommentTextBox.Text;
             privacy = (bool)PrivacyCheckBox.IsChecked;
@@ -38,6 +39,7 @@ namespace Bangumi.ContentDialogs
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            MainPage.rootPage.hasDialog = false;
         }
 
         private void StatusRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -47,7 +49,8 @@ namespace Bangumi.ContentDialogs
 
         private void ContentDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            StatusPanel.Children.Cast<RadioButton>().FirstOrDefault(c => c?.Tag?.ToString() == collectionStatus).IsChecked = true;
+            if (collectionStatus != "收藏")
+                StatusPanel.Children.Cast<RadioButton>().FirstOrDefault(c => c?.Tag?.ToString() == collectionStatus).IsChecked = true;
         }
     }
 }
