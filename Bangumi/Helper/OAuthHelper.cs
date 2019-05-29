@@ -1,11 +1,9 @@
 ﻿using Bangumi.Models;
 using Bangumi.Services;
-using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
@@ -14,13 +12,10 @@ namespace Bangumi.Helper
 {
     internal static class OAuthHelper
     {
-        private const string oauthBaseUrl = "https://bgm.tv/oauth";
-        private const string client_id = Constants.ClientId;
-        private const string client_secret = Constants.ClientSecret;
-        private const string redirect_url = Constants.RedirectUrl;
-        public static string AccessTokenString = "";
-        public static string RefreshTokenString = "";
-        public static string UserIdString = "";
+        private const string OAuthBaseUrl = "https://bgm.tv/oauth";
+        private const string RedirectUrl = Constants.RedirectUrl;
+        private const string ClientId = Constants.ClientId;
+        public static AccessToken MyToken = new AccessToken();
         public static bool IsLogin = false;
 
         /// <summary>
@@ -31,18 +26,18 @@ namespace Bangumi.Helper
         {
             try
             {
-                string URL = $"{oauthBaseUrl}/authorize?client_id=" + client_id + "&response_type=code";
+                string URL = $"{OAuthBaseUrl}/authorize?client_id=" + ClientId + "&response_type=code";
 
                 Uri StartUri = new Uri(URL);
                 // When using the desktop flow, the success code is displayed in the html title of this end uri
-                Uri EndUri = new Uri($"{oauthBaseUrl}/{redirect_url}");
+                Uri EndUri = new Uri($"{OAuthBaseUrl}/{RedirectUrl}");
 
                 //rootPage.NotifyUser("Navigating to: " + GoogleURL, NotifyType.StatusMessage);
 
                 WebAuthenticationResult WebAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
                 if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
                 {
-                    await GetAccessToken(WebAuthenticationResult.ResponseData.ToString().Replace($"{oauthBaseUrl}/{redirect_url}?code=", ""));
+                    await GetAccessToken(WebAuthenticationResult.ResponseData.ToString().Replace($"{OAuthBaseUrl}/{RedirectUrl}?code=", ""));
                 }
                 else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
                 {
@@ -53,49 +48,46 @@ namespace Bangumi.Helper
                     //OutputToken("Error returned by AuthenticateAsync() : " + WebAuthenticationResult.ResponseStatus.ToString());
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e.Message);
+                //var msgDialog = new Windows.UI.Popups.MessageDialog("登录失败，请重试！\n" + e.Message) { Title = "登录失败！" };
+                //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                //await msgDialog.ShowAsync();
                 //rootPage.NotifyUser(Error.Message, NotifyType.ErrorMessage);
             }
         }
 
         /// <summary>
-        /// 使用返回的的 code 换取 Access Token。
+        /// 使用 code 换取 Access Token。
         /// </summary>
         /// <param name="codeString"></param>
         /// <returns></returns>
-        private static async Task GetAccessToken(string codeString)
+        private static async Task GetAccessToken(string code)
         {
-            string url = $"{oauthBaseUrl}/access_token";
-            string postData = "grant_type=authorization_code";
-            postData += "&client_id=" + client_id;
-            postData += "&client_secret=" + client_secret;
-            postData += "&code=" + codeString;
-            postData += "&redirect_uri=" + redirect_url;
-
             try
             {
-                string response = await HttpHelper.PostAsync(url, postData);
-                if (!string.IsNullOrEmpty(response))
+                AccessToken token;
+                // 重试最多三次
+                for (int i = 0; i < 3; i++)
                 {
-                    var result = JsonConvert.DeserializeObject<AccessToken>(response);
-                    //将信息写入本地文件
-                    await WriteTokensAsync(result);
-                }
-                else //再试一次
-                {
-                    response = await HttpHelper.PostAsync(url, postData);
-                    if (!string.IsNullOrEmpty(response))
+                    Debug.WriteLine($"第{i + 1}次尝试获取Token。");
+                    token = await BangumiHttpWrapper.GetAccessToken(code);
+                    if (token != null)
                     {
-                        var result = JsonConvert.DeserializeObject<AccessToken>(response);
-                        //将信息写入本地文件
-                        await WriteTokensAsync(result);
+                        await WriteTokensAsync(token);
+                        break;
+                    }
+                    else
+                    {
+                        await Task.Delay(1000);
                     }
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e.Message);
+                Debug.WriteLine("获取AccessToken失败。");
+                throw e;
             }
         }
 
@@ -106,30 +98,34 @@ namespace Bangumi.Helper
         /// <returns></returns>
         public static async Task RefreshAccessToken()
         {
-            string url = $"{oauthBaseUrl}/access_token";
-            string postData = "grant_type=refresh_token";
-            postData += "&client_id=" + client_id;
-            postData += "&client_secret=" + client_secret;
-            postData += "&refresh_token=" + RefreshTokenString;
-            postData += "&redirect_uri=" + redirect_url;
-
             try
             {
-                string response = await HttpHelper.PostAsync(url, postData);
-                if (!string.IsNullOrEmpty(response))
+                AccessToken token;
+                // 重试最多三次
+                for (int i = 0; i < 3; i++)
                 {
-                    var result = JsonConvert.DeserializeObject<AccessToken>(response);
-                    // 刷新后存入内存
-                    AccessTokenString = result.Token;
-                    RefreshTokenString = result.RefreshToken;
-                    UserIdString = result.UserId.ToString();
-                    // 将信息写入本地文件
-                    await WriteTokensAsync(result);
+                    Debug.WriteLine($"第{i + 1}次尝试刷新Token。");
+                    token = await BangumiHttpWrapper.RefreshAccessToken(MyToken);
+                    if (token != null)
+                    {
+                        // 刷新后存入内存
+                        MyToken.Token = token.Token;
+                        MyToken.RefreshToken = token.RefreshToken;
+                        MyToken.UserId = token.UserId;
+                        // 将信息写入本地文件
+                        await WriteTokensAsync(token);
+                        break;
+                    }
+                    else
+                    {
+                        await Task.Delay(1000);
+                    }
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e.Message);
+                Debug.WriteLine("刷新AccessToken失败。");
+                throw e;
             }
         }
 
@@ -138,25 +134,10 @@ namespace Bangumi.Helper
         /// </summary>
         private static async void CheckAccessToken()
         {
-            var token = AccessTokenString;
-            string url = string.Format("{0}/token_status?access_token={1}", oauthBaseUrl, token);
-
             try
             {
-                string response = await HttpHelper.PostAsync(url);
-                if (string.IsNullOrEmpty(response))
-                {
-                    await RefreshAccessToken();
-                }
-                else
-                {
-                    var result = JsonConvert.DeserializeObject<AccessToken>(response);
-                    // C# 时间戳为 1/10000000 秒，从0001年1月1日开始；js 时间戳为秒，从1970年1月1日开始
-                    // 获取两天后的时间戳，离过期不足两天时或过期后更新 access_token
-                    var aa = (DateTime.Now.AddDays(2).ToUniversalTime().Ticks - new DateTime(1970, 1, 1).Ticks) / 10000000;
-                    if (result.Expires < aa)
-                        await RefreshAccessToken();
-                }
+                var token = await BangumiHttpWrapper.CheckAccessToken(MyToken);
+                await WriteTokensAsync(token);
             }
             catch (WebException ex)
             {
@@ -181,10 +162,10 @@ namespace Bangumi.Helper
         /// <returns></returns>
         public static async Task<bool> CheckTokens()
         {
-            AccessTokenString = await FileHelper.ReadFromFileAsync(getOAuthFileName(OAuthFile.access_token), true);
-            RefreshTokenString = await FileHelper.ReadFromFileAsync(getOAuthFileName(OAuthFile.refresh_token), true);
-            UserIdString = await FileHelper.ReadFromFileAsync(getOAuthFileName(OAuthFile.user_id), false);
-            if (string.IsNullOrEmpty(AccessTokenString) || string.IsNullOrEmpty(RefreshTokenString) || string.IsNullOrEmpty(UserIdString))
+            MyToken.Token = await FileHelper.ReadFromFileAsync(getOAuthFileName(OAuthFile.access_token), true);
+            MyToken.RefreshToken = await FileHelper.ReadFromFileAsync(getOAuthFileName(OAuthFile.refresh_token), true);
+            MyToken.UserId = await FileHelper.ReadFromFileAsync(getOAuthFileName(OAuthFile.user_id), false);
+            if (string.IsNullOrEmpty(MyToken.Token) || string.IsNullOrEmpty(MyToken.RefreshToken) || string.IsNullOrEmpty(MyToken.UserId))
             {
                 DeleteTokens();
                 IsLogin = false;
@@ -212,11 +193,12 @@ namespace Bangumi.Helper
         }
 
         /// <summary>
-        /// 删除 Tokens。
+        /// 删除用户相关文件。
         /// </summary>
         /// <returns></returns>
         public static void DeleteTokens()
         {
+            // 删除用户认证文件
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
             if (File.Exists(localFolder.Path + "\\" + getOAuthFileName(OAuthFile.access_token)))
                 File.Delete(localFolder.Path + "\\" + getOAuthFileName(OAuthFile.access_token));
@@ -224,6 +206,20 @@ namespace Bangumi.Helper
                 File.Delete(localFolder.Path + "\\" + getOAuthFileName(OAuthFile.refresh_token));
             if (File.Exists(localFolder.Path + "\\" + getOAuthFileName(OAuthFile.user_id)))
                 File.Delete(localFolder.Path + "\\" + getOAuthFileName(OAuthFile.user_id));
+            // 删除用户缓存文件
+            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
+            if (File.Exists(cacheFolder.Path + "\\JsonCache\\home"))
+                File.Delete(cacheFolder.Path + "\\JsonCache\\home");
+            if (File.Exists(cacheFolder.Path + "\\JsonCache\\anime"))
+                File.Delete(cacheFolder.Path + "\\JsonCache\\anime");
+            if (File.Exists(cacheFolder.Path + "\\JsonCache\\book"))
+                File.Delete(cacheFolder.Path + "\\JsonCache\\book");
+            if (File.Exists(cacheFolder.Path + "\\JsonCache\\game"))
+                File.Delete(cacheFolder.Path + "\\JsonCache\\game");
+            if (File.Exists(cacheFolder.Path + "\\JsonCache\\music"))
+                File.Delete(cacheFolder.Path + "\\JsonCache\\music");
+            if (File.Exists(cacheFolder.Path + "\\JsonCache\\real"))
+                File.Delete(cacheFolder.Path + "\\JsonCache\\real");
         }
 
         #region FileName

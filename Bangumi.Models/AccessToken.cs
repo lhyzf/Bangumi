@@ -28,6 +28,6 @@ namespace Bangumi.Models
         public string RefreshToken { get; set; }
 
         [JsonProperty("user_id")]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
     }
 }

@@ -68,13 +68,37 @@
                 <StackPanel Padding="0,10,0,0">
                     <TextBlock Text="Bangumi UWP (非官方)" 
                                Style="{StaticResource TitleTextBlockStyle}" />
+                    <TextBlock TextWrapping="Wrap">
+                        <LineBreak/>
+                        <Run Text="项目开源地址："/>
+                        <Hyperlink NavigateUri="https://github.com/Teachoc/Bangumi">
+                            https://github.com/Teachoc/Bangumi
+                        </Hyperlink>
+                    </TextBlock>
                     <TextBlock>
                         <LineBreak/>
                         © 2019 Bangumi
                         <LineBreak/>
                         版本：
                         <Run Text="{x:Bind Version}"/>
+                        <LineBreak/>
                     </TextBlock>
+                    <TextBlock Text="引用及参考" 
+                               Margin="0,0,0,5"
+                               Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <TextBlock TextWrapping="Wrap"
+                               Margin="0,0,0,5">
+                        <Hyperlink NavigateUri="https://www.newtonsoft.com/json">
+                            Newtonsoft.Json(https://www.newtonsoft.com/json)
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap"
+                               Margin="0,0,0,5">
+                        <Hyperlink NavigateUri="https://github.com/Microsoft/microsoft-ui-xaml">
+                            Microsoft.UI.Xaml(https://github.com/Microsoft/microsoft-ui-xaml)
+                        </Hyperlink>
+                    </TextBlock>
+
                 </StackPanel>
             </PivotItem>
         </Pivot>
