@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:Bangumi.Models"
     xmlns:common="using:Bangumi.Common"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     Loaded="Page_Loaded"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d"
@@ -14,17 +15,18 @@
 
     <Page.Resources>
         <DataTemplate x:Key="SubjectWithTypeTemplate" x:DataType="data:Subject">
-            <RelativePanel Width="{Binding ElementName=MyWidth,Path=Width}"
-                           Padding="5">
-                <Image Name="BangumiImage"
-                       Source="{x:Bind Images.Common}" 
-                       RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.AlignTopWithPanel="True"
-                       x:Phase="2"
-                       Height="75" 
-                       Width="75" 
-                       Margin="0,0,6,0"
-                       Stretch="UniformToFill" />
+            <RelativePanel Padding="5">
+                <controls:ImageEx Name="BangumiImage"
+                                  IsCacheEnabled="True"
+                                  CacheMode="BitmapCache"
+                                  Source="{x:Bind Images.Common}" 
+                                  RelativePanel.AlignLeftWithPanel="True"
+                                  RelativePanel.AlignTopWithPanel="True"
+                                  x:Phase="2"
+                                  Height="75" 
+                                  Width="75" 
+                                  Margin="0,0,6,0"
+                                  Stretch="UniformToFill" />
                 <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.AlignTopWithPanel="True"
@@ -50,17 +52,18 @@
         </DataTemplate>
         
         <DataTemplate x:Key="SubjectTemplate" x:DataType="data:Subject">
-            <RelativePanel Width="{Binding ElementName=MyWidth,Path=Width}"
-                           Padding="5">
-                <Image Name="BangumiImage"
-                       Source="{x:Bind Images.Common}" 
-                       RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.AlignTopWithPanel="True"
-                       x:Phase="2"
-                       Height="75" 
-                       Width="75" 
-                       Margin="0,0,6,0"
-                       Stretch="UniformToFill" />
+            <RelativePanel Padding="5">
+                <controls:ImageEx Name="BangumiImage"
+                                  IsCacheEnabled="True"
+                                  CacheMode="BitmapCache"
+                                  Source="{x:Bind Images.Common}" 
+                                  RelativePanel.AlignLeftWithPanel="True"
+                                  RelativePanel.AlignTopWithPanel="True"
+                                  x:Phase="2"
+                                  Height="75" 
+                                  Width="75" 
+                                  Margin="0,0,6,0"
+                                  Stretch="UniformToFill" />
                 <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.AlignTopWithPanel="True"
@@ -108,9 +111,6 @@
                         QuerySubmitted="AutoSuggestBox_QuerySubmitted"
                         Margin="10,10,10,0" />
 
-        <Border Name="MyWidth"
-                Visibility="Collapsed"/>
-
         <Pivot Name="TypePivot" 
                SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
                Grid.Row="2"
@@ -121,13 +121,14 @@
                         <Run Text="{x:Bind ViewModel.ResultNumber[0], Mode=OneWay}"/>
                     </TextBlock>
                 </PivotItem.Header>
-                <GridView Name="AllGridView"
-                          Padding="10,0"
-                          IsItemClickEnabled="True" 
-                          ItemClick="GridView_ItemClick"
-                          IncrementalLoadingTrigger="Edge"
-                          DataFetchSize="1"
-                          ItemTemplate="{StaticResource SubjectWithTypeTemplate}">
+                <controls:AdaptiveGridView Name="AllGridView"
+                                           DesiredWidth="300"
+                                           Padding="10,0"
+                                           IsItemClickEnabled="True" 
+                                           ItemClick="GridView_ItemClick"
+                                           IncrementalLoadingTrigger="Edge"
+                                           DataFetchSize="1"
+                                           ItemTemplate="{StaticResource SubjectWithTypeTemplate}">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[0], Mode=OneWay}"
@@ -148,7 +149,7 @@
                             <RepositionThemeTransition IsStaggeringEnabled="False" />
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                </GridView>
+                </controls:AdaptiveGridView>
             </PivotItem>
             <PivotItem Margin="0">
                 <PivotItem.Header>
@@ -156,13 +157,14 @@
                         <Run Text="{x:Bind ViewModel.ResultNumber[1], Mode=OneWay}"/>
                     </TextBlock>
                 </PivotItem.Header>
-                <GridView Name="AnimeGridView"
-                          Padding="10,0"
-                          IsItemClickEnabled="True" 
-                          ItemClick="GridView_ItemClick"
-                          IncrementalLoadingTrigger="Edge"
-                          DataFetchSize="1"
-                          ItemTemplate="{StaticResource SubjectTemplate}">
+                <controls:AdaptiveGridView Name="AnimeGridView"
+                                           DesiredWidth="300"
+                                           Padding="10,0"
+                                           IsItemClickEnabled="True" 
+                                           ItemClick="GridView_ItemClick"
+                                           IncrementalLoadingTrigger="Edge"
+                                           DataFetchSize="1"
+                                           ItemTemplate="{StaticResource SubjectTemplate}">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[1], Mode=OneWay}"
@@ -183,7 +185,7 @@
                             <RepositionThemeTransition IsStaggeringEnabled="False" />
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                </GridView>
+                </controls:AdaptiveGridView>
             </PivotItem>
             <PivotItem Margin="0">
                 <PivotItem.Header>
@@ -191,13 +193,14 @@
                         <Run Text="{x:Bind ViewModel.ResultNumber[2], Mode=OneWay}"/>
                     </TextBlock>
                 </PivotItem.Header>
-                <GridView Name="BookGridView"
-                          Padding="10,0"
-                          IsItemClickEnabled="True" 
-                          ItemClick="GridView_ItemClick"
-                          IncrementalLoadingTrigger="Edge"
-                          DataFetchSize="1"
-                          ItemTemplate="{StaticResource SubjectTemplate}">
+                <controls:AdaptiveGridView Name="BookGridView"
+                                           DesiredWidth="300"
+                                           Padding="10,0"
+                                           IsItemClickEnabled="True" 
+                                           ItemClick="GridView_ItemClick"
+                                           IncrementalLoadingTrigger="Edge"
+                                           DataFetchSize="1"
+                                           ItemTemplate="{StaticResource SubjectTemplate}">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[2], Mode=OneWay}"
@@ -218,7 +221,7 @@
                             <RepositionThemeTransition IsStaggeringEnabled="False" />
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                </GridView>
+                </controls:AdaptiveGridView>
             </PivotItem>
             <PivotItem Margin="0">
                 <PivotItem.Header>
@@ -226,13 +229,14 @@
                         <Run Text="{x:Bind ViewModel.ResultNumber[3], Mode=OneWay}"/>
                     </TextBlock>
                 </PivotItem.Header>
-                <GridView Name="MusicGridView"
-                          Padding="10,0"
-                          IsItemClickEnabled="True" 
-                          ItemClick="GridView_ItemClick"
-                          IncrementalLoadingTrigger="Edge"
-                          DataFetchSize="1"
-                          ItemTemplate="{StaticResource SubjectTemplate}">
+                <controls:AdaptiveGridView Name="MusicGridView"
+                                           DesiredWidth="300"
+                                           Padding="10,0"
+                                           IsItemClickEnabled="True" 
+                                           ItemClick="GridView_ItemClick"
+                                           IncrementalLoadingTrigger="Edge"
+                                           DataFetchSize="1"
+                                           ItemTemplate="{StaticResource SubjectTemplate}">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[3], Mode=OneWay}"
@@ -253,7 +257,7 @@
                             <RepositionThemeTransition IsStaggeringEnabled="False" />
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                </GridView>
+                </controls:AdaptiveGridView>
             </PivotItem>
             <PivotItem Margin="0">
                 <PivotItem.Header>
@@ -261,13 +265,14 @@
                         <Run Text="{x:Bind ViewModel.ResultNumber[4], Mode=OneWay}"/>
                     </TextBlock>
                 </PivotItem.Header>
-                <GridView Name="GameGridView"
-                          Padding="10,0"
-                          IsItemClickEnabled="True" 
-                          ItemClick="GridView_ItemClick"
-                          IncrementalLoadingTrigger="Edge"
-                          DataFetchSize="1"
-                          ItemTemplate="{StaticResource SubjectTemplate}">
+                <controls:AdaptiveGridView Name="GameGridView"
+                                           DesiredWidth="300"
+                                           Padding="10,0"
+                                           IsItemClickEnabled="True" 
+                                           ItemClick="GridView_ItemClick"
+                                           IncrementalLoadingTrigger="Edge"
+                                           DataFetchSize="1"
+                                           ItemTemplate="{StaticResource SubjectTemplate}">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[4], Mode=OneWay}"
@@ -288,7 +293,7 @@
                             <RepositionThemeTransition IsStaggeringEnabled="False" />
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                </GridView>
+                </controls:AdaptiveGridView>
             </PivotItem>
             <PivotItem Margin="0">
                 <PivotItem.Header>
@@ -296,13 +301,14 @@
                         <Run Text="{x:Bind ViewModel.ResultNumber[5], Mode=OneWay}"/>
                     </TextBlock>
                 </PivotItem.Header>
-                <GridView Name="RealGridView"
-                          Padding="10,0"
-                          IsItemClickEnabled="True" 
-                          ItemClick="GridView_ItemClick"
-                          IncrementalLoadingTrigger="Edge"
-                          DataFetchSize="1"
-                          ItemTemplate="{StaticResource SubjectTemplate}">
+                <controls:AdaptiveGridView Name="RealGridView"
+                                           DesiredWidth="300"
+                                           Padding="10,0"
+                                           IsItemClickEnabled="True" 
+                                           ItemClick="GridView_ItemClick"
+                                           IncrementalLoadingTrigger="Edge"
+                                           DataFetchSize="1"
+                                           ItemTemplate="{StaticResource SubjectTemplate}">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[5], Mode=OneWay}"
@@ -323,7 +329,7 @@
                             <RepositionThemeTransition IsStaggeringEnabled="False" />
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                </GridView>
+                </controls:AdaptiveGridView>
             </PivotItem>
         </Pivot>
     </Grid>
