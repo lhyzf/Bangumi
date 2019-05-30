@@ -135,6 +135,8 @@ namespace Bangumi.ViewModels
         /// </summary>
         public async void EditCollectionStatus()
         {
+            if (!OAuthHelper.IsLogin)
+                return;
             CollectionEditContentDialog collectionEditContentDialog = new CollectionEditContentDialog()
             {
                 rate = myRate,

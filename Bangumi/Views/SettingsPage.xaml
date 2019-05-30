@@ -88,6 +88,12 @@
                                Style="{StaticResource SubtitleTextBlockStyle}" />
                     <TextBlock TextWrapping="Wrap"
                                Margin="0,0,0,5">
+                        <Hyperlink NavigateUri="https://github.com/bangumi/api">
+                            Bangumi API(https://github.com/bangumi/api)
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap"
+                               Margin="0,0,0,5">
                         <Hyperlink NavigateUri="https://www.newtonsoft.com/json">
                             Newtonsoft.Json(https://www.newtonsoft.com/json)
                         </Hyperlink>
