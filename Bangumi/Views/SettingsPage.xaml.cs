@@ -1,5 +1,7 @@
 ﻿using Bangumi.Helper;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
@@ -17,7 +19,6 @@ namespace Bangumi.Views
     /// </summary>
     public sealed partial class SettingsPage : Page
     {
-        StorageFolder jsonCacheFolder;
         public string Version
         {
             get
@@ -71,10 +72,11 @@ namespace Bangumi.Views
             MainPage.rootPage.MyCommandBar.Visibility = Visibility.Collapsed;
 
             EpsBatchToggleSwitch.IsOn = SettingHelper.EpsBatch == true;
-            try
+
+            // 计算文件夹 JsonCache 中文件大小
+            if (Directory.Exists(ApplicationData.Current.LocalCacheFolder.Path + "\\JsonCache"))
             {
-                // 计算文件夹中文件大小
-                jsonCacheFolder = await ApplicationData.Current.LocalCacheFolder.GetFolderAsync("JsonCache");
+                StorageFolder jsonCacheFolder = await ApplicationData.Current.LocalCacheFolder.GetFolderAsync("JsonCache");
                 var files = await jsonCacheFolder.GetFilesAsync();
                 double fileSize = 0;
                 foreach (var file in files)
@@ -82,15 +84,39 @@ namespace Bangumi.Views
                     var fileInfo = await file.GetBasicPropertiesAsync();
                     fileSize += fileInfo.Size;
                 }
-                CacheSizeTextBlock.Text = (fileSize / 1024).ToString("F3");
-                DeleteTempFileButton.IsEnabled = true;
+                JsonCacheSizeTextBlock.Text = (fileSize / 1024).ToString("F3");
+                DeleteUserCacheFileButton.IsEnabled = true;
             }
-            catch (Exception)
+            else
             {
-                // 找不到文件夹
-                CacheSizeTextBlock.Text = "0";
-                DeleteTempFileButton.IsEnabled = false;
+                // 文件夹 JsonCache 不存在
+                JsonCacheSizeTextBlock.Text = "0";
+                DeleteUserCacheFileButton.IsEnabled = false;
             }
+
+            // 计算文件夹 ImageCache 中文件大小
+            if (Directory.Exists(ApplicationData.Current.TemporaryFolder.Path + "\\ImageCache"))
+            {
+                StorageFolder imageCacheFolder = await ApplicationData.Current.TemporaryFolder.GetFolderAsync("ImageCache");
+                var files = await imageCacheFolder.GetFilesAsync();
+                double fileSize = 0;
+                foreach (var file in files)
+                {
+                    var fileInfo = await file.GetBasicPropertiesAsync();
+                    fileSize += fileInfo.Size;
+                }
+                ImageCacheSizeTextBlock.Text = (fileSize / 1024).ToString("F3");
+                DeleteImageTempFileButton.IsEnabled = true;
+            }
+            else
+            {
+                // 文件夹 ImageCache 不存在
+                ImageCacheSizeTextBlock.Text = "0";
+                DeleteImageTempFileButton.IsEnabled = false;
+            }
+
+
+
         }
 
         private void EpsBatchToggleSwitch_Toggled(object sender, RoutedEventArgs e)
@@ -109,23 +135,22 @@ namespace Bangumi.Views
             }
         }
 
-        private async void DeleteTempFileButton_Click(object sender, RoutedEventArgs e)
+        private async void DeleteJsonCacheFileButton_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                // 删除Json缓存文件夹
-                await jsonCacheFolder.DeleteAsync();
-            }
-            catch (Exception)
-            {
-
-            }
-            finally
-            {
-                CacheSizeTextBlock.Text = "0";
-                DeleteTempFileButton.IsEnabled = false;
-            }
+            // 删除Json缓存文件夹
+            if (Directory.Exists(ApplicationData.Current.LocalCacheFolder.Path + "\\JsonCache"))
+                await (await ApplicationData.Current.LocalCacheFolder.GetFolderAsync("JsonCache")).DeleteAsync();
+            JsonCacheSizeTextBlock.Text = "0";
+            DeleteUserCacheFileButton.IsEnabled = false;
         }
 
+        private async void DeleteImageTempFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            // 删除图片缓存文件夹
+            if (Directory.Exists(ApplicationData.Current.TemporaryFolder.Path + "\\ImageCache"))
+                await(await ApplicationData.Current.TemporaryFolder.GetFolderAsync("ImageCache")).DeleteAsync();
+            ImageCacheSizeTextBlock.Text = "0";
+            DeleteImageTempFileButton.IsEnabled = false;
+        }
     }
 }
