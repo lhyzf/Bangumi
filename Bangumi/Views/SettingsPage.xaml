@@ -46,20 +46,36 @@
                         </ToggleSwitch.Header>
                     </ToggleSwitch>
 
-                    <!-- 应用缓存 -->
+                    <!-- 用户数据缓存 -->
                     <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
-                               Text="应用缓存"
+                               Text="用户数据缓存"
                                Margin="0,10,0,0"
                                FontWeight="Normal"/>
                     <TextBlock Margin="0,10,0,0">
                         <Run Text="缓存大小："/>
-                        <Run x:Name="CacheSizeTextBlock" Text="0" />
+                        <Run x:Name="JsonCacheSizeTextBlock" Text="0" />
                         <Run Text="KB"/>
                     </TextBlock>
-                    <Button Name="DeleteTempFileButton"
+                    <Button Name="DeleteUserCacheFileButton"
                             Content="清空缓存" 
                             Margin="0,4,0,0"
-                            Click="DeleteTempFileButton_Click"
+                            Click="DeleteJsonCacheFileButton_Click"
+                            Style="{StaticResource ButtonRevealStyle}"/>
+
+                    <!-- 图片缓存 -->
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                               Text="图片缓存"
+                               Margin="0,10,0,0"
+                               FontWeight="Normal"/>
+                    <TextBlock Margin="0,10,0,0">
+                        <Run Text="缓存大小："/>
+                        <Run x:Name="ImageCacheSizeTextBlock" Text="0" />
+                        <Run Text="KB"/>
+                    </TextBlock>
+                    <Button Name="DeleteImageTempFileButton"
+                            Content="清空缓存" 
+                            Margin="0,4,0,0"
+                            Click="DeleteImageTempFileButton_Click"
                             Style="{StaticResource ButtonRevealStyle}"/>
 
                 </StackPanel>
@@ -102,6 +118,12 @@
                                Margin="0,0,0,5">
                         <Hyperlink NavigateUri="https://github.com/Microsoft/microsoft-ui-xaml">
                             Microsoft.UI.Xaml(https://github.com/Microsoft/microsoft-ui-xaml)
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap"
+                               Margin="0,0,0,5">
+                        <Hyperlink NavigateUri="https://github.com/windows-toolkit/WindowsCommunityToolkit">
+                            WindowsCommunityToolkit(https://github.com/windows-toolkit/WindowsCommunityToolkit)
                         </Hyperlink>
                     </TextBlock>
 
