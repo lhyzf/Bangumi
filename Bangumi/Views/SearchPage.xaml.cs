@@ -185,17 +185,6 @@ namespace Bangumi.Views
             ViewModel.SearchResultCollection.OnLoadMoreCompleted += ViewModel.OnLoadMoreCompleted;
         }
 
-        /// <summary>
-        /// 在调整窗口大小时计算item的宽度。
-        /// </summary>
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            double UseableWidth = availableSize.Width - 20;
-            if (UseableWidth > 0)
-                MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
-            return base.MeasureOverride(availableSize);
-        }
-
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             Window.Current.SetTitleBar(GridTitleBar);

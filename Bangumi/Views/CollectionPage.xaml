@@ -8,6 +8,7 @@
     xmlns:data="using:Bangumi.Models"
     xmlns:common="using:Bangumi.Common"
     xmlns:wuxdata="using:Windows.UI.Xaml.Data"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     NavigationCacheMode="Enabled"
     Loaded="Page_Loaded"
     Unloaded="Page_Unloaded"
@@ -18,17 +19,18 @@
         <CollectionViewSource x:Name="cvsGroups" Source="{x:Bind ViewModel.SubjectCollection}" IsSourceGrouped="True" ItemsPath="Items"/>
 
         <DataTemplate x:Key="ZoomedInTemplate" x:DataType="data:Subject2">
-            <RelativePanel Width="{Binding ElementName=MyWidth,Path=Width}"
-                           Padding="5">
-                <Image Name="BangumiImage"
-                       Source="{x:Bind Subject.Images.Common}" 
-                       RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.AlignTopWithPanel="True"
-                       x:Phase="2"
-                       Height="75" 
-                       Width="75" 
-                       Margin="0,0,6,0"
-                       Stretch="UniformToFill" />
+            <RelativePanel Padding="5">
+                <controls:ImageEx Name="BangumiImage"
+                                  IsCacheEnabled="True"
+                                  CacheMode="BitmapCache"
+                                  Source="{x:Bind Subject.Images.Common}" 
+                                  RelativePanel.AlignLeftWithPanel="True"
+                                  RelativePanel.AlignTopWithPanel="True"
+                                  x:Phase="2"
+                                  Height="75" 
+                                  Width="75" 
+                                  Margin="0,0,6,0"
+                                  Stretch="UniformToFill" />
                 <TextBlock Name="TitleTextBlock" Text="{x:Bind Subject.NameCn}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.AlignTopWithPanel="True"
@@ -63,19 +65,16 @@
     </Page.Resources>
 
     <Grid>
-
-        <Border Name="MyWidth"
-                    Visibility="Collapsed"/>
-
         <SemanticZoom Name="CollectionSemanticZoom" 
                       Grid.Row="1">
             <SemanticZoom.ZoomedInView>
-                <GridView ItemsSource="{x:Bind cvsGroups.View}" 
-                          Padding="12,0,12,40"
-                          ScrollViewer.IsHorizontalScrollChainingEnabled="False"
-                          IsItemClickEnabled="True" 
-                          ItemClick="GridView_ItemClick"
-                          ItemTemplate="{StaticResource ZoomedInTemplate}">
+                <controls:AdaptiveGridView ItemsSource="{x:Bind cvsGroups.View}" 
+                                           Padding="12,0,12,40"
+                                           DesiredWidth="300"
+                                           ScrollViewer.IsHorizontalScrollChainingEnabled="False"
+                                           IsItemClickEnabled="True" 
+                                           ItemClick="GridView_ItemClick"
+                                           ItemTemplate="{StaticResource ZoomedInTemplate}">
                     <GridView.GroupStyle>
                         <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}"/>
                     </GridView.GroupStyle>
@@ -84,7 +83,7 @@
                             <RepositionThemeTransition IsStaggeringEnabled="False" />
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                </GridView>
+                </controls:AdaptiveGridView>
             </SemanticZoom.ZoomedInView>
 
             <SemanticZoom.ZoomedOutView>

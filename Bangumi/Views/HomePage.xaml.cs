@@ -107,8 +107,8 @@ namespace Bangumi.Views
                 if (!HomePagePivot.Items.Cast<PivotItem>().Any(p => p.Name == "ProgressItem"))
                 {
                     HomePagePivot.Items.Insert(0, ProgressItem);
+                    HomePagePivot.SelectedIndex = 0;
                 }
-                HomePagePivot.SelectedIndex = 0;
                 ProgressPageFrame.Navigate(typeof(ProgressPage), null, new SuppressNavigationTransitionInfo());
                 CollectionPageFrame.Navigate(typeof(CollectionPage), null, new SuppressNavigationTransitionInfo());
                 TimeLinePageFrame.Navigate(typeof(TimeLinePage), null, new SuppressNavigationTransitionInfo());
@@ -125,25 +125,7 @@ namespace Bangumi.Views
         {
             var pivot = sender as Pivot;
             var pivotItem = pivot.SelectedItem as PivotItem;
-            var frame = pivotItem.Content as Frame;
             MainPage.rootPage.RefreshAppBarButton.Tag = pivotItem.Header;
-            if (frame.Content == null)
-            {
-                switch (pivotItem.Header)
-                {
-                    case "进度":
-                        ProgressPageFrame.Navigate(typeof(ProgressPage), null, new SuppressNavigationTransitionInfo());
-                        break;
-                    case "收藏":
-                        CollectionPageFrame.Navigate(typeof(CollectionPage), null, new SuppressNavigationTransitionInfo());
-                        break;
-                    case "时间表":
-                        TimeLinePageFrame.Navigate(typeof(TimeLinePage), null, new SuppressNavigationTransitionInfo());
-                        break;
-                    default:
-                        break;
-                }
-            }
         }
     }
 }

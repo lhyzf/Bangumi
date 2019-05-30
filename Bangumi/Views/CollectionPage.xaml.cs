@@ -62,15 +62,5 @@ namespace Bangumi.Views
             MainPage.rootFrame.Navigate(typeof(DetailsPage), selectedItem.Subject, new DrillInNavigationTransitionInfo());
         }
 
-        /// <summary>
-        /// 在调整窗口大小时计算item的宽度。
-        /// </summary>
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            double UseableWidth = availableSize.Width - 24;
-            if (UseableWidth > 0)
-                MyWidth.Width = GridWidthHelper.GetWidth(UseableWidth, 200);
-            return base.MeasureOverride(availableSize);
-        }
     }
 }

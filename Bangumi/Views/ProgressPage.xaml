@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:Bangumi.ViewModels"
     xmlns:common="using:Bangumi.Common"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     NavigationCacheMode="Enabled"
     Loaded="Page_Loaded"
     Unloaded="Page_Unloaded"
@@ -15,17 +16,18 @@
 
     <Page.Resources>
         <DataTemplate x:Key="ProgressSubjectTemplate" x:DataType="data:WatchingStatus">
-            <RelativePanel Padding="5"
-                           Width="{Binding ElementName=MyWidth,Path=Width}">
-                <Image Name="BangumiImage"
-                       Source="{x:Bind image}" 
-                       x:Phase="2"
-                       RelativePanel.AlignLeftWithPanel="True"
-                       RelativePanel.AlignTopWithPanel="True"
-                       Height="75" 
-                       Width="75" 
-                       Margin="0,0,5,0"
-                       Stretch="UniformToFill" />
+            <RelativePanel Padding="5">
+                <controls:ImageEx Name="BangumiImage"
+                                  IsCacheEnabled="True"
+                                  CacheMode="BitmapCache"
+                                  Source="{x:Bind image}" 
+                                  x:Phase="2"
+                                  RelativePanel.AlignLeftWithPanel="True"
+                                  RelativePanel.AlignTopWithPanel="True"
+                                  Height="75" 
+                                  Width="75" 
+                                  Margin="0,0,5,0"
+                                  Stretch="UniformToFill" />
                 <TextBlock Name="TitleTextBlock"
                            Text="{x:Bind name_cn}" 
                            FontSize="14" 
@@ -104,24 +106,21 @@
     </Page.Resources>
 
     <Grid>
-        <GridView Name="MyGridView" 
-                  Padding="12,6,12,46"
-                  ItemsSource="{x:Bind ViewModel.WatchingCollection}" 
-                  IsItemClickEnabled="True" 
-                  ItemClick="GridView_ItemClick"
-                  ItemTemplate="{StaticResource ProgressSubjectTemplate}">
+        <controls:AdaptiveGridView Name="MyGridView" 
+                                   Padding="12,6,12,46"
+                                   DesiredWidth="300"
+                                   ItemsSource="{x:Bind ViewModel.WatchingCollection}" 
+                                   IsItemClickEnabled="True" 
+                                   ItemClick="GridView_ItemClick"
+                                   ItemTemplate="{StaticResource ProgressSubjectTemplate}">
             <GridView.ItemContainerTransitions>
                 <TransitionCollection>
                     <RepositionThemeTransition IsStaggeringEnabled="False" />
                     <EntranceThemeTransition IsStaggeringEnabled="True" />
                     <AddDeleteThemeTransition />
-                    <ContentThemeTransition />
                 </TransitionCollection>
             </GridView.ItemContainerTransitions>
-        </GridView>
-
-        <Border Name="MyWidth"
-                Visibility="Collapsed"/>
+        </controls:AdaptiveGridView>
 
     </Grid>
 </Page>

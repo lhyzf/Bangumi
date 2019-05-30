@@ -9,6 +9,7 @@
     xmlns:common="using:Bangumi.Common"
     xmlns:sys="using:System"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     NavigationCacheMode="Enabled"
     Loaded="Page_Loaded"
     mc:Ignorable="d"
@@ -20,7 +21,6 @@
                            RightTapped="Eps_RightTapped"
                            Padding="5" 
                            Height="68"
-                           Width="{Binding ElementName=MyWidth,Path=Width}"
                            Background="Transparent"
                            BorderThickness="0.5"
                            BorderBrush="{ThemeResource SystemControlBackgroundListMediumBrush}">
@@ -129,18 +129,21 @@
                 </ProgressRing.RenderTransform>
             </ProgressRing>
         </Grid>
-        <GridView Name="EpsGridView" 
-                  Grid.Row="1"
-                  ItemsSource="{x:Bind ViewModel.eps}" 
-                  Padding="10,5,10,45"
-                  ItemTemplate="{StaticResource EpTemplate}">
+        <controls:AdaptiveGridView Name="EpsGridView" 
+                                   Grid.Row="1"
+                                   ItemsSource="{x:Bind ViewModel.eps}" 
+                                   DesiredWidth="300"
+                                   Padding="10,5,10,45"
+                                   ItemTemplate="{StaticResource EpTemplate}">
             <GridView.Header>
                 <RelativePanel>
-                    <Image x:Name="BangumiImage" 
-                           Source="{x:Bind ViewModel.ImageSource, Mode=OneWay}"
-                           RelativePanel.AlignLeftWithPanel="True"
-                           RelativePanel.AlignTopWithPanel="True"
-                           Margin="0,0,5,0"/>
+                    <controls:ImageEx x:Name="BangumiImage" 
+                                      IsCacheEnabled="True"
+                                      CacheMode="BitmapCache"
+                                      Source="{x:Bind ViewModel.ImageSource, Mode=OneWay}"
+                                      RelativePanel.AlignLeftWithPanel="True"
+                                      RelativePanel.AlignTopWithPanel="True"
+                                      Margin="0,0,5,0"/>
                     <TextBlock Name="NameTextBlock" 
                                Text="{x:Bind ViewModel.NameCn, Mode=OneWay}"
                                RelativePanel.RightOf="BangumiImage"
@@ -184,16 +187,12 @@
                     <RepositionThemeTransition IsStaggeringEnabled="False" />
                 </TransitionCollection>
             </GridView.ItemContainerTransitions>
-        </GridView>
+        </controls:AdaptiveGridView>
 
         <ProgressBar Name="MyProgressBar"
                      Grid.Row="1"
                      Visibility="{x:Bind ViewModel.IsUpdating, Mode=OneWay}"
                      IsIndeterminate="True"
                      VerticalAlignment="Top"/>
-
-        <Border Name="MyWidth"
-                Visibility="Collapsed"/>
-
     </Grid>
 </Page>
