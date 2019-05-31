@@ -15,9 +15,9 @@
     Background="Transparent">
 
     <Page.Resources>
-        <DataTemplate x:Key="ProgressSubjectTemplate" x:DataType="data:WatchingStatus">
+        <DataTemplate x:Key="NarrowProgressSubjectTemplate" x:DataType="data:WatchingStatus">
             <RelativePanel Padding="5">
-                <controls:ImageEx Name="BangumiImage"
+                <controls:ImageEx x:Name="BangumiImage"
                                   IsCacheEnabled="True"
                                   CacheMode="BitmapCache"
                                   Source="{x:Bind image}" 
@@ -43,7 +43,8 @@
                            FontSize="12" 
                            Foreground="Gray"
                            TextTrimming="CharacterEllipsis"/>
-                <TextBlock FontSize="12" 
+                <TextBlock Name="WatchedTextBlock"
+                           FontSize="12" 
                            x:Phase="1"
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.Below="SubTitleTextBlock"
@@ -103,16 +104,126 @@
 
             </RelativePanel>
         </DataTemplate>
+        
+        <DataTemplate x:Key="WideProgressSubjectTemplate" x:DataType="data:WatchingStatus">
+            <RelativePanel Padding="5">
+                <controls:ImageEx x:Name="BangumiImage"
+                                  IsCacheEnabled="True"
+                                  CacheMode="BitmapCache"
+                                  Source="{x:Bind image}" 
+                                  x:Phase="2"
+                                  RelativePanel.AlignLeftWithPanel="True"
+                                  RelativePanel.AlignTopWithPanel="True"
+                                  Height="136" 
+                                  Width="100" 
+                                  Margin="0,0,10,0"
+                                  Stretch="UniformToFill" />
+                <TextBlock Name="TitleTextBlock"
+                           Text="{x:Bind name_cn}" 
+                           FontSize="20" 
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.AlignTopWithPanel="True"
+                           Foreground="#d26585"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Name="SubTitleTextBlock"
+                           Text="{x:Bind name}" 
+                           x:Phase="1"
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.Below="TitleTextBlock"
+                           FontSize="16" 
+                           Foreground="Gray"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Name="WatchedTextBlock"
+                           FontSize="16" 
+                           x:Phase="1"
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.Below="SubTitleTextBlock"
+                           Foreground="{x:Bind ep_color, Mode=OneWay}"
+                           TextTrimming="CharacterEllipsis">
+                        <Run Text="{x:Bind watched_eps, Mode=OneWay}"/>
+                        <Run Text="/"/>
+                        <Run Text="{x:Bind eps_count, Mode=OneWay}"/>
+                </TextBlock>
+
+                <Button Click="CollectionButton_Click"
+                        Padding="12,4"
+                        RelativePanel.RightOf="BangumiImage"
+                        RelativePanel.AlignBottomWithPanel="True"
+                        BorderThickness="1"
+                        Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" 
+                              Glyph="&#xE00B;" 
+                              Foreground="{x:Bind ep_color, Mode=OneWay}"
+                              Margin="0">
+                        <FontIcon.RenderTransform>
+                            <CompositeTransform CenterX="10"
+                                                CenterY="10"
+                                                ScaleX="0.9" 
+                                                ScaleY="0.9"/>
+                        </FontIcon.RenderTransform>
+                    </FontIcon>
+                </Button>
+
+                <Button Click="NextEpButton_Click"
+                        Padding="8,3"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.AlignBottomWithPanel="True"
+                        BorderThickness="1"
+                        Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
+                    <TextBlock FontSize="16" 
+                               Foreground="{x:Bind ep_color, Mode=OneWay}"
+                               VerticalAlignment="Center">
+                                <Run Text="EP."/>
+                                <Run Text="{x:Bind next_ep, Mode=OneWay}"/>
+                    </TextBlock>
+                </Button>
+                
+                <ProgressRing IsActive="True"
+                              Visibility="{x:Bind isUpdating,Mode=OneWay}"
+                              RelativePanel.AlignRightWithPanel="True"
+                              RelativePanel.AlignTopWithPanel="True"
+                              Margin="8"
+                              Width="20" 
+                              Height="20" >
+                </ProgressRing>
+
+            </RelativePanel>
+        </DataTemplate>
     </Page.Resources>
 
     <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MyGridView.ItemTemplate" 
+                                Value="{StaticResource NarrowProgressSubjectTemplate}"/>
+                        <Setter Target="MyGridView.DesiredWidth" 
+                                Value="300"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="400" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MyGridView.ItemTemplate" 
+                                Value="{StaticResource WideProgressSubjectTemplate}"/>
+                        <Setter Target="MyGridView.DesiredWidth" 
+                                Value="370"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
         <controls:AdaptiveGridView Name="MyGridView" 
                                    Padding="12,6,12,46"
-                                   DesiredWidth="300"
                                    ItemsSource="{x:Bind ViewModel.WatchingCollection}" 
                                    IsItemClickEnabled="True" 
-                                   ItemClick="GridView_ItemClick"
-                                   ItemTemplate="{StaticResource ProgressSubjectTemplate}">
+                                   ItemClick="GridView_ItemClick">
             <GridView.ItemContainerTransitions>
                 <TransitionCollection>
                     <RepositionThemeTransition IsStaggeringEnabled="False" />

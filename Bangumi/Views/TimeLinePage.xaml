@@ -19,7 +19,7 @@
     <Page.Resources>
         <CollectionViewSource x:Name="cvsGroups" Source="{x:Bind ViewModel.BangumiCollection}" IsSourceGrouped="True" ItemsPath="Items"/>
 
-        <DataTemplate x:Key="ZoomedInTemplate" x:DataType="data:Subject">
+        <DataTemplate x:Key="NarrowZoomedInTemplate" x:DataType="data:Subject">
             <RelativePanel Padding="5">
                 <controls:ImageEx Name="BangumiImage"
                                   IsCacheEnabled="True"
@@ -48,6 +48,35 @@
             </RelativePanel>
         </DataTemplate>
 
+        <DataTemplate x:Key="WideZoomedInTemplate" x:DataType="data:Subject">
+            <RelativePanel Padding="5">
+                <controls:ImageEx Name="BangumiImage"
+                                  IsCacheEnabled="True"
+                                  CacheMode="BitmapCache"
+                                  Source="{x:Bind Images.Common}" 
+                                  RelativePanel.AlignLeftWithPanel="True"
+                                  RelativePanel.AlignTopWithPanel="True"
+                                  x:Phase="2"
+                                  Height="134" 
+                                  Width="100" 
+                                  Margin="0,0,12,0"
+                                  Stretch="UniformToFill" />
+                <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.AlignTopWithPanel="True"
+                           FontSize="20" 
+                           Foreground="#d26585"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Text="{x:Bind Name}" 
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.Below="TitleTextBlock"
+                           x:Phase="1"
+                           FontSize="16"
+                           Foreground="Gray"
+                           TextTrimming="CharacterEllipsis"/>
+            </RelativePanel>
+        </DataTemplate>
+
         <DataTemplate x:Key="ZoomedInGroupHeaderTemplate"  x:DataType="data:BangumiTimeLine">
             <TextBlock Text="{x:Bind Weekday.Chinese}"
                        Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
@@ -63,16 +92,42 @@
     </Page.Resources>
 
     <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MyGridView.ItemTemplate" 
+                                Value="{StaticResource NarrowZoomedInTemplate}"/>
+                        <Setter Target="MyGridView.DesiredWidth" 
+                                Value="300"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="400" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MyGridView.ItemTemplate" 
+                                Value="{StaticResource WideZoomedInTemplate}"/>
+                        <Setter Target="MyGridView.DesiredWidth" 
+                                Value="370"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <SemanticZoom Name="TimeLineSemanticZoom"
                       Grid.Row="1">
             <SemanticZoom.ZoomedInView>
-                <controls:AdaptiveGridView ItemsSource="{x:Bind cvsGroups.View}"
-                                           DesiredWidth="300"
+                <controls:AdaptiveGridView Name="MyGridView"
+                                           ItemsSource="{x:Bind cvsGroups.View}"
                                            Padding="12,0,12,40"
                                            ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                                            IsItemClickEnabled="True"
-                                           ItemClick="GridView_ItemClick"
-                                           ItemTemplate="{StaticResource ZoomedInTemplate}">
+                                           ItemClick="GridView_ItemClick">
                     <GridView.GroupStyle>
                         <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}"/>
                     </GridView.GroupStyle>
