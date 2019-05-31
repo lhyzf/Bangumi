@@ -14,7 +14,7 @@
     Background="Transparent">
 
     <Page.Resources>
-        <DataTemplate x:Key="SubjectWithTypeTemplate" x:DataType="data:Subject">
+        <DataTemplate x:Key="NarrowSubjectWithTypeTemplate" x:DataType="data:Subject">
             <RelativePanel Padding="5">
                 <controls:ImageEx Name="BangumiImage"
                                   IsCacheEnabled="True"
@@ -50,8 +50,45 @@
                            TextTrimming="CharacterEllipsis"/>
             </RelativePanel>
         </DataTemplate>
-        
-        <DataTemplate x:Key="SubjectTemplate" x:DataType="data:Subject">
+
+        <DataTemplate x:Key="WideSubjectWithTypeTemplate" x:DataType="data:Subject">
+            <RelativePanel Padding="5">
+                <controls:ImageEx Name="BangumiImage"
+                                  IsCacheEnabled="True"
+                                  CacheMode="BitmapCache"
+                                  Source="{x:Bind Images.Common}" 
+                                  RelativePanel.AlignLeftWithPanel="True"
+                                  RelativePanel.AlignTopWithPanel="True"
+                                  x:Phase="2"
+                                  Height="134" 
+                                  Width="100" 
+                                  Margin="0,0,12,0"
+                                  Stretch="UniformToFill" />
+                <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.AlignTopWithPanel="True"
+                           FontSize="20" 
+                           Foreground="#d26585"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Name="SubTitleTextBlock" Text="{x:Bind Name}" 
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.Below="TitleTextBlock"
+                           x:Phase="1"
+                           FontSize="16"
+                           Foreground="Gray"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Grid.Row="2"
+                           Text="{x:Bind common:Converters.GetSubjectTypeName(Type)}" 
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.Below="SubTitleTextBlock"
+                           x:Phase="1"
+                           FontSize="16" 
+                           Foreground="Gray"
+                           TextTrimming="CharacterEllipsis"/>
+            </RelativePanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="NarrowSubjectTemplate" x:DataType="data:Subject">
             <RelativePanel Padding="5">
                 <controls:ImageEx Name="BangumiImage"
                                   IsCacheEnabled="True"
@@ -79,9 +116,105 @@
                            TextTrimming="CharacterEllipsis"/>
             </RelativePanel>
         </DataTemplate>
+
+        <DataTemplate x:Key="WideSubjectTemplate" x:DataType="data:Subject">
+            <RelativePanel Padding="5">
+                <controls:ImageEx Name="BangumiImage"
+                                  IsCacheEnabled="True"
+                                  CacheMode="BitmapCache"
+                                  Source="{x:Bind Images.Common}" 
+                                  RelativePanel.AlignLeftWithPanel="True"
+                                  RelativePanel.AlignTopWithPanel="True"
+                                  x:Phase="2"
+                                  Height="134" 
+                                  Width="100" 
+                                  Margin="0,0,12,0"
+                                  Stretch="UniformToFill" />
+                <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.AlignTopWithPanel="True"
+                           FontSize="20" 
+                           Foreground="#d26585"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Text="{x:Bind Name}" 
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.Below="TitleTextBlock"
+                           x:Phase="1"
+                           FontSize="16"
+                           Foreground="Gray"
+                           TextTrimming="CharacterEllipsis"/>
+            </RelativePanel>
+        </DataTemplate>
     </Page.Resources>
 
     <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="AllGridView.ItemTemplate" 
+                                Value="{StaticResource NarrowSubjectWithTypeTemplate}"/>
+                        <Setter Target="AllGridView.DesiredWidth" 
+                                Value="300"/>
+                        <Setter Target="AnimeGridView.ItemTemplate" 
+                                Value="{StaticResource NarrowSubjectWithTypeTemplate}"/>
+                        <Setter Target="AnimeGridView.DesiredWidth" 
+                                Value="300"/>
+                        <Setter Target="BookGridView.ItemTemplate" 
+                                Value="{StaticResource NarrowSubjectTemplate}"/>
+                        <Setter Target="BookGridView.DesiredWidth" 
+                                Value="300"/>
+                        <Setter Target="MusicGridView.ItemTemplate" 
+                                Value="{StaticResource NarrowSubjectTemplate}"/>
+                        <Setter Target="MusicGridView.DesiredWidth" 
+                                Value="300"/>
+                        <Setter Target="GameGridView.ItemTemplate" 
+                                Value="{StaticResource NarrowSubjectTemplate}"/>
+                        <Setter Target="GameGridView.DesiredWidth" 
+                                Value="300"/>
+                        <Setter Target="RealGridView.ItemTemplate" 
+                                Value="{StaticResource NarrowSubjectTemplate}"/>
+                        <Setter Target="RealGridView.DesiredWidth" 
+                                Value="300"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="400" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="AllGridView.ItemTemplate" 
+                                Value="{StaticResource WideSubjectWithTypeTemplate}"/>
+                        <Setter Target="AllGridView.DesiredWidth" 
+                                Value="370"/>
+                        <Setter Target="AnimeGridView.ItemTemplate" 
+                                Value="{StaticResource WideSubjectTemplate}"/>
+                        <Setter Target="AnimeGridView.DesiredWidth" 
+                                Value="370"/>
+                        <Setter Target="BookGridView.ItemTemplate" 
+                                Value="{StaticResource WideSubjectTemplate}"/>
+                        <Setter Target="BookGridView.DesiredWidth" 
+                                Value="370"/>
+                        <Setter Target="MusicGridView.ItemTemplate" 
+                                Value="{StaticResource WideSubjectTemplate}"/>
+                        <Setter Target="MusicGridView.DesiredWidth" 
+                                Value="370"/>
+                        <Setter Target="GameGridView.ItemTemplate" 
+                                Value="{StaticResource WideSubjectTemplate}"/>
+                        <Setter Target="GameGridView.DesiredWidth" 
+                                Value="370"/>
+                        <Setter Target="RealGridView.ItemTemplate" 
+                                Value="{StaticResource WideSubjectTemplate}"/>
+                        <Setter Target="RealGridView.DesiredWidth" 
+                                Value="370"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -122,13 +255,11 @@
                     </TextBlock>
                 </PivotItem.Header>
                 <controls:AdaptiveGridView Name="AllGridView"
-                                           DesiredWidth="300"
                                            Padding="10,0"
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick"
                                            IncrementalLoadingTrigger="Edge"
-                                           DataFetchSize="1"
-                                           ItemTemplate="{StaticResource SubjectWithTypeTemplate}">
+                                           DataFetchSize="1">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[0], Mode=OneWay}"
@@ -158,13 +289,11 @@
                     </TextBlock>
                 </PivotItem.Header>
                 <controls:AdaptiveGridView Name="AnimeGridView"
-                                           DesiredWidth="300"
                                            Padding="10,0"
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick"
                                            IncrementalLoadingTrigger="Edge"
-                                           DataFetchSize="1"
-                                           ItemTemplate="{StaticResource SubjectTemplate}">
+                                           DataFetchSize="1">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[1], Mode=OneWay}"
@@ -194,13 +323,11 @@
                     </TextBlock>
                 </PivotItem.Header>
                 <controls:AdaptiveGridView Name="BookGridView"
-                                           DesiredWidth="300"
                                            Padding="10,0"
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick"
                                            IncrementalLoadingTrigger="Edge"
-                                           DataFetchSize="1"
-                                           ItemTemplate="{StaticResource SubjectTemplate}">
+                                           DataFetchSize="1">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[2], Mode=OneWay}"
@@ -230,13 +357,11 @@
                     </TextBlock>
                 </PivotItem.Header>
                 <controls:AdaptiveGridView Name="MusicGridView"
-                                           DesiredWidth="300"
                                            Padding="10,0"
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick"
                                            IncrementalLoadingTrigger="Edge"
-                                           DataFetchSize="1"
-                                           ItemTemplate="{StaticResource SubjectTemplate}">
+                                           DataFetchSize="1">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[3], Mode=OneWay}"
@@ -266,13 +391,11 @@
                     </TextBlock>
                 </PivotItem.Header>
                 <controls:AdaptiveGridView Name="GameGridView"
-                                           DesiredWidth="300"
                                            Padding="10,0"
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick"
                                            IncrementalLoadingTrigger="Edge"
-                                           DataFetchSize="1"
-                                           ItemTemplate="{StaticResource SubjectTemplate}">
+                                           DataFetchSize="1">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[4], Mode=OneWay}"
@@ -302,13 +425,11 @@
                     </TextBlock>
                 </PivotItem.Header>
                 <controls:AdaptiveGridView Name="RealGridView"
-                                           DesiredWidth="300"
                                            Padding="10,0"
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick"
                                            IncrementalLoadingTrigger="Edge"
-                                           DataFetchSize="1"
-                                           ItemTemplate="{StaticResource SubjectTemplate}">
+                                           DataFetchSize="1">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
                                    Visibility="{x:Bind ViewModel.NoResult[5], Mode=OneWay}"
