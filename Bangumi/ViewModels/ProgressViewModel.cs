@@ -134,7 +134,12 @@ namespace Bangumi.ViewModels
                     if (item.eps.Where(e => e.status == "看过").Count() < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                         item.ep_color = "#d26585";
                     else
+                    {
+                        // 将已看到更新剧集的条目排到最后
+                        WatchingCollection.Remove(item);
+                        WatchingCollection.Add(item);
                         item.ep_color = "Gray";
+                    }
 
                     //将对象序列化并存储到文件
                     await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), "JsonCache\\home");
