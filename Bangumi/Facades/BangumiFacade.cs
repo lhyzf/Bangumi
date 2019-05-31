@@ -27,6 +27,7 @@ namespace Bangumi.Facades
             {
                 //从文件反序列化
                 var PreWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await FileHelper.ReadFromCacheFileAsync("JsonCache\\home"));
+                watchingListCollection.Clear();
                 if (PreWatchings != null)
                 {
                     foreach (var sub in PreWatchings)
@@ -217,9 +218,9 @@ namespace Bangumi.Facades
             {
                 //从文件反序列化
                 var PreCollection = JsonConvert.DeserializeObject<List<Collection>>(await FileHelper.ReadFromCacheFileAsync("JsonCache\\" + subjectType));
+                subjectCollection.Clear();
                 if (PreCollection != null)
                 {
-                    subjectCollection.Clear();
                     foreach (var type in PreCollection)
                     {
                         subjectCollection.Add(type);
@@ -257,9 +258,9 @@ namespace Bangumi.Facades
             {
                 //从文件反序列化
                 var PreCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await FileHelper.ReadFromCacheFileAsync("JsonCache\\calendar"));
+                bangumiCollection.Clear();
                 if (PreCalendar != null)
                 {
-                    bangumiCollection.Clear();
                     foreach (var item in PreCalendar)
                     {
                         bangumiCollection.Add(item);
