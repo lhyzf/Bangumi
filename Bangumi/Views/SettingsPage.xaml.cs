@@ -72,6 +72,7 @@ namespace Bangumi.Views
             MainPage.rootPage.MyCommandBar.Visibility = Visibility.Collapsed;
 
             EpsBatchToggleSwitch.IsOn = SettingHelper.EpsBatch == true;
+            SubjectCompleteToggleSwitch.IsOn = SettingHelper.SubjectComplete == true;
 
             // 计算文件夹 JsonCache 中文件大小
             if (Directory.Exists(ApplicationData.Current.LocalCacheFolder.Path + "\\JsonCache"))
@@ -114,9 +115,6 @@ namespace Bangumi.Views
                 ImageCacheSizeTextBlock.Text = "0";
                 DeleteImageTempFileButton.IsEnabled = false;
             }
-
-
-
         }
 
         private void EpsBatchToggleSwitch_Toggled(object sender, RoutedEventArgs e)
@@ -135,6 +133,22 @@ namespace Bangumi.Views
             }
         }
 
+        private void SubjectCompleteToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            ToggleSwitch toggleSwitch = sender as ToggleSwitch;
+            if (toggleSwitch != null)
+            {
+                if (toggleSwitch.IsOn == true)
+                {
+                    SettingHelper.SubjectComplete = true;
+                }
+                else
+                {
+                    SettingHelper.SubjectComplete = false;
+                }
+            }
+        }
+
         private async void DeleteJsonCacheFileButton_Click(object sender, RoutedEventArgs e)
         {
             // 删除Json缓存文件夹
@@ -148,7 +162,7 @@ namespace Bangumi.Views
         {
             // 删除图片缓存文件夹
             if (Directory.Exists(ApplicationData.Current.TemporaryFolder.Path + "\\ImageCache"))
-                await(await ApplicationData.Current.TemporaryFolder.GetFolderAsync("ImageCache")).DeleteAsync();
+                await (await ApplicationData.Current.TemporaryFolder.GetFolderAsync("ImageCache")).DeleteAsync();
             ImageCacheSizeTextBlock.Text = "0";
             DeleteImageTempFileButton.IsEnabled = false;
         }

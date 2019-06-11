@@ -78,11 +78,7 @@ namespace Bangumi.Views
             if (e.Parameter.GetType() == typeof(WatchingStatus))
             {
                 var p = (WatchingStatus)e.Parameter;
-                if (ViewModel.SubjectId == p.subject_id.ToString())
-                {
-                    return;
-                }
-                else
+                if (!(ViewModel.SubjectId == p.subject_id.ToString()))
                 {
                     needReLoad = true;
                     ViewModel.InitViewModel();
@@ -92,6 +88,7 @@ namespace Bangumi.Views
                 ViewModel.NameCn = p.name_cn;
                 if (p.eps != null)
                 {
+                    ViewModel.eps.Clear();
                     foreach (var ep in p.eps)
                     {
                         var newEp = new Ep();
@@ -115,11 +112,7 @@ namespace Bangumi.Views
             else if (e.Parameter.GetType() == typeof(Subject))
             {
                 var p = (Subject)e.Parameter;
-                if (ViewModel.SubjectId == p.Id.ToString())
-                {
-                    return;
-                }
-                else
+                if (!(ViewModel.SubjectId == p.Id.ToString()))
                 {
                     needReLoad = true;
                     ViewModel.InitViewModel();
@@ -132,11 +125,7 @@ namespace Bangumi.Views
             }
             else if (e.Parameter.GetType() == typeof(Int32))
             {
-                if (ViewModel.SubjectId == e.Parameter.ToString())
-                {
-                    return;
-                }
-                else
+                if (!(ViewModel.SubjectId == e.Parameter.ToString()))
                 {
                     needReLoad = true;
                     ViewModel.InitViewModel();

@@ -3,13 +3,11 @@ using Bangumi.Models;
 using Bangumi.Services;
 using Bangumi.ViewModels;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Bangumi.Facades
@@ -27,7 +25,6 @@ namespace Bangumi.Facades
             {
                 //从文件反序列化
                 var PreWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await FileHelper.ReadFromCacheFileAsync("JsonCache\\home"));
-                watchingListCollection.Clear();
                 if (PreWatchings != null)
                 {
                     foreach (var sub in PreWatchings)
@@ -36,6 +33,10 @@ namespace Bangumi.Facades
                         if (watchingListCollection.Where(e => e.subject_id == sub.subject_id).Count() == 0)
                             watchingListCollection.Add(sub);
                     }
+                }
+                else
+                {
+                    watchingListCollection.Clear();
                 }
 
                 var watchingList = await BangumiHttpWrapper.GetWatchingListAsync(OAuthHelper.MyToken.UserId);

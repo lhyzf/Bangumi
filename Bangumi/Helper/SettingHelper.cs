@@ -23,6 +23,18 @@ namespace Bangumi.Helper
                 return localSettings.Values["EpsBatch"] as bool?;
             }
         }
-        
+
+        public static bool? SubjectComplete
+        {
+            set
+            {
+                localSettings.Values["SubjectComplete"] = value;
+            }
+            get
+            {
+                return localSettings.Values["SubjectComplete"] as bool?;
+            }
+        }
+
     }
 }

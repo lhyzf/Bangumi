@@ -131,14 +131,24 @@ namespace Bangumi.ViewModels
                     else
                         item.next_ep++;
                     item.watched_eps = "看到第" + item.eps.Where(e => e.status == "看过").Count() + "话";
+                    // 若未看到最新一集，则使用粉色，否则使用灰色
                     if (item.eps.Where(e => e.status == "看过").Count() < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                         item.ep_color = "#d26585";
                     else
                     {
-                        // 将已看到更新剧集的条目排到最后
-                        WatchingCollection.Remove(item);
-                        WatchingCollection.Add(item);
-                        item.ep_color = "Gray";
+                        // 若设置启用且看完则标记为看过，并从列表中删除
+                        if (SettingHelper.SubjectComplete == true && item.eps.Where(e => e.status == "看过").Count() == item.eps.Count)
+                        {
+                            await BangumiFacade.UpdateCollectionStatusAsync(item.subject_id.ToString(), CollectionStatusEnum.collect);
+                            WatchingCollection.Remove(item);
+                        }
+                        else
+                        {
+                            // 将已看到最新剧集的条目排到最后
+                            WatchingCollection.Remove(item);
+                            WatchingCollection.Add(item);
+                            item.ep_color = "Gray";
+                        }
                     }
 
                     //将对象序列化并存储到文件
