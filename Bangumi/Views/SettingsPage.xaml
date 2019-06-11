@@ -46,6 +46,21 @@
                         </ToggleSwitch.Header>
                     </ToggleSwitch>
 
+                    <!-- 看完逻辑 -->
+                    <ToggleSwitch Name="SubjectCompleteToggleSwitch"
+                                  OnContent="开启" 
+                                  OffContent="关闭"
+                                  FontSize="16"
+                                  Toggled="SubjectCompleteToggleSwitch_Toggled">
+                        <ToggleSwitch.Header>
+                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                                       Text="看完所有剧集后将收藏状态修改为看过"
+                                       Margin="0,4,0,0"
+                                       FontWeight="Normal"
+                                       TextWrapping="Wrap" />
+                        </ToggleSwitch.Header>
+                    </ToggleSwitch>
+
                     <!-- 用户数据缓存 -->
                     <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
                                Text="用户数据缓存"

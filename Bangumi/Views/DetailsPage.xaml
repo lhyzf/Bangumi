@@ -37,7 +37,7 @@
                            FontSize="12" 
                            Foreground="#d26585"/>
                 <TextBlock Grid.Row="1"
-                           Text="{x:Bind NameCn}" 
+                           Text="{x:Bind NameCn,Mode=OneWay}" 
                            x:Phase="1"
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="SortTextBlock"
@@ -175,7 +175,7 @@
                     <HyperlinkButton Name="MoreInfoHyperLink"
                                      Content="更多资料"
                                      Click="MoreInfoButton_Click"
-                                     Visibility="{x:Bind common:Converters.CollapsedIf(ViewModel.IsLoading), Mode=OneWay}"
+                                     IsEnabled="{x:Bind common:Converters.Not(ViewModel.IsLoading), Mode=OneWay}"
                                      RelativePanel.AlignLeftWithPanel="True"
                                      RelativePanel.Below="SummaryTextBlock"
                                      Padding="0,0,0,10"

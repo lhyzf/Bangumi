@@ -24,8 +24,18 @@ namespace Bangumi.Models
         [JsonProperty("name")]
         public string Name { get; set; }
 
+        private string _nameCn { get; set; }
+
         [JsonProperty("name_cn")]
-        public string NameCn { get; set; }
+        public string NameCn
+        {
+            get { return _nameCn; }
+            set
+            {
+                _nameCn = value;
+                OnPropertyChanged();
+            }
+        }
 
         [JsonProperty("duration")]
         public string Duration { get; set; }
@@ -38,6 +48,7 @@ namespace Bangumi.Models
 
         [JsonProperty("desc")]
         public string Desc { get; set; }
+
         private string _status { get; set; }
 
         [JsonProperty("status")]
