@@ -143,8 +143,12 @@ namespace Bangumi
             if (!MainPage.rootFrame.CanGoBack)
                 return false;
 
-            // Don't go back if the nav pane is overlayed.
+            // 有弹出框时不向后导航
             if (hasDialog)
+                return false;
+
+            // 处于首页时不向后导航
+            if (MainPage.rootFrame.CurrentSourcePageType == typeof(HomePage))
                 return false;
 
             MainPage.rootFrame.GoBack();

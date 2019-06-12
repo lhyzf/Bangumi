@@ -24,18 +24,8 @@ namespace Bangumi.Models
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        private string _nameCn { get; set; }
-
         [JsonProperty("name_cn")]
-        public string NameCn
-        {
-            get { return _nameCn; }
-            set
-            {
-                _nameCn = value;
-                OnPropertyChanged();
-            }
-        }
+        public string NameCn { get; set; }
 
         [JsonProperty("duration")]
         public string Duration { get; set; }
