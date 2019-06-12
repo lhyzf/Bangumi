@@ -34,10 +34,10 @@ namespace Bangumi.Facades
                             watchingListCollection.Add(sub);
                     }
                 }
-                else
-                {
-                    watchingListCollection.Clear();
-                }
+                //else
+                //{
+                //    watchingListCollection.Clear();
+                //}
 
                 var watchingList = await BangumiHttpWrapper.GetWatchingListAsync(OAuthHelper.MyToken.UserId);
 
@@ -94,7 +94,7 @@ namespace Bangumi.Facades
                                 simpleEp.sort = ep.Sort;
                                 simpleEp.status = ep.Status;
                                 simpleEp.type = ep.Type;
-                                simpleEp.name = ep.NameCn;
+                                simpleEp.name = ep.NameCn == "" ? ep.Name : ep.NameCn;
                                 item.eps.Add(simpleEp);
                             }
                             if (item.eps.Where(e => e.status == "NA").Count() == 0)
@@ -144,7 +144,7 @@ namespace Bangumi.Facades
                                     simpleEp.sort = ep.Sort;
                                     simpleEp.status = ep.Status;
                                     simpleEp.type = ep.Type;
-                                    simpleEp.name = ep.NameCn;
+                                    simpleEp.name = ep.NameCn == "" ? ep.Name : ep.NameCn;
                                     item.eps.Add(simpleEp);
                                 }
                                 if (item.eps.Where(e => e.status == "NA").Count() == 0)
