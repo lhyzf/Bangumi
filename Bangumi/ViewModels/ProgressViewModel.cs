@@ -191,71 +191,47 @@ namespace Bangumi.ViewModels
 
     }
 
-    public class WatchingStatus : INotifyPropertyChanged
+    public class WatchingStatus : ViewModelBase
     {
         public string name { get; set; }
         public string name_cn { get; set; }
         public int subject_id { get; set; }
-        private string _watched_eps { get; set; }
-        private string _eps_count { get; set; }
-        public int lasttouch { get; set; }
+        public long lasttouch { get; set; }
+        public long lastupdate { get; set; }
         public string url { get; set; }
         public string image { get; set; }
-        private string _ep_color { get; set; }
-        private int _next_ep { get; set; }
-        private bool _isUpdating { get; set; }
         public List<SimpleEp> eps { get; set; }
+
+        private string _watched_eps;
+        private string _eps_count;
+        private string _ep_color;
+        private int _next_ep;
+        private bool _isUpdating;
 
         public int next_ep
         {
-            get { return _next_ep; }
-            set
-            {
-                _next_ep = value;
-                OnPropertyChanged();
-            }
+            get => _next_ep;
+            set => Set(ref _next_ep, value);
         }
         public bool isUpdating
         {
-            get { return _isUpdating; }
-            set
-            {
-                _isUpdating = value;
-                OnPropertyChanged();
-            }
+            get => _isUpdating;
+            set => Set(ref _isUpdating, value);
         }
         public string ep_color
         {
             get { return _ep_color; }
-            set
-            {
-                _ep_color = value;
-                OnPropertyChanged();
-            }
+            set => Set(ref _ep_color, value);
         }
         public string watched_eps
         {
             get { return _watched_eps; }
-            set
-            {
-                _watched_eps = value;
-                OnPropertyChanged();
-            }
+            set => Set(ref _watched_eps, value);
         }
         public string eps_count
         {
             get { return _eps_count; }
-            set
-            {
-                _eps_count = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName]string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            set => Set(ref _eps_count, value);
         }
     }
 
