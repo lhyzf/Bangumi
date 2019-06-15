@@ -129,11 +129,13 @@ namespace Bangumi.Facades
                                 item.ep_color = "#d26585";
                             }
                             item.lasttouch = watching.LastTouch;
+                            item.lastupdate = Utils.ConvertDateTimeToJsTick(DateTime.Today);
                         }
                         else
                         {
-                            // 对条目有 修改 或 当天更新 或 未知更新星期 的进行更新
-                            if (item.lasttouch != watching.LastTouch || watching.Subject.AirWeekday == GetDayOfWeek() + 1 || watching.Subject.AirWeekday == 0)
+                            // 对条目有 修改 或 当天首次加载 进行更新
+                            if (item.lasttouch != watching.LastTouch
+                                || item.lastupdate != Utils.ConvertDateTimeToJsTick(DateTime.Today))
                             {
                                 var subject = await BangumiHttpWrapper.GetSubjectEpsAsync(item.subject_id.ToString());
                                 item.eps.Clear();
@@ -189,6 +191,7 @@ namespace Bangumi.Facades
                                 }
 
                                 item.lasttouch = watching.LastTouch;
+                                item.lastupdate = Utils.ConvertDateTimeToJsTick(DateTime.Today);
                             }
                         }
                         item.isUpdating = false;

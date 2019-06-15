@@ -400,10 +400,8 @@ namespace Bangumi.Services
                 else
                 {
                     var result = JsonConvert.DeserializeObject<AccessToken>(response);
-                    // C# 时间戳为 1/10000000 秒，从0001年1月1日开始；js 时间戳为秒，从1970年1月1日开始
                     // 获取两天后的时间戳，离过期不足两天时或过期后更新 access_token
-                    var aa = (DateTime.Now.AddDays(2).ToUniversalTime().Ticks - new DateTime(1970, 1, 1).Ticks) / 10000000;
-                    if (result.Expires < aa)
+                    if (result.Expires < Utils.ConvertDateTimeToJsTick(DateTime.Now.AddDays(2)))
                         return await RefreshAccessToken(token);
                 }
                 return token;
