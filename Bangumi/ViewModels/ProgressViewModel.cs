@@ -130,7 +130,7 @@ namespace Bangumi.ViewModels
                         item.next_ep = 0;
                     else
                         item.next_ep++;
-                    item.watched_eps = "看到第" + item.eps.Where(e => e.status == "看过").Count() + "话";
+                    item.watched_eps = item.eps.Where(e => e.status == "看过").Count();
                     // 若未看到最新一集，则使用粉色，否则使用灰色
                     if (item.eps.Where(e => e.status == "看过").Count() < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                         item.ep_color = "#d26585";
@@ -167,7 +167,7 @@ namespace Bangumi.ViewModels
             order.AddRange(WatchingCollection.OrderBy(p => p.lasttouch).OrderBy(p => p.ep_color));
             for (int i = 0; i < order.Count; i++)
             {
-                if (order[i].watched_eps == "尚未观看")
+                if (order[i].watched_eps == 0)
                 {
                     notWatched.Add(order[i]);
                     order.Remove(order[i]);
@@ -202,8 +202,8 @@ namespace Bangumi.ViewModels
         public string image { get; set; }
         public List<SimpleEp> eps { get; set; }
 
-        private string _watched_eps;
-        private string _eps_count;
+        private int _watched_eps;
+        private string _updated_eps;
         private string _ep_color;
         private int _next_ep;
         private bool _isUpdating;
@@ -223,15 +223,15 @@ namespace Bangumi.ViewModels
             get { return _ep_color; }
             set => Set(ref _ep_color, value);
         }
-        public string watched_eps
+        public int watched_eps
         {
             get { return _watched_eps; }
             set => Set(ref _watched_eps, value);
         }
-        public string eps_count
+        public string updated_eps
         {
-            get { return _eps_count; }
-            set => Set(ref _eps_count, value);
+            get { return _updated_eps; }
+            set => Set(ref _updated_eps, value);
         }
     }
 

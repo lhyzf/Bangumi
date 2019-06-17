@@ -67,8 +67,8 @@ namespace Bangumi.Facades
                         watchingStatus.url = watching.Subject.Url;
                         watchingStatus.ep_color = "Gray";
                         watchingStatus.lasttouch = 0;
-                        watchingStatus.watched_eps = watching.EpStatus.ToString();
-                        watchingStatus.eps_count = watching.Subject.EpsCount.ToString();
+                        watchingStatus.watched_eps = watching.EpStatus;
+                        watchingStatus.updated_eps = watching.Subject.EpsCount.ToString();
 
                         watchingListCollection.Add(watchingStatus);
                     }
@@ -98,13 +98,13 @@ namespace Bangumi.Facades
                                 item.eps.Add(simpleEp);
                             }
                             if (item.eps.Where(e => e.status == "NA").Count() == 0)
-                                item.eps_count = "全" + item.eps.Count + "话";
+                                item.updated_eps = "全" + item.eps.Count + "话";
                             else
-                                item.eps_count = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
+                                item.updated_eps = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
                             if (progress != null)
                             {
-                                item.next_ep = progress.Eps.Count + 1;
-                                item.watched_eps = "看到第" + progress.Eps.Count + "话";
+                                item.watched_eps = progress.Eps.Count;
+                                item.next_ep = item.watched_eps + 1;
                                 if (progress.Eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                                     item.ep_color = "#d26585";
                                 else
@@ -124,18 +124,18 @@ namespace Bangumi.Facades
                             }
                             else
                             {
+                                item.watched_eps = 0;
                                 item.next_ep = 1;
-                                item.watched_eps = "尚未观看";
                                 item.ep_color = "#d26585";
                             }
                             item.lasttouch = watching.LastTouch;
-                            item.lastupdate = Utils.ConvertDateTimeToJsTick(DateTime.Today);
+                            item.lastupdate = DateTime.Today.ConvertDateTimeToJsTick();
                         }
                         else
                         {
                             // 对条目有 修改 或 当天首次加载 进行更新
                             if (item.lasttouch != watching.LastTouch
-                                || item.lastupdate != Utils.ConvertDateTimeToJsTick(DateTime.Today))
+                                || item.lastupdate != DateTime.Today.ConvertDateTimeToJsTick())
                             {
                                 var subject = await BangumiHttpWrapper.GetSubjectEpsAsync(item.subject_id.ToString());
                                 item.eps.Clear();
@@ -150,19 +150,19 @@ namespace Bangumi.Facades
                                     item.eps.Add(simpleEp);
                                 }
                                 if (item.eps.Where(e => e.status == "NA").Count() == 0)
-                                    item.eps_count = "全" + item.eps.Count + "话";
+                                    item.updated_eps = "全" + item.eps.Count + "话";
                                 else
-                                    item.eps_count = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
+                                    item.updated_eps = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
 
                                 var progress = await BangumiHttpWrapper.GetProgressesAsync(OAuthHelper.MyToken.UserId, OAuthHelper.MyToken.Token, item.subject_id.ToString());
                                 if (progress != null)
                                 {
-                                    if (item.eps.Count == progress.Eps.Count)
+                                    item.watched_eps = progress.Eps.Count;
+                                    if (item.eps.Count == item.watched_eps)
                                         item.next_ep = 0;
                                     else
-                                        item.next_ep = progress.Eps.Count + 1;
-                                    item.watched_eps = "看到第" + progress.Eps.Count + "话";
-                                    if (progress.Eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
+                                        item.next_ep = item.watched_eps + 1;
+                                    if (item.watched_eps < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                                         item.ep_color = "#d26585";
                                     else
                                         item.ep_color = "Gray";
@@ -185,13 +185,13 @@ namespace Bangumi.Facades
                                 }
                                 else
                                 {
+                                    item.watched_eps = 0;
                                     item.next_ep = 1;
-                                    item.watched_eps = "尚未观看";
                                     item.ep_color = "#d26585";
                                 }
 
                                 item.lasttouch = watching.LastTouch;
-                                item.lastupdate = Utils.ConvertDateTimeToJsTick(DateTime.Today);
+                                item.lastupdate = DateTime.Today.ConvertDateTimeToJsTick();
                             }
                         }
                         item.isUpdating = false;
@@ -263,11 +263,19 @@ namespace Bangumi.Facades
                 //从文件反序列化
                 var PreCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await FileHelper.ReadFromCacheFileAsync("JsonCache\\calendar"));
                 bangumiCollection.Clear();
+                int day = GetDayOfWeek();
                 if (PreCalendar != null)
                 {
                     foreach (var item in PreCalendar)
                     {
-                        bangumiCollection.Add(item);
+                        if (item.Weekday.Id <= day)
+                        {
+                            bangumiCollection.Add(item);
+                        }
+                        else
+                        {
+                            bangumiCollection.Insert(bangumiCollection.Count - day, item);
+                        }
                     }
                     // 非强制加载，若缓存与当天为同一星期几则不请求新数据。
                     if (!force && bangumiCollection[0].Weekday.Id == GetDayOfWeek() + 1)
@@ -280,7 +288,6 @@ namespace Bangumi.Facades
 
                 //清空原数据
                 bangumiCollection.Clear();
-                int day = GetDayOfWeek();
                 foreach (var bangumiCalendar in bangumiCalendarList)
                 {
                     if (bangumiCalendar.Weekday.Id <= day)

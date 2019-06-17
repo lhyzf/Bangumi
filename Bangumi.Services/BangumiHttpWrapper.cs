@@ -110,7 +110,18 @@ namespace Bangumi.Services
                         watching.Subject.Name : System.Net.WebUtility.HtmlDecode(watching.Subject.NameCn);
                     if (watching.Subject.Images == null)
                     {
-                        watching.Subject.Images = new Images { Common = NoImageUri };
+                        watching.Subject.Images = new Images
+                        {
+                            Grid = NoImageUri,
+                            Small = NoImageUri,
+                            Common = NoImageUri,
+                            Medium = NoImageUri,
+                            Large = NoImageUri,
+                        };
+                    }
+                    else
+                    {
+                        watching.Subject.Images.ConvertImageHttpToHttps();
                     }
                 }
                 return result;
@@ -282,7 +293,18 @@ namespace Bangumi.Services
                         item.NameCn = string.IsNullOrEmpty(item.NameCn) ? item.Name : System.Net.WebUtility.HtmlDecode(item.NameCn);
                         if (item.Images == null)
                         {
-                            item.Images = new Images { Common = NoImageUri };
+                            item.Images = new Images
+                            {
+                                Grid = NoImageUri,
+                                Small = NoImageUri,
+                                Common = NoImageUri,
+                                Medium = NoImageUri,
+                                Large = NoImageUri,
+                            };
+                        }
+                        else
+                        {
+                            item.Images.ConvertImageHttpToHttps();
                         }
                     }
                 }
@@ -319,7 +341,18 @@ namespace Bangumi.Services
                             item.NameCn = string.IsNullOrEmpty(item.NameCn) ? item.Name : System.Net.WebUtility.HtmlDecode(item.NameCn);
                             if (item.Images == null)
                             {
-                                item.Images = new Images { Common = NoImageUri };
+                                item.Images = new Images
+                                {
+                                    Grid = NoImageUri,
+                                    Small = NoImageUri,
+                                    Common = NoImageUri,
+                                    Medium = NoImageUri,
+                                    Large = NoImageUri,
+                                };
+                            }
+                            else
+                            {
+                                item.Images.ConvertImageHttpToHttps();
                             }
                         }
                         return result;
@@ -401,7 +434,7 @@ namespace Bangumi.Services
                 {
                     var result = JsonConvert.DeserializeObject<AccessToken>(response);
                     // 获取两天后的时间戳，离过期不足两天时或过期后更新 access_token
-                    if (result.Expires < Utils.ConvertDateTimeToJsTick(DateTime.Now.AddDays(2)))
+                    if (result.Expires < DateTime.Now.AddDays(2).ConvertDateTimeToJsTick())
                         return await RefreshAccessToken(token);
                 }
                 return token;
