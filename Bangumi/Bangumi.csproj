@@ -261,10 +261,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bangumi.Models\Bangumi.Models.csproj">
-      <Project>{61bfe87d-4970-4447-ab47-224c8dd914b4}</Project>
-      <Name>Bangumi.Models</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Bangumi.Services\Bangumi.Services.csproj">
       <Project>{185d9bbc-ecb8-4a5a-bad0-c919d70032d9}</Project>
       <Name>Bangumi.Services</Name>

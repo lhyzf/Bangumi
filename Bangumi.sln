@@ -5,9 +5,7 @@ VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bangumi", "Bangumi\Bangumi.csproj", "{4DECE7B1-AADA-427F-8A7C-22F73515973A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bangumi.Models", "Bangumi.Models\Bangumi.Models.csproj", "{61BFE87D-4970-4447-AB47-224C8DD914B4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bangumi.Services", "Bangumi.Services\Bangumi.Services.csproj", "{185D9BBC-ECB8-4A5A-BAD0-C919D70032D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bangumi.Services", "Bangumi.Services\Bangumi.Services.csproj", "{185D9BBC-ECB8-4A5A-BAD0-C919D70032D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,26 +47,6 @@ Global
 		{4DECE7B1-AADA-427F-8A7C-22F73515973A}.Release|x86.ActiveCfg = Release|x86
 		{4DECE7B1-AADA-427F-8A7C-22F73515973A}.Release|x86.Build.0 = Release|x86
 		{4DECE7B1-AADA-427F-8A7C-22F73515973A}.Release|x86.Deploy.0 = Release|x86
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Debug|ARM.Build.0 = Debug|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Debug|x64.Build.0 = Debug|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Debug|x86.Build.0 = Debug|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Release|ARM.ActiveCfg = Release|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Release|ARM.Build.0 = Release|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Release|ARM64.Build.0 = Release|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Release|x64.ActiveCfg = Release|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Release|x64.Build.0 = Release|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Release|x86.ActiveCfg = Release|Any CPU
-		{61BFE87D-4970-4447-AB47-224C8DD914B4}.Release|x86.Build.0 = Release|Any CPU
 		{185D9BBC-ECB8-4A5A-BAD0-C919D70032D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{185D9BBC-ECB8-4A5A-BAD0-C919D70032D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{185D9BBC-ECB8-4A5A-BAD0-C919D70032D9}.Debug|ARM.ActiveCfg = Debug|Any CPU
