@@ -167,7 +167,7 @@ namespace Bangumi.Helper
             MyToken.UserId = await FileHelper.ReadFromFileAsync(getOAuthFileName(OAuthFile.user_id), false);
             if (string.IsNullOrEmpty(MyToken.Token) || string.IsNullOrEmpty(MyToken.RefreshToken) || string.IsNullOrEmpty(MyToken.UserId))
             {
-                DeleteTokens();
+                //DeleteTokens();
                 IsLogin = false;
                 return false;
             }

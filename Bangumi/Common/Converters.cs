@@ -36,6 +36,11 @@ namespace Bangumi.Common
         public static Visibility CollapsedIfNullOrEmpty(string value) =>
             string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible;
 
+        /// <summary>
+        /// 返回条目类型
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static string GetSubjectTypeName(int type)
         {
             string cn = "";
@@ -62,7 +67,11 @@ namespace Bangumi.Common
             return cn;
         }
 
-        // 获取星期的中文
+        /// <summary>
+        /// 获取星期的中文
+        /// </summary>
+        /// <param name="day"></param>
+        /// <returns></returns>
         public static string GetWeekday(int day)
         {
             switch (day)
@@ -86,5 +95,16 @@ namespace Bangumi.Common
             }
         }
 
+        /// <summary>
+        /// 根据观看进度返回相应描述
+        /// </summary>
+        /// <param name="watched_eps"></param>
+        /// <returns></returns>
+        public static string GetWatchedEpsDesc(int watched_eps)
+        {
+            if (watched_eps == 0)
+                return "尚未观看";
+            return "看到第" + watched_eps + "话";
+        }
     }
 }

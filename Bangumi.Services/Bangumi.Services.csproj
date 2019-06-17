@@ -12,4 +12,8 @@
     <ProjectReference Include="..\Bangumi.Models\Bangumi.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>
