@@ -261,13 +261,13 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bangumi.Services\Bangumi.Services.csproj">
-      <Project>{185d9bbc-ecb8-4a5a-bad0-c919d70032d9}</Project>
-      <Name>Bangumi.Services</Name>
-    </ProjectReference>
+    <Folder Include="Controls\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controls\" />
+    <ProjectReference Include="..\Bangumi.Api\Bangumi.Api.csproj">
+      <Project>{f04d2305-6d91-4b17-a0a5-d7d570cc2ede}</Project>
+      <Name>Bangumi.Api</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

@@ -1,6 +1,6 @@
 ﻿using Bangumi.Common;
 using Bangumi.Facades;
-using Bangumi.Models;
+using Bangumi.Api.Models;
 using Bangumi.Views;
 using System;
 using System.Collections.Generic;

@@ -2,8 +2,8 @@
 using Bangumi.ContentDialogs;
 using Bangumi.Facades;
 using Bangumi.Helper;
-using Bangumi.Models;
-using Bangumi.Services;
+using Bangumi.Api.Models;
+using Bangumi.Api.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

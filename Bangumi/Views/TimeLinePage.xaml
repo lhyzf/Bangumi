@@ -5,7 +5,7 @@
     xmlns:local="using:Bangumi.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:data="using:Bangumi.Models"
+    xmlns:data="using:Bangumi.Api.Models"
     xmlns:wuxdata="using:Windows.UI.Xaml.Data"
     xmlns:common="using:Bangumi.Common"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
