@@ -95,7 +95,7 @@
         </Style>
     </ContentDialog.Resources>
 
-    <StackPanel>
+    <StackPanel MaxWidth="300">
         <Grid Name="StatusPanel">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

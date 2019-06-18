@@ -31,6 +31,27 @@ namespace Bangumi.ViewModels
             set => Set(ref _isLoading, value);
         }
 
+        private bool _isDetailLoading;
+        public bool IsDetailLoading
+        {
+            get => _isDetailLoading;
+            set => Set(ref _isDetailLoading, value);
+        }
+
+        private bool _isProgressLoading;
+        public bool IsProgressLoading
+        {
+            get => _isProgressLoading;
+            set => Set(ref _isProgressLoading, value);
+        }
+
+        private bool _isStatusLoaded;
+        public bool IsStatusLoaded
+        {
+            get => _isStatusLoaded;
+            set => Set(ref _isStatusLoaded, value);
+        }
+
         private bool _isUpdating;
         public bool IsUpdating
         {
@@ -149,6 +170,7 @@ namespace Bangumi.ViewModels
             {
                 MainPage.rootPage.hasDialog = false;
                 IsUpdating = true;
+                IsStatusLoaded = false;
                 if (await BangumiFacade.UpdateCollectionStatusAsync(SubjectId,
                     BangumiConverters.GetCollectionStatusEnum(collectionEditContentDialog.collectionStatus), collectionEditContentDialog.comment,
                     collectionEditContentDialog.rate.ToString(), collectionEditContentDialog.privacy == true ? "1" : "0"))
@@ -184,6 +206,7 @@ namespace Bangumi.ViewModels
                         }
                     }
                 }
+                IsStatusLoaded = true;
                 IsUpdating = false;
             }
         }
@@ -302,6 +325,9 @@ namespace Bangumi.ViewModels
             try
             {
                 IsLoading = true;
+                IsDetailLoading = true;
+                IsProgressLoading = true;
+                IsStatusLoaded = false;
                 MainPage.rootPage.RefreshAppBarButton.IsEnabled = false;
                 // 获取条目信息
                 var subject = await BangumiFacade.GetSubjectAsync(SubjectId);
@@ -335,6 +361,7 @@ namespace Bangumi.ViewModels
                     // 角色
                     if (subject.Characters != null)
                     {
+                        moreCharacters = "";
                         foreach (var crt in subject.Characters)
                         {
                             moreCharacters += string.Format("{0}：", string.IsNullOrEmpty(crt.NameCn) ? crt.Name : crt.NameCn);
@@ -356,11 +383,12 @@ namespace Bangumi.ViewModels
                     }
                     else
                     {
-                        moreCharacters += "暂无资料";
+                        moreCharacters = "暂无资料";
                     }
                     // 演职人员
                     if (subject.Staff != null)
                     {
+                        moreStaff = "";
                         var sd = new Dictionary<string, string>();
                         foreach (var staff in subject.Staff)
                         {
@@ -384,7 +412,7 @@ namespace Bangumi.ViewModels
                     }
                     else
                     {
-                        moreStaff += "暂无资料";
+                        moreStaff = "暂无资料";
                     }
                     // 显示章节
                     if (subject.Eps != null)
@@ -421,6 +449,7 @@ namespace Bangumi.ViewModels
                             }
                         }
                     }
+                    IsDetailLoading = false;
 
                     // 确认用户登录状态
                     if (OAuthHelper.IsLogin)
@@ -439,6 +468,7 @@ namespace Bangumi.ViewModels
                                 ep.Status = subject.Eps.Where(e => e.Id == ep.Id).FirstOrDefault().Status;
                             }
                         }
+                        IsProgressLoading = false;
 
                         // 获取收藏、评分和吐槽信息。
                         SubjectStatus2 collectionStatus = await BangumiFacade.GetCollectionStatusAsync(SubjectId);
@@ -450,7 +480,7 @@ namespace Bangumi.ViewModels
                             myPrivacy = collectionStatus.Private == "1" ? true : false;
                         }
                         SetCollectionButton();
-
+                        IsStatusLoaded = true;
                     }
                 }
             }
@@ -463,6 +493,9 @@ namespace Bangumi.ViewModels
             finally
             {
                 IsLoading = false;
+                IsDetailLoading = false;
+                IsProgressLoading = false;
+                IsStatusLoaded = true;
                 MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
             }
         }

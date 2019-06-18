@@ -202,36 +202,39 @@ namespace Bangumi.ViewModels
         public string image { get; set; }
         public List<SimpleEp> eps { get; set; }
 
-        private int _watched_eps;
-        private string _updated_eps;
-        private string _ep_color;
-        private int _next_ep;
         private bool _isUpdating;
-
-        public int next_ep
-        {
-            get => _next_ep;
-            set => Set(ref _next_ep, value);
-        }
         public bool isUpdating
         {
             get => _isUpdating;
             set => Set(ref _isUpdating, value);
         }
-        public string ep_color
-        {
-            get { return _ep_color; }
-            set => Set(ref _ep_color, value);
-        }
+
+        private int _watched_eps;
         public int watched_eps
         {
             get { return _watched_eps; }
             set => Set(ref _watched_eps, value);
         }
+
+        private string _updated_eps;
         public string updated_eps
         {
             get { return _updated_eps; }
             set => Set(ref _updated_eps, value);
+        }
+
+        private int _next_ep;
+        public int next_ep
+        {
+            get => _next_ep;
+            set => Set(ref _next_ep, value);
+        }
+
+        private string _ep_color;
+        public string ep_color
+        {
+            get { return _ep_color; }
+            set => Set(ref _ep_color, value);
         }
     }
 
