@@ -141,48 +141,34 @@ namespace Bangumi.Views
 
 
         /// <summary>
-        /// 章节看过。
+        /// 修改章节状态。
         /// </summary>
-        private void WatchedMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private void UpdateEpStatusMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            var item = sender as MenuFlyoutItem;
+            var tag = item.Tag;
             var ep = EpsGridView.SelectedItem as Ep;
-            ViewModel.UpdateEpStatus(ep, EpStatusEnum.watched);
-        }
+            switch (tag)
+            {
+                case "Watched":
+                    ViewModel.UpdateEpStatus(ep, EpStatusEnum.watched);
+                    break;
+                case "WatchedTo":
+                    ViewModel.UpdateEpStatusBatch(ep, EpStatusEnum.watched);
+                    break;
+                case "Queue":
+                    ViewModel.UpdateEpStatus(ep, EpStatusEnum.queue);
+                    break;
+                case "Drop":
+                    ViewModel.UpdateEpStatus(ep, EpStatusEnum.drop);
+                    break;
+                case "Remove":
+                    ViewModel.UpdateEpStatus(ep, EpStatusEnum.remove);
+                    break;
+                default:
+                    break;
+            }
 
-        /// <summary>
-        /// 章节看到。
-        /// </summary>
-        private void WatchedToMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            var ep = EpsGridView.SelectedItem as Ep;
-            ViewModel.UpdateEpStatusBatch(ep, EpStatusEnum.watched);
-        }
-
-        /// <summary>
-        /// 章节想看。
-        /// </summary>
-        private void QueueMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            var ep = EpsGridView.SelectedItem as Ep;
-            ViewModel.UpdateEpStatus(ep, EpStatusEnum.queue);
-        }
-
-        /// <summary>
-        /// 章节抛弃。
-        /// </summary>
-        private void DropMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            var ep = EpsGridView.SelectedItem as Ep;
-            ViewModel.UpdateEpStatus(ep, EpStatusEnum.drop);
-        }
-
-        /// <summary>
-        /// 章节未看。
-        /// </summary>
-        private void RemoveMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            var ep = EpsGridView.SelectedItem as Ep;
-            ViewModel.UpdateEpStatus(ep, EpStatusEnum.remove);
         }
 
         /// <summary>
@@ -190,7 +176,7 @@ namespace Bangumi.Views
         /// </summary>
         private void Eps_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (OAuthHelper.IsLogin && !ViewModel.IsLoading && ((Ep)EpsGridView.SelectedItem).Status != "NA")
+            if (OAuthHelper.IsLogin && !ViewModel.IsProgressLoading && ((Ep)EpsGridView.SelectedItem).Status != "NA")
             {
                 FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
             }
@@ -201,7 +187,7 @@ namespace Bangumi.Views
         /// </summary>
         private void Eps_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            if (OAuthHelper.IsLogin && !ViewModel.IsLoading)
+            if (OAuthHelper.IsLogin && !ViewModel.IsProgressLoading)
             {
                 FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
             }
@@ -238,6 +224,12 @@ namespace Bangumi.Views
                 Path = new PropertyPath("CollectionStatusIcon"),
             };
             MainPage.rootPage.CollectionAppBarButtonFontIcon.SetBinding(FontIcon.GlyphProperty, GlyphBinding);
+            Binding IsEnabledBinding = new Binding
+            {
+                Source = ViewModel,
+                Path = new PropertyPath("IsStatusLoaded"),
+            };
+            MainPage.rootPage.CollectionAppBarButton.SetBinding(AppBarButton.IsEnabledProperty, IsEnabledBinding);
             MainPage.rootPage.CollectionAppBarButton.Click += CollectionAppBarButton_Click;
             MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Visible;
         }
