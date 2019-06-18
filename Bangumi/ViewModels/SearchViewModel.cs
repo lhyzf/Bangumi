@@ -175,62 +175,58 @@ namespace Bangumi.ViewModels
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
             var dispatcher = Window.Current.Dispatcher;
-            //var tokenSource = new CancellationTokenSource();
-            //var token = tokenSource.Token;
             return AsyncInfo.Run(async cancelToken =>
             {
-                //if (!token.IsCancellationRequested)
-                //{
-                    await Task.WhenAll(Task.Delay(1000), dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                await Task.WhenAll(Task.Delay(1000), dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                {
+                    if (IsSearching)
+                        return;
+                    try
                     {
-                        if (IsSearching)
-                            return;
-                        try
+                        IsSearching = true;
+                        Debug.WriteLine("Loading {0}/{1} items ({2})", offset + 20, max, type);
+                        // 加载开始事件
+                        if (this.OnLoadMoreStarted != null)
                         {
-                            IsSearching = true;
-                            Debug.WriteLine("Loading {0}/{1} items ({2})", offset + 20, max, type);
-                            // 加载开始事件
-                            if (this.OnLoadMoreStarted != null)
-                            {
-                                this.OnLoadMoreStarted(index);
-                            }
-                            SearchResult result = await BangumiFacade.GetSearchResultAsync(keyword, type, offset, 20);
-                            max = result.ResultCount;
-                            foreach (Subject item in result.Results)
-                            {
-                                Add(item);
-                            }
-                            if (!HasMoreItems)
-                            {
-                                System.Diagnostics.Debug.WriteLine("Loading complete.");
-                            }
-                            ItemsCount += result.Results.Count;
-                            offset += 20;
-
+                            this.OnLoadMoreStarted(index);
                         }
-                        catch (Exception e)
+                        SearchResult result = await BangumiFacade.GetSearchResultAsync(keyword, type, offset, 20);
+                        max = result.ResultCount;
+                        foreach (Subject item in result.Results)
                         {
-                            var msgDialog = new Windows.UI.Popups.MessageDialog("获取搜索结果失败！\n" + e.Message) { Title = "错误！" };
-                            msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                            await msgDialog.ShowAsync();
+                            Add(item);
                         }
-                        finally
+                        if (!HasMoreItems)
                         {
-                            // 加载完成事件
-                            if (this.OnLoadMoreCompleted != null)
-                            {
-                                if (offset > max)
-                                {
-                                    offset = max;
-                                }
-                                this.OnLoadMoreCompleted(index, ItemsCount, HasMoreItems);
-                            }
-                            IsSearching = false;
+                            System.Diagnostics.Debug.WriteLine("Loading complete.");
                         }
-                    }).AsTask());
+                        ItemsCount += result.Results.Count;
+                        offset += 20;
 
+                    }
+                    catch (Exception e)
+                    {
+                        MainPage.rootPage.ErrorInAppNotification.Show("获取搜索结果失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
+                        offset = max;
+                        //var msgDialog = new Windows.UI.Popups.MessageDialog("获取搜索结果失败！\n" + e.Message) { Title = "错误！" };
+                        //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                        //await msgDialog.ShowAsync();
+                    }
+                    finally
+                    {
+                        // 加载完成事件
+                        if (this.OnLoadMoreCompleted != null)
+                        {
+                            if (offset > max)
+                            {
+                                offset = max;
+                            }
+                            this.OnLoadMoreCompleted(index, ItemsCount, HasMoreItems);
+                        }
+                        IsSearching = false;
+                    }
+                }).AsTask());
 
-                //}
                 return new LoadMoreItemsResult { Count = count };
             });
         }

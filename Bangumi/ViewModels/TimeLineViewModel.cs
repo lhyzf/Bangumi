@@ -41,9 +41,10 @@ namespace Bangumi.ViewModels
             }
             catch (Exception e)
             {
-                var msgDialog = new Windows.UI.Popups.MessageDialog("获取时间表失败！\n" + e.Message) { Title = "错误！" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
+                MainPage.rootPage.ErrorInAppNotification.Show("获取时间表失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
+                //var msgDialog = new Windows.UI.Popups.MessageDialog("获取时间表失败！\n" + e.Message) { Title = "错误！" };
+                //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                //await msgDialog.ShowAsync();
             }
             finally
             {
