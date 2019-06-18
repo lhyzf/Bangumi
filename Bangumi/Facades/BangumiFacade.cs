@@ -404,13 +404,20 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.UpdateProgressAsync(OAuthHelper.MyToken.Token, ep, status);
+                if (await BangumiHttpWrapper.UpdateProgressAsync(OAuthHelper.MyToken.Token, ep, status))
+                {
+                    MainPage.rootPage.ToastInAppNotification.Show($"标记章节{ep}{status.GetValue()}成功", 1500);
+                    return true;
+                }
+                MainPage.rootPage.ErrorInAppNotification.Show($"标记章节{ep}{status.GetValue()}失败，请重试！", 1500);
+                return false;
             }
             catch (Exception e)
             {
-                var msgDialog = new Windows.UI.Popups.MessageDialog("更新收视进度失败！\n" + e.Message) { Title = "错误！" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
+                MainPage.rootPage.ErrorInAppNotification.Show("更新收视进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
+                //var msgDialog = new Windows.UI.Popups.MessageDialog("更新收视进度失败！\n" + e.Message) { Title = "错误！" };
+                //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                //await msgDialog.ShowAsync();
                 return false;
             }
         }
@@ -427,13 +434,20 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.UpdateProgressBatchAsync(OAuthHelper.MyToken.Token, ep, status, epsId);
+                if (await BangumiHttpWrapper.UpdateProgressBatchAsync(OAuthHelper.MyToken.Token, ep, status, epsId))
+                {
+                    MainPage.rootPage.ToastInAppNotification.Show($"批量标记章节{epsId}{status.GetValue()}状态成功", 1500);
+                    return true;
+                }
+                MainPage.rootPage.ErrorInAppNotification.Show($"批量标记章节{epsId}{status.GetValue()}状态失败，请重试！", 1500);
+                return false;
             }
             catch (Exception e)
             {
-                var msgDialog = new Windows.UI.Popups.MessageDialog("更新收藏状态失败！\n" + e.Message) { Title = "错误！" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
+                MainPage.rootPage.ErrorInAppNotification.Show("更新收藏进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
+                //var msgDialog = new Windows.UI.Popups.MessageDialog("更新收藏状态失败！\n" + e.Message) { Title = "错误！" };
+                //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                //await msgDialog.ShowAsync();
                 return false;
             }
         }
@@ -452,14 +466,21 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.UpdateCollectionStatusAsync(OAuthHelper.MyToken.Token,
-                    subjectId, collectionStatusEnum, comment, rating, privace);
+                if (await BangumiHttpWrapper.UpdateCollectionStatusAsync(OAuthHelper.MyToken.Token,
+                    subjectId, collectionStatusEnum, comment, rating, privace))
+                {
+                    MainPage.rootPage.ToastInAppNotification.Show($"更新条目{subjectId}{collectionStatusEnum.GetValue()}状态成功", 1500);
+                    return true;
+                }
+                MainPage.rootPage.ErrorInAppNotification.Show($"更新条目{subjectId}{collectionStatusEnum.GetValue()}状态失败，请重试！", 1500);
+                return false;
             }
             catch (Exception e)
             {
-                var msgDialog = new Windows.UI.Popups.MessageDialog("更新收藏状态失败！\n" + e.Message) { Title = "错误！" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                await msgDialog.ShowAsync();
+                MainPage.rootPage.ErrorInAppNotification.Show("更新收藏进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
+                //var msgDialog = new Windows.UI.Popups.MessageDialog("更新收藏状态失败！\n" + e.Message) { Title = "错误！" };
+                //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                //await msgDialog.ShowAsync();
                 return false;
             }
         }
