@@ -2,7 +2,7 @@
 using Bangumi.ContentDialogs;
 using Bangumi.Facades;
 using Bangumi.Helper;
-using Bangumi.Models;
+using Bangumi.Api.Models;
 using Bangumi.Views;
 using Newtonsoft.Json;
 using System;

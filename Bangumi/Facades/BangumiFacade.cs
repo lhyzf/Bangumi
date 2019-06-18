@@ -1,6 +1,7 @@
-﻿using Bangumi.Helper;
-using Bangumi.Models;
-using Bangumi.Services;
+﻿using Bangumi.Api.Models;
+using Bangumi.Api.Utils;
+using Bangumi.Api.Services;
+using Bangumi.Helper;
 using Bangumi.ViewModels;
 using Newtonsoft.Json;
 using System;

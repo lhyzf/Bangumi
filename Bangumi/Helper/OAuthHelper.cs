@@ -1,5 +1,5 @@
-﻿using Bangumi.Models;
-using Bangumi.Services;
+﻿using Bangumi.Api.Models;
+using Bangumi.Api.Services;
 using System;
 using System.Diagnostics;
 using System.IO;

@@ -1,6 +1,6 @@
 ﻿using Bangumi.Facades;
 using Bangumi.Helper;
-using Bangumi.Models;
+using Bangumi.Api.Models;
 using Bangumi.ViewModels;
 using System;
 using System.Collections.ObjectModel;
