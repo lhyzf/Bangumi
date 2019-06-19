@@ -97,14 +97,6 @@ namespace Bangumi.Views
                         newEp.Status = ep.status;
                         newEp.Type = ep.type;
                         newEp.NameCn = ep.name;
-                        if (newEp.Type == 0)
-                        {
-                            newEp.Sort = "第 " + newEp.Sort + " 话";
-                        }
-                        else
-                        {
-                            newEp.Sort = ViewModel.GetEpisodeType(newEp.Type) + " " + newEp.Sort;
-                        }
                         ViewModel.eps.Add(newEp);
                     }
                 }

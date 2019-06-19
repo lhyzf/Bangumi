@@ -105,12 +105,13 @@ namespace Bangumi.Facades
                             if (progress != null)
                             {
                                 item.watched_eps = progress.Eps.Count;
-                                item.next_ep = item.watched_eps + 1;
+                                if (item.eps.Count == item.watched_eps)
+                                    item.next_ep = 0;
                                 if (progress.Eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                                     item.ep_color = "#d26585";
                                 else
                                     item.ep_color = "Gray";
-                                foreach (var ep in item.eps) //用户观看状态
+                                foreach (var ep in item.eps) // 填充用户观看状态
                                 {
                                     foreach (var p in progress.Eps)
                                     {
@@ -126,9 +127,9 @@ namespace Bangumi.Facades
                             else
                             {
                                 item.watched_eps = 0;
-                                item.next_ep = 1;
                                 item.ep_color = "#d26585";
                             }
+                            item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today" || ep.status == "NA").FirstOrDefault().sort;
                             item.lasttouch = watching.LastTouch;
                             item.lastupdate = DateTime.Today.ConvertDateTimeToJsTick();
                         }
@@ -161,8 +162,6 @@ namespace Bangumi.Facades
                                     item.watched_eps = progress.Eps.Count;
                                     if (item.eps.Count == item.watched_eps)
                                         item.next_ep = 0;
-                                    else
-                                        item.next_ep = item.watched_eps + 1;
                                     if (item.watched_eps < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                                         item.ep_color = "#d26585";
                                     else
@@ -177,20 +176,15 @@ namespace Bangumi.Facades
                                                 progress.Eps.Remove(p);
                                                 break;
                                             }
-                                            else
-                                            {
-
-                                            }
                                         }
                                     }
                                 }
                                 else
                                 {
                                     item.watched_eps = 0;
-                                    item.next_ep = 1;
                                     item.ep_color = "#d26585";
                                 }
-
+                                item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today" || ep.status == "NA").FirstOrDefault().sort;
                                 item.lasttouch = watching.LastTouch;
                                 item.lastupdate = DateTime.Today.ConvertDateTimeToJsTick();
                             }

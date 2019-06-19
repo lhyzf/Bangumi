@@ -124,14 +124,15 @@ namespace Bangumi.ViewModels
             if (item != null)
             {
                 item.isUpdating = true;
-                if (item.next_ep != 0 && await BangumiFacade.UpdateProgressAsync(item.eps[item.next_ep - 1].id.ToString(), EpStatusEnum.watched))
+                if (item.next_ep != 0 && await BangumiFacade.UpdateProgressAsync(
+                    item.eps.Where(ep => ep.sort == item.next_ep).FirstOrDefault().id.ToString(), EpStatusEnum.watched))
                 {
-                    item.eps[item.next_ep - 1].status = "看过";
+                    item.eps.Where(ep => ep.sort == item.next_ep).FirstOrDefault().status = "看过";
                     if (item.eps.Count == item.eps.Where(e => e.status == "看过").Count())
                         item.next_ep = 0;
                     else
-                        item.next_ep++;
-                    item.watched_eps = item.eps.Where(e => e.status == "看过").Count();
+                        item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today" || ep.status == "NA").FirstOrDefault().sort;
+                    item.watched_eps++;
                     // 若未看到最新一集，则使用粉色，否则使用灰色
                     if (item.eps.Where(e => e.status == "看过").Count() < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                         item.ep_color = "#d26585";
@@ -224,8 +225,8 @@ namespace Bangumi.ViewModels
             set => Set(ref _updated_eps, value);
         }
 
-        private int _next_ep;
-        public int next_ep
+        private float _next_ep;
+        public float next_ep
         {
             get => _next_ep;
             set => Set(ref _next_ep, value);
@@ -243,7 +244,7 @@ namespace Bangumi.ViewModels
     {
         public int id { get; set; }
         public int type { get; set; }
-        public string sort { get; set; }
+        public float sort { get; set; }
         public string status { get; set; }
         public string name { get; set; }
     }

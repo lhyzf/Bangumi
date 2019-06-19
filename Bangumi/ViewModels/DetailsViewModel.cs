@@ -422,14 +422,6 @@ namespace Bangumi.ViewModels
                         {
                             foreach (var ep in subject.Eps.OrderBy(c => c.Type))
                             {
-                                if (ep.Type == 0)
-                                {
-                                    ep.Sort = "第 " + ep.Sort + " 话";
-                                }
-                                else
-                                {
-                                    ep.Sort = GetEpisodeType(ep.Type) + " " + ep.Sort;
-                                }
                                 eps.Add(ep);
                             }
                         }
@@ -498,31 +490,6 @@ namespace Bangumi.ViewModels
                 IsProgressLoading = false;
                 IsStatusLoaded = true;
                 MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
-            }
-        }
-
-
-        // 获取章节类型
-        public string GetEpisodeType(int n)
-        {
-            switch (n)
-            {
-                case 0:
-                    return "本篇";
-                case 1:
-                    return "特别篇";
-                case 2:
-                    return "OP";
-                case 3:
-                    return "ED";
-                case 4:
-                    return "预告/宣传/广告";
-                case 5:
-                    return "MAD";
-                case 6:
-                    return "其他";
-                default:
-                    return "";
             }
         }
 

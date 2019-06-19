@@ -19,7 +19,7 @@ namespace Bangumi.Api.Models
         public int Type { get; set; }
 
         [JsonProperty("sort")]
-        public string Sort { get; set; }
+        public float Sort { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }
