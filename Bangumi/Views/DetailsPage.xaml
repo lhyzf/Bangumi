@@ -25,7 +25,7 @@
                            BorderThickness="0.5"
                            BorderBrush="{ThemeResource SystemControlBackgroundListMediumBrush}">
                 <TextBlock Name="SortTextBlock"
-                           Text="{x:Bind Sort}" 
+                           Text="{x:Bind common:Converters.GetEpSortDesc(Sort,Type)}" 
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.AlignTopWithPanel="True"
                            FontSize="14" />
@@ -67,7 +67,7 @@
             </RelativePanel>
         </DataTemplate>
     </Page.Resources>
-    
+
     <Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>

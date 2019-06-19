@@ -1,5 +1,6 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+using Bangumi.Api.Models;
 
 namespace Bangumi.Common
 {
@@ -106,5 +107,23 @@ namespace Bangumi.Common
                 return "尚未观看";
             return "看到第" + watched_eps + "话";
         }
+
+        /// <summary>
+        /// 根据sort和type返回相应描述
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        public static string GetEpSortDesc(float sort, int type)
+        {
+            if (type == 0)
+            {
+                return "第 " + sort + " 话";
+            }
+            else
+            {
+                return type.GetEpisodeType() + " " + sort;
+            }
+        }
+
     }
 }
