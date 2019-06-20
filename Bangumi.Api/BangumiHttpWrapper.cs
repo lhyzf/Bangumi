@@ -253,7 +253,18 @@ namespace Bangumi.Api.Services
             try
             {
                 string response = await HttpHelper.GetAsync(url);
-                return JsonConvert.DeserializeObject<Subject>(response);
+                var result = JsonConvert.DeserializeObject<Subject>(response);
+                result.Name = System.Net.WebUtility.HtmlDecode(result.Name);
+                result.NameCn = string.IsNullOrEmpty(result.NameCn) ? result.Name : System.Net.WebUtility.HtmlDecode(result.NameCn);
+                if (result.Eps != null)
+                {
+                    foreach (var ep in result.Eps)
+                    {
+                        ep.Name = System.Net.WebUtility.HtmlDecode(ep.Name);
+                        ep.NameCn = string.IsNullOrEmpty(ep.NameCn) ? ep.Name : System.Net.WebUtility.HtmlDecode(ep.NameCn);
+                    }
+                }
+                return result;
             }
             catch (Exception e)
             {
@@ -296,8 +307,7 @@ namespace Bangumi.Api.Services
                     foreach (var ep in result.Eps)
                     {
                         ep.Name = System.Net.WebUtility.HtmlDecode(ep.Name);
-                        ep.NameCn = System.Net.WebUtility.HtmlDecode(ep.NameCn);
-                        ep.NameCn = string.IsNullOrEmpty(ep.NameCn) ? ep.Name : ep.NameCn;
+                        ep.NameCn = string.IsNullOrEmpty(ep.NameCn) ? ep.Name : System.Net.WebUtility.HtmlDecode(ep.NameCn);
                     }
                 }
                 return result;

@@ -141,6 +141,7 @@ namespace Bangumi.Facades
                             {
                                 var subject = await BangumiHttpWrapper.GetSubjectEpsAsync(item.subject_id.ToString());
                                 item.eps.Clear();
+                                Console.WriteLine(watching.LastTouch);
                                 foreach (var ep in subject.Eps)
                                 {
                                     SimpleEp simpleEp = new SimpleEp();
@@ -148,7 +149,7 @@ namespace Bangumi.Facades
                                     simpleEp.sort = ep.Sort;
                                     simpleEp.status = ep.Status;
                                     simpleEp.type = ep.Type;
-                                    simpleEp.name = ep.NameCn == "" ? ep.Name : ep.NameCn;
+                                    simpleEp.name = ep.NameCn;
                                     item.eps.Add(simpleEp);
                                 }
                                 if (item.eps.Where(e => e.status == "NA").Count() == 0)
