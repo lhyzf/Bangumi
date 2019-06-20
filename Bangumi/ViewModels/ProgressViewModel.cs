@@ -2,6 +2,7 @@
 using Bangumi.ContentDialogs;
 using Bangumi.Facades;
 using Bangumi.Helper;
+using Bangumi.Api.Utils;
 using Bangumi.Api.Models;
 using Bangumi.Views;
 using Newtonsoft.Json;
@@ -152,6 +153,7 @@ namespace Bangumi.ViewModels
                             item.ep_color = "Gray";
                         }
                     }
+                    item.lasttouch = DateTime.Now.ConvertDateTimeToJsTick();
 
                     //将对象序列化并存储到文件
                     await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), "JsonCache\\home");
@@ -164,30 +166,30 @@ namespace Bangumi.ViewModels
         // 对条目进行排序
         private void CollectionSorting()
         {
+            // 排序
             var order = new List<WatchingStatus>();
             var notWatched = new List<WatchingStatus>();
-            order.AddRange(WatchingCollection.OrderBy(p => p.lasttouch).OrderBy(p => p.ep_color));
-            for (int i = 0; i < order.Count; i++)
+            order.AddRange(WatchingCollection.Where(p => p.watched_eps != 0).OrderBy(p => p.lasttouch).OrderBy(p => p.ep_color));
+            notWatched.AddRange(WatchingCollection.Where(p => p.watched_eps == 0));
+            if (notWatched != null)
             {
-                if (order[i].watched_eps == 0)
+                for (int i = 0; i < order.Count; i++)
                 {
-                    notWatched.Add(order[i]);
-                    order.Remove(order[i]);
-                    i--;
+                    if (order[i].ep_color == "Gray")
+                    {
+                        order.InsertRange(i, notWatched);
+                        break;
+                    }
                 }
             }
-            WatchingCollection.Clear();
-            foreach (var item in order)
+            // 仅修改与排序不同之处
+            for (int i = 0; i < WatchingCollection.Count; i++)
             {
-                if (notWatched.Count != 0 && item.ep_color == "Gray")
+                if (WatchingCollection[i].subject_id != order[i].subject_id)
                 {
-                    foreach (var item2 in notWatched)
-                    {
-                        WatchingCollection.Add(item2);
-                    }
-                    notWatched.Clear();
+                    WatchingCollection.RemoveAt(i);
+                    WatchingCollection.Insert(i, order[i]);
                 }
-                WatchingCollection.Add(item);
             }
         }
 
