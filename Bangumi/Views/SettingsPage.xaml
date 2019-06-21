@@ -54,7 +54,7 @@
                                   Toggled="SubjectCompleteToggleSwitch_Toggled">
                         <ToggleSwitch.Header>
                             <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
-                                       Text="看完所有剧集后将收藏状态修改为看过"
+                                       Text="看完所有剧集后弹窗提示评价"
                                        Margin="0,4,0,0"
                                        FontWeight="Normal"
                                        TextWrapping="Wrap" />
