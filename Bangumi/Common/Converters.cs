@@ -1,6 +1,8 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Bangumi.Api.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Bangumi.Common
 {
@@ -109,7 +111,7 @@ namespace Bangumi.Common
         }
 
         /// <summary>
-        /// 根据sort和type返回相应描述
+        /// 根据sort和type返回章节相应描述
         /// </summary>
         /// <param name="sort"></param>
         /// <returns></returns>
@@ -118,6 +120,24 @@ namespace Bangumi.Common
             if (type == 0)
             {
                 return "第 " + sort + " 话";
+            }
+            else
+            {
+                return type.GetEpisodeType() + " " + sort;
+            }
+        }
+
+        /// <summary>
+        /// 根据sort和eps返回非正片章节相应描述
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        public static string GetEpNextSortDesc(float sort, List<ViewModels.SimpleEp> eps)
+        {
+            int type = eps.Where(p => p.sort == sort).FirstOrDefault().type;
+            if (type == 0)
+            {
+                return sort.ToString();
             }
             else
             {
