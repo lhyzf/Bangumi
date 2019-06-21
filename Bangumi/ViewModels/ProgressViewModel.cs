@@ -148,8 +148,12 @@ namespace Bangumi.ViewModels
                         else
                         {
                             // 将已看到最新剧集的条目排到最后
-                            WatchingCollection.Remove(item);
-                            WatchingCollection.Add(item);
+
+                            if (WatchingCollection.IndexOf(item) != WatchingCollection.Count - 1)
+                            {
+                                WatchingCollection.Remove(item);
+                                WatchingCollection.Add(item);
+                            }
                             item.ep_color = "Gray";
                         }
                     }
