@@ -31,14 +31,14 @@ namespace Bangumi.ViewModels
         }
 
         // 更新收藏状态、评分、吐槽
-        public async void EditCollectionStatus(WatchingStatus status)
+        public async void EditCollectionStatus(WatchingStatus status, string currentStatus = "在看")
         {
             CollectionEditContentDialog collectionEditContentDialog = new CollectionEditContentDialog()
             {
                 rate = 0,
                 comment = "",
                 privacy = false,
-                collectionStatus = "在看"
+                collectionStatus = currentStatus
             };
             MainPage.rootPage.hasDialog = true;
             if (ContentDialogResult.Primary == await collectionEditContentDialog.ShowAsync())
@@ -139,22 +139,18 @@ namespace Bangumi.ViewModels
                         item.ep_color = "#d26585";
                     else
                     {
-                        // 若设置启用且看完则标记为看过，并从列表中删除
+                        // 将已看到最新剧集的条目排到最后，且设为灰色
+                        if (WatchingCollection.IndexOf(item) != WatchingCollection.Count - 1)
+                        {
+                            WatchingCollection.Remove(item);
+                            WatchingCollection.Add(item);
+                        }
+                        item.ep_color = "Gray";
+
+                        // 若设置启用且看完则弹窗提示修改收藏状态及评价
                         if (SettingHelper.SubjectComplete == true && item.eps.Where(e => e.status == "看过").Count() == item.eps.Count)
                         {
-                            await BangumiFacade.UpdateCollectionStatusAsync(item.subject_id.ToString(), CollectionStatusEnum.collect);
-                            WatchingCollection.Remove(item);
-                        }
-                        else
-                        {
-                            // 将已看到最新剧集的条目排到最后
-
-                            if (WatchingCollection.IndexOf(item) != WatchingCollection.Count - 1)
-                            {
-                                WatchingCollection.Remove(item);
-                                WatchingCollection.Add(item);
-                            }
-                            item.ep_color = "Gray";
+                            EditCollectionStatus(item, "看过");
                         }
                     }
                     item.lasttouch = DateTime.Now.ConvertDateTimeToJsTick();
@@ -170,22 +166,33 @@ namespace Bangumi.ViewModels
         // 对条目进行排序
         private void CollectionSorting()
         {
-            // 排序
             var order = new List<WatchingStatus>();
             var notWatched = new List<WatchingStatus>();
-            order.AddRange(WatchingCollection.Where(p => p.watched_eps != 0).OrderBy(p => p.lasttouch).OrderBy(p => p.ep_color));
-            notWatched.AddRange(WatchingCollection.Where(p => p.watched_eps == 0));
-            if (notWatched != null)
+            var allWatched = new List<WatchingStatus>();
+            order = WatchingCollection
+                .Where(p => p.watched_eps != 0 && p.watched_eps != p.eps.Count)
+                .OrderBy(p => p.lasttouch)
+                .OrderBy(p => p.ep_color)
+                .ToList();
+            notWatched = WatchingCollection
+                .Where(p => p.watched_eps == 0)
+                .ToList();
+            allWatched = WatchingCollection
+                .Where(p => p.watched_eps == p.eps.Count)
+                .ToList();
+
+            // 排序，尚未观看的排在所有有观看记录的有更新的条目之后，
+            // ，在已看到最新剧集的条目之前，看完的排在最后
+            for (int i = 0; i < order.Count; i++)
             {
-                for (int i = 0; i < order.Count; i++)
+                if (order[i].ep_color == "Gray")
                 {
-                    if (order[i].ep_color == "Gray")
-                    {
-                        order.InsertRange(i, notWatched);
-                        break;
-                    }
+                    order.InsertRange(i, notWatched);
+                    break;
                 }
             }
+            order.AddRange(allWatched);
+
             // 仅修改与排序不同之处
             for (int i = 0; i < WatchingCollection.Count; i++)
             {

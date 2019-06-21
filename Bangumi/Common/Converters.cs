@@ -134,14 +134,18 @@ namespace Bangumi.Common
         /// <returns></returns>
         public static string GetEpNextSortDesc(float sort, List<ViewModels.SimpleEp> eps)
         {
-            int type = eps.Where(p => p.sort == sort).FirstOrDefault().type;
-            if (type == 0)
+            int? type = eps?.Where(p => p.sort == sort).FirstOrDefault()?.type;
+            if (type == null)
+            {
+                return "0";
+            }
+            else if (type == 0)
             {
                 return sort.ToString();
             }
             else
             {
-                return type.GetEpisodeType() + " " + sort;
+                return type?.GetEpisodeType() + " " + sort;
             }
         }
 
