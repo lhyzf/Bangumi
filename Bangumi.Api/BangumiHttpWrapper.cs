@@ -258,6 +258,8 @@ namespace Bangumi.Api.Services
                 result.NameCn = string.IsNullOrEmpty(result.NameCn) ? result.Name : System.Net.WebUtility.HtmlDecode(result.NameCn);
                 if (result.Eps != null)
                 {
+                    // 将章节按类别排序
+                    result.Eps = result.Eps.OrderBy(c => c.Type).ToList();
                     foreach (var ep in result.Eps)
                     {
                         ep.Name = System.Net.WebUtility.HtmlDecode(ep.Name);
@@ -304,6 +306,8 @@ namespace Bangumi.Api.Services
                 }
                 if (result.Eps != null)
                 {
+                    // 将章节按类别排序
+                    result.Eps = result.Eps.OrderBy(c => c.Type).ToList();
                     foreach (var ep in result.Eps)
                     {
                         ep.Name = System.Net.WebUtility.HtmlDecode(ep.Name);

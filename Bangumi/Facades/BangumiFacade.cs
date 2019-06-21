@@ -84,11 +84,11 @@ namespace Bangumi.Facades
                         if (item.lasttouch == 0)
                         {
                             // 获取EP详细信息
-                            var subject = await BangumiHttpWrapper.GetSubjectEpsAsync(item.subject_id.ToString());
-                            var progress = await BangumiHttpWrapper.GetProgressesAsync(OAuthHelper.MyToken.UserId, OAuthHelper.MyToken.Token, item.subject_id.ToString());
+                            var subject = await GetSubjectAsync(item.subject_id.ToString());
+                            var progress = await GetProgressesAsync(item.subject_id.ToString());
 
                             item.eps = new List<SimpleEp>();
-                            foreach (var ep in subject.Eps.OrderBy(c => c.Type))
+                            foreach (var ep in subject.Eps)
                             {
                                 SimpleEp simpleEp = new SimpleEp();
                                 simpleEp.id = ep.Id;
@@ -157,7 +157,7 @@ namespace Bangumi.Facades
                                 else
                                     item.updated_eps = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
 
-                                var progress = await BangumiHttpWrapper.GetProgressesAsync(OAuthHelper.MyToken.UserId, OAuthHelper.MyToken.Token, item.subject_id.ToString());
+                                var progress = await GetProgressesAsync(item.subject_id.ToString());
                                 if (progress != null)
                                 {
                                     item.watched_eps = progress.Eps.Count;
@@ -316,7 +316,8 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.GetSubjectAsync(subjectId);
+                var result = await BangumiHttpWrapper.GetSubjectAsync(subjectId);
+                return result;
             }
             catch (Exception e)
             {

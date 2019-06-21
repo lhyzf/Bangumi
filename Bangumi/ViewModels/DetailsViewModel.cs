@@ -420,7 +420,7 @@ namespace Bangumi.ViewModels
                         // 在无章节信息时添加
                         if (eps.Count == 0)
                         {
-                            foreach (var ep in subject.Eps.OrderBy(c => c.Type))
+                            foreach (var ep in subject.Eps)
                             {
                                 eps.Add(ep);
                             }
