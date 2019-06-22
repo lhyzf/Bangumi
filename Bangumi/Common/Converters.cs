@@ -128,24 +128,28 @@ namespace Bangumi.Common
         }
 
         /// <summary>
-        /// 根据sort和eps返回非正片章节相应描述
+        /// 根据next_ep和eps返回非正片章节相应描述
         /// </summary>
-        /// <param name="sort"></param>
+        /// <param name="next_ep"></param>
         /// <returns></returns>
-        public static string GetEpNextSortDesc(float sort, List<ViewModels.SimpleEp> eps)
+        public static string GetEpNextSortDesc(float next_ep, List<ViewModels.SimpleEp> eps)
         {
-            int? type = eps?.Where(p => p.sort == sort).FirstOrDefault()?.type;
+            if (next_ep == -1)
+            {
+                return "";
+            }
+            int? type = eps?.Where(p => p.sort == next_ep).FirstOrDefault()?.type;
             if (type == null)
             {
-                return "0";
+                return "";
             }
             else if (type == 0)
             {
-                return sort.ToString();
+                return next_ep.ToString();
             }
             else
             {
-                return type?.GetEpisodeType() + " " + sort;
+                return type?.GetEpisodeType() + " " + next_ep;
             }
         }
 
