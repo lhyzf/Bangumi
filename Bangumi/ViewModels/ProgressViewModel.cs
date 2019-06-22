@@ -125,12 +125,14 @@ namespace Bangumi.ViewModels
             if (item != null)
             {
                 item.isUpdating = true;
-                if (item.next_ep != 0 && await BangumiFacade.UpdateProgressAsync(
-                    item.eps.Where(ep => ep.sort == item.next_ep).FirstOrDefault().id.ToString(), EpStatusEnum.watched))
+                if (item.next_ep != -1 && await BangumiFacade.UpdateProgressAsync(
+                    item.eps.Where(ep => (ep.status == "Air" || ep.status == "Today" || ep.status == "NA") && ep.sort == item.next_ep)
+                            .FirstOrDefault().id.ToString(), EpStatusEnum.watched))
                 {
-                    item.eps.Where(ep => ep.sort == item.next_ep).FirstOrDefault().status = "看过";
+                    item.eps.Where(ep => (ep.status == "Air" || ep.status == "Today" || ep.status == "NA") && ep.sort == item.next_ep)
+                            .FirstOrDefault().status = "看过";
                     if (item.eps.Count == item.eps.Where(e => e.status == "看过").Count())
-                        item.next_ep = 0;
+                        item.next_ep = -1;
                     else
                         item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today" || ep.status == "NA").FirstOrDefault().sort;
                     item.watched_eps++;

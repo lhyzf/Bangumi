@@ -183,7 +183,7 @@
                                Foreground="{x:Bind ep_color, Mode=OneWay}"
                                VerticalAlignment="Center">
                                 <Run Text="EP."/>
-                                <Run Text="{x:Bind next_ep, Mode=OneWay}"/>
+                                <Run Text="{x:Bind common:Converters.GetEpNextSortDesc(next_ep,eps), Mode=OneWay}"/>
                     </TextBlock>
                 </Button>
 

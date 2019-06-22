@@ -106,7 +106,7 @@ namespace Bangumi.Facades
                             {
                                 item.watched_eps = progress.Eps.Count;
                                 if (item.eps.Count == item.watched_eps)
-                                    item.next_ep = 0;
+                                    item.next_ep = -1;
                                 if (progress.Eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                                     item.ep_color = "#d26585";
                                 else
@@ -162,7 +162,7 @@ namespace Bangumi.Facades
                                 {
                                     item.watched_eps = progress.Eps.Count;
                                     if (item.eps.Count == item.watched_eps)
-                                        item.next_ep = 0;
+                                        item.next_ep = -1;
                                     if (item.watched_eps < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                                         item.ep_color = "#d26585";
                                     else
