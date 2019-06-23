@@ -56,7 +56,8 @@
                        Margin="0">
                 <Frame Name="CollectionPageFrame"/>
             </PivotItem>
-            <PivotItem Header="时间表"
+            <PivotItem Name="TimeLineItem"
+                       Header="时间表"
                        Margin="0">
                 <Frame Name="TimeLinePageFrame"/>
             </PivotItem>
