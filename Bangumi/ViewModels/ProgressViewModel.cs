@@ -50,33 +50,9 @@ namespace Bangumi.ViewModels
                                                                     collectionEditContentDialog.rate.ToString(),
                                                                     collectionEditContentDialog.privacy == true ? "1" : "0"))
                 {
+                    // 若修改后状态不是在看，则从进度页面删除
                     if (collectionEditContentDialog.collectionStatus != "在看")
-                        await LoadWatchingListAsync();
-                    if (collectionEditContentDialog.collectionStatus == CollectionStatusEnum.collect.GetValue() && SettingHelper.EpsBatch == true)
-                    {
-                        int epId = 0;
-                        string epsId = string.Empty;
-                        foreach (var episode in status.eps)
-                        {
-                            if (status.eps.IndexOf(episode) == status.eps.Count - 1)
-                            {
-                                epsId += episode.id.ToString();
-                                epId = episode.id;
-                                break;
-                            }
-                            else
-                            {
-                                epsId += episode.id.ToString() + ",";
-                            }
-                        }
-                        if (await BangumiFacade.UpdateProgressBatchAsync(epId, EpStatusEnum.watched, epsId))
-                        {
-                            foreach (var episode in status.eps)
-                            {
-                                episode.status = "看过";
-                            }
-                        }
-                    }
+                        WatchingCollection.Remove(status);
                 }
                 status.isUpdating = false;
             }
