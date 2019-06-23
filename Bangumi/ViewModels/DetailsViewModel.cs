@@ -180,6 +180,7 @@ namespace Bangumi.ViewModels
                     myPrivacy = collectionEditContentDialog.privacy;
                     CollectionStatusText = collectionEditContentDialog.collectionStatus;
                     SetCollectionButton();
+                    // 若状态修改为看过，且设置启用，则批量修改章节状态为看过
                     if (collectionEditContentDialog.collectionStatus == CollectionStatusEnum.collect.GetValue() && SettingHelper.EpsBatch == true)
                     {
                         int epId = 0;
