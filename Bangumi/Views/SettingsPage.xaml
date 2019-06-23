@@ -99,19 +99,26 @@
                 <StackPanel Padding="0,10,0,0">
                     <TextBlock Text="Bangumi UWP (非官方)" 
                                Style="{StaticResource TitleTextBlockStyle}" />
-                    <TextBlock TextWrapping="Wrap">
-                        <LineBreak/>
-                        <Run Text="项目开源地址："/>
-                        <Hyperlink NavigateUri="https://github.com/Teachoc/Bangumi">
-                            https://github.com/Teachoc/Bangumi
-                        </Hyperlink>
-                    </TextBlock>
                     <TextBlock>
                         <LineBreak/>
                         © 2019 Bangumi
                         <LineBreak/>
                         版本：
                         <Run Text="{x:Bind Version}"/>
+                        <LineBreak/>
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap">
+                        <Run Text="项目开源地址："/>
+                        <Hyperlink NavigateUri="https://github.com/Teachoc/Bangumi">
+                            https://github.com/Teachoc/Bangumi
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap">
+                        <Run Text="应用图标及应用内素材由"/>
+                        <Hyperlink NavigateUri="https://bgm.tv/user/419012">
+                            ekibun
+                        </Hyperlink>
+                        <Run Text="授权使用"/>
                         <LineBreak/>
                     </TextBlock>
                     <TextBlock Text="引用及参考" 

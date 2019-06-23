@@ -297,7 +297,7 @@ namespace Bangumi.Facades
                 }
 
                 //将对象序列化并存储到文件
-                await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(bangumiCollection), "JsonCache\\calendar");
+                await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(bangumiCollection.OrderBy(c => c.Weekday.Id)), "JsonCache\\calendar");
             }
             catch (Exception e)
             {

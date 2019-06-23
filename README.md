@@ -1,6 +1,6 @@
 ﻿# Bangumi UWP
 
-一个 [Bangumi 番組計画](https://bgm.tv) 的第三方客户端。
+一个使用 [Bangumi API](https://github.com/bangumi/api) 开发的 [Bangumi 番組計画](https://bgm.tv) 第三方客户端。
 
 ## 功能
 
@@ -28,3 +28,5 @@
 ## 编译环境
 
 - Visual Studio Community 2019
+
+    说明：编译之前，请至 [Bangumi 开发者平台](https://bgm.tv/dev/app) 创建应用，将申请到的 App ID 等填入 Bangumi.Api/Constants.cs 中。

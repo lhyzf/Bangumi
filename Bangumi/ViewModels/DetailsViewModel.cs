@@ -66,7 +66,7 @@ namespace Bangumi.ViewModels
             set => Set(ref _subjectId, value);
         }
 
-        private string _imageSource = "ms-appx:///Assets/NoImage.png";
+        private string _imageSource = "ms-appx:///Assets/resource/err_404.png";
         public string ImageSource
         {
             get => _imageSource;

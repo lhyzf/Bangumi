@@ -145,6 +145,8 @@
                                       IsCacheEnabled="True"
                                       CacheMode="BitmapCache"
                                       Source="{x:Bind ViewModel.ImageSource, Mode=OneWay}"
+                                      PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
+                                      PlaceholderStretch="UniformToFill"
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True"
                                       Margin="0,0,5,0" />

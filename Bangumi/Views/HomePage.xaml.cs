@@ -120,6 +120,7 @@ namespace Bangumi.Views
                     HomePagePivot.Items.Remove(ProgressItem);
                     HomePagePivot.Items.Remove(CollectionItem);
                     TimeLinePageFrame.Navigate(typeof(TimeLinePage), null, new SuppressNavigationTransitionInfo());
+                    MainPage.rootPage.RefreshAppBarButton.Tag = TimeLineItem.Header;
                 }
             }
         }

@@ -12,7 +12,7 @@ namespace Bangumi.Api.Services
         public const string ClientId = "";
         public const string ClientSecret = "";
         public const string RedirectUrl = "";
-        public const string NoImageUri = "ms-appx:///Assets/NoImage.png";
+        public const string NoImageUri = "ms-appx:///Assets/resource/err_404.png";
 
     }
 }
