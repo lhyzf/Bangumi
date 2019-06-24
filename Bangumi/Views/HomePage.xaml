@@ -5,6 +5,7 @@
     xmlns:local="using:Bangumi.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:common="using:Bangumi.Common"
     mc:Ignorable="d"
     NavigationCacheMode="Enabled"
     Loaded="Page_Loaded"
@@ -23,25 +24,41 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
+            <!-- 显示应用名 -->
             <TextBlock Text="Bangumi UWP" 
                        Grid.Column="0"
                        VerticalAlignment="Center"
+                       Visibility="{x:Bind common:Converters.CollapsedIf(isLoading),Mode=OneWay}"
                        Margin="10,0" 
                        TextTrimming="CharacterEllipsis"/>
-            <ProgressRing Name="MyProgressRing"
-                          Grid.Column="1"
-                          VerticalAlignment="Center"
-                          Visibility="{x:Bind isLoading, Mode=OneWay}"
-                          IsActive="True"
-                          Width="20"
-                          Height="20" >
-                <ProgressRing.RenderTransform>
-                    <CompositeTransform CenterX="10"
-                                        CenterY="10"
-                                        ScaleX="0.75" 
-                                        ScaleY="0.75"/>
-                </ProgressRing.RenderTransform>
-            </ProgressRing>
+            <!-- 显示加载中 -->
+            <Grid Grid.Column="0"
+                  Margin="10,0"
+                  Visibility="{x:Bind isLoading,Mode=OneWay}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ProgressRing Name="MyProgressRing"
+                              Grid.Column="0"
+                              VerticalAlignment="Center"
+                              IsActive="True"
+                              Width="20"
+                              Height="20" >
+                    <ProgressRing.RenderTransform>
+                        <CompositeTransform CenterX="10"
+                                            CenterY="10"
+                                            ScaleX="0.75" 
+                                            ScaleY="0.75"/>
+                    </ProgressRing.RenderTransform>
+                </ProgressRing>
+                <TextBlock Text="加载中..."
+                           Grid.Column="1"
+                           VerticalAlignment="Center"  
+                           Margin="10,0"
+                           TextTrimming="CharacterEllipsis">
+                </TextBlock>
+            </Grid>
         </Grid>
         <Pivot Grid.Row="1"
                Name="HomePagePivot"
