@@ -185,26 +185,23 @@ namespace Bangumi.ViewModels
                     {
                         int epId = 0;
                         string epsId = string.Empty;
-                        foreach (var episode in eps)
+                        foreach (var episode in eps.Where(ep => ep.Status == "Air" || ep.Status == "Today" || ep.Status == "NA"))
                         {
-                            if (eps.IndexOf(episode) == eps.Count - 1)
-                            {
-                                epsId += episode.Id.ToString();
-                                epId = episode.Id;
-                                break;
-                            }
-                            else
-                            {
-                                epsId += episode.Id.ToString() + ",";
-                            }
+                            epsId += episode.Id.ToString() + ",";
                         }
-                        if (await BangumiFacade.UpdateProgressBatchAsync(epId, EpStatusEnum.watched, epsId))
+                        epsId = epsId.TrimEnd(',');
+                        if (epsId != string.Empty && await BangumiFacade.UpdateProgressBatchAsync(epId, EpStatusEnum.watched, epsId))
                         {
-                            foreach (var episode in eps)
+                            foreach (var episode in eps.Where(ep => ep.Status == "Air" || ep.Status == "Today" || ep.Status == "NA"))
                             {
                                 episode.Status = "看过";
                             }
                         }
+                        else
+                        {
+                            MainPage.rootPage.ToastInAppNotification.Show("无章节需要更新", 1500);
+                        }
+
                     }
                 }
                 IsStatusLoaded = true;
@@ -271,26 +268,29 @@ namespace Bangumi.ViewModels
                 string epsId = string.Empty;
                 foreach (var episode in eps)
                 {
+                    if (episode.Status == "Air" || episode.Status == "Today" || episode.Status == "NA")
+                        epsId += episode.Id.ToString() + ",";
                     if (episode.Id == ep.Id)
                     {
-                        epsId += episode.Id.ToString();
                         break;
                     }
-                    else
-                    {
-                        epsId += episode.Id.ToString() + ",";
-                    }
                 }
-                if (await BangumiFacade.UpdateProgressBatchAsync(ep.Id, status, epsId))
+                epsId = epsId.TrimEnd(',');
+                if (epsId != string.Empty && await BangumiFacade.UpdateProgressBatchAsync(ep.Id, status, epsId))
                 {
                     foreach (var episode in eps)
                     {
-                        episode.Status = "看过";
+                        if (episode.Status == "Air" || episode.Status == "Today" || episode.Status == "NA")
+                            episode.Status = "看过";
                         if (episode.Id == ep.Id)
                         {
                             break;
                         }
                     }
+                }
+                else
+                {
+                    MainPage.rootPage.ToastInAppNotification.Show("无章节需要更新", 1500);
                 }
                 IsUpdating = false;
             }
