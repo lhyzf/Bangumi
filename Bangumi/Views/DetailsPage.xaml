@@ -113,25 +113,43 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="{x:Bind ViewModel.NameCn,Mode=OneWay}" 
-                       Grid.Column="0"
+            <!-- 显示标题及条目ID -->
+            <TextBlock Grid.Column="0"
                        VerticalAlignment="Center"  
+                       Visibility="{x:Bind common:Converters.CollapsedIf(ViewModel.IsLoading),Mode=OneWay}"
                        Margin="10,0"
-                       TextTrimming="CharacterEllipsis"/>
-            <ProgressRing Name="MyProgressRing"
-                          Grid.Column="1"
-                          Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                          VerticalAlignment="Center"
-                          IsActive="True"
-                          Width="20"
-                          Height="20" >
-                <ProgressRing.RenderTransform>
-                    <CompositeTransform CenterX="10"
-                                        CenterY="10"
-                                        ScaleX="0.75" 
-                                        ScaleY="0.75"/>
-                </ProgressRing.RenderTransform>
-            </ProgressRing>
+                       TextTrimming="CharacterEllipsis">
+                <Run Text="{x:Bind ViewModel.NameCn,Mode=OneWay}"/>
+                <Run Text="("/><Run Text="{x:Bind ViewModel.SubjectId,Mode=OneWay}"/><Run Text=")"/>
+            </TextBlock>
+            <!-- 显示加载中 -->
+            <Grid Grid.Column="0"
+                  Margin="10,0"
+                  Visibility="{x:Bind ViewModel.IsLoading,Mode=OneWay}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ProgressRing Name="MyProgressRing"
+                              Grid.Column="0"
+                              VerticalAlignment="Center"
+                              IsActive="True"
+                              Width="20"
+                              Height="20" >
+                    <ProgressRing.RenderTransform>
+                        <CompositeTransform CenterX="10"
+                                            CenterY="10"
+                                            ScaleX="0.75" 
+                                            ScaleY="0.75"/>
+                    </ProgressRing.RenderTransform>
+                </ProgressRing>
+                <TextBlock Text="加载中..."
+                           Grid.Column="1"
+                           VerticalAlignment="Center"  
+                           Margin="10,0"
+                           TextTrimming="CharacterEllipsis">
+                </TextBlock>
+            </Grid>
         </Grid>
         <controls:AdaptiveGridView Name="EpsGridView" 
                                    Grid.Row="1"
