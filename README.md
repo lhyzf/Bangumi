@@ -13,17 +13,8 @@
 
 ## 安装
 
-### 前提
-
-- Windows 10 16299 及以上
-- 打开开发者模式
-
-### 安装脚本
-
-- 下载 [release](https://github.com/Teachoc/Bangumi/releases) 中的 zip 压缩包并解压
-- 右键点击 `Add-AppDevPackage.ps1`
-- 选择 `使用 PowerShell 运行`
-- 根据提示进行安装
+- 系统版本：Windows 10 16299 及以上
+- [下载地址](https://www.microsoft.com/store/apps/9PLKXLTWSVXR)
 
 ## 编译环境
 
