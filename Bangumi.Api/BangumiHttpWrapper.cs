@@ -437,7 +437,8 @@ namespace Bangumi.Api.Services
             catch (Exception e)
             {
                 Debug.WriteLine("GetAccessToken Error.");
-                throw e;
+                Console.WriteLine(e);
+                return null;
             }
         }
 
@@ -461,7 +462,8 @@ namespace Bangumi.Api.Services
             catch (Exception e)
             {
                 Debug.WriteLine("RefreshAccessToken Error.");
-                throw e;
+                Console.WriteLine(e);
+                return null;
             }
         }
 

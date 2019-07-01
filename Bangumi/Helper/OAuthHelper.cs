@@ -1,5 +1,6 @@
 ﻿using Bangumi.Api.Models;
 using Bangumi.Api.Services;
+using Bangumi.Views;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -91,12 +92,10 @@ namespace Bangumi.Helper
             }
         }
 
-
         /// <summary>
-        /// 刷新授权有效期。
+        /// 查询授权信息，并在满足条件时刷新Token。
         /// </summary>
-        /// <returns></returns>
-        public static async Task RefreshAccessToken()
+        private static async void CheckAccessToken()
         {
             try
             {
@@ -105,13 +104,9 @@ namespace Bangumi.Helper
                 for (int i = 0; i < 3; i++)
                 {
                     Debug.WriteLine($"第{i + 1}次尝试刷新Token。");
-                    token = await BangumiHttpWrapper.RefreshAccessToken(MyToken);
+                    token = await BangumiHttpWrapper.CheckAccessToken(MyToken);
                     if (token != null)
                     {
-                        // 刷新后存入内存
-                        MyToken.Token = token.Token;
-                        MyToken.RefreshToken = token.RefreshToken;
-                        MyToken.UserId = token.UserId;
                         // 将信息写入本地文件
                         await WriteTokensAsync(token);
                         break;
@@ -122,32 +117,17 @@ namespace Bangumi.Helper
                     }
                 }
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine("刷新AccessToken失败。");
-                throw e;
-            }
-        }
-
-        /// <summary>
-        /// 查询授权信息。
-        /// </summary>
-        private static async void CheckAccessToken()
-        {
-            try
-            {
-                var token = await BangumiHttpWrapper.CheckAccessToken(MyToken);
-                await WriteTokensAsync(token);
-            }
             catch (WebException ex)
             {
                 HttpWebResponse response = (HttpWebResponse)ex.Response;
                 Debug.WriteLine("response.StatusCode:" + response?.StatusCode);
                 if (response?.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    var msgDialog = new Windows.UI.Popups.MessageDialog("登录已过期，请重新登录！") { Title = "登录失效！" };
-                    msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                    await msgDialog.ShowAsync();
+                    // 授权过期，返回登录界面
+                    MainPage.rootFrame.Navigate(typeof(LoginPage), "ms-appx:///Assets/resource/err_401.png");
+                    //var msgDialog = new Windows.UI.Popups.MessageDialog("登录已过期，请重新登录！") { Title = "登录失效！" };
+                    //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
+                    //await msgDialog.ShowAsync();
                 }
             }
             catch (Exception e)
@@ -178,7 +158,7 @@ namespace Bangumi.Helper
         }
 
         /// <summary>
-        /// 写入 Tokens。
+        /// 将 Token 写入内存及文件。
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
@@ -186,6 +166,11 @@ namespace Bangumi.Helper
         {
             if (!string.IsNullOrEmpty(token.Token) && !string.IsNullOrEmpty(token.RefreshToken) && !string.IsNullOrEmpty(token.UserId.ToString()))
             {
+                // 刷新后存入内存
+                MyToken.Token = token.Token;
+                MyToken.RefreshToken = token.RefreshToken;
+                MyToken.UserId = token.UserId;
+                // 将信息写入本地文件
                 await FileHelper.WriteToFileAsync(token.Token, getOAuthFileName(OAuthFile.access_token), true);
                 await FileHelper.WriteToFileAsync(token.RefreshToken, getOAuthFileName(OAuthFile.refresh_token), true);
                 await FileHelper.WriteToFileAsync(token.UserId.ToString(), getOAuthFileName(OAuthFile.user_id), false);
@@ -199,27 +184,16 @@ namespace Bangumi.Helper
         public static void DeleteTokens()
         {
             // 删除用户认证文件
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            if (File.Exists(localFolder.Path + "\\" + getOAuthFileName(OAuthFile.access_token)))
-                File.Delete(localFolder.Path + "\\" + getOAuthFileName(OAuthFile.access_token));
-            if (File.Exists(localFolder.Path + "\\" + getOAuthFileName(OAuthFile.refresh_token)))
-                File.Delete(localFolder.Path + "\\" + getOAuthFileName(OAuthFile.refresh_token));
-            if (File.Exists(localFolder.Path + "\\" + getOAuthFileName(OAuthFile.user_id)))
-                File.Delete(localFolder.Path + "\\" + getOAuthFileName(OAuthFile.user_id));
+            FileHelper.DeleteLocalFile(getOAuthFileName(OAuthFile.access_token));
+            FileHelper.DeleteLocalFile(getOAuthFileName(OAuthFile.refresh_token));
+            FileHelper.DeleteLocalFile(getOAuthFileName(OAuthFile.user_id));
             // 删除用户缓存文件
-            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
-            if (File.Exists(cacheFolder.Path + "\\JsonCache\\home"))
-                File.Delete(cacheFolder.Path + "\\JsonCache\\home");
-            if (File.Exists(cacheFolder.Path + "\\JsonCache\\anime"))
-                File.Delete(cacheFolder.Path + "\\JsonCache\\anime");
-            if (File.Exists(cacheFolder.Path + "\\JsonCache\\book"))
-                File.Delete(cacheFolder.Path + "\\JsonCache\\book");
-            if (File.Exists(cacheFolder.Path + "\\JsonCache\\game"))
-                File.Delete(cacheFolder.Path + "\\JsonCache\\game");
-            if (File.Exists(cacheFolder.Path + "\\JsonCache\\music"))
-                File.Delete(cacheFolder.Path + "\\JsonCache\\music");
-            if (File.Exists(cacheFolder.Path + "\\JsonCache\\real"))
-                File.Delete(cacheFolder.Path + "\\JsonCache\\real");
+            FileHelper.DeleteCacheFile("JsonCache\\home");
+            FileHelper.DeleteCacheFile("JsonCache\\anime");
+            FileHelper.DeleteCacheFile("JsonCache\\book");
+            FileHelper.DeleteCacheFile("JsonCache\\game");
+            FileHelper.DeleteCacheFile("JsonCache\\music");
+            FileHelper.DeleteCacheFile("JsonCache\\real");
         }
 
         #region FileName
