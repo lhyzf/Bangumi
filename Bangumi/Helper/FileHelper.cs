@@ -34,9 +34,10 @@ namespace Bangumi.Helper
                 }
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                await storageFile.DeleteAsync();
+                Console.WriteLine(e);
+                DeleteLocalFile(fileName);
                 return false;
             }
         }
@@ -51,21 +52,19 @@ namespace Bangumi.Helper
         {
             try
             {
-                StorageFile storageFile = await localFolder.GetFileAsync(fileName);
-                if (encrytion)
+                if (File.Exists(localFolder.Path + "\\" + fileName))
                 {
-                    IBuffer buffMsg = await FileIO.ReadBufferAsync(storageFile);
-                    return await EncryptionHelper.TokenDecryptionAsync(buffMsg);
+                    StorageFile storageFile = await localFolder.GetFileAsync(fileName);
+                    if (encrytion)
+                    {
+                        IBuffer buffMsg = await FileIO.ReadBufferAsync(storageFile);
+                        return await EncryptionHelper.TokenDecryptionAsync(buffMsg);
+                    }
+                    else
+                    {
+                        return await FileIO.ReadTextAsync(storageFile);
+                    }
                 }
-                else
-                {
-                    return await FileIO.ReadTextAsync(storageFile);
-                }
-            }
-            catch (FileNotFoundException)
-            {
-                // Cannot find file
-                Debug.WriteLine("File not found.");
                 return "";
             }
             catch (IOException e)
@@ -95,9 +94,10 @@ namespace Bangumi.Helper
                 await FileIO.WriteTextAsync(storageFile, msg);
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                await storageFile.DeleteAsync();
+                Console.WriteLine(e);
+                DeleteCacheFile(fileName);
                 return false;
             }
         }
@@ -112,13 +112,11 @@ namespace Bangumi.Helper
         {
             try
             {
-                StorageFile storageFile = await cacheFolder.GetFileAsync(fileName);
-                return await FileIO.ReadTextAsync(storageFile);
-            }
-            catch (FileNotFoundException)
-            {
-                // Cannot find file
-                Debug.WriteLine("File not found.");
+                if (File.Exists(cacheFolder.Path + "\\" + fileName))
+                {
+                    StorageFile storageFile = await cacheFolder.GetFileAsync(fileName);
+                    return await FileIO.ReadTextAsync(storageFile);
+                }
                 return "";
             }
             catch (IOException e)
@@ -131,6 +129,26 @@ namespace Bangumi.Helper
                 }
                 return "";
             }
+        }
+
+        /// <summary>
+        /// 删除localFolder中的文件
+        /// </summary>
+        /// <param name="filename">在localFolder中的文件名</param>
+        public static void DeleteLocalFile(string filename)
+        {
+            if (File.Exists(localFolder.Path + "\\" + filename))
+                File.Delete(localFolder.Path + "\\" + filename);
+        }
+
+        /// <summary>
+        /// 删除cacheFolder中的文件
+        /// </summary>
+        /// <param name="filename">在cacheFolder中的文件名</param>
+        public static void DeleteCacheFile(string filename)
+        {
+            if (File.Exists(cacheFolder.Path + "\\" + filename))
+                File.Delete(cacheFolder.Path + "\\" + filename);
         }
     }
 }

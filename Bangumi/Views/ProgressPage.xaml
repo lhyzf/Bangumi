@@ -250,7 +250,6 @@
                 <TransitionCollection>
                     <RepositionThemeTransition IsStaggeringEnabled="False" />
                     <EntranceThemeTransition IsStaggeringEnabled="True" />
-                    <AddDeleteThemeTransition />
                 </TransitionCollection>
             </GridView.ItemContainerTransitions>
         </controls:AdaptiveGridView>

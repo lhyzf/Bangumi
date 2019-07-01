@@ -147,8 +147,9 @@ namespace Bangumi
             if (hasDialog)
                 return false;
 
-            // 处于首页时不向后导航
-            if (MainPage.rootFrame.CurrentSourcePageType == typeof(HomePage))
+            // 处于首页或登录页时不向后导航
+            if (MainPage.rootFrame.CurrentSourcePageType == typeof(HomePage) || 
+                MainPage.rootFrame.CurrentSourcePageType == typeof(LoginPage))
                 return false;
 
             MainPage.rootFrame.GoBack();

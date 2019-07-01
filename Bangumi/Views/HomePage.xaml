@@ -25,7 +25,8 @@
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
             <!-- 显示应用名 -->
-            <TextBlock Text="Bangumi UWP" 
+            <TextBlock Name="TitleTextBlock"
+                       Text="Bangumi" 
                        Grid.Column="0"
                        VerticalAlignment="Center"
                        Visibility="{x:Bind common:Converters.CollapsedIf(isLoading),Mode=OneWay}"

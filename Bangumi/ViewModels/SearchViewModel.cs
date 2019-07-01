@@ -177,10 +177,10 @@ namespace Bangumi.ViewModels
             var dispatcher = Window.Current.Dispatcher;
             return AsyncInfo.Run(async cancelToken =>
             {
-                await Task.WhenAll(Task.Delay(1000), dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                if (IsSearching)
+                    return new LoadMoreItemsResult { Count = count }; 
+                await Task.WhenAll(dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
-                    if (IsSearching)
-                        return;
                     try
                     {
                         IsSearching = true;

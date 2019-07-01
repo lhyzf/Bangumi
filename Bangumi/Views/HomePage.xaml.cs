@@ -55,6 +55,9 @@ namespace Bangumi.Views
             this.InitializeComponent();
             homePage = this;
             CostomTitleBar();
+#if DEBUG
+            TitleTextBlock.Text += " (Debug)";
+#endif
         }
 
         /// <summary>

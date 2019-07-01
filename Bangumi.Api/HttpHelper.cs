@@ -1,11 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Bangumi.Api.Utils;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,6 +20,11 @@ namespace Bangumi.Api.Services
             try
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Timeout = 15000;
+                // 请求添加时间，防止搜索过于频繁
+                Cookie cookie = new Cookie("chii_searchDateLine", DateTime.Now.ToString(),"/", "api.bgm.tv");
+                request.CookieContainer = new CookieContainer();
+                request.CookieContainer.Add(cookie);
                 HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync();
                 using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
                 {

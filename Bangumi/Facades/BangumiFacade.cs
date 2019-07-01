@@ -25,20 +25,20 @@ namespace Bangumi.Facades
             try
             {
                 //从文件反序列化
-                var PreWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await FileHelper.ReadFromCacheFileAsync("JsonCache\\home"));
-                if (PreWatchings != null)
+                if (watchingListCollection.Count == 0)
                 {
-                    foreach (var sub in PreWatchings)
+                    var PreWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await FileHelper.ReadFromCacheFileAsync("JsonCache\\home"));
+                    if (PreWatchings != null)
                     {
-                        // 将Collection中没有的添加进去
-                        if (watchingListCollection.Where(e => e.subject_id == sub.subject_id).Count() == 0)
-                            watchingListCollection.Add(sub);
+                        foreach (var sub in PreWatchings)
+                        {
+                            // 将Collection中没有的添加进去
+                            if (watchingListCollection.Where(e => e.subject_id == sub.subject_id).Count() == 0)
+                                watchingListCollection.Add(sub);
+                        }
                     }
                 }
-                //else
-                //{
-                //    watchingListCollection.Clear();
-                //}
+
 
                 var watchingList = await BangumiHttpWrapper.GetWatchingListAsync(OAuthHelper.MyToken.UserId);
 
