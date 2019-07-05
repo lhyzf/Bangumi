@@ -110,7 +110,9 @@ namespace Bangumi.ViewModels
                     if (item.eps.Count == item.eps.Where(e => e.status == "看过").Count())
                         item.next_ep = -1;
                     else
-                        item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today" || ep.status == "NA").FirstOrDefault().sort;
+                        item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").Count() != 0 ?
+                                       item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").FirstOrDefault().sort :
+                                       item.eps.Where(ep => ep.status == "NA").FirstOrDefault().sort;
                     item.watched_eps++;
                     // 若未看到最新一集，则使用粉色，否则使用灰色
                     if (item.eps.Where(e => e.status == "看过").Count() < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
@@ -161,9 +163,9 @@ namespace Bangumi.ViewModels
 
             // 排序，尚未观看的排在所有有观看记录的有更新的条目之后，
             // ，在已看到最新剧集的条目之前，看完的排在最后
-            for (int i = 0; i < order.Count; i++)
+            for (int i = 0; i <= order.Count; i++)
             {
-                if (order[i].ep_color == "Gray")
+                if (i == order.Count || order[i].ep_color == "Gray")
                 {
                     order.InsertRange(i, notWatched);
                     break;
