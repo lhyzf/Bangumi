@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:Bangumi.Api.Models"
+    xmlns:data2="using:Bangumi.ViewModels"
     xmlns:common="using:Bangumi.Common"
     xmlns:sys="using:System"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
@@ -16,57 +17,84 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
-        <DataTemplate x:Name="EpTemplate" x:DataType="data:Ep">
-            <RelativePanel Tapped="Eps_Tapped" 
-                           RightTapped="Eps_RightTapped"
-                           Padding="5" 
-                           Height="68"
-                           Background="Transparent"
-                           BorderThickness="0.5"
-                           BorderBrush="{ThemeResource SystemControlBackgroundListMediumBrush}">
-                <TextBlock Name="SortTextBlock"
-                           Text="{x:Bind common:Converters.GetEpSortDesc(Sort,Type)}" 
-                           RelativePanel.AlignLeftWithPanel="True"
-                           RelativePanel.AlignTopWithPanel="True"
-                           FontSize="14" />
-                <TextBlock Grid.Column="1"
-                           Text="{x:Bind Status,Mode=OneWay}" 
-                           x:Phase="2"
-                           RelativePanel.AlignRightWithPanel="True"
-                           RelativePanel.AlignTopWithPanel="True"
-                           FontSize="12" 
-                           Foreground="#d26585"/>
-                <TextBlock Grid.Row="1"
-                           Text="{x:Bind NameCn,Mode=OneWay}" 
-                           x:Phase="1"
-                           RelativePanel.AlignLeftWithPanel="True"
-                           RelativePanel.Below="SortTextBlock"
-                           FontSize="14" 
-                           TextWrapping="Wrap"
-                           TextTrimming="CharacterEllipsis"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Dictionary1.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
 
-                <FlyoutBase.AttachedFlyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                        Text="看过"
-                                        Tag="Watched"/>
-                        <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                        Text="看到"
-                                        Tag="WatchedTo"/>
-                        <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                        Text="想看"
-                                        Tag="Queue"/>
-                        <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                        Text="抛弃"
-                                        Tag="Drop"/>
-                        <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                        Text="未看"
-                                        Tag="Remove"/>
-                    </MenuFlyout>
-                </FlyoutBase.AttachedFlyout>
-            </RelativePanel>
-        </DataTemplate>
-    </Page.Resources>
+            <DataTemplate x:Name="RateTemplate" x:DataType="data2:SimpleRate">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Border Background="{ThemeResource SystemChromeLowColor}"
+                            Width="10"
+                            ToolTipService.ToolTip="{x:Bind count}"
+                            Height="100">
+                        <Rectangle Fill="{ThemeResource SystemAccentColor}"
+                                   Height="{x:Bind ratio}" 
+                                   VerticalAlignment="Bottom"/>
+                    </Border>
+                    <TextBlock Grid.Row="1"
+                               Text="{x:Bind score,Mode=OneWay}"
+                               FontSize="10"
+                               HorizontalAlignment="Center"/>
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate x:Name="EpTemplate" x:DataType="data:Ep">
+                <RelativePanel Tapped="Eps_Tapped" 
+                               RightTapped="Eps_RightTapped"
+                               Padding="5" 
+                               Height="68"
+                               Background="Transparent"
+                               BorderThickness="0.5"
+                               BorderBrush="{ThemeResource SystemControlBackgroundListMediumBrush}">
+                    <TextBlock Name="SortTextBlock"
+                               Text="{x:Bind common:Converters.GetEpSortDesc(Sort,Type)}" 
+                               RelativePanel.AlignLeftWithPanel="True"
+                               RelativePanel.AlignTopWithPanel="True"
+                               FontSize="14" />
+                    <TextBlock Grid.Column="1"
+                               Text="{x:Bind Status,Mode=OneWay}" 
+                               x:Phase="2"
+                               RelativePanel.AlignRightWithPanel="True"
+                               RelativePanel.AlignTopWithPanel="True"
+                               FontSize="12" 
+                               Foreground="{StaticResource BangumiPinkColor}"/>
+                    <TextBlock Grid.Row="1"
+                               Text="{x:Bind NameCn,Mode=OneWay}" 
+                               x:Phase="1"
+                               RelativePanel.AlignLeftWithPanel="True"
+                               RelativePanel.Below="SortTextBlock"
+                               FontSize="14" 
+                               TextWrapping="Wrap"
+                               TextTrimming="CharacterEllipsis"/>
+
+                    <FlyoutBase.AttachedFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
+                                            Text="看过"
+                                            Tag="Watched"/>
+                            <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
+                                            Text="看到"
+                                            Tag="WatchedTo"/>
+                            <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
+                                            Text="想看"
+                                            Tag="Queue"/>
+                            <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
+                                            Text="抛弃"
+                                            Tag="Drop"/>
+                            <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
+                                            Text="未看"
+                                            Tag="Remove"/>
+                        </MenuFlyout>
+                    </FlyoutBase.AttachedFlyout>
+                </RelativePanel>
+            </DataTemplate>
+        </ResourceDictionary>
+   </Page.Resources>
 
     <Grid>
         <VisualStateManager.VisualStateGroups>
@@ -83,6 +111,10 @@
                         <Setter Target="air_weekdayTextBlock.FontSize" Value="14"/>
                         <Setter Target="SummaryTextBlock.FontSize" Value="14"/>
                         <Setter Target="MoreInfoHyperLink.FontSize" Value="14"/>
+                        <Setter Target="collectionTextBlock.FontSize" Value="10"/>
+                        <Setter Target="ratingTextBlock.FontSize" Value="24"/>
+                        <Setter Target="ratingTextBlock.Margin" Value="20"/>
+                        <Setter Target="RateItemsRepeater.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Wide">
@@ -97,6 +129,28 @@
                         <Setter Target="air_weekdayTextBlock.FontSize" Value="16"/>
                         <Setter Target="SummaryTextBlock.FontSize" Value="18"/>
                         <Setter Target="MoreInfoHyperLink.FontSize" Value="16"/>
+                        <Setter Target="collectionTextBlock.FontSize" Value="12"/>
+                        <Setter Target="ratingTextBlock.FontSize" Value="48"/>
+                        <Setter Target="ratingTextBlock.Margin" Value="25,30"/>
+                        <Setter Target="RateItemsRepeater.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ExWide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BangumiImage.Width" Value="150"/>
+                        <Setter Target="BangumiImage.Height" Value="214"/>
+                        <Setter Target="NameTextBlock.FontSize" Value="24"/>
+                        <Setter Target="air_dateTextBlock.FontSize" Value="16"/>
+                        <Setter Target="air_weekdayTextBlock.FontSize" Value="16"/>
+                        <Setter Target="SummaryTextBlock.FontSize" Value="18"/>
+                        <Setter Target="MoreInfoHyperLink.FontSize" Value="16"/>
+                        <Setter Target="collectionTextBlock.FontSize" Value="14"/>
+                        <Setter Target="ratingTextBlock.FontSize" Value="48"/>
+                        <Setter Target="ratingTextBlock.Margin" Value="25,30"/>
+                        <Setter Target="RateItemsRepeater.Visibility" Value="Visible"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -168,13 +222,24 @@
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True"
                                       Margin="0,0,5,0" />
+                    <muxc:ItemsRepeater Name="RateItemsRepeater"
+                                        RelativePanel.Above="collectionTextBlock"
+                                        RelativePanel.AlignRightWithPanel="True"
+                                        ItemTemplate="{StaticResource RateTemplate}"
+                                        ItemsSource="{x:Bind ViewModel.OthersRates}">
+                        <muxc:ItemsRepeater.Layout>
+                            <muxc:StackLayout Orientation="Horizontal"
+                                              Spacing="8"/>
+                        </muxc:ItemsRepeater.Layout>
+                    </muxc:ItemsRepeater>
+
                     <TextBlock Name="NameTextBlock" 
                                Text="{x:Bind ViewModel.NameCn, Mode=OneWay}"
                                RelativePanel.RightOf="BangumiImage"
                                RelativePanel.AlignTopWithPanel="True"
                                IsTextSelectionEnabled="True"
                                TextWrapping="Wrap"
-                               Foreground="#d26585" />
+                               Foreground="{StaticResource BangumiPinkColor}" />
                     <TextBlock Name="air_dateTextBlock" 
                                Text="{x:Bind sys:String.Format('开播时间：{0}',ViewModel.AirDate), Mode=OneWay}" 
                                RelativePanel.RightOf="BangumiImage"
@@ -189,6 +254,24 @@
                                Margin="0,2,0,0" >
                         <Run Text="{x:Bind common:Converters.GetWeekday(ViewModel.AirWeekday), Mode=OneWay}"/>
                     </TextBlock>
+                    <TextBlock Name="ratingTextBlock" 
+                               Text="{x:Bind common:Converters.DoubleToString(ViewModel.Score), Mode=OneWay}" 
+                               RelativePanel.LeftOf="RateItemsRepeater"
+                               RelativePanel.Above="collectionTextBlock"
+                               Margin="30,45"
+                               Foreground="{StaticResource BangumiPinkColor}" >
+                    </TextBlock>
+                    <TextBlock Name="collectionTextBlock" 
+                               Text="{x:Bind ViewModel.OthersCollection,Mode=OneWay}" 
+                               RelativePanel.AlignRightWithPanel="True"
+                               RelativePanel.AlignBottomWith="BangumiImage"
+                               RelativePanel.RightOf="BangumiImage"
+                               TextTrimming="CharacterEllipsis"
+                               HorizontalAlignment="Right"
+                               Foreground="#666666" 
+                               Margin="0,2,0,0" >
+                    </TextBlock>
+                    
                     <TextBlock Name="SummaryTextBlock" 
                                Text="{x:Bind ViewModel.Summary, Mode=OneWay}"
                                RelativePanel.AlignLeftWithPanel="True"
@@ -203,7 +286,7 @@
                                      RelativePanel.AlignLeftWithPanel="True"
                                      RelativePanel.Below="SummaryTextBlock"
                                      Padding="0,0,0,10"
-                                     Foreground="#d26585"/>
+                                     Foreground="{StaticResource BangumiPinkColor}"/>
                 </RelativePanel>
             </GridView.Header>
             <GridView.ItemContainerTransitions>

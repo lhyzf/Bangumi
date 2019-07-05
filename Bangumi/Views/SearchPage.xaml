@@ -14,145 +14,151 @@
     Background="Transparent">
 
     <Page.Resources>
-        <DataTemplate x:Key="NarrowSubjectWithTypeTemplate" x:DataType="data:Subject">
-            <RelativePanel Padding="5">
-                <controls:ImageEx Name="BangumiImage"
-                                  IsCacheEnabled="True"
-                                  CacheMode="BitmapCache"
-                                  Source="{x:Bind Images.Common}" 
-                                  PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
-                                  PlaceholderStretch="UniformToFill"
-                                  RelativePanel.AlignLeftWithPanel="True"
-                                  RelativePanel.AlignTopWithPanel="True"
-                                  x:Phase="2"
-                                  Height="75" 
-                                  Width="75" 
-                                  Margin="0,0,6,0"
-                                  Stretch="UniformToFill" />
-                <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
-                           RelativePanel.RightOf="BangumiImage"
-                           RelativePanel.AlignTopWithPanel="True"
-                           FontSize="14" 
-                           Foreground="#d26585"
-                           TextTrimming="CharacterEllipsis"/>
-                <TextBlock Name="SubTitleTextBlock" Text="{x:Bind Name}" 
-                           RelativePanel.RightOf="BangumiImage"
-                           RelativePanel.Below="TitleTextBlock"
-                           x:Phase="1"
-                           FontSize="12"
-                           Foreground="Gray"
-                           TextTrimming="CharacterEllipsis"/>
-                <TextBlock Grid.Row="2"
-                           Text="{x:Bind common:Converters.GetSubjectTypeName(Type)}" 
-                           RelativePanel.RightOf="BangumiImage"
-                           RelativePanel.Below="SubTitleTextBlock"
-                           x:Phase="1"
-                           FontSize="12" 
-                           Foreground="Gray"
-                           TextTrimming="CharacterEllipsis"/>
-            </RelativePanel>
-        </DataTemplate>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Dictionary1.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
 
-        <DataTemplate x:Key="WideSubjectWithTypeTemplate" x:DataType="data:Subject">
-            <RelativePanel Padding="5">
-                <controls:ImageEx Name="BangumiImage"
-                                  IsCacheEnabled="True"
-                                  CacheMode="BitmapCache"
-                                  Source="{x:Bind Images.Common}" 
-                                  PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
-                                  PlaceholderStretch="UniformToFill"
-                                  RelativePanel.AlignLeftWithPanel="True"
-                                  RelativePanel.AlignTopWithPanel="True"
-                                  x:Phase="2"
-                                  Height="134" 
-                                  Width="100" 
-                                  Margin="0,0,12,0"
-                                  Stretch="UniformToFill" />
-                <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
-                           RelativePanel.RightOf="BangumiImage"
-                           RelativePanel.AlignTopWithPanel="True"
-                           FontSize="20" 
-                           Foreground="#d26585"
-                           TextTrimming="CharacterEllipsis"/>
-                <TextBlock Name="SubTitleTextBlock" Text="{x:Bind Name}" 
-                           RelativePanel.RightOf="BangumiImage"
-                           RelativePanel.Below="TitleTextBlock"
-                           x:Phase="1"
-                           FontSize="16"
-                           Foreground="Gray"
-                           TextTrimming="CharacterEllipsis"/>
-                <TextBlock Grid.Row="2"
-                           Text="{x:Bind common:Converters.GetSubjectTypeName(Type)}" 
-                           RelativePanel.RightOf="BangumiImage"
-                           RelativePanel.Below="SubTitleTextBlock"
-                           x:Phase="1"
-                           FontSize="16" 
-                           Foreground="Gray"
-                           TextTrimming="CharacterEllipsis"/>
-            </RelativePanel>
-        </DataTemplate>
+            <DataTemplate x:Key="NarrowSubjectWithTypeTemplate" x:DataType="data:Subject">
+                <RelativePanel Padding="5">
+                    <controls:ImageEx Name="BangumiImage"
+                                      IsCacheEnabled="True"
+                                      CacheMode="BitmapCache"
+                                      Source="{x:Bind Images.Common}" 
+                                      PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
+                                      PlaceholderStretch="UniformToFill"
+                                      RelativePanel.AlignLeftWithPanel="True"
+                                      RelativePanel.AlignTopWithPanel="True"
+                                      x:Phase="2"
+                                      Height="75" 
+                                      Width="75" 
+                                      Margin="0,0,6,0"
+                                      Stretch="UniformToFill" />
+                    <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
+                               RelativePanel.RightOf="BangumiImage"
+                               RelativePanel.AlignTopWithPanel="True"
+                               FontSize="14" 
+                               Foreground="{StaticResource BangumiPinkColor}"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Name="SubTitleTextBlock" Text="{x:Bind Name}" 
+                               RelativePanel.RightOf="BangumiImage"
+                               RelativePanel.Below="TitleTextBlock"
+                               x:Phase="1"
+                               FontSize="12"
+                               Foreground="Gray"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Grid.Row="2"
+                               Text="{x:Bind common:Converters.GetSubjectTypeName(Type)}" 
+                               RelativePanel.RightOf="BangumiImage"
+                               RelativePanel.Below="SubTitleTextBlock"
+                               x:Phase="1"
+                               FontSize="12" 
+                               Foreground="Gray"
+                               TextTrimming="CharacterEllipsis"/>
+                </RelativePanel>
+            </DataTemplate>
 
-        <DataTemplate x:Key="NarrowSubjectTemplate" x:DataType="data:Subject">
-            <RelativePanel Padding="5">
-                <controls:ImageEx Name="BangumiImage"
-                                  IsCacheEnabled="True"
-                                  CacheMode="BitmapCache"
-                                  Source="{x:Bind Images.Common}" 
-                                  PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
-                                  PlaceholderStretch="UniformToFill"
-                                  RelativePanel.AlignLeftWithPanel="True"
-                                  RelativePanel.AlignTopWithPanel="True"
-                                  x:Phase="2"
-                                  Height="75" 
-                                  Width="75" 
-                                  Margin="0,0,6,0"
-                                  Stretch="UniformToFill" />
-                <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
-                           RelativePanel.RightOf="BangumiImage"
-                           RelativePanel.AlignTopWithPanel="True"
-                           FontSize="14" 
-                           Foreground="#d26585"
-                           TextTrimming="CharacterEllipsis"/>
-                <TextBlock Text="{x:Bind Name}" 
-                           RelativePanel.RightOf="BangumiImage"
-                           RelativePanel.Below="TitleTextBlock"
-                           x:Phase="1"
-                           FontSize="12"
-                           Foreground="Gray"
-                           TextTrimming="CharacterEllipsis"/>
-            </RelativePanel>
-        </DataTemplate>
+            <DataTemplate x:Key="WideSubjectWithTypeTemplate" x:DataType="data:Subject">
+                <RelativePanel Padding="5">
+                    <controls:ImageEx Name="BangumiImage"
+                                      IsCacheEnabled="True"
+                                      CacheMode="BitmapCache"
+                                      Source="{x:Bind Images.Common}" 
+                                      PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
+                                      PlaceholderStretch="UniformToFill"
+                                      RelativePanel.AlignLeftWithPanel="True"
+                                      RelativePanel.AlignTopWithPanel="True"
+                                      x:Phase="2"
+                                      Height="134" 
+                                      Width="100" 
+                                      Margin="0,0,12,0"
+                                      Stretch="UniformToFill" />
+                    <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
+                               RelativePanel.RightOf="BangumiImage"
+                               RelativePanel.AlignTopWithPanel="True"
+                               FontSize="20" 
+                               Foreground="{StaticResource BangumiPinkColor}"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Name="SubTitleTextBlock" Text="{x:Bind Name}" 
+                               RelativePanel.RightOf="BangumiImage"
+                               RelativePanel.Below="TitleTextBlock"
+                               x:Phase="1"
+                               FontSize="16"
+                               Foreground="Gray"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Grid.Row="2"
+                               Text="{x:Bind common:Converters.GetSubjectTypeName(Type)}" 
+                               RelativePanel.RightOf="BangumiImage"
+                               RelativePanel.Below="SubTitleTextBlock"
+                               x:Phase="1"
+                               FontSize="16" 
+                               Foreground="Gray"
+                               TextTrimming="CharacterEllipsis"/>
+                </RelativePanel>
+            </DataTemplate>
 
-        <DataTemplate x:Key="WideSubjectTemplate" x:DataType="data:Subject">
-            <RelativePanel Padding="5">
-                <controls:ImageEx Name="BangumiImage"
-                                  IsCacheEnabled="True"
-                                  CacheMode="BitmapCache"
-                                  Source="{x:Bind Images.Common}" 
-                                  PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
-                                  PlaceholderStretch="UniformToFill"
-                                  RelativePanel.AlignLeftWithPanel="True"
-                                  RelativePanel.AlignTopWithPanel="True"
-                                  x:Phase="2"
-                                  Height="134" 
-                                  Width="100" 
-                                  Margin="0,0,12,0"
-                                  Stretch="UniformToFill" />
-                <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
-                           RelativePanel.RightOf="BangumiImage"
-                           RelativePanel.AlignTopWithPanel="True"
-                           FontSize="20" 
-                           Foreground="#d26585"
-                           TextTrimming="CharacterEllipsis"/>
-                <TextBlock Text="{x:Bind Name}" 
-                           RelativePanel.RightOf="BangumiImage"
-                           RelativePanel.Below="TitleTextBlock"
-                           x:Phase="1"
-                           FontSize="16"
-                           Foreground="Gray"
-                           TextTrimming="CharacterEllipsis"/>
-            </RelativePanel>
-        </DataTemplate>
+            <DataTemplate x:Key="NarrowSubjectTemplate" x:DataType="data:Subject">
+                <RelativePanel Padding="5">
+                    <controls:ImageEx Name="BangumiImage"
+                                      IsCacheEnabled="True"
+                                      CacheMode="BitmapCache"
+                                      Source="{x:Bind Images.Common}" 
+                                      PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
+                                      PlaceholderStretch="UniformToFill"
+                                      RelativePanel.AlignLeftWithPanel="True"
+                                      RelativePanel.AlignTopWithPanel="True"
+                                      x:Phase="2"
+                                      Height="75" 
+                                      Width="75" 
+                                      Margin="0,0,6,0"
+                                      Stretch="UniformToFill" />
+                    <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
+                               RelativePanel.RightOf="BangumiImage"
+                               RelativePanel.AlignTopWithPanel="True"
+                               FontSize="14" 
+                               Foreground="{StaticResource BangumiPinkColor}"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{x:Bind Name}" 
+                               RelativePanel.RightOf="BangumiImage"
+                               RelativePanel.Below="TitleTextBlock"
+                               x:Phase="1"
+                               FontSize="12"
+                               Foreground="Gray"
+                               TextTrimming="CharacterEllipsis"/>
+                </RelativePanel>
+            </DataTemplate>
+
+            <DataTemplate x:Key="WideSubjectTemplate" x:DataType="data:Subject">
+                <RelativePanel Padding="5">
+                    <controls:ImageEx Name="BangumiImage"
+                                      IsCacheEnabled="True"
+                                      CacheMode="BitmapCache"
+                                      Source="{x:Bind Images.Common}" 
+                                      PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
+                                      PlaceholderStretch="UniformToFill"
+                                      RelativePanel.AlignLeftWithPanel="True"
+                                      RelativePanel.AlignTopWithPanel="True"
+                                      x:Phase="2"
+                                      Height="134" 
+                                      Width="100" 
+                                      Margin="0,0,12,0"
+                                      Stretch="UniformToFill" />
+                    <TextBlock Name="TitleTextBlock" Text="{x:Bind NameCn}" 
+                               RelativePanel.RightOf="BangumiImage"
+                               RelativePanel.AlignTopWithPanel="True"
+                               FontSize="20" 
+                               Foreground="{StaticResource BangumiPinkColor}"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{x:Bind Name}" 
+                               RelativePanel.RightOf="BangumiImage"
+                               RelativePanel.Below="TitleTextBlock"
+                               x:Phase="1"
+                               FontSize="16"
+                               Foreground="Gray"
+                               TextTrimming="CharacterEllipsis"/>
+                </RelativePanel>
+            </DataTemplate>
+        </ResourceDictionary>
     </Page.Resources>
 
     <Grid>

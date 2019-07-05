@@ -11,7 +11,7 @@
     NavigationCacheMode="Enabled"
     Loaded="Page_Loaded"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    
     <Grid>
         <Frame Name="MyFrame" />
 
