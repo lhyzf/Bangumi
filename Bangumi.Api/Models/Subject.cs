@@ -47,7 +47,7 @@ namespace Bangumi.Api.Models
         public Images Images { get; set; }
 
         [JsonProperty("collection")]
-        public SubjectStatus2 Collection { get; set; }
+        public CollectionStatus Collection { get; set; }
 
         [JsonProperty("eps")]
         public List<Ep> Eps { get; set; }

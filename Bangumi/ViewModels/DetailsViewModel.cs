@@ -101,6 +101,23 @@ namespace Bangumi.ViewModels
             set => Set(ref _summary, value);
         }
 
+        private double _score;
+        public double Score
+        {
+            get => _score;
+            set => Set(ref _score, value);
+        }
+
+        public ObservableCollection<SimpleRate> OthersRates { get; private set; } = new ObservableCollection<SimpleRate>();
+
+        private string _otherscollection;
+        public string OthersCollection
+        {
+            get => _otherscollection;
+            set => Set(ref _otherscollection, value);
+        }
+
+
 
         // 更多资料用
         public string name;
@@ -134,6 +151,9 @@ namespace Bangumi.ViewModels
             AirDate = "";
             AirWeekday = 0;
             Summary = "";
+            OthersRates.Clear();
+            OthersCollection = "";
+            Score = 0;
             // 更多资料用
             name = "";
             moreInfo = "";
@@ -352,6 +372,30 @@ namespace Bangumi.ViewModels
                         Summary = "暂无简介";
                     }
 
+                    Score = subject.Rating.Score;
+                    List<SimpleRate> simpleRates = new List<SimpleRate>();
+                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._10, score = 10 });
+                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._9, score = 9 });
+                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._8, score = 8 });
+                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._7, score = 7 });
+                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._6, score = 6 });
+                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._5, score = 5 });
+                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._4, score = 4 });
+                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._3, score = 3 });
+                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._2, score = 2 });
+                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._1, score = 1 });
+                    double maxCount = simpleRates.Max().count;
+                    foreach (var item in simpleRates)
+                    {
+                        item.ratio = item.count * 100 / maxCount;
+                        OthersRates.Add(item);
+                    }
+                    OthersCollection = subject.Collection.Wish + "想看/" +
+                                       subject.Collection.Collect + "看过/" +
+                                       subject.Collection.Doing + "在看/" +
+                                       subject.Collection.OnHold + "搁置/" +
+                                       subject.Collection.Dropped + "抛弃";
+
                     // 更多资料
                     name = subject.Name;
                     moreSummary = string.IsNullOrEmpty(subject.Summary) ? "暂无简介" : subject.Summary;
@@ -494,5 +538,18 @@ namespace Bangumi.ViewModels
             }
         }
 
+    }
+
+    public class SimpleRate : IComparable<SimpleRate>
+    {
+
+        public int count { get; set; }
+        public int score { get; set; }
+        public double ratio { get; set; }
+
+        public int CompareTo(SimpleRate other)
+        {
+            return count.CompareTo(other.count);
+        }
     }
 }

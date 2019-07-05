@@ -153,5 +153,18 @@ namespace Bangumi.Common
             }
         }
 
+        /// <summary>
+        /// 保留一位小数
+        /// </summary>
+        /// <param name="d"></param>
+        /// <returns></returns>
+        public static string DoubleToString(double d)
+        {
+            if (d == 0)
+                return "-";
+            else
+                return d.ToString("0.0");
+        }
+
     }
 }
