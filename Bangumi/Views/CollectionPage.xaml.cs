@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Controls.Primitives;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -62,5 +63,39 @@ namespace Bangumi.Views
             MainPage.rootFrame.Navigate(typeof(DetailsPage), selectedItem.Subject, new DrillInNavigationTransitionInfo());
         }
 
+        // 右键弹出菜单
+        private void ItemRelativePanel_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            if (OAuthHelper.IsLogin && !ViewModel.IsLoading)
+            {
+                FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+            }
+        }
+
+        // 更新条目收藏状态
+        private void UpdateCollectionStatusMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            switch (item.Tag)
+            {
+                case "Wish":
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.wish);
+                    break;
+                case "Collect":
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.collect);
+                    break;
+                case "Doing":
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.@do);
+                    break;
+                case "OnHold":
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.on_hold);
+                    break;
+                case "Dropped":
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.dropped);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

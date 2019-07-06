@@ -385,6 +385,7 @@ namespace Bangumi.ViewModels
                     simpleRates.Add(new SimpleRate { count = subject.Rating.Count._2, score = 2 });
                     simpleRates.Add(new SimpleRate { count = subject.Rating.Count._1, score = 1 });
                     double maxCount = simpleRates.Max().count;
+                    OthersRates.Clear();
                     foreach (var item in simpleRates)
                     {
                         item.ratio = item.count * 100 / maxCount;

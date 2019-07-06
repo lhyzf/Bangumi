@@ -255,7 +255,7 @@
                         <Run Text="{x:Bind common:Converters.GetWeekday(ViewModel.AirWeekday), Mode=OneWay}"/>
                     </TextBlock>
                     <TextBlock Name="ratingTextBlock" 
-                               Text="{x:Bind common:Converters.DoubleToString(ViewModel.Score), Mode=OneWay}" 
+                               Text="{x:Bind common:Converters.DoubleToString(ViewModel.Score,1), Mode=OneWay}" 
                                RelativePanel.LeftOf="RateItemsRepeater"
                                RelativePanel.Above="collectionTextBlock"
                                Margin="30,45"

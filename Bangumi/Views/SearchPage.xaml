@@ -20,7 +20,9 @@
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate x:Key="NarrowSubjectWithTypeTemplate" x:DataType="data:Subject">
-                <RelativePanel Padding="5">
+                <RelativePanel Padding="5"
+                               RightTapped="ItemRelativePanel_RightTapped"
+                               Background="Transparent">
                     <controls:ImageEx Name="BangumiImage"
                                       IsCacheEnabled="True"
                                       CacheMode="BitmapCache"
@@ -55,11 +57,32 @@
                                FontSize="12" 
                                Foreground="Gray"
                                TextTrimming="CharacterEllipsis"/>
+                    <FlyoutBase.AttachedFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="想看"
+                                            Tag="Wish"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="看过"
+                                            Tag="Collect"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="在看"
+                                            Tag="Doing"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="搁置"
+                                            Tag="OnHold"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="抛弃"
+                                            Tag="Dropped"/>
+                        </MenuFlyout>
+                    </FlyoutBase.AttachedFlyout>
                 </RelativePanel>
             </DataTemplate>
 
             <DataTemplate x:Key="WideSubjectWithTypeTemplate" x:DataType="data:Subject">
-                <RelativePanel Padding="5">
+                <RelativePanel Padding="5"
+                               RightTapped="ItemRelativePanel_RightTapped"
+                               Background="Transparent">
                     <controls:ImageEx Name="BangumiImage"
                                       IsCacheEnabled="True"
                                       CacheMode="BitmapCache"
@@ -94,11 +117,32 @@
                                FontSize="16" 
                                Foreground="Gray"
                                TextTrimming="CharacterEllipsis"/>
+                    <FlyoutBase.AttachedFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="想看"
+                                            Tag="Wish"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="看过"
+                                            Tag="Collect"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="在看"
+                                            Tag="Doing"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="搁置"
+                                            Tag="OnHold"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="抛弃"
+                                            Tag="Dropped"/>
+                        </MenuFlyout>
+                    </FlyoutBase.AttachedFlyout>
                 </RelativePanel>
             </DataTemplate>
 
             <DataTemplate x:Key="NarrowSubjectTemplate" x:DataType="data:Subject">
-                <RelativePanel Padding="5">
+                <RelativePanel Padding="5"
+                               RightTapped="ItemRelativePanel_RightTapped"
+                               Background="Transparent">
                     <controls:ImageEx Name="BangumiImage"
                                       IsCacheEnabled="True"
                                       CacheMode="BitmapCache"
@@ -125,11 +169,32 @@
                                FontSize="12"
                                Foreground="Gray"
                                TextTrimming="CharacterEllipsis"/>
+                    <FlyoutBase.AttachedFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="想看"
+                                            Tag="Wish"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="看过"
+                                            Tag="Collect"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="在看"
+                                            Tag="Doing"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="搁置"
+                                            Tag="OnHold"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="抛弃"
+                                            Tag="Dropped"/>
+                        </MenuFlyout>
+                    </FlyoutBase.AttachedFlyout>
                 </RelativePanel>
             </DataTemplate>
 
             <DataTemplate x:Key="WideSubjectTemplate" x:DataType="data:Subject">
-                <RelativePanel Padding="5">
+                <RelativePanel Padding="5"
+                               RightTapped="ItemRelativePanel_RightTapped"
+                               Background="Transparent">
                     <controls:ImageEx Name="BangumiImage"
                                       IsCacheEnabled="True"
                                       CacheMode="BitmapCache"
@@ -156,6 +221,25 @@
                                FontSize="16"
                                Foreground="Gray"
                                TextTrimming="CharacterEllipsis"/>
+                    <FlyoutBase.AttachedFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="想看"
+                                            Tag="Wish"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="看过"
+                                            Tag="Collect"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="在看"
+                                            Tag="Doing"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="搁置"
+                                            Tag="OnHold"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="抛弃"
+                                            Tag="Dropped"/>
+                        </MenuFlyout>
+                    </FlyoutBase.AttachedFlyout>
                 </RelativePanel>
             </DataTemplate>
         </ResourceDictionary>
@@ -467,5 +551,12 @@
                 </controls:AdaptiveGridView>
             </PivotItem>
         </Pivot>
+
+        <ProgressBar Name="MyProgressBar"
+                     Grid.Row="1"
+                     Visibility="{x:Bind ViewModel.IsUpdating, Mode=OneWay}"
+                     IsIndeterminate="True"
+                     VerticalAlignment="Top"/>
+
     </Grid>
 </Page>

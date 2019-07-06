@@ -129,9 +129,10 @@ namespace Bangumi.Facades
                                 item.watched_eps = 0;
                                 item.ep_color = "#d26585";
                             }
-                            item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").Count() != 0 ?
-                                           item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").FirstOrDefault().sort :
-                                           item.eps.Where(ep => ep.status == "NA").FirstOrDefault().sort;
+                            if (item.next_ep != -1)
+                                item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").Count() != 0 ?
+                                               item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").FirstOrDefault().sort :
+                                               item.eps.Where(ep => ep.status == "NA").FirstOrDefault().sort;
                             item.lasttouch = watching.LastTouch;
                             item.lastupdate = DateTime.Today.ConvertDateTimeToJsTick();
                         }
@@ -187,9 +188,10 @@ namespace Bangumi.Facades
                                     item.watched_eps = 0;
                                     item.ep_color = "#d26585";
                                 }
-                                item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").Count() != 0 ?
-                                               item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").FirstOrDefault().sort :
-                                               item.eps.Where(ep => ep.status == "NA").FirstOrDefault().sort;
+                                if (item.next_ep != -1)
+                                    item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").Count() != 0 ?
+                                                   item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").FirstOrDefault().sort :
+                                                   item.eps.Where(ep => ep.status == "NA").FirstOrDefault().sort;
                                 item.lasttouch = watching.LastTouch;
                                 item.lastupdate = DateTime.Today.ConvertDateTimeToJsTick();
                             }

@@ -20,7 +20,7 @@ namespace Bangumi.Api.Services
             try
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                request.Timeout = 15000;
+                request.Timeout = 20000;
                 // 请求添加时间，防止搜索过于频繁
                 Cookie cookie = new Cookie("chii_searchDateLine", DateTime.Now.ToString(),"/", "api.bgm.tv");
                 request.CookieContainer = new CookieContainer();
@@ -60,6 +60,7 @@ namespace Bangumi.Api.Services
             {
                 byte[] requestBytes = Encoding.ASCII.GetBytes(post);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Timeout = 20000;
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
                 Stream requestStream = await request.GetRequestStreamAsync();

@@ -27,6 +27,16 @@ namespace Bangumi.ViewModels
         public ObservableCollection<string> Suggestions { get; private set; } = new ObservableCollection<string>();
         public SearchResultIncrementalLoadingCollection SearchResultCollection;
 
+        private bool _isUpdating;
+        public bool IsUpdating
+        {
+            get => _isUpdating;
+            set
+            {
+                Set(ref _isUpdating, value);
+            }
+        }
+
         private int _selectedIndex;
         public int SelectedIndex
         {
@@ -145,6 +155,21 @@ namespace Bangumi.ViewModels
                 {
                     SearchStatus[index] = "没有更多了";
                 }
+            }
+        }
+
+        /// <summary>
+        /// 更新条目的收藏状态
+        /// </summary>
+        /// <param name="subject"></param>
+        /// <param name="collectionStatus"></param>
+        public async void UpdateCollectionStatus(Subject subject, CollectionStatusEnum collectionStatus)
+        {
+            if (subject != null)
+            {
+                IsUpdating = true;
+                await BangumiFacade.UpdateCollectionStatusAsync(subject.Id.ToString(), collectionStatus);
+                IsUpdating = false;
             }
         }
 

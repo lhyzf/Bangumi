@@ -166,16 +166,27 @@ namespace Bangumi.Common
         }
 
         /// <summary>
-        /// 保留一位小数
+        /// 保留小数位数
         /// </summary>
         /// <param name="d"></param>
+        /// <param name="n">小数点后几位</param>
         /// <returns></returns>
-        public static string DoubleToString(double d)
+        public static string DoubleToString(double d, int n)
         {
             if (d == 0)
                 return "-";
             else
-                return d.ToString("0.0");
+                switch (n)
+                {
+                    case 0:
+                        return d.ToString("0");
+                    case 1:
+                        return d.ToString("0.0");
+                    case 2:
+                        return d.ToString("0.00");
+                    default:
+                        return d.ToString();
+                }
         }
 
     }
