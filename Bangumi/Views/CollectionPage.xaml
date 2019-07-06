@@ -24,7 +24,9 @@
             <CollectionViewSource x:Name="cvsGroups" Source="{x:Bind ViewModel.SubjectCollection}" IsSourceGrouped="True" ItemsPath="Items"/>
 
             <DataTemplate x:Key="NarrowZoomedInTemplate" x:DataType="data:Subject2">
-                <RelativePanel Padding="5">
+                <RelativePanel Name="ItemRelativePanel" Padding="5"
+                               RightTapped="ItemRelativePanel_RightTapped"
+                               Background="Transparent">
                     <controls:ImageEx Name="BangumiImage"
                                       IsCacheEnabled="True"
                                       CacheMode="BitmapCache"
@@ -51,11 +53,32 @@
                                FontSize="12"
                                Foreground="Gray"
                                TextTrimming="CharacterEllipsis"/>
+                    <FlyoutBase.AttachedFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="想看"
+                                            Tag="Wish"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="看过"
+                                            Tag="Collect"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="在看"
+                                            Tag="Doing"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="搁置"
+                                            Tag="OnHold"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="抛弃"
+                                            Tag="Dropped"/>
+                        </MenuFlyout>
+                    </FlyoutBase.AttachedFlyout>
                 </RelativePanel>
             </DataTemplate>
 
             <DataTemplate x:Key="WideZoomedInTemplate" x:DataType="data:Subject2">
-                <RelativePanel Padding="5">
+                <RelativePanel Padding="5"
+                               RightTapped="ItemRelativePanel_RightTapped"
+                               Background="Transparent">
                     <controls:ImageEx Name="BangumiImage"
                                       IsCacheEnabled="True"
                                       CacheMode="BitmapCache"
@@ -82,6 +105,25 @@
                                FontSize="16"
                                Foreground="Gray"
                                TextTrimming="CharacterEllipsis"/>
+                    <FlyoutBase.AttachedFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="想看"
+                                            Tag="Wish"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="看过"
+                                            Tag="Collect"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="在看"
+                                            Tag="Doing"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="搁置"
+                                            Tag="OnHold"/>
+                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                            Text="抛弃"
+                                            Tag="Dropped"/>
+                        </MenuFlyout>
+                    </FlyoutBase.AttachedFlyout>
                 </RelativePanel>
             </DataTemplate>
 
@@ -174,6 +216,12 @@
             <ComboBoxItem Content="游戏" />
             <ComboBoxItem Content="三次元" />
         </ComboBox>
+        
+        <ProgressBar Name="MyProgressBar"
+                     Grid.Row="1"
+                     Visibility="{x:Bind ViewModel.IsUpdating, Mode=OneWay}"
+                     IsIndeterminate="True"
+                     VerticalAlignment="Top"/>
 
         <Image Name="EmptyImage"
                Width="200"

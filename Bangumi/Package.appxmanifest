@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="29205Teachoc.BangumiUWP" Publisher="CN=72BD852E-289E-4683-8C22-CEF187DFA041" Version="0.4.1.0" />
+  <Identity Name="29205Teachoc.BangumiUWP" Publisher="CN=72BD852E-289E-4683-8C22-CEF187DFA041" Version="0.4.2.0" />
   <mp:PhoneIdentity PhoneProductId="ea202ea4-b4e3-4928-a8b4-0c10cbff2eeb" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Bangumi UWP</DisplayName>

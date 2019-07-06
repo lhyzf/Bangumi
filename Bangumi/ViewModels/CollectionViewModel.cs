@@ -26,7 +26,22 @@ namespace Bangumi.ViewModels
         public bool IsLoading
         {
             get => _isLoading;
-            set => Set(ref _isLoading, value);
+            set
+            {
+                Set(ref _isLoading, value);
+                HomePage.homePage.isLoading = value;
+                MainPage.rootPage.RefreshAppBarButton.IsEnabled = !value;
+            }
+        }
+
+        private bool _isUpdating;
+        public bool IsUpdating
+        {
+            get => _isUpdating;
+            set
+            {
+                Set(ref _isUpdating, value);
+            }
         }
 
         private int _selectedIndex;
@@ -47,8 +62,6 @@ namespace Bangumi.ViewModels
                 if (OAuthHelper.IsLogin)
                 {
                     IsLoading = true;
-                    HomePage.homePage.isLoading = IsLoading;
-                    MainPage.rootPage.RefreshAppBarButton.IsEnabled = false;
                     await BangumiFacade.PopulateSubjectCollectionAsync(SubjectCollection, subjectType);
                 }
                 else
@@ -66,8 +79,55 @@ namespace Bangumi.ViewModels
             finally
             {
                 IsLoading = false;
-                HomePage.homePage.isLoading = IsLoading;
-                MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
+            }
+        }
+
+        /// <summary>
+        /// 更新条目的收藏状态
+        /// </summary>
+        /// <param name="subject"></param>
+        /// <param name="collectionStatus"></param>
+        public async void UpdateCollectionStatus(Subject2 subject, CollectionStatusEnum collectionStatus)
+        {
+            if (subject != null)
+            {
+                // 由于服务器原因，导致条目在多个类别下出现，则有不属于同一类别的存在，则进行更新
+                var cols = SubjectCollection.Where(sub => sub.Items.Where(it => it.SubjectId == subject.SubjectId).FirstOrDefault() != null);
+                if (cols.Where(c => c.Status.Name != collectionStatus.GetValue()).Count() == 0)
+                    return;
+                var col = cols.Where(c => c.Status.Name != collectionStatus.GetValue()).FirstOrDefault();
+                IsUpdating = true;
+                if (await BangumiFacade.UpdateCollectionStatusAsync(subject.SubjectId.ToString(), collectionStatus))
+                {
+                    // 将条目从原类别中删除
+                    col.Items.Remove(subject);
+                    col.Count--;
+                    var index = SubjectCollection.IndexOf(col);
+                    SubjectCollection.Remove(col);
+                    if (col.Items.Count != 0)
+                        SubjectCollection.Insert(index, col);
+                    // 找到新所属类别，有则加入，无则新增
+                    var newCol = SubjectCollection.Where(sub => sub.Status.Name == collectionStatus.GetValue()).FirstOrDefault();
+                    if (newCol != null)
+                    {
+                        newCol.Items.Insert(0, subject);
+                        newCol.Count++;
+                        index = SubjectCollection.IndexOf(newCol);
+                        SubjectCollection.Remove(newCol);
+                        SubjectCollection.Insert(index, newCol);
+                    }
+                    else
+                    {
+                        newCol = new Collection()
+                        {
+                            Items = new List<Subject2>() { subject },
+                            Status = new SubjectStatus() { Name = collectionStatus.GetValue() },
+                            Count = 1
+                        };
+                        SubjectCollection.Add(newCol);
+                    }
+                }
+                IsUpdating = false;
             }
         }
 
