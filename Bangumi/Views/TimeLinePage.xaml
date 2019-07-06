@@ -110,8 +110,9 @@
                     <VisualState.Setters>
                         <Setter Target="MyGridView.ItemTemplate"
                                 Value="{StaticResource NarrowZoomedInTemplate}"/>
-                        <Setter Target="MyGridView.DesiredWidth"
-                                Value="300"/>
+                        <Setter Target="MyGridView.DesiredWidth" Value="300"/>
+                        <Setter Target="EmptyImage.Width" Value="200"/>
+                        <Setter Target="EmptyImage.Height" Value="326"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Wide">
@@ -121,8 +122,9 @@
                     <VisualState.Setters>
                         <Setter Target="MyGridView.ItemTemplate"
                                 Value="{StaticResource WideZoomedInTemplate}"/>
-                        <Setter Target="MyGridView.DesiredWidth"
-                                Value="370"/>
+                        <Setter Target="MyGridView.DesiredWidth" Value="370"/>
+                        <Setter Target="EmptyImage.Width" Value="300"/>
+                        <Setter Target="EmptyImage.Height" Value="490"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -157,5 +159,13 @@
                 </ListView>
             </SemanticZoom.ZoomedOutView>
         </SemanticZoom>
+
+        <Image Name="EmptyImage"
+               Width="200"
+               Height="326"
+               Visibility="{x:Bind common:Converters.CollapsedIfNotZero(ViewModel.BangumiCollection.Count),Mode=OneWay}"
+               Source="ms-appx:///Assets/resource/empty.png"
+               Stretch="Uniform"/>
+
     </Grid>
 </Page>

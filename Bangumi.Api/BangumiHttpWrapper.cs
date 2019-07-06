@@ -118,6 +118,10 @@ namespace Bangumi.Api.Services
             try
             {
                 string response = await HttpHelper.GetAsync(url);
+                if (response == "null")
+                {
+                    return new List<Watching>();
+                }
                 var result = JsonConvert.DeserializeObject<List<Watching>>(response);
                 foreach (var watching in result)
                 {
