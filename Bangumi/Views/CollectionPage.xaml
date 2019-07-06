@@ -113,8 +113,9 @@
                     <VisualState.Setters>
                         <Setter Target="MyGridView.ItemTemplate" 
                                 Value="{StaticResource NarrowZoomedInTemplate}"/>
-                        <Setter Target="MyGridView.DesiredWidth" 
-                                Value="300"/>
+                        <Setter Target="MyGridView.DesiredWidth" Value="300"/>
+                        <Setter Target="EmptyImage.Width" Value="200"/>
+                        <Setter Target="EmptyImage.Height" Value="326"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Wide">
@@ -124,8 +125,9 @@
                     <VisualState.Setters>
                         <Setter Target="MyGridView.ItemTemplate" 
                                 Value="{StaticResource WideZoomedInTemplate}"/>
-                        <Setter Target="MyGridView.DesiredWidth" 
-                                Value="370"/>
+                        <Setter Target="MyGridView.DesiredWidth" Value="370"/>
+                        <Setter Target="EmptyImage.Width" Value="300"/>
+                        <Setter Target="EmptyImage.Height" Value="490"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -172,6 +174,13 @@
             <ComboBoxItem Content="游戏" />
             <ComboBoxItem Content="三次元" />
         </ComboBox>
+
+        <Image Name="EmptyImage"
+               Width="200"
+               Height="326"
+               Visibility="{x:Bind common:Converters.CollapsedIfNotZero(ViewModel.SubjectCollection.Count),Mode=OneWay}"
+               Source="ms-appx:///Assets/resource/empty.png"
+               Stretch="Uniform"/>
 
     </Grid>
 </Page>

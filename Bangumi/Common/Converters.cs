@@ -34,6 +34,18 @@ namespace Bangumi.Common
             value == null ? Visibility.Collapsed : Visibility.Visible;
 
         /// <summary>
+        /// Returns Visibility.Collapsed if the specified value is not null; otherwise, returns Visibility.Visible.
+        /// </summary>
+        public static Visibility CollapsedIfNotNull(object value) =>
+            value == null ? Visibility.Visible : Visibility.Collapsed;
+
+        /// <summary>
+        /// Returns Visibility.Collapsed if the specified value is not null; otherwise, returns Visibility.Visible.
+        /// </summary>
+        public static Visibility CollapsedIfNotZero(int value) =>
+            value == 0 ? Visibility.Visible : Visibility.Collapsed;
+
+        /// <summary>
         /// Returns Visibility.Collapsed if the specified string is null or empty; otherwise, returns Visibility.Visible.
         /// </summary>
         public static Visibility CollapsedIfNullOrEmpty(string value) =>
