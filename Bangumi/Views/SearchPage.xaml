@@ -11,7 +11,7 @@
     Loaded="Page_Loaded"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d"
-    Background="Transparent">
+    Background="{ThemeResource SystemChromeLowColor}">
 
     <Page.Resources>
         <ResourceDictionary>

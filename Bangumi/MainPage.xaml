@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     NavigationCacheMode="Enabled"
     Loaded="Page_Loaded"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource SystemChromeLowColor}">
     
     <Grid>
         <Frame Name="MyFrame" />
@@ -24,22 +24,34 @@
                           x:FieldModifier="public"
                           IsEnabled="{Binding ElementName=RefreshAppBarButton,Path=IsEnabled}"
                           Label="收藏"
+                          ToolTipService.ToolTip="收藏"
                           Visibility="Collapsed">
                 <FontIcon Name="CollectionAppBarButtonFontIcon" 
                           x:FieldModifier="public"
                           FontFamily="Segoe MDL2 Assets" 
                           Glyph="&#xE006;"/>
             </AppBarButton>
-            <AppBarSeparator Visibility="{Binding ElementName=CollectionAppBarButton,Path=Visibility}" />
+            <AppBarButton Name="WebPageAppBarButton"
+                          x:FieldModifier="public"
+                          Label="访问网页"
+                          ToolTipService.ToolTip="访问网页"
+                          Visibility="Collapsed">
+                <FontIcon FontFamily="Segoe MDL2 Assets" 
+                          Glyph="&#xE12A;" />
+            </AppBarButton>
+            <AppBarSeparator Visibility="{Binding ElementName=WebPageAppBarButton,Path=Visibility}" />
             <AppBarButton Icon="Find" 
                           Label="搜索"
+                          ToolTipService.ToolTip="搜索"
                           Click="SearchButton_Click"/>
             <AppBarButton Name="RefreshAppBarButton" 
                           x:FieldModifier="public"
                           Icon="Refresh" 
-                          Label="刷新"/>
+                          Label="刷新"
+                          ToolTipService.ToolTip="刷新"/>
             <AppBarButton Icon="Setting" 
                           Label="设置"
+                          ToolTipService.ToolTip="设置"
                           Click="SettingButton_Click"/>
             <CommandBar.SecondaryCommands>
                 <AppBarButton Name="LoginButton"

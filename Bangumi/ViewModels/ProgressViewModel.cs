@@ -98,7 +98,7 @@ namespace Bangumi.ViewModels
         // 更新下一章章节状态为已看
         public async void UpdateNextEpStatus(WatchingStatus item)
         {
-            if (item != null)
+            if (item != null && item.eps != null && item.eps.Count != 0)
             {
                 item.isUpdating = true;
                 if (item.next_ep != -1 && await BangumiFacade.UpdateProgressAsync(
@@ -111,7 +111,7 @@ namespace Bangumi.ViewModels
                         item.next_ep = -1;
                     else
                         item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").Count() != 0 ?
-                                       item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").FirstOrDefault().sort :
+                                       item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").OrderBy(ep => ep.sort).FirstOrDefault().sort :
                                        item.eps.Where(ep => ep.status == "NA").FirstOrDefault().sort;
                     item.watched_eps++;
                     // 若未看到最新一集，则使用粉色，否则使用灰色

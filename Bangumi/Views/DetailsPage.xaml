@@ -11,10 +11,11 @@
     xmlns:sys="using:System"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     NavigationCacheMode="Enabled"
     Loaded="Page_Loaded"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource SystemChromeLowColor}">
 
     <Page.Resources>
         <ResourceDictionary>
@@ -37,7 +38,7 @@
                                    VerticalAlignment="Bottom"/>
                     </Border>
                     <TextBlock Grid.Row="1"
-                               Text="{x:Bind score,Mode=OneWay}"
+                               Text="{x:Bind score}"
                                FontSize="10"
                                HorizontalAlignment="Center"/>
                 </Grid>
@@ -93,8 +94,86 @@
                     </FlyoutBase.AttachedFlyout>
                 </RelativePanel>
             </DataTemplate>
+
+            <DataTemplate x:Name="CrtTemplate" x:DataType="data:Crt">
+                <RelativePanel DataContext="{x:Bind Url}"
+                               Tapped="ItemsRepeater_Tapped"
+                               PointerEntered="RelativePanel_PointerEntered"
+                               PointerExited="RelativePanel_PointerExited"
+                               BorderThickness="1.5"
+                               BorderBrush="{ThemeResource SystemControlTransparentRevealBorderBrush}"
+                               Background="Transparent">
+                    <controls:ImageEx Name="CrtImage" 
+                                      Source="{x:Bind Images.Grid}"
+                                      Width="75"
+                                      Height="75"
+                                      Margin="0,0,5,0"
+                                      RelativePanel.AlignLeftWithPanel="True"
+                                      RelativePanel.AlignTopWithPanel="True"
+                                      PlaceholderSource="ms-appx:///Assets/resource/akkarin.jpg"
+                                      PlaceholderStretch="UniformToFill"
+                                      IsCacheEnabled="True"/>
+                    <TextBlock Name="CrtNameTextBlock"
+                               RelativePanel.RightOf="CrtImage"
+                               RelativePanel.AlignTopWithPanel="True"
+                               TextWrapping="Wrap">
+                        <Run Text="{x:Bind Name}"/>
+                        <Run Text="/" 
+                             Foreground="Gray"/>
+                        <Run Text="{x:Bind NameCn}"
+                             Foreground="Gray"
+                             FontSize="12"/>
+                    </TextBlock>
+                    <TextBlock Name="RoleTextBlock"
+                               Text="{x:Bind RoleName}"
+                               RelativePanel.RightOf="CrtImage"
+                               RelativePanel.Below="CrtNameTextBlock"/>
+                    <TextBlock Name="ActorTextBlock"
+                               Text="{x:Bind common:Converters.ActorListToString(Actors)}"
+                               RelativePanel.RightOf="CrtImage"
+                               RelativePanel.Below="RoleTextBlock"/>
+                </RelativePanel>
+            </DataTemplate>
+            
+            <DataTemplate x:Name="StaffTemplate" x:DataType="data:Staff">
+                <RelativePanel DataContext="{x:Bind Url}"
+                               Tapped="ItemsRepeater_Tapped"
+                               PointerEntered="RelativePanel_PointerEntered"
+                               PointerExited="RelativePanel_PointerExited"
+                               BorderThickness="1.5"
+                               BorderBrush="{ThemeResource SystemControlTransparentRevealBorderBrush}"
+                               Background="Transparent">
+                    <controls:ImageEx Name="StaffImage" 
+                                      Source="{x:Bind Images.Grid}"
+                                      Width="75"
+                                      Height="75"
+                                      Margin="0,0,5,0"
+                                      RelativePanel.AlignLeftWithPanel="True"
+                                      RelativePanel.AlignTopWithPanel="True"
+                                      PlaceholderSource="ms-appx:///Assets/resource/akkarin.jpg"
+                                      PlaceholderStretch="UniformToFill"
+                                      IsCacheEnabled="True"/>
+                    <TextBlock Name="StaffNameTextBlock"
+                               RelativePanel.RightOf="StaffImage"
+                               RelativePanel.AlignTopWithPanel="True"
+                               TextWrapping="Wrap">
+                        <Run Text="{x:Bind Name}"/>
+                        <Run Text="/"
+                             Foreground="Gray"/>
+                        <Run Text="{x:Bind NameCn}"
+                             Foreground="Gray"
+                             FontSize="12"/>
+                    </TextBlock>
+                    <TextBlock Name="JobTextBlock"
+                               Text="{x:Bind common:Converters.JobListToString(Jobs)}"
+                               TextWrapping="Wrap"
+                               RelativePanel.RightOf="StaffImage"
+                               RelativePanel.Below="StaffNameTextBlock"/>
+                </RelativePanel>
+            </DataTemplate>
+
         </ResourceDictionary>
-   </Page.Resources>
+    </Page.Resources>
 
     <Grid>
         <VisualStateManager.VisualStateGroups>
@@ -109,8 +188,6 @@
                         <Setter Target="NameTextBlock.FontSize" Value="16"/>
                         <Setter Target="air_dateTextBlock.FontSize" Value="14"/>
                         <Setter Target="air_weekdayTextBlock.FontSize" Value="14"/>
-                        <Setter Target="SummaryTextBlock.FontSize" Value="14"/>
-                        <Setter Target="MoreInfoHyperLink.FontSize" Value="14"/>
                         <Setter Target="collectionTextBlock.FontSize" Value="12"/>
                         <Setter Target="ratingTextBlock.FontSize" Value="24"/>
                         <Setter Target="ratingTextBlock.Margin" Value="20"/>
@@ -127,8 +204,6 @@
                         <Setter Target="NameTextBlock.FontSize" Value="24"/>
                         <Setter Target="air_dateTextBlock.FontSize" Value="16"/>
                         <Setter Target="air_weekdayTextBlock.FontSize" Value="16"/>
-                        <Setter Target="SummaryTextBlock.FontSize" Value="18"/>
-                        <Setter Target="MoreInfoHyperLink.FontSize" Value="16"/>
                         <Setter Target="collectionTextBlock.FontSize" Value="14"/>
                         <Setter Target="ratingTextBlock.FontSize" Value="48"/>
                         <Setter Target="ratingTextBlock.Margin" Value="25,30"/>
@@ -145,8 +220,6 @@
                         <Setter Target="NameTextBlock.FontSize" Value="24"/>
                         <Setter Target="air_dateTextBlock.FontSize" Value="16"/>
                         <Setter Target="air_weekdayTextBlock.FontSize" Value="16"/>
-                        <Setter Target="SummaryTextBlock.FontSize" Value="18"/>
-                        <Setter Target="MoreInfoHyperLink.FontSize" Value="16"/>
                         <Setter Target="collectionTextBlock.FontSize" Value="14"/>
                         <Setter Target="ratingTextBlock.FontSize" Value="48"/>
                         <Setter Target="ratingTextBlock.Margin" Value="25,30"/>
@@ -205,103 +278,166 @@
                 </TextBlock>
             </Grid>
         </Grid>
-        <controls:AdaptiveGridView Name="EpsGridView" 
-                                   Grid.Row="1"
-                                   ItemsSource="{x:Bind ViewModel.eps}" 
-                                   DesiredWidth="300"
-                                   Padding="10,5,10,45"
-                                   ItemTemplate="{StaticResource EpTemplate}">
-            <GridView.Header>
-                <RelativePanel Margin="0,0,10,0">
-                    <controls:ImageEx x:Name="BangumiImage" 
-                                      IsCacheEnabled="True"
-                                      CacheMode="BitmapCache"
-                                      Source="{x:Bind ViewModel.ImageSource, Mode=OneWay}"
-                                      PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
-                                      PlaceholderStretch="UniformToFill"
-                                      RelativePanel.AlignLeftWithPanel="True"
-                                      RelativePanel.AlignTopWithPanel="True"
-                                      Margin="0,0,5,0" />
-                    <ItemsControl Name="RateItemsControl"
-                                  RelativePanel.Above="collectionTextBlock"
-                                  RelativePanel.AlignRightWithPanel="True"
-                                  ItemTemplate="{StaticResource RateTemplate}"
-                                  ItemsSource="{x:Bind ViewModel.OthersRates}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <controls:WrapPanel HorizontalSpacing="8"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-                    
 
-                    <TextBlock Name="NameTextBlock" 
-                               Text="{x:Bind ViewModel.NameCn, Mode=OneWay}"
-                               RelativePanel.RightOf="BangumiImage"
-                               RelativePanel.AlignTopWithPanel="True"
-                               IsTextSelectionEnabled="True"
-                               TextWrapping="Wrap"
-                               Foreground="{StaticResource BangumiPinkColor}" />
-                    <TextBlock Name="air_dateTextBlock" 
-                               Text="{x:Bind sys:String.Format('开播时间：{0}',ViewModel.AirDate), Mode=OneWay}" 
-                               RelativePanel.RightOf="BangumiImage"
-                               RelativePanel.Below="NameTextBlock"
-                               Foreground="#666666" 
-                               Margin="0,2,0,0" />
-                    <TextBlock Name="air_weekdayTextBlock" 
-                               Text="更新时间：" 
-                               RelativePanel.RightOf="BangumiImage"
-                               RelativePanel.Below="air_dateTextBlock"
-                               Foreground="#666666" 
-                               Margin="0,2,0,0" >
-                        <Run Text="{x:Bind common:Converters.GetWeekday(ViewModel.AirWeekday), Mode=OneWay}"/>
-                    </TextBlock>
-                    <TextBlock Name="ratingTextBlock" 
-                               Text="{x:Bind common:Converters.DoubleToString(ViewModel.Score,1), Mode=OneWay}" 
-                               RelativePanel.LeftOf="RateItemsControl"
-                               RelativePanel.Above="collectionTextBlock"
-                               Margin="30,45"
-                               Foreground="{StaticResource BangumiPinkColor}" >
-                    </TextBlock>
-                    <TextBlock Name="collectionTextBlock" 
-                               Text="{x:Bind ViewModel.OthersCollection,Mode=OneWay}" 
-                               RelativePanel.AlignRightWithPanel="True"
-                               RelativePanel.AlignBottomWith="BangumiImage"
-                               RelativePanel.RightOf="BangumiImage"
-                               TextTrimming="CharacterEllipsis"
-                               HorizontalAlignment="Right"
-                               Foreground="#666666" 
-                               Margin="0,2,0,0" >
-                    </TextBlock>
-                    
-                    <TextBlock Name="SummaryTextBlock" 
-                               Text="{x:Bind ViewModel.Summary, Mode=OneWay}"
-                               RelativePanel.AlignLeftWithPanel="True"
-                               RelativePanel.Below="BangumiImage"
-                               IsTextSelectionEnabled="True"
-                               TextWrapping="Wrap" 
-                               Margin="0,5,0,0" />
-                    <HyperlinkButton Name="MoreInfoHyperLink"
-                                     Content="更多资料"
-                                     Click="MoreInfoButton_Click"
-                                     IsEnabled="{x:Bind common:Converters.Not(ViewModel.IsDetailLoading), Mode=OneWay}"
-                                     RelativePanel.AlignLeftWithPanel="True"
-                                     RelativePanel.Below="SummaryTextBlock"
-                                     Padding="0,0,0,10"
-                                     Foreground="{StaticResource BangumiPinkColor}"/>
-                </RelativePanel>
-            </GridView.Header>
-            <GridView.ItemContainerTransitions>
-                <TransitionCollection>
-                    <RepositionThemeTransition IsStaggeringEnabled="False" />
-                </TransitionCollection>
-            </GridView.ItemContainerTransitions>
-        </controls:AdaptiveGridView>
+        <Pivot Name="MyPivot"
+               Grid.Row="1">
+            <PivotItem Header="章节"
+                       Margin="0">
+                <Grid>
+                    <controls:AdaptiveGridView Name="EpsGridView" 
+                                               ItemsSource="{x:Bind ViewModel.eps}" 
+                                               DesiredWidth="300"
+                                               Padding="10,5,10,45"
+                                               ItemTemplate="{StaticResource EpTemplate}">
+                        <GridView.Header>
+                            <RelativePanel Margin="0,0,10,10">
+                                <controls:ImageEx x:Name="BangumiImage" 
+                                                  IsCacheEnabled="True"
+                                                  CacheMode="BitmapCache"
+                                                  Source="{x:Bind ViewModel.ImageSource, Mode=OneWay}"
+                                                  PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
+                                                  PlaceholderStretch="UniformToFill"
+                                                  RelativePanel.AlignLeftWithPanel="True"
+                                                  RelativePanel.AlignTopWithPanel="True"
+                                                  Margin="0,0,5,0" />
+                                <ItemsControl Name="RateItemsControl"
+                                              RelativePanel.Above="collectionTextBlock"
+                                              RelativePanel.AlignRightWithPanel="True"
+                                              ItemTemplate="{StaticResource RateTemplate}"
+                                              ItemsSource="{x:Bind ViewModel.OthersRates}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <controls:WrapPanel HorizontalSpacing="8"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
 
-        <ProgressBar Name="MyProgressBar"
-                     Grid.Row="1"
-                     Visibility="{x:Bind ViewModel.IsUpdating, Mode=OneWay}"
-                     IsIndeterminate="True"
-                     VerticalAlignment="Top"/>
+
+                                <TextBlock Name="NameTextBlock" 
+                                           Text="{x:Bind ViewModel.NameCn, Mode=OneWay}"
+                                           RelativePanel.RightOf="BangumiImage"
+                                           RelativePanel.AlignTopWithPanel="True"
+                                           IsTextSelectionEnabled="True"
+                                           TextWrapping="Wrap"
+                                           Foreground="{StaticResource BangumiPinkColor}" />
+                                <TextBlock Name="air_dateTextBlock" 
+                                           Text="{x:Bind sys:String.Format('开播时间：{0}',ViewModel.AirDate), Mode=OneWay}" 
+                                           RelativePanel.RightOf="BangumiImage"
+                                           RelativePanel.Below="NameTextBlock"
+                                           Foreground="#666666" 
+                                           Margin="0,2,0,0" />
+                                <TextBlock Name="air_weekdayTextBlock" 
+                                           Text="更新时间：" 
+                                           RelativePanel.RightOf="BangumiImage"
+                                           RelativePanel.Below="air_dateTextBlock"
+                                           Foreground="#666666" 
+                                           Margin="0,2,0,0" >
+                                    <Run Text="{x:Bind common:Converters.GetWeekday(ViewModel.AirWeekday), Mode=OneWay}"/>
+                                </TextBlock>
+                                <TextBlock Name="ratingTextBlock" 
+                                           Text="{x:Bind common:Converters.DoubleToString(ViewModel.Score,1), Mode=OneWay}" 
+                                           RelativePanel.LeftOf="RateItemsControl"
+                                           RelativePanel.Above="collectionTextBlock"
+                                           Margin="30,45"
+                                           Foreground="{StaticResource BangumiPinkColor}" >
+                                </TextBlock>
+                                <TextBlock Name="collectionTextBlock" 
+                                           Text="{x:Bind ViewModel.OthersCollection,Mode=OneWay}" 
+                                           RelativePanel.AlignRightWithPanel="True"
+                                           RelativePanel.AlignBottomWith="BangumiImage"
+                                           RelativePanel.RightOf="BangumiImage"
+                                           TextTrimming="CharacterEllipsis"
+                                           HorizontalAlignment="Right"
+                                           Foreground="#666666" 
+                                           Margin="0,2,0,0" >
+                                </TextBlock>
+
+                            </RelativePanel>
+                        </GridView.Header>
+                        <GridView.ItemContainerTransitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition IsStaggeringEnabled="False" />
+                            </TransitionCollection>
+                        </GridView.ItemContainerTransitions>
+                    </controls:AdaptiveGridView>
+
+                    <ProgressBar Name="MyProgressBar"
+                                 Grid.Row="1"
+                                 Visibility="{x:Bind ViewModel.IsUpdating, Mode=OneWay}"
+                                 IsIndeterminate="True"
+                                 VerticalAlignment="Top"/>
+                </Grid>
+            </PivotItem>
+
+            <PivotItem Header="详情"
+                       Margin="0">
+                <ScrollViewer>
+                    <StackPanel Padding="10,5,10,45">
+                        <TextBlock IsTextSelectionEnabled="True"
+                                   TextWrapping="Wrap"
+                                   FontSize="18">
+                            <Bold Foreground="{StaticResource BangumiPinkColor}">原名：</Bold><Run Text="{x:Bind ViewModel.Name,Mode=OneWay}"></Run>
+                        </TextBlock>
+                        <TextBlock LineHeight="34"
+                                   FontSize="18"
+                                   Foreground="{StaticResource BangumiPinkColor}"
+                                   Padding="0,15,0,0"><Bold>影片信息</Bold></TextBlock>
+                        <TextBlock LineHeight="22" 
+                                   Text="{x:Bind ViewModel.MoreInfo,Mode=OneWay}"
+                                   TextWrapping="Wrap"/>
+                        <TextBlock LineHeight="34"
+                                   FontSize="18"
+                                   Foreground="{StaticResource BangumiPinkColor}"
+                                   Padding="0,15,0,0"><Bold>简介</Bold></TextBlock>
+                        <TextBlock LineHeight="22" 
+                                   IsTextSelectionEnabled="True"
+                                   Text="{x:Bind ViewModel.MoreSummary,Mode=OneWay}"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock LineHeight="34"
+                                   FontSize="18"
+                                   Foreground="{StaticResource BangumiPinkColor}"
+                                   Padding="0,15,0,0"><Bold>角色资料</Bold></TextBlock>
+                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.characters}"
+                                            ItemTemplate="{StaticResource CrtTemplate}">
+                            <muxc:ItemsRepeater.Layout>
+                                <muxc:UniformGridLayout Orientation="Horizontal"
+                                                        ItemsJustification="Start"
+                                                        ItemsStretch="Fill"
+                                                        MinItemWidth="250"
+                                                        MinColumnSpacing="8"
+                                                        MinRowSpacing="8"/>
+                            </muxc:ItemsRepeater.Layout>
+                        </muxc:ItemsRepeater>
+                        <TextBlock LineHeight="22" 
+                                   Text="暂无资料"
+                                   Visibility="{x:Bind common:Converters.CollapsedIfNotZero(ViewModel.characters.Count),Mode=OneWay}"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock LineHeight="34"
+                                   FontSize="18"
+                                   Foreground="{StaticResource BangumiPinkColor}"
+                                   Padding="0,15,0,0"><Bold>演职资料</Bold></TextBlock>
+                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.staffs}"
+                                            ItemTemplate="{StaticResource StaffTemplate}">
+                            <muxc:ItemsRepeater.Layout>
+                                <muxc:UniformGridLayout Orientation="Horizontal"
+                                                        ItemsJustification="Start"
+                                                        ItemsStretch="Fill"
+                                                        MinItemWidth="250"
+                                                        MinColumnSpacing="8"
+                                                        MinRowSpacing="8"/>
+                            </muxc:ItemsRepeater.Layout>
+                        </muxc:ItemsRepeater>
+                        <TextBlock LineHeight="22" 
+                                   Text="暂无资料"
+                                   Visibility="{x:Bind common:Converters.CollapsedIfNotZero(ViewModel.staffs.Count),Mode=OneWay}"
+                                   TextWrapping="Wrap"/>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+        </Pivot>
+        
     </Grid>
 </Page>

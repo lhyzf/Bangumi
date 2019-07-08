@@ -150,7 +150,7 @@ namespace Bangumi.Facades
 
                             if (item.next_ep != -1 && item.eps.Count != 0)
                                 item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").Count() != 0 ?
-                                               item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").FirstOrDefault().sort :
+                                               item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").OrderBy(ep=>ep.sort).FirstOrDefault().sort :
                                                item.eps.Where(ep => ep.status == "NA").FirstOrDefault().sort;
                             item.lasttouch = watching.LastTouch;
                             item.lastupdate = DateTime.Today.ConvertDateTimeToJsTick();

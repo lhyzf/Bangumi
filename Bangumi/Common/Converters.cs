@@ -191,5 +191,35 @@ namespace Bangumi.Common
                 }
         }
 
+        public static string ActorListToString(List<Actor> actors)
+        {
+            if (actors != null && actors.Count != 0)
+            {
+                string str = "CV：";
+                foreach (var item in actors)
+                {
+                    str += item.Name + '、';
+                }
+                return str.TrimEnd('、');
+            }
+            else
+                return "";
+        }
+
+        public static string JobListToString(List<string> jobs)
+        {
+            if (jobs != null && jobs.Count != 0)
+            {
+                string str = "";
+                foreach (var item in jobs)
+                {
+                    str += item + '、';
+                }
+                return str.TrimEnd('、');
+            }
+            else
+                return "";
+        }
+
     }
 }
