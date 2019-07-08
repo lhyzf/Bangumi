@@ -155,7 +155,8 @@ namespace Bangumi.ViewModels
                 .OrderBy(p => p.ep_color)
                 .ToList();
             notWatched = WatchingCollection
-                .Where(p => p.watched_eps == 0)
+                .Where(p => p.watched_eps == 0 && p.watched_eps != p.eps.Count)
+                .OrderBy(p => p.ep_color)
                 .ToList();
             allWatched = WatchingCollection
                 .Where(p => p.watched_eps == p.eps.Count)
@@ -218,8 +219,8 @@ namespace Bangumi.ViewModels
             set => Set(ref _updated_eps, value);
         }
 
-        private float _next_ep;
-        public float next_ep
+        private double _next_ep;
+        public double next_ep
         {
             get => _next_ep;
             set => Set(ref _next_ep, value);
@@ -237,7 +238,7 @@ namespace Bangumi.ViewModels
     {
         public int id { get; set; }
         public int type { get; set; }
-        public float sort { get; set; }
+        public double sort { get; set; }
         public string status { get; set; }
         public string name { get; set; }
     }

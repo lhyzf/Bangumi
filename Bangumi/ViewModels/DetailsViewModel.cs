@@ -371,31 +371,36 @@ namespace Bangumi.ViewModels
                     {
                         Summary = "暂无简介";
                     }
-
-                    Score = subject.Rating.Score;
-                    List<SimpleRate> simpleRates = new List<SimpleRate>();
-                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._10, score = 10 });
-                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._9, score = 9 });
-                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._8, score = 8 });
-                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._7, score = 7 });
-                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._6, score = 6 });
-                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._5, score = 5 });
-                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._4, score = 4 });
-                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._3, score = 3 });
-                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._2, score = 2 });
-                    simpleRates.Add(new SimpleRate { count = subject.Rating.Count._1, score = 1 });
-                    double maxCount = simpleRates.Max().count;
-                    OthersRates.Clear();
-                    foreach (var item in simpleRates)
+                    if (subject.Rating != null)
                     {
-                        item.ratio = item.count * 100 / maxCount;
-                        OthersRates.Add(item);
+                        Score = subject.Rating.Score;
+                        List<SimpleRate> simpleRates = new List<SimpleRate>();
+                        simpleRates.Add(new SimpleRate { count = subject.Rating.Count._10, score = 10 });
+                        simpleRates.Add(new SimpleRate { count = subject.Rating.Count._9, score = 9 });
+                        simpleRates.Add(new SimpleRate { count = subject.Rating.Count._8, score = 8 });
+                        simpleRates.Add(new SimpleRate { count = subject.Rating.Count._7, score = 7 });
+                        simpleRates.Add(new SimpleRate { count = subject.Rating.Count._6, score = 6 });
+                        simpleRates.Add(new SimpleRate { count = subject.Rating.Count._5, score = 5 });
+                        simpleRates.Add(new SimpleRate { count = subject.Rating.Count._4, score = 4 });
+                        simpleRates.Add(new SimpleRate { count = subject.Rating.Count._3, score = 3 });
+                        simpleRates.Add(new SimpleRate { count = subject.Rating.Count._2, score = 2 });
+                        simpleRates.Add(new SimpleRate { count = subject.Rating.Count._1, score = 1 });
+                        double maxCount = simpleRates.Max().count;
+                        OthersRates.Clear();
+                        foreach (var item in simpleRates)
+                        {
+                            item.ratio = (double)item.count * 100 / maxCount;
+                            OthersRates.Add(item);
+                        }
                     }
-                    OthersCollection = subject.Collection.Wish + "想看/" +
-                                       subject.Collection.Collect + "看过/" +
-                                       subject.Collection.Doing + "在看/" +
-                                       subject.Collection.OnHold + "搁置/" +
-                                       subject.Collection.Dropped + "抛弃";
+                    if (subject.Collection != null)
+                    {
+                        OthersCollection = subject.Collection.Wish + "想看/" +
+                                           subject.Collection.Collect + "看过/" +
+                                           subject.Collection.Doing + "在看/" +
+                                           subject.Collection.OnHold + "搁置/" +
+                                           subject.Collection.Dropped + "抛弃";
+                    }
 
                     // 更多资料
                     name = subject.Name;
