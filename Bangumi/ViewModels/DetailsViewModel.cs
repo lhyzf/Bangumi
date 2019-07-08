@@ -120,11 +120,26 @@ namespace Bangumi.ViewModels
 
 
         // 更多资料用
-        public string name;
-        public string moreInfo;
-        public string moreSummary;
-        public string moreCharacters;
-        public string moreStaff;
+        public ObservableCollection<Crt> characters { get; private set; } = new ObservableCollection<Crt>();
+        public ObservableCollection<Staff> staffs { get; private set; } = new ObservableCollection<Staff>();
+        private string _name;
+        public string Name
+        {
+            get => _name;
+            set => Set(ref _name, value);
+        }
+        private string _moreInfo;
+        public string MoreInfo
+        {
+            get => _moreInfo;
+            set => Set(ref _moreInfo, value);
+        }
+        private string _moreSummary;
+        public string MoreSummary
+        {
+            get => _moreSummary;
+            set => Set(ref _moreSummary, value);
+        }
 
         // 收藏状态，评分，吐槽
         public int myRate;
@@ -155,11 +170,11 @@ namespace Bangumi.ViewModels
             OthersCollection = "";
             Score = 0;
             // 更多资料用
-            name = "";
-            moreInfo = "";
-            moreSummary = "";
-            moreCharacters = "";
-            moreStaff = "";
+            characters.Clear();
+            staffs.Clear();
+            Name = "";
+            MoreInfo = "";
+            MoreSummary = "";
             // 收藏状态，评分，吐槽
             CollectionStatusText = "收藏";
             CollectionStatusIcon = "\uE006";
@@ -227,24 +242,6 @@ namespace Bangumi.ViewModels
                 IsStatusLoaded = true;
                 IsUpdating = false;
             }
-        }
-
-        /// <summary>
-        /// 显示更多资料
-        /// </summary>
-        public async void ShowMoreInfo()
-        {
-            SubjectMoreInfoContentDialog subjectMoreInfoContentDialog = new SubjectMoreInfoContentDialog()
-            {
-                name = name,
-                info = moreInfo,
-                summary = moreSummary,
-                characters = moreCharacters,
-                staff = moreStaff,
-            };
-            subjectMoreInfoContentDialog.Title = NameCn;
-            MainPage.rootPage.hasDialog = true;
-            await subjectMoreInfoContentDialog.ShowAsync();
         }
 
         /// <summary>
@@ -353,7 +350,7 @@ namespace Bangumi.ViewModels
                 // 获取条目信息
                 var subject = await BangumiFacade.GetSubjectAsync(SubjectId);
 
-                if (subject != null)
+                if (subject != null && subject.Id.ToString() == SubjectId)
                 {
                     // 条目标题
                     NameCn = string.IsNullOrEmpty(subject.NameCn) ? subject.Name : subject.NameCn;
@@ -403,67 +400,29 @@ namespace Bangumi.ViewModels
                     }
 
                     // 更多资料
-                    name = subject.Name;
-                    moreSummary = string.IsNullOrEmpty(subject.Summary) ? "暂无简介" : subject.Summary;
-                    moreInfo = "作品分类：" + ((SubjectTypeEnum)subject.Type).GetValue();
-                    moreInfo += "\n放送开始：" + subject.AirDate;
-                    moreInfo += "\n放送星期：" + Converters.GetWeekday(subject.AirWeekday);
-                    moreInfo += "\n话数：" + subject.EpsCount;
+                    Name = subject.Name;
+                    MoreSummary = string.IsNullOrEmpty(subject.Summary) ? "暂无简介" : subject.Summary;
+                    MoreInfo = "作品分类：" + ((SubjectTypeEnum)subject.Type).GetValue();
+                    MoreInfo += "\n放送开始：" + subject.AirDate;
+                    MoreInfo += "\n放送星期：" + Converters.GetWeekday(subject.AirWeekday);
+                    MoreInfo += "\n话数：" + subject.Eps?.Count;
                     // 角色
+                    characters.Clear();
                     if (subject.Characters != null)
                     {
-                        moreCharacters = "";
                         foreach (var crt in subject.Characters)
                         {
-                            moreCharacters += string.Format("{0}：", string.IsNullOrEmpty(crt.NameCn) ? crt.Name : crt.NameCn);
-                            if (crt.Actors != null)
-                            {
-                                foreach (var actor in crt.Actors)
-                                {
-                                    moreCharacters += actor.Name + "、";
-                                }
-                                moreCharacters = moreCharacters.TrimEnd('、');
-                            }
-                            else
-                            {
-                                moreCharacters += "暂无资料";
-                            }
-                            moreCharacters += "\n";
+                            characters.Add(crt);
                         }
-                        moreCharacters = moreCharacters.TrimEnd('\n');
-                    }
-                    else
-                    {
-                        moreCharacters = "暂无资料";
                     }
                     // 演职人员
+                    staffs.Clear();
                     if (subject.Staff != null)
                     {
-                        moreStaff = "";
-                        var sd = new Dictionary<string, string>();
                         foreach (var staff in subject.Staff)
                         {
-                            foreach (var job in staff.Jobs)
-                            {
-                                if (!sd.ContainsKey(job))
-                                {
-                                    sd.Add(job, string.IsNullOrEmpty(staff.NameCn) ? staff.Name : staff.NameCn);
-                                }
-                                else
-                                {
-                                    sd[job] += string.Format("、{0}", string.IsNullOrEmpty(staff.NameCn) ? staff.Name : staff.NameCn);
-                                }
-                            }
+                            staffs.Add(staff);
                         }
-                        foreach (var s in sd)
-                        {
-                            moreStaff += string.Format("{0}：{1}\n", s.Key, s.Value);
-                        }
-                        moreStaff = moreStaff.TrimEnd('\n');
-                    }
-                    else
-                    {
-                        moreStaff = "暂无资料";
                     }
                     // 显示章节
                     if (subject.Eps != null)
@@ -499,20 +458,22 @@ namespace Bangumi.ViewModels
                     {
                         // 显示用户章节状态
                         Progress progress = await BangumiFacade.GetProgressesAsync(SubjectId);
-                        foreach (var ep in eps) //用户观看状态
+                        if (progress != null && progress.SubjectId.ToString() == SubjectId)
                         {
-                            var prog = progress?.Eps?.Where(p => p.Id == ep.Id).FirstOrDefault();
-                            if (prog != null)
+                            foreach (var ep in eps) //用户观看状态
                             {
-                                ep.Status = prog.Status.CnName;
+                                var prog = progress?.Eps?.Where(p => p.Id == ep.Id).FirstOrDefault();
+                                if (prog != null)
+                                {
+                                    ep.Status = prog.Status.CnName;
+                                }
+                                else
+                                {
+                                    ep.Status = subject.Eps.Where(e => e.Id == ep.Id).FirstOrDefault().Status;
+                                }
                             }
-                            else
-                            {
-                                ep.Status = subject.Eps.Where(e => e.Id == ep.Id).FirstOrDefault().Status;
-                            }
+                            IsProgressLoading = false;
                         }
-                        IsProgressLoading = false;
-
                         // 获取收藏、评分和吐槽信息。
                         SubjectStatus2 collectionStatus = await BangumiFacade.GetCollectionStatusAsync(SubjectId);
                         if (collectionStatus?.Status != null)

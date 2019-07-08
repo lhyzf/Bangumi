@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     NavigationCacheMode="Enabled"
     Loaded="Page_Loaded"
-    Background="Transparent">
+    Background="{ThemeResource SystemChromeLowColor}">
 
     <Grid>
         <Grid.RowDefinitions>

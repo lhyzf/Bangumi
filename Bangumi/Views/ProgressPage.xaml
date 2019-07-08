@@ -12,7 +12,7 @@
     Loaded="Page_Loaded"
     Unloaded="Page_Unloaded"
     mc:Ignorable="d"
-    Background="Transparent">
+    Background="{ThemeResource SystemChromeLowColor}">
 
     <Page.Resources>
         <ResourceDictionary>

@@ -14,7 +14,7 @@
     Unloaded="Page_Unloaded"
     NavigationCacheMode="Enabled"
     mc:Ignorable="d"
-    Background="Transparent">
+    Background="{ThemeResource SystemChromeLowColor}">
 
     <Page.Resources>
         <ResourceDictionary>

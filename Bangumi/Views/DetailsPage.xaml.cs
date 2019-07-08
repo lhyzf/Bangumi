@@ -139,7 +139,7 @@ namespace Bangumi.Views
         {
             var item = sender as MenuFlyoutItem;
             var tag = item.Tag;
-            var ep = EpsGridView.SelectedItem as Ep;
+            var ep = item.DataContext as Ep;
             switch (tag)
             {
                 case "Watched":
@@ -168,7 +168,7 @@ namespace Bangumi.Views
         /// </summary>
         private void Eps_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (OAuthHelper.IsLogin && !ViewModel.IsProgressLoading && ((Ep)EpsGridView.SelectedItem).Status != "NA")
+            if (OAuthHelper.IsLogin && !ViewModel.IsProgressLoading && ((sender as RelativePanel).DataContext as Ep).Status != "NA")
             {
                 FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
             }
@@ -185,14 +185,6 @@ namespace Bangumi.Views
             }
         }
 
-        /// <summary>
-        /// 更多资料。
-        /// </summary>
-        private void MoreInfoButton_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.ShowMoreInfo();
-        }
-
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             Window.Current.SetTitleBar(GridTitleBar);
@@ -201,29 +193,39 @@ namespace Bangumi.Views
 
             // 设置刷新按钮可见以及事件绑定
             MainPage.rootPage.MyCommandBar.Visibility = Visibility.Visible;
-            MainPage.rootPage.RefreshAppBarButton.Click += DetailPageRefresh;
+            MainPage.rootPage.RefreshAppBarButton.Click += DetailPageRefresh_Click;
+
+            // 设置访问网页按钮可见以及事件绑定
+            MainPage.rootPage.WebPageAppBarButton.Visibility = Visibility.Visible;
+            MainPage.rootPage.WebPageAppBarButton.Click += LaunchWebPage_Click;
 
             // 设置收藏按钮可见以及属性绑定、事件绑定
-            Binding LabelBinding = new Binding
+            if (OAuthHelper.IsLogin)
             {
-                Source = ViewModel,
-                Path = new PropertyPath("CollectionStatusText"),
-            };
-            MainPage.rootPage.CollectionAppBarButton.SetBinding(AppBarButton.LabelProperty, LabelBinding);
-            Binding GlyphBinding = new Binding
-            {
-                Source = ViewModel,
-                Path = new PropertyPath("CollectionStatusIcon"),
-            };
-            MainPage.rootPage.CollectionAppBarButtonFontIcon.SetBinding(FontIcon.GlyphProperty, GlyphBinding);
-            Binding IsEnabledBinding = new Binding
-            {
-                Source = ViewModel,
-                Path = new PropertyPath("IsStatusLoaded"),
-            };
-            MainPage.rootPage.CollectionAppBarButton.SetBinding(AppBarButton.IsEnabledProperty, IsEnabledBinding);
-            MainPage.rootPage.CollectionAppBarButton.Click += CollectionAppBarButton_Click;
-            MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Visible;
+                // 标签文本描述
+                Binding LabelBinding = new Binding
+                {
+                    Source = ViewModel,
+                    Path = new PropertyPath("CollectionStatusText"),
+                };
+                MainPage.rootPage.CollectionAppBarButton.SetBinding(AppBarButton.LabelProperty, LabelBinding);
+                // 图标
+                Binding GlyphBinding = new Binding
+                {
+                    Source = ViewModel,
+                    Path = new PropertyPath("CollectionStatusIcon"),
+                };
+                MainPage.rootPage.CollectionAppBarButtonFontIcon.SetBinding(FontIcon.GlyphProperty, GlyphBinding);
+                // 是否启用
+                Binding IsEnabledBinding = new Binding
+                {
+                    Source = ViewModel,
+                    Path = new PropertyPath("IsStatusLoaded"),
+                };
+                MainPage.rootPage.CollectionAppBarButton.SetBinding(AppBarButton.IsEnabledProperty, IsEnabledBinding);
+                MainPage.rootPage.CollectionAppBarButton.Click += CollectionAppBarButton_Click;
+                MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Visible;
+            }
         }
 
         /// <summary>
@@ -236,16 +238,51 @@ namespace Bangumi.Views
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            if (e.NavigationMode == NavigationMode.Back)
+            {
+                MyPivot.SelectedIndex = 0;
+            }
             // 设置收藏按钮隐藏以及解除事件绑定
             MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Collapsed;
             MainPage.rootPage.CollectionAppBarButton.Click -= CollectionAppBarButton_Click;
             // 设置刷新按钮隐藏以及解除事件绑定
-            MainPage.rootPage.RefreshAppBarButton.Click -= DetailPageRefresh;
+            MainPage.rootPage.RefreshAppBarButton.Click -= DetailPageRefresh_Click;
+            // 设置访问网页按钮隐藏以及解除事件绑定
+            MainPage.rootPage.WebPageAppBarButton.Visibility = Visibility.Collapsed;
+            MainPage.rootPage.WebPageAppBarButton.Click -= LaunchWebPage_Click;
         }
 
-        private void DetailPageRefresh(object sender, RoutedEventArgs e)
+        private void DetailPageRefresh_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.LoadDetails();
+        }
+
+        private async void LaunchWebPage_Click(object sender, RoutedEventArgs e)
+        {
+            // The URI to launch
+            var uriWebPage = new Uri("https://bgm.tv/subject/" + ViewModel.SubjectId);
+
+            // Launch the URI
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriWebPage);
+        }
+
+        private async void ItemsRepeater_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            // The URI to launch
+            var uriWebPage = new Uri((sender as RelativePanel).DataContext.ToString());
+
+            // Launch the URI
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriWebPage);
+        }
+
+        private void RelativePanel_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 10);
+        }
+
+        private void RelativePanel_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 10);
         }
     }
 }
