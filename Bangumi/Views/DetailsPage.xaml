@@ -111,10 +111,10 @@
                         <Setter Target="air_weekdayTextBlock.FontSize" Value="14"/>
                         <Setter Target="SummaryTextBlock.FontSize" Value="14"/>
                         <Setter Target="MoreInfoHyperLink.FontSize" Value="14"/>
-                        <Setter Target="collectionTextBlock.FontSize" Value="10"/>
+                        <Setter Target="collectionTextBlock.FontSize" Value="12"/>
                         <Setter Target="ratingTextBlock.FontSize" Value="24"/>
                         <Setter Target="ratingTextBlock.Margin" Value="20"/>
-                        <Setter Target="RateItemsRepeater.Visibility" Value="Collapsed"/>
+                        <Setter Target="RateItemsControl.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Wide">
@@ -129,10 +129,10 @@
                         <Setter Target="air_weekdayTextBlock.FontSize" Value="16"/>
                         <Setter Target="SummaryTextBlock.FontSize" Value="18"/>
                         <Setter Target="MoreInfoHyperLink.FontSize" Value="16"/>
-                        <Setter Target="collectionTextBlock.FontSize" Value="12"/>
+                        <Setter Target="collectionTextBlock.FontSize" Value="14"/>
                         <Setter Target="ratingTextBlock.FontSize" Value="48"/>
                         <Setter Target="ratingTextBlock.Margin" Value="25,30"/>
-                        <Setter Target="RateItemsRepeater.Visibility" Value="Collapsed"/>
+                        <Setter Target="RateItemsControl.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ExWide">
@@ -150,7 +150,7 @@
                         <Setter Target="collectionTextBlock.FontSize" Value="14"/>
                         <Setter Target="ratingTextBlock.FontSize" Value="48"/>
                         <Setter Target="ratingTextBlock.Margin" Value="25,30"/>
-                        <Setter Target="RateItemsRepeater.Visibility" Value="Visible"/>
+                        <Setter Target="RateItemsControl.Visibility" Value="Visible"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -212,7 +212,7 @@
                                    Padding="10,5,10,45"
                                    ItemTemplate="{StaticResource EpTemplate}">
             <GridView.Header>
-                <RelativePanel>
+                <RelativePanel Margin="0,0,10,0">
                     <controls:ImageEx x:Name="BangumiImage" 
                                       IsCacheEnabled="True"
                                       CacheMode="BitmapCache"
@@ -222,16 +222,18 @@
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True"
                                       Margin="0,0,5,0" />
-                    <muxc:ItemsRepeater Name="RateItemsRepeater"
-                                        RelativePanel.Above="collectionTextBlock"
-                                        RelativePanel.AlignRightWithPanel="True"
-                                        ItemTemplate="{StaticResource RateTemplate}"
-                                        ItemsSource="{x:Bind ViewModel.OthersRates}">
-                        <muxc:ItemsRepeater.Layout>
-                            <muxc:StackLayout Orientation="Horizontal"
-                                              Spacing="8"/>
-                        </muxc:ItemsRepeater.Layout>
-                    </muxc:ItemsRepeater>
+                    <ItemsControl Name="RateItemsControl"
+                                  RelativePanel.Above="collectionTextBlock"
+                                  RelativePanel.AlignRightWithPanel="True"
+                                  ItemTemplate="{StaticResource RateTemplate}"
+                                  ItemsSource="{x:Bind ViewModel.OthersRates}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <controls:WrapPanel HorizontalSpacing="8"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                    
 
                     <TextBlock Name="NameTextBlock" 
                                Text="{x:Bind ViewModel.NameCn, Mode=OneWay}"
@@ -256,7 +258,7 @@
                     </TextBlock>
                     <TextBlock Name="ratingTextBlock" 
                                Text="{x:Bind common:Converters.DoubleToString(ViewModel.Score,1), Mode=OneWay}" 
-                               RelativePanel.LeftOf="RateItemsRepeater"
+                               RelativePanel.LeftOf="RateItemsControl"
                                RelativePanel.Above="collectionTextBlock"
                                Margin="30,45"
                                Foreground="{StaticResource BangumiPinkColor}" >

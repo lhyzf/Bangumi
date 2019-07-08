@@ -117,6 +117,8 @@ namespace Bangumi.Common
         /// <returns></returns>
         public static string GetWatchedEpsDesc(int watched_eps)
         {
+            if (watched_eps == -1)
+                return "";
             if (watched_eps == 0)
                 return "尚未观看";
             return "看到第" + watched_eps + "话";
@@ -127,7 +129,7 @@ namespace Bangumi.Common
         /// </summary>
         /// <param name="sort"></param>
         /// <returns></returns>
-        public static string GetEpSortDesc(float sort, int type)
+        public static string GetEpSortDesc(double sort, int type)
         {
             if (type == 0)
             {
@@ -144,7 +146,7 @@ namespace Bangumi.Common
         /// </summary>
         /// <param name="next_ep"></param>
         /// <returns></returns>
-        public static string GetEpNextSortDesc(float next_ep, List<ViewModels.SimpleEp> eps)
+        public static string GetEpNextSortDesc(double next_ep, List<ViewModels.SimpleEp> eps)
         {
             if (next_ep == -1)
             {

@@ -80,71 +80,17 @@ namespace Bangumi.Facades
                     if (item != null)
                     {
                         item.isUpdating = true;
-                        // 首次更新
-                        if (item.lasttouch == 0)
+                        // 首次更新或条目有修改或当天首次加载
+                        if (item.lasttouch == 0 ||
+                            item.lasttouch != watching.LastTouch ||
+                            item.lastupdate != DateTime.Today.ConvertDateTimeToJsTick())
                         {
-                            // 获取EP详细信息
-                            var subject = await GetSubjectAsync(item.subject_id.ToString());
-                            var progress = await GetProgressesAsync(item.subject_id.ToString());
+                            // 获取EP信息
+                            var subject = await BangumiHttpWrapper.GetSubjectEpsAsync(item.subject_id.ToString());
 
                             item.eps = new List<SimpleEp>();
-                            foreach (var ep in subject.Eps)
+                            if (subject.Eps != null)
                             {
-                                SimpleEp simpleEp = new SimpleEp();
-                                simpleEp.id = ep.Id;
-                                simpleEp.sort = ep.Sort;
-                                simpleEp.status = ep.Status;
-                                simpleEp.type = ep.Type;
-                                simpleEp.name = ep.NameCn == "" ? ep.Name : ep.NameCn;
-                                item.eps.Add(simpleEp);
-                            }
-                            if (item.eps.Where(e => e.status == "NA").Count() == 0)
-                                item.updated_eps = "全" + item.eps.Count + "话";
-                            else
-                                item.updated_eps = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
-                            if (progress != null)
-                            {
-                                item.watched_eps = progress.Eps.Count;
-                                if (item.eps.Count == item.watched_eps)
-                                    item.next_ep = -1;
-                                if (progress.Eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
-                                    item.ep_color = "#d26585";
-                                else
-                                    item.ep_color = "Gray";
-                                foreach (var ep in item.eps) // 填充用户观看状态
-                                {
-                                    foreach (var p in progress.Eps)
-                                    {
-                                        if (p.Id == ep.id)
-                                        {
-                                            ep.status = p.Status.CnName;
-                                            progress.Eps.Remove(p);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                item.watched_eps = 0;
-                                item.ep_color = "#d26585";
-                            }
-                            if (item.next_ep != -1)
-                                item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").Count() != 0 ?
-                                               item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").FirstOrDefault().sort :
-                                               item.eps.Where(ep => ep.status == "NA").FirstOrDefault().sort;
-                            item.lasttouch = watching.LastTouch;
-                            item.lastupdate = DateTime.Today.ConvertDateTimeToJsTick();
-                        }
-                        else
-                        {
-                            // 对条目有 修改 或 当天首次加载 进行更新
-                            if (item.lasttouch != watching.LastTouch
-                                || item.lastupdate != DateTime.Today.ConvertDateTimeToJsTick())
-                            {
-                                var subject = await BangumiHttpWrapper.GetSubjectEpsAsync(item.subject_id.ToString());
-                                item.eps.Clear();
-                                Console.WriteLine(watching.LastTouch);
                                 foreach (var ep in subject.Eps)
                                 {
                                     SimpleEp simpleEp = new SimpleEp();
@@ -152,13 +98,18 @@ namespace Bangumi.Facades
                                     simpleEp.sort = ep.Sort;
                                     simpleEp.status = ep.Status;
                                     simpleEp.type = ep.Type;
-                                    simpleEp.name = ep.NameCn;
+                                    simpleEp.name = ep.NameCn == "" ? ep.Name : ep.NameCn;
                                     item.eps.Add(simpleEp);
                                 }
                                 if (item.eps.Where(e => e.status == "NA").Count() == 0)
                                     item.updated_eps = "全" + item.eps.Count + "话";
                                 else
-                                    item.updated_eps = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
+                                {
+                                    if (item.eps.Count - item.eps.Where(e => e.status == "NA").Count() != 0)
+                                        item.updated_eps = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
+                                    else
+                                        item.updated_eps = "尚未放送";
+                                }
 
                                 var progress = await GetProgressesAsync(item.subject_id.ToString());
                                 if (progress != null)
@@ -166,11 +117,11 @@ namespace Bangumi.Facades
                                     item.watched_eps = progress.Eps.Count;
                                     if (item.eps.Count == item.watched_eps)
                                         item.next_ep = -1;
-                                    if (item.watched_eps < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
+                                    if (progress.Eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
                                         item.ep_color = "#d26585";
                                     else
                                         item.ep_color = "Gray";
-                                    foreach (var ep in item.eps) //用户观看状态
+                                    foreach (var ep in item.eps) // 填充用户观看状态
                                     {
                                         foreach (var p in progress.Eps)
                                         {
@@ -186,15 +137,23 @@ namespace Bangumi.Facades
                                 else
                                 {
                                     item.watched_eps = 0;
-                                    item.ep_color = "#d26585";
+                                    if (item.updated_eps != "尚未放送")
+                                        item.ep_color = "#d26585";
                                 }
-                                if (item.next_ep != -1)
-                                    item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").Count() != 0 ?
-                                                   item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").FirstOrDefault().sort :
-                                                   item.eps.Where(ep => ep.status == "NA").FirstOrDefault().sort;
-                                item.lasttouch = watching.LastTouch;
-                                item.lastupdate = DateTime.Today.ConvertDateTimeToJsTick();
                             }
+                            else
+                            {
+                                item.watched_eps = -1;
+                                item.updated_eps = "无章节";
+                                item.ep_color = "Gray";
+                            }
+
+                            if (item.next_ep != -1 && item.eps.Count != 0)
+                                item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").Count() != 0 ?
+                                               item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").FirstOrDefault().sort :
+                                               item.eps.Where(ep => ep.status == "NA").FirstOrDefault().sort;
+                            item.lasttouch = watching.LastTouch;
+                            item.lastupdate = DateTime.Today.ConvertDateTimeToJsTick();
                         }
                         item.isUpdating = false;
                     }
