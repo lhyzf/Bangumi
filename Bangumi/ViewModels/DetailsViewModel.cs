@@ -141,6 +141,10 @@ namespace Bangumi.ViewModels
             set => Set(ref _moreSummary, value);
         }
 
+        // 评论和讨论版
+        public ObservableCollection<Blog> blogs { get; private set; } = new ObservableCollection<Blog>();
+        public ObservableCollection<Topic> topics { get; private set; } = new ObservableCollection<Topic>();
+
         // 收藏状态，评分，吐槽
         public int myRate;
         public string myComment;
@@ -181,7 +185,8 @@ namespace Bangumi.ViewModels
             myRate = 0;
             myComment = "";
             myPrivacy = false;
-
+            blogs.Clear();
+            topics.Clear();
             eps.Clear();
         }
 
@@ -401,11 +406,11 @@ namespace Bangumi.ViewModels
 
                     // 更多资料
                     Name = subject.Name;
-                    MoreSummary = string.IsNullOrEmpty(subject.Summary) ? "暂无简介" : subject.Summary;
+                    MoreSummary = subject.Summary;
                     MoreInfo = "作品分类：" + ((SubjectTypeEnum)subject.Type).GetValue();
-                    MoreInfo += "\n放送开始：" + subject.AirDate;
-                    MoreInfo += "\n放送星期：" + Converters.GetWeekday(subject.AirWeekday);
-                    MoreInfo += "\n话数：" + subject.Eps?.Count;
+                    MoreInfo += subject.AirDate == "0000-00-00" ? "" : "\n放送开始：" + subject.AirDate;
+                    MoreInfo += subject.AirWeekday == 0 ? "" : "\n放送星期：" + Converters.GetWeekday(subject.AirWeekday);
+                    MoreInfo += subject.Eps == null ? "" : "\n话数：" + subject.Eps.Count;
                     // 角色
                     characters.Clear();
                     if (subject.Characters != null)
@@ -422,6 +427,24 @@ namespace Bangumi.ViewModels
                         foreach (var staff in subject.Staff)
                         {
                             staffs.Add(staff);
+                        }
+                    }
+                    // 评论
+                    blogs.Clear();
+                    if(subject.Blogs!=null)
+                    {
+                        foreach (var blog in subject.Blogs)
+                        {
+                            blogs.Add(blog);
+                        }
+                    }
+                    // 讨论版
+                    topics.Clear();
+                    if(subject.Topics!=null)
+                    {
+                        foreach (var topic in subject.Topics)
+                        {
+                            topics.Add(topic);
                         }
                     }
                     // 显示章节

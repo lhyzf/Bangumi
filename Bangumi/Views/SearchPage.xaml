@@ -357,6 +357,7 @@
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick"
                                            IncrementalLoadingTrigger="Edge"
+                                           ShowsScrollingPlaceholders="False"
                                            DataFetchSize="1">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
@@ -391,6 +392,7 @@
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick"
                                            IncrementalLoadingTrigger="Edge"
+                                           ShowsScrollingPlaceholders="False"
                                            DataFetchSize="1">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
@@ -425,6 +427,7 @@
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick"
                                            IncrementalLoadingTrigger="Edge"
+                                           ShowsScrollingPlaceholders="False"
                                            DataFetchSize="1">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
@@ -459,6 +462,7 @@
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick"
                                            IncrementalLoadingTrigger="Edge"
+                                           ShowsScrollingPlaceholders="False"
                                            DataFetchSize="1">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
@@ -493,6 +497,7 @@
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick"
                                            IncrementalLoadingTrigger="Edge"
+                                           ShowsScrollingPlaceholders="False"
                                            DataFetchSize="1">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"
@@ -527,6 +532,7 @@
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick"
                                            IncrementalLoadingTrigger="Edge"
+                                           ShowsScrollingPlaceholders="False"
                                            DataFetchSize="1">
                     <GridView.Header>
                         <TextBlock Text="无搜索结果，请换个关键词再试"

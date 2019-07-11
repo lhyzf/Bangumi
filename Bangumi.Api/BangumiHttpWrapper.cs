@@ -318,6 +318,21 @@ namespace Bangumi.Api.Services
                         ep.NameCn = string.IsNullOrEmpty(ep.NameCn) ? ep.Name : System.Net.WebUtility.HtmlDecode(ep.NameCn);
                     }
                 }
+                if (result.Blogs != null)
+                {
+                    foreach (var blog in result.Blogs)
+                    {
+                        blog.Title = System.Net.WebUtility.HtmlDecode(blog.Title);
+                        blog.Summary = System.Net.WebUtility.HtmlDecode(blog.Summary);
+                    }
+                }
+                if (result.Topics != null)
+                {
+                    foreach (var topic in result.Topics)
+                    {
+                        topic.Title = System.Net.WebUtility.HtmlDecode(topic.Title);
+                    }
+                }
                 return result;
             }
             catch (Exception e)
