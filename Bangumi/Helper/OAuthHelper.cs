@@ -1,6 +1,7 @@
 ﻿using Bangumi.Api.Models;
 using Bangumi.Api.Services;
 using Bangumi.Views;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +17,7 @@ namespace Bangumi.Helper
         private const string OAuthBaseUrl = "https://bgm.tv/oauth";
         private const string RedirectUrl = Constants.RedirectUrl;
         private const string ClientId = Constants.ClientId;
-        public static AccessToken MyToken = new AccessToken();
+        public static AccessToken MyToken;
         public static bool IsLogin = false;
 
         /// <summary>
@@ -108,7 +109,8 @@ namespace Bangumi.Helper
                     if (token != null)
                     {
                         // 将信息写入本地文件
-                        await WriteTokensAsync(token);
+                        if (!token.Equals(MyToken))
+                            await WriteTokensAsync(token);
                         break;
                     }
                     else
@@ -125,9 +127,6 @@ namespace Bangumi.Helper
                 {
                     // 授权过期，返回登录界面
                     MainPage.rootFrame.Navigate(typeof(LoginPage), "ms-appx:///Assets/resource/err_401.png");
-                    //var msgDialog = new Windows.UI.Popups.MessageDialog("登录已过期，请重新登录！") { Title = "登录失效！" };
-                    //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                    //await msgDialog.ShowAsync();
                 }
             }
             catch (Exception e)
@@ -142,10 +141,9 @@ namespace Bangumi.Helper
         /// <returns></returns>
         public static async Task<bool> CheckTokens()
         {
-            MyToken.Token = await FileHelper.ReadFromFileAsync(getOAuthFileName(OAuthFile.access_token), true);
-            MyToken.RefreshToken = await FileHelper.ReadFromFileAsync(getOAuthFileName(OAuthFile.refresh_token), true);
-            MyToken.UserId = await FileHelper.ReadFromFileAsync(getOAuthFileName(OAuthFile.user_id), false);
-            if (string.IsNullOrEmpty(MyToken.Token) || string.IsNullOrEmpty(MyToken.RefreshToken) || string.IsNullOrEmpty(MyToken.UserId))
+            if (MyToken == null)
+                MyToken = JsonConvert.DeserializeObject<AccessToken>(await FileHelper.ReadFromFileAsync(OAuthFile.token.GetFilePath(), true));
+            if (MyToken == null)
             {
                 //DeleteTokens();
                 IsLogin = false;
@@ -164,17 +162,11 @@ namespace Bangumi.Helper
         /// <returns></returns>
         private static async Task WriteTokensAsync(AccessToken token)
         {
-            if (!string.IsNullOrEmpty(token.Token) && !string.IsNullOrEmpty(token.RefreshToken) && !string.IsNullOrEmpty(token.UserId.ToString()))
-            {
-                // 刷新后存入内存
-                MyToken.Token = token.Token;
-                MyToken.RefreshToken = token.RefreshToken;
-                MyToken.UserId = token.UserId;
-                // 将信息写入本地文件
-                await FileHelper.WriteToFileAsync(token.Token, getOAuthFileName(OAuthFile.access_token), true);
-                await FileHelper.WriteToFileAsync(token.RefreshToken, getOAuthFileName(OAuthFile.refresh_token), true);
-                await FileHelper.WriteToFileAsync(token.UserId.ToString(), getOAuthFileName(OAuthFile.user_id), false);
-            }
+            // 存入内存
+            MyToken = token;
+            IsLogin = true;
+            // 将信息写入本地文件
+            await FileHelper.WriteToFileAsync(JsonConvert.SerializeObject(token), OAuthFile.token.GetFilePath(), true);
         }
 
         /// <summary>
@@ -184,43 +176,87 @@ namespace Bangumi.Helper
         public static void DeleteTokens()
         {
             // 删除用户认证文件
-            FileHelper.DeleteLocalFile(getOAuthFileName(OAuthFile.access_token));
-            FileHelper.DeleteLocalFile(getOAuthFileName(OAuthFile.refresh_token));
-            FileHelper.DeleteLocalFile(getOAuthFileName(OAuthFile.user_id));
+            FileHelper.DeleteLocalFile(OAuthFile.token.GetFilePath());
             // 删除用户缓存文件
-            FileHelper.DeleteCacheFile("JsonCache\\home");
-            FileHelper.DeleteCacheFile("JsonCache\\anime");
-            FileHelper.DeleteCacheFile("JsonCache\\book");
-            FileHelper.DeleteCacheFile("JsonCache\\game");
-            FileHelper.DeleteCacheFile("JsonCache\\music");
-            FileHelper.DeleteCacheFile("JsonCache\\real");
+            FileHelper.DeleteCacheFile(CacheFile.progress.GetFilePath());
+            FileHelper.DeleteCacheFile(CacheFile.anime.GetFilePath());
+            FileHelper.DeleteCacheFile(CacheFile.book.GetFilePath());
+            FileHelper.DeleteCacheFile(CacheFile.game.GetFilePath());
+            FileHelper.DeleteCacheFile(CacheFile.music.GetFilePath());
+            FileHelper.DeleteCacheFile(CacheFile.real.GetFilePath());
         }
 
-        #region FileName
-        public static string getOAuthFileName(OAuthFile fileName)
+        #region JsonCacheFile
+        public enum CacheFile
         {
-            string result = string.Empty;
-            switch (fileName)
-            {
-                case OAuthFile.access_token:
-                    result = "AccessToken.data";
-                    break;
-                case OAuthFile.refresh_token:
-                    result = "RefreshToken.data";
-                    break;
-                case OAuthFile.user_id:
-                    result = "UserId.data";
-                    break;
-            }
-            return result;
+            progress,
+            anime,
+            book,
+            game,
+            music,
+            real,
+            calendar,
         }
 
+        public static string GetFilePath(this CacheFile file)
+        {
+            switch (file)
+            {
+                case CacheFile.progress:
+                    return "JsonCache\\progress";
+                case CacheFile.anime:
+                    return "JsonCache\\anime";
+                case CacheFile.book:
+                    return "JsonCache\\book";
+                case CacheFile.game:
+                    return "JsonCache\\game";
+                case CacheFile.music:
+                    return "JsonCache\\music";
+                case CacheFile.real:
+                    return "JsonCache\\real";
+                case CacheFile.calendar:
+                    return "JsonCache\\calendar";
+                default:
+                    return string.Empty;
+            }
+        }
+
+        public static string GetFilePath(this SubjectTypeEnum subjectType)
+        {
+            switch (subjectType)
+            {
+                case SubjectTypeEnum.book:
+                    return "JsonCache\\book";
+                case SubjectTypeEnum.anime:
+                    return "JsonCache\\anime";
+                case SubjectTypeEnum.music:
+                    return "JsonCache\\music";
+                case SubjectTypeEnum.game:
+                    return "JsonCache\\game";
+                case SubjectTypeEnum.real:
+                    return "JsonCache\\real";
+                default:
+                    return string.Empty;
+            }
+        }
+        #endregion
+
+        #region OAuthFile
         public enum OAuthFile
         {
-            access_token,
-            refresh_token,
-            user_id,
+            token,
         };
+
+        public static string GetFilePath(this OAuthFile file)
+        {
+            switch (file)
+            {
+                case OAuthFile.token:
+                    return "Token.data";
+                default:
+                    return string.Empty;
+            }
+        }
         #endregion
     }
 }

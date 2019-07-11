@@ -73,7 +73,7 @@ namespace Bangumi.ViewModels
                     await BangumiFacade.PopulateWatchingListAsync(WatchingCollection);
                     CollectionSorting();
                     //将对象序列化并存储到文件
-                    await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), "JsonCache\\home");
+                    await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), OAuthHelper.CacheFile.progress.GetFilePath());
                 }
                 else
                 {
@@ -136,7 +136,7 @@ namespace Bangumi.ViewModels
                     item.lasttouch = DateTime.Now.ConvertDateTimeToJsTick();
 
                     //将对象序列化并存储到文件
-                    await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), "JsonCache\\home");
+                    await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), OAuthHelper.CacheFile.progress.GetFilePath());
 
                 }
                 item.isUpdating = false;

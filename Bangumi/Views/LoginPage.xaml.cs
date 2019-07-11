@@ -57,8 +57,7 @@ namespace Bangumi.Views
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 10);
             await OAuthHelper.Authorize();
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 10);
-            await Task.Delay(500);
-            if (await OAuthHelper.CheckTokens())
+            if (OAuthHelper.MyToken != null)
                 MainPage.rootFrame.Navigate(typeof(HomePage));
         }
 

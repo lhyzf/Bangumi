@@ -27,7 +27,7 @@ namespace Bangumi.Facades
                 //从文件反序列化
                 if (watchingListCollection.Count == 0)
                 {
-                    var PreWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await FileHelper.ReadFromCacheFileAsync("JsonCache\\home"));
+                    var PreWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await FileHelper.ReadFromCacheFileAsync(OAuthHelper.CacheFile.progress.GetFilePath()));
                     if (PreWatchings != null)
                     {
                         foreach (var sub in PreWatchings)
@@ -182,7 +182,7 @@ namespace Bangumi.Facades
             try
             {
                 //从文件反序列化
-                var PreCollection = JsonConvert.DeserializeObject<List<Collection>>(await FileHelper.ReadFromCacheFileAsync("JsonCache\\" + subjectType));
+                var PreCollection = JsonConvert.DeserializeObject<List<Collection>>(await FileHelper.ReadFromCacheFileAsync(subjectType.GetFilePath()));
                 subjectCollection.Clear();
                 if (PreCollection != null)
                 {
@@ -202,7 +202,7 @@ namespace Bangumi.Facades
                 }
 
                 //将对象序列化并存储到文件
-                await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(subjectCollection), "JsonCache\\" + subjectType);
+                await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(subjectCollection), subjectType.GetFilePath());
             }
             catch (Exception e)
             {
@@ -222,7 +222,7 @@ namespace Bangumi.Facades
             try
             {
                 //从文件反序列化
-                var PreCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await FileHelper.ReadFromCacheFileAsync("JsonCache\\calendar"));
+                var PreCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await FileHelper.ReadFromCacheFileAsync(OAuthHelper.CacheFile.calendar.GetFilePath()));
                 bangumiCollection.Clear();
                 int day = GetDayOfWeek();
                 if (PreCalendar != null)
@@ -262,7 +262,7 @@ namespace Bangumi.Facades
                 }
 
                 //将对象序列化并存储到文件
-                await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(bangumiCollection.OrderBy(c => c.Weekday.Id)), "JsonCache\\calendar");
+                await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(bangumiCollection.OrderBy(c => c.Weekday.Id)), OAuthHelper.CacheFile.calendar.GetFilePath());
             }
             catch (Exception e)
             {
