@@ -131,6 +131,64 @@ namespace Bangumi.Views
             }
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            if (e.NavigationMode == NavigationMode.Back)
+            {
+                MyPivot.SelectedIndex = 0;
+            }
+            // 设置收藏按钮隐藏以及解除事件绑定
+            MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Collapsed;
+            MainPage.rootPage.CollectionAppBarButton.Click -= CollectionAppBarButton_Click;
+            // 设置刷新按钮隐藏以及解除事件绑定
+            MainPage.rootPage.RefreshAppBarButton.Click -= DetailPageRefresh_Click;
+            // 设置访问网页按钮隐藏以及解除事件绑定
+            MainPage.rootPage.WebPageAppBarButton.Visibility = Visibility.Collapsed;
+            MainPage.rootPage.WebPageAppBarButton.Click -= LaunchWebPage_Click;
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            Window.Current.SetTitleBar(GridTitleBar);
+            // 启用标题栏的后退按钮
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+
+            // 设置刷新按钮可见以及事件绑定
+            MainPage.rootPage.MyCommandBar.Visibility = Visibility.Visible;
+            MainPage.rootPage.RefreshAppBarButton.Click += DetailPageRefresh_Click;
+
+            // 设置访问网页按钮可见以及事件绑定
+            MainPage.rootPage.WebPageAppBarButton.Visibility = Visibility.Visible;
+            MainPage.rootPage.WebPageAppBarButton.Click += LaunchWebPage_Click;
+
+            // 设置收藏按钮可见以及属性绑定、事件绑定
+            if (OAuthHelper.IsLogin)
+            {
+                // 标签文本描述
+                Binding LabelBinding = new Binding
+                {
+                    Source = ViewModel,
+                    Path = new PropertyPath("CollectionStatusText"),
+                };
+                MainPage.rootPage.CollectionAppBarButton.SetBinding(AppBarButton.LabelProperty, LabelBinding);
+                // 图标
+                Binding GlyphBinding = new Binding
+                {
+                    Source = ViewModel,
+                    Path = new PropertyPath("CollectionStatusIcon"),
+                };
+                MainPage.rootPage.CollectionAppBarButtonFontIcon.SetBinding(FontIcon.GlyphProperty, GlyphBinding);
+                // 是否启用
+                Binding IsEnabledBinding = new Binding
+                {
+                    Source = ViewModel,
+                    Path = new PropertyPath("IsStatusLoaded"),
+                };
+                MainPage.rootPage.CollectionAppBarButton.SetBinding(AppBarButton.IsEnabledProperty, IsEnabledBinding);
+                MainPage.rootPage.CollectionAppBarButton.Click += CollectionAppBarButton_Click;
+                MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Visible;
+            }
+        }
 
         /// <summary>
         /// 修改章节状态。
@@ -185,71 +243,12 @@ namespace Bangumi.Views
             }
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            Window.Current.SetTitleBar(GridTitleBar);
-            // 启用标题栏的后退按钮
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-
-            // 设置刷新按钮可见以及事件绑定
-            MainPage.rootPage.MyCommandBar.Visibility = Visibility.Visible;
-            MainPage.rootPage.RefreshAppBarButton.Click += DetailPageRefresh_Click;
-
-            // 设置访问网页按钮可见以及事件绑定
-            MainPage.rootPage.WebPageAppBarButton.Visibility = Visibility.Visible;
-            MainPage.rootPage.WebPageAppBarButton.Click += LaunchWebPage_Click;
-
-            // 设置收藏按钮可见以及属性绑定、事件绑定
-            if (OAuthHelper.IsLogin)
-            {
-                // 标签文本描述
-                Binding LabelBinding = new Binding
-                {
-                    Source = ViewModel,
-                    Path = new PropertyPath("CollectionStatusText"),
-                };
-                MainPage.rootPage.CollectionAppBarButton.SetBinding(AppBarButton.LabelProperty, LabelBinding);
-                // 图标
-                Binding GlyphBinding = new Binding
-                {
-                    Source = ViewModel,
-                    Path = new PropertyPath("CollectionStatusIcon"),
-                };
-                MainPage.rootPage.CollectionAppBarButtonFontIcon.SetBinding(FontIcon.GlyphProperty, GlyphBinding);
-                // 是否启用
-                Binding IsEnabledBinding = new Binding
-                {
-                    Source = ViewModel,
-                    Path = new PropertyPath("IsStatusLoaded"),
-                };
-                MainPage.rootPage.CollectionAppBarButton.SetBinding(AppBarButton.IsEnabledProperty, IsEnabledBinding);
-                MainPage.rootPage.CollectionAppBarButton.Click += CollectionAppBarButton_Click;
-                MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Visible;
-            }
-        }
-
         /// <summary>
         /// 编辑评分和吐槽。
         /// </summary>
         private void CollectionAppBarButton_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.EditCollectionStatus();
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            if (e.NavigationMode == NavigationMode.Back)
-            {
-                MyPivot.SelectedIndex = 0;
-            }
-            // 设置收藏按钮隐藏以及解除事件绑定
-            MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Collapsed;
-            MainPage.rootPage.CollectionAppBarButton.Click -= CollectionAppBarButton_Click;
-            // 设置刷新按钮隐藏以及解除事件绑定
-            MainPage.rootPage.RefreshAppBarButton.Click -= DetailPageRefresh_Click;
-            // 设置访问网页按钮隐藏以及解除事件绑定
-            MainPage.rootPage.WebPageAppBarButton.Visibility = Visibility.Collapsed;
-            MainPage.rootPage.WebPageAppBarButton.Click -= LaunchWebPage_Click;
         }
 
         private void DetailPageRefresh_Click(object sender, RoutedEventArgs e)

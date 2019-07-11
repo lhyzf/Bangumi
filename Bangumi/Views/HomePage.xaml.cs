@@ -117,7 +117,7 @@ namespace Bangumi.Views
             else
             {
                 // 在进度页与收藏页任一页面存在时运行
-                if (HomePagePivot.Items.Cast<PivotItem>().Any(p => p.Name == "ProgressItem") 
+                if (HomePagePivot.Items.Cast<PivotItem>().Any(p => p.Name == "ProgressItem")
                     || HomePagePivot.Items.Cast<PivotItem>().Any(p => p.Name == "CollectionItem"))
                 {
                     HomePagePivot.Items.Remove(ProgressItem);
