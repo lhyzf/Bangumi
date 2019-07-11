@@ -252,6 +252,7 @@
         <controls:AdaptiveGridView Name="MyGridView" 
                                    Padding="12,6,12,46"
                                    ItemsSource="{x:Bind ViewModel.WatchingCollection}" 
+                                   ShowsScrollingPlaceholders="False"
                                    IsItemClickEnabled="True" 
                                    ItemClick="GridView_ItemClick">
             <GridView.ItemContainerTransitions>

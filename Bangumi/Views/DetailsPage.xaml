@@ -130,11 +130,12 @@
                                RelativePanel.Below="CrtNameTextBlock"/>
                     <TextBlock Name="ActorTextBlock"
                                Text="{x:Bind common:Converters.ActorListToString(Actors)}"
+                               TextWrapping="Wrap"
                                RelativePanel.RightOf="CrtImage"
                                RelativePanel.Below="RoleTextBlock"/>
                 </RelativePanel>
             </DataTemplate>
-            
+
             <DataTemplate x:Name="StaffTemplate" x:DataType="data:Staff">
                 <RelativePanel DataContext="{x:Bind Url}"
                                Tapped="ItemsRepeater_Tapped"
@@ -169,6 +170,96 @@
                                TextWrapping="Wrap"
                                RelativePanel.RightOf="StaffImage"
                                RelativePanel.Below="StaffNameTextBlock"/>
+                </RelativePanel>
+            </DataTemplate>
+
+            <DataTemplate x:Name="BlogTemplate" x:DataType="data:Blog">
+                <RelativePanel DataContext="{x:Bind Url}"
+                               Tapped="ItemsRepeater_Tapped"
+                               PointerEntered="RelativePanel_PointerEntered"
+                               PointerExited="RelativePanel_PointerExited"
+                               BorderThickness="1.5"
+                               Padding="5,0"
+                               BorderBrush="{ThemeResource SystemControlTransparentRevealBorderBrush}"
+                               Background="Transparent">
+                    <controls:ImageEx Name="UserImage" 
+                                      Source="{x:Bind User.Avatar.Small}"
+                                      Width="32"
+                                      Height="32"
+                                      Margin="0,5,5,5"
+                                      RelativePanel.AlignLeftWithPanel="True"
+                                      RelativePanel.AlignTopWithPanel="True"
+                                      PlaceholderSource="ms-appx:///Assets/resource/akkarin.jpg"
+                                      PlaceholderStretch="UniformToFill"
+                                      IsCacheEnabled="True"/>
+                    <TextBlock Name="PostInfoTextBlock"
+                               RelativePanel.RightOf="UserImage"
+                               RelativePanel.AlignTopWithPanel="True"
+                               TextWrapping="Wrap">
+                        <Run Text="{x:Bind User.NickName}"/>
+                        <LineBreak/>
+                        <Run Text="{x:Bind DateLine}"
+                             Foreground="Gray"/>
+                        <Run Text="(+" Foreground="Red"/><Run Text="{x:Bind Replies}"
+                             Foreground="Red"/><Run Text=")" Foreground="Red"/>
+                    </TextBlock>
+                    <TextBlock Name="BlogTitleTextBlock"
+                               RelativePanel.AlignLeftWithPanel="True"
+                               RelativePanel.Below="UserImage"
+                               LineHeight="24"
+                               FontSize="16"
+                               Foreground="RoyalBlue"
+                               Text="{x:Bind Title}"
+                               TextWrapping="Wrap"/>
+                    <TextBlock Name="SummaryTextBlock"
+                               Text="{x:Bind Summary}"
+                               LineHeight="22" 
+                               TextWrapping="Wrap"
+                               RelativePanel.AlignLeftWithPanel="True"
+                               RelativePanel.Below="BlogTitleTextBlock"/>
+                </RelativePanel>
+            </DataTemplate>
+
+            <DataTemplate x:Name="TopicTemplate" x:DataType="data:Topic">
+                <RelativePanel DataContext="{x:Bind Url}"
+                               Tapped="ItemsRepeater_Tapped"
+                               PointerEntered="RelativePanel_PointerEntered"
+                               PointerExited="RelativePanel_PointerExited"
+                               BorderThickness="1.5"
+                               Padding="5,0"
+                               BorderBrush="{ThemeResource SystemControlTransparentRevealBorderBrush}"
+                               Background="Transparent">
+                    <TextBlock Name="TopicTitleTextBlock"
+                               RelativePanel.AlignLeftWithPanel="True"
+                               RelativePanel.AlignTopWithPanel="True"
+                               LineHeight="24"
+                               FontSize="16"
+                               Foreground="RoyalBlue"
+                               Text="{x:Bind Title}"
+                               TextWrapping="Wrap"/>
+                    <TextBlock Name="PostInfoTextBlock"
+                               RelativePanel.AlignLeftWithPanel="True"
+                               RelativePanel.Below="TopicTitleTextBlock"
+                               LineHeight="22"
+                               TextTrimming="WordEllipsis">
+                        <Run Text="{x:Bind User.NickName}"/>
+                        <Run Text="{x:Bind common:Converters.ConvertJsTickToDateTime(Timestamp)}"
+                             Foreground="Gray"/>
+                    </TextBlock>
+                    <TextBlock Name="LastReplyTextBlock"
+                               RelativePanel.AlignRightWithPanel="True"
+                               RelativePanel.RightOf="PostInfoTextBlock"
+                               RelativePanel.Below="TopicTitleTextBlock"
+                               HorizontalTextAlignment="Right"
+                               LineHeight="22"
+                               TextTrimming="WordEllipsis">
+                        <Run Text="    最后回复:"
+                             Foreground="Gray"/>
+                        <Run Text="{x:Bind common:Converters.ConvertJsTickToDateTime(LastPost)}"
+                             Foreground="Gray"/>
+                        <Run Text="(+" Foreground="Red"/><Run Text="{x:Bind Replies}"
+                             Foreground="Red"/><Run Text=")" Foreground="Red"/>
+                    </TextBlock>
                 </RelativePanel>
             </DataTemplate>
 
@@ -288,6 +379,7 @@
                                                ItemsSource="{x:Bind ViewModel.eps}" 
                                                DesiredWidth="300"
                                                Padding="10,5,10,45"
+                                               ShowsScrollingPlaceholders="False"
                                                ItemTemplate="{StaticResource EpTemplate}">
                         <GridView.Header>
                             <RelativePanel Margin="0,0,10,10">
@@ -372,7 +464,7 @@
             <PivotItem Header="详情"
                        Margin="0">
                 <ScrollViewer>
-                    <StackPanel Padding="10,5,10,45">
+                    <StackPanel Padding="10,5,10,90">
                         <TextBlock IsTextSelectionEnabled="True"
                                    TextWrapping="Wrap"
                                    FontSize="18">
@@ -387,6 +479,7 @@
                                    TextWrapping="Wrap"/>
                         <TextBlock LineHeight="34"
                                    FontSize="18"
+                                   Visibility="{x:Bind common:Converters.CollapsedIfNullOrEmpty(ViewModel.MoreSummary),Mode=OneWay}"
                                    Foreground="{StaticResource BangumiPinkColor}"
                                    Padding="0,15,0,0"><Bold>简介</Bold></TextBlock>
                         <TextBlock LineHeight="22" 
@@ -394,8 +487,10 @@
                                    Text="{x:Bind ViewModel.MoreSummary,Mode=OneWay}"
                                    TextWrapping="Wrap"/>
 
+                        <!-- 角色资料 -->
                         <TextBlock LineHeight="34"
                                    FontSize="18"
+                                   Visibility="{x:Bind common:Converters.CollapsedIfZero(ViewModel.characters.Count),Mode=OneWay}"
                                    Foreground="{StaticResource BangumiPinkColor}"
                                    Padding="0,15,0,0"><Bold>角色资料</Bold></TextBlock>
                         <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.characters}"
@@ -409,13 +504,11 @@
                                                         MinRowSpacing="8"/>
                             </muxc:ItemsRepeater.Layout>
                         </muxc:ItemsRepeater>
-                        <TextBlock LineHeight="22" 
-                                   Text="暂无资料"
-                                   Visibility="{x:Bind common:Converters.CollapsedIfNotZero(ViewModel.characters.Count),Mode=OneWay}"
-                                   TextWrapping="Wrap"/>
 
+                        <!-- 演职资料 -->
                         <TextBlock LineHeight="34"
                                    FontSize="18"
+                                   Visibility="{x:Bind common:Converters.CollapsedIfZero(ViewModel.staffs.Count),Mode=OneWay}"
                                    Foreground="{StaticResource BangumiPinkColor}"
                                    Padding="0,15,0,0"><Bold>演职资料</Bold></TextBlock>
                         <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.staffs}"
@@ -429,15 +522,40 @@
                                                         MinRowSpacing="8"/>
                             </muxc:ItemsRepeater.Layout>
                         </muxc:ItemsRepeater>
-                        <TextBlock LineHeight="22" 
-                                   Text="暂无资料"
-                                   Visibility="{x:Bind common:Converters.CollapsedIfNotZero(ViewModel.staffs.Count),Mode=OneWay}"
-                                   TextWrapping="Wrap"/>
+
+                        <!-- 评论 -->
+                        <TextBlock LineHeight="34"
+                                   FontSize="18"
+                                   Visibility="{x:Bind common:Converters.CollapsedIfZero(ViewModel.blogs.Count),Mode=OneWay}"
+                                   Foreground="{StaticResource BangumiPinkColor}"
+                                   Padding="0,15,0,0"><Bold>评论</Bold></TextBlock>
+                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.blogs}"
+                                            ItemTemplate="{StaticResource BlogTemplate}">
+                            <muxc:ItemsRepeater.Layout>
+                                <muxc:StackLayout Spacing="8"
+                                                  Orientation="Vertical"/>
+                            </muxc:ItemsRepeater.Layout>
+                        </muxc:ItemsRepeater>
+
+                        <!-- 讨论版 -->
+                        <TextBlock LineHeight="34"
+                                   FontSize="18"
+                                   Visibility="{x:Bind common:Converters.CollapsedIfZero(ViewModel.topics.Count),Mode=OneWay}"
+                                   Foreground="{StaticResource BangumiPinkColor}"
+                                   Padding="0,15,0,0"><Bold>讨论版</Bold></TextBlock>
+                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.topics}"
+                                            ItemTemplate="{StaticResource TopicTemplate}">
+                            <muxc:ItemsRepeater.Layout>
+                                <muxc:StackLayout Spacing="8"
+                                                  Orientation="Vertical"/>
+                            </muxc:ItemsRepeater.Layout>
+                        </muxc:ItemsRepeater>
 
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
+
         </Pivot>
-        
+
     </Grid>
 </Page>

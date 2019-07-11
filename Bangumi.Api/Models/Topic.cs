@@ -20,10 +20,10 @@ namespace Bangumi.Api.Models
         public int MainId { get; set; }
 
         [JsonProperty("timestamp")]
-        public int Timestamp { get; set; }
+        public long Timestamp { get; set; }
 
         [JsonProperty("lastpost")]
-        public int LastPost { get; set; }
+        public long LastPost { get; set; }
 
         [JsonProperty("replies")]
         public int Replies { get; set; }

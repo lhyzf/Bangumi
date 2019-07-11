@@ -182,6 +182,7 @@
                                            ItemsSource="{x:Bind cvsGroups.View}" 
                                            Padding="12,0,12,40"
                                            ScrollViewer.IsHorizontalScrollChainingEnabled="False"
+                                           ShowsScrollingPlaceholders="False"
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick">
                     <GridView.GroupStyle>

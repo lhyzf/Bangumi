@@ -3,6 +3,7 @@ using Windows.UI.Xaml.Media;
 using Bangumi.Api.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace Bangumi.Common
 {
@@ -40,6 +41,12 @@ namespace Bangumi.Common
             value == null ? Visibility.Visible : Visibility.Collapsed;
 
         /// <summary>
+        /// Returns Visibility.Visible if the specified value is not null; otherwise, returns Visibility.Collapsed.
+        /// </summary>
+        public static Visibility CollapsedIfZero(int value) =>
+            value == 0 ? Visibility.Collapsed : Visibility.Visible;
+
+        /// <summary>
         /// Returns Visibility.Collapsed if the specified value is not null; otherwise, returns Visibility.Visible.
         /// </summary>
         public static Visibility CollapsedIfNotZero(int value) =>
@@ -50,6 +57,17 @@ namespace Bangumi.Common
         /// </summary>
         public static Visibility CollapsedIfNullOrEmpty(string value) =>
             string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible;
+
+        /// <summary>
+        /// 将js时间戳转换为C#时间戳
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        public static string ConvertJsTickToDateTime(long dateTime)
+        {
+            // 默认 DateTime 使用 UTC 时间
+            return new DateTime(1970, 1, 1).Add(new TimeSpan(long.Parse(dateTime + "0000000"))).ToLocalTime().ToString();
+        }
 
         /// <summary>
         /// 返回条目类型
@@ -191,6 +209,11 @@ namespace Bangumi.Common
                 }
         }
 
+        /// <summary>
+        /// 将演员列表转为string
+        /// </summary>
+        /// <param name="actors"></param>
+        /// <returns></returns>
         public static string ActorListToString(List<Actor> actors)
         {
             if (actors != null && actors.Count != 0)
@@ -206,6 +229,11 @@ namespace Bangumi.Common
                 return "";
         }
 
+        /// <summary>
+        /// 将职责列表转为string
+        /// </summary>
+        /// <param name="jobs"></param>
+        /// <returns></returns>
         public static string JobListToString(List<string> jobs)
         {
             if (jobs != null && jobs.Count != 0)
