@@ -201,7 +201,7 @@ namespace Bangumi.Views
         {
             if (OAuthHelper.IsLogin)
             {
-                FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+                CollectionMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
             }
         }
 

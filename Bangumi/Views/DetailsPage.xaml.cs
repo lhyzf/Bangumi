@@ -228,7 +228,7 @@ namespace Bangumi.Views
         {
             if (OAuthHelper.IsLogin && !ViewModel.IsProgressLoading && ((sender as RelativePanel).DataContext as Ep).Status != "NA")
             {
-                FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+                EpMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
             }
         }
 
@@ -239,7 +239,7 @@ namespace Bangumi.Views
         {
             if (OAuthHelper.IsLogin && !ViewModel.IsProgressLoading)
             {
-                FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+                EpMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
             }
         }
 

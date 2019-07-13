@@ -19,6 +19,24 @@
                 <ResourceDictionary Source="Dictionary1.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
+            <MenuFlyout x:Name="CollectionMenuFlyout">
+                <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                Text="想看"
+                                Tag="Wish"/>
+                <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                Text="看过"
+                                Tag="Collect"/>
+                <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                Text="在看"
+                                Tag="Doing"/>
+                <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                Text="搁置"
+                                Tag="OnHold"/>
+                <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                                Text="抛弃"
+                                Tag="Dropped"/>
+            </MenuFlyout>
+
             <DataTemplate x:Key="NarrowSubjectWithTypeTemplate" x:DataType="data:Subject">
                 <RelativePanel Padding="5"
                                RightTapped="ItemRelativePanel_RightTapped"
@@ -57,25 +75,6 @@
                                FontSize="12" 
                                Foreground="Gray"
                                TextTrimming="CharacterEllipsis"/>
-                    <FlyoutBase.AttachedFlyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="想看"
-                                            Tag="Wish"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="看过"
-                                            Tag="Collect"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="在看"
-                                            Tag="Doing"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="搁置"
-                                            Tag="OnHold"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="抛弃"
-                                            Tag="Dropped"/>
-                        </MenuFlyout>
-                    </FlyoutBase.AttachedFlyout>
                 </RelativePanel>
             </DataTemplate>
 
@@ -117,25 +116,6 @@
                                FontSize="16" 
                                Foreground="Gray"
                                TextTrimming="CharacterEllipsis"/>
-                    <FlyoutBase.AttachedFlyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="想看"
-                                            Tag="Wish"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="看过"
-                                            Tag="Collect"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="在看"
-                                            Tag="Doing"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="搁置"
-                                            Tag="OnHold"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="抛弃"
-                                            Tag="Dropped"/>
-                        </MenuFlyout>
-                    </FlyoutBase.AttachedFlyout>
                 </RelativePanel>
             </DataTemplate>
 
@@ -169,25 +149,6 @@
                                FontSize="12"
                                Foreground="Gray"
                                TextTrimming="CharacterEllipsis"/>
-                    <FlyoutBase.AttachedFlyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="想看"
-                                            Tag="Wish"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="看过"
-                                            Tag="Collect"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="在看"
-                                            Tag="Doing"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="搁置"
-                                            Tag="OnHold"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="抛弃"
-                                            Tag="Dropped"/>
-                        </MenuFlyout>
-                    </FlyoutBase.AttachedFlyout>
                 </RelativePanel>
             </DataTemplate>
 
@@ -221,25 +182,6 @@
                                FontSize="16"
                                Foreground="Gray"
                                TextTrimming="CharacterEllipsis"/>
-                    <FlyoutBase.AttachedFlyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="想看"
-                                            Tag="Wish"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="看过"
-                                            Tag="Collect"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="在看"
-                                            Tag="Doing"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="搁置"
-                                            Tag="OnHold"/>
-                            <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
-                                            Text="抛弃"
-                                            Tag="Dropped"/>
-                        </MenuFlyout>
-                    </FlyoutBase.AttachedFlyout>
                 </RelativePanel>
             </DataTemplate>
         </ResourceDictionary>

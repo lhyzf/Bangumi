@@ -4,5 +4,5 @@
     xmlns:local="using:Bangumi.Views">
     
     <Color x:Key="BangumiPinkColor">#d26585</Color>
-    
+
 </ResourceDictionary>
