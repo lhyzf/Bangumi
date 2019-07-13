@@ -19,9 +19,14 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Dictionary1.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            
+
+            <!-- 右键放送站点菜单 -->
+            <MenuFlyout x:Name="SitesMenuFlyout"/>
+
             <DataTemplate x:Key="NarrowProgressSubjectTemplate" x:DataType="data:WatchingStatus">
-                <RelativePanel Padding="5">
+                <RelativePanel Padding="5"
+                               RightTapped="RelativePanel_RightTapped"
+                               Background="Transparent">
                     <controls:ImageEx x:Name="BangumiImage"
                                       IsCacheEnabled="True"
                                       CacheMode="BitmapCache"
@@ -122,7 +127,9 @@
             </DataTemplate>
         
             <DataTemplate x:Key="WideProgressSubjectTemplate" x:DataType="data:WatchingStatus">
-                <RelativePanel Padding="5">
+                <RelativePanel Padding="5"
+                               RightTapped="RelativePanel_RightTapped"
+                               Background="Transparent">
                     <controls:ImageEx x:Name="BangumiImage"
                                       IsCacheEnabled="True"
                                       CacheMode="BitmapCache"

@@ -10,6 +10,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using Windows.System;
+using Bangumi.Data;
+using System.Linq;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -71,6 +74,70 @@ namespace Bangumi.Views
             var button = (Windows.UI.Xaml.Controls.Button)sender;
             var item = (WatchingStatus)button.DataContext;
             ViewModel.EditCollectionStatus(item);
+        }
+
+        /// <summary>
+        /// 点击菜单项打开站点
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void SiteMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            var uri = item.DataContext as string;
+            await Launcher.LaunchUriAsync(new Uri(uri));
+        }
+
+        /// <summary>
+        /// 初始化放送站点及拆分按钮
+        /// </summary>
+        private void InitAirSites(string id)
+        {
+            SitesMenuFlyout.Items.Clear();
+            var airSites = BangumiDataHelper.GetAirSitesByBangumiID(id);
+            if (airSites.Count != 0)
+            {
+                if (SettingHelper.UseBilibiliUWP == true)
+                {
+                    var bili = airSites.Where(s => s.SiteName == "bilibili").FirstOrDefault();
+                    if (bili != null)
+                        bili.Url = "bilibili://bangumi/season/" + bili.Id;
+                }
+                foreach (var site in airSites)
+                {
+                    MenuFlyoutItem menuFlyoutItem = new MenuFlyoutItem()
+                    {
+                        Text = site.SiteName,
+                        DataContext = site.Url
+                    };
+                    menuFlyoutItem.Click += SiteMenuFlyoutItem_Click;
+                    SitesMenuFlyout.Items.Add(menuFlyoutItem);
+                }
+            }
+            else
+            {
+                MenuFlyoutItem menuFlyoutItem = new MenuFlyoutItem()
+                {
+                    Text = "无放送站点"
+                };
+                SitesMenuFlyout.Items.Add(menuFlyoutItem);
+            }
+        }
+
+        /// <summary>
+        /// 右键菜单
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RelativePanel_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+        {
+            if(SettingHelper.UseBangumiData==true)
+            {
+                var panel = sender as RelativePanel;
+                var watch = panel.DataContext as WatchingStatus;
+                InitAirSites(watch.subject_id.ToString());
+                SitesMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+            }
         }
     }
 }

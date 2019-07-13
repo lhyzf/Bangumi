@@ -25,20 +25,20 @@
             
             <MenuFlyout x:Name="EpMenuFlyout">
                 <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                            Text="看过"
-                                            Tag="Watched"/>
+                                Text="看过"
+                                Tag="Watched"/>
                 <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                            Text="看到"
-                                            Tag="WatchedTo"/>
+                                Text="看到"
+                                Tag="WatchedTo"/>
                 <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                            Text="想看"
-                                            Tag="Queue"/>
+                                Text="想看"
+                                Tag="Queue"/>
                 <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                            Text="抛弃"
-                                            Tag="Drop"/>
+                                Text="抛弃"
+                                Tag="Drop"/>
                 <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                            Text="未看"
-                                            Tag="Remove"/>
+                                Text="未看"
+                                Tag="Remove"/>
             </MenuFlyout>
 
             <DataTemplate x:Name="RateTemplate" x:DataType="data2:SimpleRate">
@@ -433,14 +433,28 @@
                                 </TextBlock>
                                 <TextBlock Name="collectionTextBlock" 
                                            Text="{x:Bind ViewModel.OthersCollection,Mode=OneWay}" 
+                                           ToolTipService.ToolTip="{x:Bind ViewModel.OthersCollection,Mode=OneWay}"
                                            RelativePanel.AlignRightWithPanel="True"
                                            RelativePanel.AlignBottomWith="BangumiImage"
-                                           RelativePanel.RightOf="BangumiImage"
+                                           RelativePanel.RightOf="SitesSplitButton"
                                            TextTrimming="CharacterEllipsis"
                                            HorizontalAlignment="Right"
                                            Foreground="#666666" 
                                            Margin="0,2,0,0" >
                                 </TextBlock>
+
+                                <muxc:SplitButton Name="SitesSplitButton" 
+                                                  Click="SitesSplitButton_Click"
+                                                  Visibility="{x:Bind common:Converters.CollapsedIfNullOrEmpty(SelectedTextBlock.Text),Mode=OneWay}"
+                                                  RelativePanel.RightOf="BangumiImage"
+                                                  RelativePanel.AlignBottomWith="BangumiImage"
+                                                  FontSize="14">
+                                    <TextBlock Name="SelectedTextBlock"/>
+                                    <muxc:SplitButton.Flyout>
+                                        <MenuFlyout x:Name="SitesMenuFlyout"/>
+                                    </muxc:SplitButton.Flyout>
+                                </muxc:SplitButton>
+
 
                             </RelativePanel>
                         </GridView.Header>

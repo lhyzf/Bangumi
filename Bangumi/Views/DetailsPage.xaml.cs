@@ -19,6 +19,8 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
+using Windows.System;
+using Bangumi.Data;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -188,6 +190,17 @@ namespace Bangumi.Views
                 MainPage.rootPage.CollectionAppBarButton.Click += CollectionAppBarButton_Click;
                 MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Visible;
             }
+
+            if (SettingHelper.UseBangumiData == true)
+            {
+                InitAirSites();
+            }
+            else
+            {
+                SitesMenuFlyout.Items.Clear();
+                SelectedTextBlock.Text = "";
+                SelectedTextBlock.DataContext = null;
+            }
         }
 
         /// <summary>
@@ -283,5 +296,64 @@ namespace Bangumi.Views
         {
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 10);
         }
+
+        /// <summary>
+        /// 点击拆分按钮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private async void SitesSplitButton_Click(Microsoft.UI.Xaml.Controls.SplitButton sender, Microsoft.UI.Xaml.Controls.SplitButtonClickEventArgs args)
+        {
+            var textBlock = sender.Content as TextBlock;
+            var uri = textBlock.DataContext as string;
+            await Launcher.LaunchUriAsync(new Uri(uri));
+        }
+
+        /// <summary>
+        /// 点击菜单项打开站点
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void SiteMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            var uri = item.DataContext as string;
+            SelectedTextBlock.Text = item.Text;
+            SelectedTextBlock.DataContext = uri;
+            await Launcher.LaunchUriAsync(new Uri(uri));
+        }
+
+        /// <summary>
+        /// 初始化放送站点及拆分按钮
+        /// </summary>
+        private void InitAirSites()
+        {
+            SitesMenuFlyout.Items.Clear();
+            SelectedTextBlock.Text = "";
+            SelectedTextBlock.DataContext = null;
+            var airSites = BangumiDataHelper.GetAirSitesByBangumiID(ViewModel.SubjectId);
+            if (airSites.Count != 0)
+            {
+                if (SettingHelper.UseBilibiliUWP == true)
+                {
+                    var bili = airSites.Where(s => s.SiteName == "bilibili").FirstOrDefault();
+                    if (bili != null)
+                        bili.Url = "bilibili://bangumi/season/" + bili.Id;
+                }
+                foreach (var site in airSites)
+                {
+                    MenuFlyoutItem menuFlyoutItem = new MenuFlyoutItem()
+                    {
+                        Text = site.SiteName,
+                        DataContext = site.Url
+                    };
+                    menuFlyoutItem.Click += SiteMenuFlyoutItem_Click;
+                    SitesMenuFlyout.Items.Add(menuFlyoutItem);
+                }
+                SelectedTextBlock.Text = airSites[0].SiteName;
+                SelectedTextBlock.DataContext = airSites[0].Url;
+            }
+        }
+
     }
 }

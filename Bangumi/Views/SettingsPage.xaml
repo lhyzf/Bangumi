@@ -95,6 +95,61 @@
 
                 </StackPanel>
             </PivotItem>
+
+            <PivotItem Header="实验性功能">
+                <StackPanel Padding="0,10,0,0">
+                    <!-- 使用BangumiData -->
+                    <ToggleSwitch Name="UseBangumiDataToggleSwitch"
+                                  OnContent="开启" 
+                                  OffContent="关闭"
+                                  FontSize="16"
+                                  Toggled="UseBangumiDataToggleSwitch_Toggled">
+                        <ToggleSwitch.Header>
+                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                                       Text="使用 bangumi-data 数据显示番剧放送网站"
+                                       Margin="0,4,0,0"
+                                       FontWeight="Normal"
+                                       TextWrapping="Wrap" />
+                        </ToggleSwitch.Header>
+                    </ToggleSwitch>
+                    <StackPanel Visibility="{x:Bind UseBangumiDataToggleSwitch.IsOn,Mode=OneWay}">
+                        <TextBlock Name="BangumiDataTextBlock" 
+                                   Text="数据版本："
+                                   Margin="0,10,0,0"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Name="BangumiDataButton"
+                                    Content="检查更新"
+                                    Click="BangumiDataButton_Click"
+                                    Tag="Update"
+                                    Margin="0,4,0,0"/>
+                            <ProgressBar Name="BangumiDataProgressBar"
+                                         Grid.Column="1"
+                                         Visibility="Collapsed"
+                                         IsIndeterminate="True"
+                                         Margin="10,4,0,0"/>
+                        </Grid>
+                        <ToggleSwitch Name="UseBilibiliUWPToggleSwitch"
+                                      OnContent="开启" 
+                                      OffContent="关闭"
+                                      FontSize="16"
+                                      Toggled="UseBilibiliUWPToggleSwitch_Toggled">
+                            <ToggleSwitch.Header>
+                                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
+                                           Text="B站放送链接使用应用打开"
+                                           Margin="0,4,0,0"
+                                           FontWeight="Normal"
+                                           TextWrapping="Wrap" />
+                            </ToggleSwitch.Header>
+                        </ToggleSwitch>
+                    </StackPanel>
+
+                </StackPanel>
+            </PivotItem>
+            
             <PivotItem Header="关于">
                 <StackPanel Padding="0,10,0,0">
                     <TextBlock Text="Bangumi UWP (非官方)" 
@@ -146,6 +201,18 @@
                                Margin="0,0,0,5">
                         <Hyperlink NavigateUri="https://github.com/windows-toolkit/WindowsCommunityToolkit">
                             WindowsCommunityToolkit(https://github.com/windows-toolkit/WindowsCommunityToolkit)
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap"
+                               Margin="0,0,0,5">
+                        <Hyperlink NavigateUri="https://github.com/bangumi-data/bangumi-data">
+                            bangumi-data(https://github.com/bangumi-data/bangumi-data)
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap"
+                               Margin="0,0,0,5">
+                        <Hyperlink NavigateUri="https://github.com/AngleSharp/AngleSharp">
+                            AngleSharp(https://github.com/AngleSharp/AngleSharp)
                         </Hyperlink>
                     </TextBlock>
 

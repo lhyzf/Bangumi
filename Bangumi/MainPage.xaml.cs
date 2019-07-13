@@ -1,4 +1,5 @@
-﻿using Bangumi.Helper;
+﻿using Bangumi.Data;
+using Bangumi.Helper;
 using Bangumi.Views;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.System;
 using Windows.System.Profile;
 using Windows.UI;
@@ -45,6 +47,11 @@ namespace Bangumi
             Window.Current.CoreWindow.PointerPressed += CoreWindow_PointerPressed;
 
             CostomTitleBar();
+
+            if (SettingHelper.UseBangumiData == true)
+            {
+                BangumiDataHelper.InitBangumiData(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
+            }
         }
 
         /// <summary>
@@ -148,7 +155,7 @@ namespace Bangumi
                 return false;
 
             // 处于首页或登录页时不向后导航
-            if (MainPage.rootFrame.CurrentSourcePageType == typeof(HomePage) || 
+            if (MainPage.rootFrame.CurrentSourcePageType == typeof(HomePage) ||
                 MainPage.rootFrame.CurrentSourcePageType == typeof(LoginPage))
                 return false;
 
