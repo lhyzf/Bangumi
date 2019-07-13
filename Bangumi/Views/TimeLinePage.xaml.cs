@@ -62,7 +62,7 @@ namespace Bangumi.Views
         {
             if (OAuthHelper.IsLogin && !ViewModel.IsLoading)
             {
-                FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
+                CollectionMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
             }
         }
 

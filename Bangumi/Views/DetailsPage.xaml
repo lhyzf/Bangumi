@@ -22,6 +22,24 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Dictionary1.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            
+            <MenuFlyout x:Name="EpMenuFlyout">
+                <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
+                                            Text="看过"
+                                            Tag="Watched"/>
+                <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
+                                            Text="看到"
+                                            Tag="WatchedTo"/>
+                <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
+                                            Text="想看"
+                                            Tag="Queue"/>
+                <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
+                                            Text="抛弃"
+                                            Tag="Drop"/>
+                <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
+                                            Text="未看"
+                                            Tag="Remove"/>
+            </MenuFlyout>
 
             <DataTemplate x:Name="RateTemplate" x:DataType="data2:SimpleRate">
                 <Grid>
@@ -72,26 +90,6 @@
                                FontSize="14" 
                                TextWrapping="Wrap"
                                TextTrimming="CharacterEllipsis"/>
-
-                    <FlyoutBase.AttachedFlyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                            Text="看过"
-                                            Tag="Watched"/>
-                            <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                            Text="看到"
-                                            Tag="WatchedTo"/>
-                            <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                            Text="想看"
-                                            Tag="Queue"/>
-                            <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                            Text="抛弃"
-                                            Tag="Drop"/>
-                            <MenuFlyoutItem Click="UpdateEpStatusMenuFlyoutItem_Click" 
-                                            Text="未看"
-                                            Tag="Remove"/>
-                        </MenuFlyout>
-                    </FlyoutBase.AttachedFlyout>
                 </RelativePanel>
             </DataTemplate>
 
