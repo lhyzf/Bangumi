@@ -1,4 +1,5 @@
-﻿using Bangumi.Helper;
+﻿using Bangumi.Data;
+using Bangumi.Helper;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -74,6 +75,8 @@ namespace Bangumi.Views
 
             EpsBatchToggleSwitch.IsOn = SettingHelper.EpsBatch == true;
             SubjectCompleteToggleSwitch.IsOn = SettingHelper.SubjectComplete == true;
+            UseBangumiDataToggleSwitch.IsOn = SettingHelper.UseBangumiData == true;
+            UseBilibiliUWPToggleSwitch.IsOn = SettingHelper.UseBilibiliUWP == true;
 
             // 计算文件夹 JsonCache 中文件大小
             if (Directory.Exists(ApplicationData.Current.LocalCacheFolder.Path + "\\JsonCache"))
@@ -148,6 +151,97 @@ namespace Bangumi.Views
                     SettingHelper.SubjectComplete = false;
                 }
             }
+        }
+
+        private void UseBangumiDataToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            ToggleSwitch toggleSwitch = sender as ToggleSwitch;
+            if (toggleSwitch != null)
+            {
+                if (toggleSwitch.IsOn == true)
+                {
+                    SettingHelper.UseBangumiData = true;
+                    // 获取数据版本
+                    BangumiDataHelper.InitBangumiData(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
+                    BangumiDataTextBlock.Text = "数据版本：" +
+                        (string.IsNullOrEmpty(BangumiDataHelper.GetCurVersion()) ?
+                        "无数据" :
+                        BangumiDataHelper.GetCurVersion());
+                }
+                else
+                {
+                    SettingHelper.UseBangumiData = false;
+                }
+            }
+        }
+
+        private void UseBilibiliUWPToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            ToggleSwitch toggleSwitch = sender as ToggleSwitch;
+            if (toggleSwitch != null)
+            {
+                if (toggleSwitch.IsOn == true)
+                {
+                    SettingHelper.UseBilibiliUWP = true;
+                }
+                else
+                {
+                    SettingHelper.UseBilibiliUWP = false;
+                }
+            }
+        }
+
+        private async void BangumiDataButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            button.IsEnabled = false;
+            BangumiDataProgressBar.Visibility = Visibility.Visible;
+            if (button.Tag.ToString() == "Update")
+            {
+                var v = await BangumiDataHelper.GetLatestVersion();
+                if (!string.IsNullOrEmpty(v))
+                {
+                    if (v != BangumiDataHelper.GetCurVersion())
+                    {
+                        BangumiDataTextBlock.Text = "数据版本：" +
+                            (string.IsNullOrEmpty(BangumiDataHelper.GetCurVersion()) ?
+                            "无数据" :
+                            BangumiDataHelper.GetCurVersion()) +
+                            " -> " + v;
+                        button.Content = "下载数据";
+                        button.Tag = "Download";
+                    }
+                    else
+                    {
+                        MainPage.rootPage.ToastInAppNotification.Show("已是最新版本！", 1500);
+                    }
+                }
+                else
+                {
+                    MainPage.rootPage.ErrorInAppNotification.Show("获取最新版本失败！", 3000);
+                }
+            }
+            else if (button.Tag.ToString() == "Download")
+            {
+                if (!Directory.Exists(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data"))
+                    Directory.CreateDirectory(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
+                if (await BangumiDataHelper.DownloadLatestBangumiData(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data"))
+                {
+                    BangumiDataTextBlock.Text = "数据版本：" +
+                        (string.IsNullOrEmpty(BangumiDataHelper.GetCurVersion()) ?
+                        "无数据" :
+                        BangumiDataHelper.GetCurVersion());
+                    button.Content = "检查更新";
+                    button.Tag = "Update";
+                    MainPage.rootPage.ToastInAppNotification.Show("数据下载成功！", 1500);
+                }
+                else
+                {
+                    MainPage.rootPage.ErrorInAppNotification.Show("数据下载失败，请重试或稍后再试！", 3000);
+                }
+            }
+            BangumiDataProgressBar.Visibility = Visibility.Collapsed;
+            button.IsEnabled = true;
         }
 
         private async void DeleteJsonCacheFileButton_Click(object sender, RoutedEventArgs e)

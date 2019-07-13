@@ -36,5 +36,29 @@ namespace Bangumi.Helper
             }
         }
 
+        public static bool? UseBangumiData
+        {
+            set
+            {
+                localSettings.Values["UseBangumiData"] = value;
+            }
+            get
+            {
+                return localSettings.Values["UseBangumiData"] as bool?;
+            }
+        }
+
+        public static bool? UseBilibiliUWP
+        {
+            set
+            {
+                localSettings.Values["UseBilibiliUWP"] = value;
+            }
+            get
+            {
+                return localSettings.Values["UseBilibiliUWP"] as bool?;
+            }
+        }
+
     }
 }

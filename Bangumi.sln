@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bangumi", "Bangumi\Bangumi.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bangumi.Api", "Bangumi.Api\Bangumi.Api.csproj", "{F04D2305-6D91-4B17-A0A5-D7D570CC2EDE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bangumi.Data", "Bangumi.Data\Bangumi.Data.csproj", "{DAC81160-227F-4720-B921-A2AE0ECE0C4B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,26 @@ Global
 		{F04D2305-6D91-4B17-A0A5-D7D570CC2EDE}.Release|x64.Build.0 = Release|Any CPU
 		{F04D2305-6D91-4B17-A0A5-D7D570CC2EDE}.Release|x86.ActiveCfg = Release|Any CPU
 		{F04D2305-6D91-4B17-A0A5-D7D570CC2EDE}.Release|x86.Build.0 = Release|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Debug|ARM.Build.0 = Debug|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Debug|x64.Build.0 = Debug|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Debug|x86.Build.0 = Debug|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Release|ARM.ActiveCfg = Release|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Release|ARM.Build.0 = Release|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Release|ARM64.Build.0 = Release|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Release|x64.ActiveCfg = Release|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Release|x64.Build.0 = Release|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Release|x86.ActiveCfg = Release|Any CPU
+		{DAC81160-227F-4720-B921-A2AE0ECE0C4B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -311,6 +311,10 @@
       <Project>{f04d2305-6d91-4b17-a0a5-d7d570cc2ede}</Project>
       <Name>Bangumi.Api</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Bangumi.Data\Bangumi.Data.csproj">
+      <Project>{DAC81160-227F-4720-B921-A2AE0ECE0C4B}</Project>
+      <Name>Bangumi.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
