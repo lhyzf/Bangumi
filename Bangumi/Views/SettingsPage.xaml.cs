@@ -73,10 +73,10 @@ namespace Bangumi.Views
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             MainPage.rootPage.MyCommandBar.Visibility = Visibility.Collapsed;
 
-            EpsBatchToggleSwitch.IsOn = SettingHelper.EpsBatch == true;
-            SubjectCompleteToggleSwitch.IsOn = SettingHelper.SubjectComplete == true;
-            UseBangumiDataToggleSwitch.IsOn = SettingHelper.UseBangumiData == true;
-            UseBilibiliUWPToggleSwitch.IsOn = SettingHelper.UseBilibiliUWP == true;
+            EpsBatchToggleSwitch.IsOn = SettingHelper.EpsBatch;
+            SubjectCompleteToggleSwitch.IsOn = SettingHelper.SubjectComplete;
+            UseBangumiDataToggleSwitch.IsOn = SettingHelper.UseBangumiData;
+            UseBilibiliUWPToggleSwitch.IsOn = SettingHelper.UseBiliApp;
 
             // 计算文件夹 JsonCache 中文件大小
             if (Directory.Exists(ApplicationData.Current.LocalCacheFolder.Path + "\\JsonCache"))
@@ -182,12 +182,13 @@ namespace Bangumi.Views
             {
                 if (toggleSwitch.IsOn == true)
                 {
-                    SettingHelper.UseBilibiliUWP = true;
+                    SettingHelper.UseBiliApp = true;
                 }
                 else
                 {
-                    SettingHelper.UseBilibiliUWP = false;
+                    SettingHelper.UseBiliApp = false;
                 }
+                BangumiDataHelper.SetUseBiliApp(SettingHelper.UseBiliApp);
             }
         }
 
@@ -223,9 +224,7 @@ namespace Bangumi.Views
             }
             else if (button.Tag.ToString() == "Download")
             {
-                if (!Directory.Exists(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data"))
-                    Directory.CreateDirectory(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
-                if (await BangumiDataHelper.DownloadLatestBangumiData(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data"))
+                if (await BangumiDataHelper.DownloadLatestBangumiData())
                 {
                     BangumiDataTextBlock.Text = "数据版本：" +
                         (string.IsNullOrEmpty(BangumiDataHelper.GetCurVersion()) ?

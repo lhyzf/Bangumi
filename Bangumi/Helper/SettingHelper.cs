@@ -8,55 +8,71 @@ using Windows.UI.Xaml;
 
 namespace Bangumi.Helper
 {
-    class SettingHelper
+    static class SettingHelper
     {
         private static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+        private static bool? _epsBatch;
+        private static bool? _subjectComplete;
+        private static bool? _useBangumiData;
+        private static bool? _useBiliApp;
 
-        public static bool? EpsBatch
+        static SettingHelper()
+        {
+            _epsBatch = localSettings.Values["EpsBatch"] as bool?;
+            _subjectComplete = localSettings.Values["SubjectComplete"] as bool?;
+            _useBangumiData = localSettings.Values["UseBangumiData"] as bool?;
+            _useBiliApp = localSettings.Values["UseBiliApp"] as bool?;
+        }
+
+        public static bool EpsBatch
         {
             set
             {
-                localSettings.Values["EpsBatch"] = value;
+                _epsBatch = value;
+                localSettings.Values["EpsBatch"] = _epsBatch;
             }
             get
             {
-                return localSettings.Values["EpsBatch"] as bool?;
+                return _epsBatch == true;
             }
         }
 
-        public static bool? SubjectComplete
+        public static bool SubjectComplete
         {
             set
             {
-                localSettings.Values["SubjectComplete"] = value;
+                _subjectComplete = value;
+                localSettings.Values["SubjectComplete"] = _subjectComplete;
             }
             get
             {
-                return localSettings.Values["SubjectComplete"] as bool?;
+                return _subjectComplete == true;
             }
         }
 
-        public static bool? UseBangumiData
+        public static bool UseBangumiData
         {
             set
             {
-                localSettings.Values["UseBangumiData"] = value;
+                _useBangumiData = value;
+                localSettings.Values["UseBangumiData"] = _useBangumiData;
             }
             get
             {
-                return localSettings.Values["UseBangumiData"] as bool?;
+                return _useBangumiData == true;
             }
         }
 
-        public static bool? UseBilibiliUWP
+        public static bool UseBiliApp
         {
             set
             {
-                localSettings.Values["UseBilibiliUWP"] = value;
+                _useBiliApp = value;
+                localSettings.Values["UseBiliApp"] = _useBiliApp;
             }
             get
             {
-                return localSettings.Values["UseBilibiliUWP"] as bool?;
+                return _useBiliApp == true;
             }
         }
 

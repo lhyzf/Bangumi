@@ -128,7 +128,7 @@ namespace Bangumi.ViewModels
                         item.ep_color = "Gray";
 
                         // 若设置启用且看完则弹窗提示修改收藏状态及评价
-                        if (SettingHelper.SubjectComplete == true && item.eps.Where(e => e.status == "看过").Count() == item.eps.Count)
+                        if (SettingHelper.SubjectComplete && item.eps.Where(e => e.status == "看过").Count() == item.eps.Count)
                         {
                             EditCollectionStatus(item, "看过");
                         }

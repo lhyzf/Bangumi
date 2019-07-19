@@ -31,30 +31,6 @@ namespace Bangumi.Data
         public object Begin { get; set; }
 
         /// <summary>
-        /// Examples: null, true, false
-        /// </summary>
-        [JsonProperty("official")]
-        public bool? Official { get; set; }
-
-        /// <summary>
-        /// Examples: null, false, true
-        /// </summary>
-        [JsonProperty("premuiumOnly")]
-        public bool? PremuiumOnly { get; set; }
-
-        /// <summary>
-        /// Examples: null, false, true
-        /// </summary>
-        [JsonProperty("censored")]
-        public bool? Censored { get; set; }
-
-        /// <summary>
-        /// Examples: null, true, false
-        /// </summary>
-        [JsonProperty("exist")]
-        public bool? Exist { get; set; }
-
-        /// <summary>
         /// Examples: "", "港区可见", "分割为 TV 放送", "原始版本为剧场版但是 Netflix 目前将其做成 14 集 TV 分割形式放送"
         /// </summary>
         [JsonProperty("comment")]

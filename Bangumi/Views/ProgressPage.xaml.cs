@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.System;
 using Bangumi.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -91,18 +92,12 @@ namespace Bangumi.Views
         /// <summary>
         /// 初始化放送站点及拆分按钮
         /// </summary>
-        private void InitAirSites(string id)
+        private async Task InitAirSites(string id)
         {
             SitesMenuFlyout.Items.Clear();
-            var airSites = BangumiDataHelper.GetAirSitesByBangumiID(id);
+            var airSites = await BangumiDataHelper.GetAirSitesByBangumiID(id);
             if (airSites.Count != 0)
             {
-                if (SettingHelper.UseBilibiliUWP == true)
-                {
-                    var bili = airSites.Where(s => s.SiteName == "bilibili").FirstOrDefault();
-                    if (bili != null)
-                        bili.Url = "bilibili://bangumi/season/" + bili.Id;
-                }
                 foreach (var site in airSites)
                 {
                     MenuFlyoutItem menuFlyoutItem = new MenuFlyoutItem()
@@ -129,13 +124,13 @@ namespace Bangumi.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void RelativePanel_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+        private async void RelativePanel_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
         {
             if(SettingHelper.UseBangumiData==true)
             {
                 var panel = sender as RelativePanel;
                 var watch = panel.DataContext as WatchingStatus;
-                InitAirSites(watch.subject_id.ToString());
+                await InitAirSites(watch.subject_id.ToString());
                 SitesMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
             }
         }
