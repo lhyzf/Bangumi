@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Bangumi.Data
 {
@@ -15,6 +16,9 @@ namespace Bangumi.Data
         private static BangumiData bangumiData;
         private static string version;
         private static string latestVersion;
+        private static bool useBiliApp;
+        private static Dictionary<string, string> SeasonIDMap;
+        private static string DataFolderPath;
 
         /// <summary>
         /// 读取文件，将数据加载到内存
@@ -22,10 +26,24 @@ namespace Bangumi.Data
         /// <param name="datafolderpath">文件夹路径</param>
         public static void InitBangumiData(string datafolderpath)
         {
-            if (bangumiData == null && File.Exists(datafolderpath + "\\data.json") && File.Exists(datafolderpath + "\\version"))
+            DataFolderPath = datafolderpath;
+            if (!Directory.Exists(DataFolderPath))
+                Directory.CreateDirectory(DataFolderPath);
+            if (bangumiData == null && File.Exists(DataFolderPath + "\\data.json") && File.Exists(DataFolderPath + "\\version"))
             {
-                bangumiData = JsonConvert.DeserializeObject<BangumiData>(File.ReadAllText(datafolderpath + "\\data.json"));
-                version = File.ReadAllText(datafolderpath + "\\version");
+                bangumiData = JsonConvert.DeserializeObject<BangumiData>(File.ReadAllText(DataFolderPath + "\\data.json"));
+                version = File.ReadAllText(DataFolderPath + "\\version");
+            }
+            if (SeasonIDMap == null)
+            {
+                if (File.Exists(DataFolderPath + "\\map.json"))
+                {
+                    SeasonIDMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(DataFolderPath + "\\map.json"));
+                }
+                else
+                {
+                    SeasonIDMap = new Dictionary<string, string>();
+                }
             }
         }
 
@@ -62,11 +80,11 @@ namespace Bangumi.Data
         /// <summary>
         /// 下载最新的数据，并更新原有数据，不比较版本号
         /// </summary>
-        /// <param name="datafolderpath">存在的文件夹路径</param>
         /// <returns></returns>
-        public static async Task<bool> DownloadLatestBangumiData(string datafolderpath)
+        public static async Task<bool> DownloadLatestBangumiData()
         {
-            var data = await HTTPHelper.GetTextByUrlAsync("https://github.com/bangumi-data/bangumi-data/raw/master/dist/data.json");
+            //var data = await HTTPHelper.GetTextByUrlAsync("https://github.com/bangumi-data/bangumi-data/raw/master/dist/data.json");
+            var data = await HTTPHelper.GetTextByUrlAsync("https://cdn.jsdelivr.net/npm/bangumi-data@0.3/dist/data.json");
             if (string.IsNullOrEmpty(latestVersion))
                 await GetLatestVersion();
             if (!string.IsNullOrEmpty(data) && !string.IsNullOrEmpty(latestVersion))
@@ -74,9 +92,9 @@ namespace Bangumi.Data
                 try
                 {
                     bangumiData = JsonConvert.DeserializeObject<BangumiData>(data);
-                    File.WriteAllText(datafolderpath + "\\data.json", data);
+                    File.WriteAllText(DataFolderPath + "\\data.json", data);
                     version = latestVersion;
-                    File.WriteAllText(datafolderpath + "\\version", version);
+                    File.WriteAllText(DataFolderPath + "\\version", version);
                     return true;
                 }
                 catch (Exception e)
@@ -100,9 +118,22 @@ namespace Bangumi.Data
             return bangumiData;
         }
 
+        /// <summary>
+        /// 返回数据版本号
+        /// </summary>
+        /// <returns></returns>
         public static string GetCurVersion()
         {
             return version;
+        }
+
+        /// <summary>
+        /// 设置是否使用哔哩哔哩动画UWP应用
+        /// </summary>
+        /// <param name="value"></param>
+        public static void SetUseBiliApp(bool value)
+        {
+            useBiliApp = value;
         }
 
         /// <summary>
@@ -110,7 +141,7 @@ namespace Bangumi.Data
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static List<Site> GetAirSitesByBangumiID(string id)
+        public static async Task<List<Site>> GetAirSitesByBangumiID(string id)
         {
             if (bangumiData == null)
             {
@@ -127,6 +158,34 @@ namespace Bangumi.Data
                     site.Url = string.IsNullOrEmpty(site.Id) ?
                                site.Url :
                                bangumiData.SiteMeta[site.SiteName].UrlTemplate.Replace("{{id}}", site.Id);
+                }
+                // 启用设置
+                if (useBiliApp)
+                {
+                    var biliSite = siteList.Where(s => s.SiteName == "bilibili").FirstOrDefault();
+                    if (biliSite != null)
+                    {
+                        string seasonId;
+                        if (!SeasonIDMap.TryGetValue(biliSite.Id, out seasonId))
+                        {
+                            var url = string.Format("https://bangumi.bilibili.com/view/web_api/media?media_id={0}", biliSite.Id);
+                            try
+                            {
+                                var result = await HTTPHelper.GetTextByUrlAsync(url);
+                                JObject jObject = JObject.Parse(result);
+                                seasonId = jObject.SelectToken("result.param.season_id").ToString();
+                                SeasonIDMap.Add(biliSite.Id, seasonId);
+                                File.WriteAllText(DataFolderPath + "\\map.json", JsonConvert.SerializeObject(SeasonIDMap));
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("获取seasonId失败");
+                                Console.WriteLine(e.Message);
+                                return siteList;
+                            }
+                        }
+                        biliSite.Url = "bilibili://bangumi/season/" + seasonId;
+                    }
                 }
                 return siteList;
             }

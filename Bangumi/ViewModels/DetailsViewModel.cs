@@ -221,7 +221,7 @@ namespace Bangumi.ViewModels
                     CollectionStatusText = collectionEditContentDialog.collectionStatus;
                     SetCollectionButton();
                     // 若状态修改为看过，且设置启用，则批量修改章节状态为看过
-                    if (collectionEditContentDialog.collectionStatus == CollectionStatusEnum.collect.GetValue() && SettingHelper.EpsBatch == true)
+                    if (collectionEditContentDialog.collectionStatus == CollectionStatusEnum.collect.GetValue() && SettingHelper.EpsBatch)
                     {
                         int epId = 0;
                         string epsId = string.Empty;
@@ -431,7 +431,7 @@ namespace Bangumi.ViewModels
                     }
                     // 评论
                     blogs.Clear();
-                    if(subject.Blogs!=null)
+                    if (subject.Blogs != null)
                     {
                         foreach (var blog in subject.Blogs)
                         {
@@ -440,7 +440,7 @@ namespace Bangumi.ViewModels
                     }
                     // 讨论版
                     topics.Clear();
-                    if(subject.Topics!=null)
+                    if (subject.Topics != null)
                     {
                         foreach (var topic in subject.Topics)
                         {

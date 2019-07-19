@@ -326,20 +326,14 @@ namespace Bangumi.Views
         /// <summary>
         /// 初始化放送站点及拆分按钮
         /// </summary>
-        private void InitAirSites()
+        private async void InitAirSites()
         {
             SitesMenuFlyout.Items.Clear();
             SelectedTextBlock.Text = "";
             SelectedTextBlock.DataContext = null;
-            var airSites = BangumiDataHelper.GetAirSitesByBangumiID(ViewModel.SubjectId);
+            var airSites = await BangumiDataHelper.GetAirSitesByBangumiID(ViewModel.SubjectId);
             if (airSites.Count != 0)
             {
-                if (SettingHelper.UseBilibiliUWP == true)
-                {
-                    var bili = airSites.Where(s => s.SiteName == "bilibili").FirstOrDefault();
-                    if (bili != null)
-                        bili.Url = "bilibili://bangumi/season/" + bili.Id;
-                }
                 foreach (var site in airSites)
                 {
                     MenuFlyoutItem menuFlyoutItem = new MenuFlyoutItem()
