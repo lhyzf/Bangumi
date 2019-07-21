@@ -31,15 +31,9 @@ namespace Bangumi.ContentDialogs
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            MainPage.rootPage.hasDialog = false;
             rate = (int)RateSlider.Value;
             comment = CommentTextBox.Text;
             privacy = (bool)PrivacyCheckBox.IsChecked;
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            MainPage.rootPage.hasDialog = false;
         }
 
         private void StatusRadioButton_Checked(object sender, RoutedEventArgs e)

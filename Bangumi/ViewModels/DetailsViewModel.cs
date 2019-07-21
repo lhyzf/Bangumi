@@ -208,7 +208,6 @@ namespace Bangumi.ViewModels
             MainPage.rootPage.hasDialog = true;
             if (ContentDialogResult.Primary == await collectionEditContentDialog.ShowAsync())
             {
-                MainPage.rootPage.hasDialog = false;
                 IsUpdating = true;
                 IsStatusLoaded = false;
                 if (await BangumiFacade.UpdateCollectionStatusAsync(SubjectId,
@@ -247,6 +246,7 @@ namespace Bangumi.ViewModels
                 IsStatusLoaded = true;
                 IsUpdating = false;
             }
+            MainPage.rootPage.hasDialog = false;
         }
 
         /// <summary>

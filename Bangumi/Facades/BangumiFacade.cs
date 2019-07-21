@@ -33,20 +33,28 @@ namespace Bangumi.Facades
                         foreach (var sub in PreWatchings)
                         {
                             // 将Collection中没有的添加进去
-                            if (watchingListCollection.Where(e => e.subject_id == sub.subject_id).Count() == 0)
+                            if (watchingListCollection.Where(e => e.SubjectId == sub.SubjectId).Count() == 0)
                                 watchingListCollection.Add(sub);
                         }
                     }
                 }
+            }
+            catch (Exception)
+            {
+                // 删除无法反序列化的数据
+                FileHelper.DeleteCacheFile(OAuthHelper.CacheFile.progress.GetFilePath());
+            }
 
 
+            try
+            {
                 var watchingList = await BangumiHttpWrapper.GetWatchingListAsync(OAuthHelper.MyToken.UserId);
 
                 var deletedItems = new List<WatchingStatus>(); //标记要删除的条目
                 foreach (var sub in watchingListCollection)
                 {
                     //根据最新的进度删除原有条目
-                    if (watchingList.Where(e => e.SubjectId == sub.subject_id).Count() == 0)
+                    if (watchingList.Where(e => e.SubjectId == sub.SubjectId).Count() == 0)
                         deletedItems.Add(sub);
                 }
                 foreach (var item in deletedItems) //删除条目
@@ -57,77 +65,72 @@ namespace Bangumi.Facades
                 foreach (var watching in watchingList)
                 {
                     //若在看含有原来没有的条目则新增,之后再细化
-                    var item = watchingListCollection.Where(e => e.subject_id == watching.SubjectId).FirstOrDefault();
+                    var item = watchingListCollection.Where(e => e.SubjectId == watching.SubjectId).FirstOrDefault();
                     if (item == null)
                     {
                         WatchingStatus watchingStatus = new WatchingStatus();
-                        watchingStatus.name = watching.Subject.Name;
-                        watchingStatus.name_cn = watching.Subject.NameCn;
-                        watchingStatus.image = watching.Subject.Images.Common;
-                        watchingStatus.subject_id = watching.SubjectId;
-                        watchingStatus.url = watching.Subject.Url;
-                        watchingStatus.ep_color = "Gray";
-                        watchingStatus.lasttouch = 0;
-                        watchingStatus.watched_eps = watching.EpStatus;
-                        watchingStatus.updated_eps = watching.Subject.EpsCount.ToString();
+                        watchingStatus.Name = watching.Subject.Name;
+                        watchingStatus.NameCn = watching.Subject.NameCn;
+                        watchingStatus.Image = watching.Subject.Images.Common;
+                        watchingStatus.SubjectId = watching.SubjectId;
+                        watchingStatus.Url = watching.Subject.Url;
+                        watchingStatus.EpColor = "Gray";
+                        watchingStatus.LastTouch = 0;
+                        watchingStatus.WatchedEps = watching.EpStatus;
+                        watchingStatus.UpdatedEps = watching.Subject.EpsCount;
+                        watchingStatus.AirDate = watching.Subject.AirDate;
+                        watchingStatus.AirWeekday = watching.Subject.AirWeekday;
+                        watchingStatus.Type = watching.Subject.Type;
 
                         watchingListCollection.Add(watchingStatus);
                     }
                 }
                 foreach (var watching in watchingList)
                 {
-                    var item = watchingListCollection.Where(e => e.subject_id == watching.SubjectId).FirstOrDefault();
+                    var item = watchingListCollection.Where(e => e.SubjectId == watching.SubjectId).FirstOrDefault();
                     if (item != null)
                     {
-                        item.isUpdating = true;
+                        item.IsUpdating = true;
                         // 首次更新或条目有修改或当天首次加载
-                        if (item.lasttouch == 0 ||
-                            item.lasttouch != watching.LastTouch ||
-                            item.lastupdate != DateTime.Today.ConvertDateTimeToJsTick())
+                        if (item.LastTouch == 0 ||
+                            item.LastTouch != watching.LastTouch ||
+                            item.LastUpdate != DateTime.Today.ConvertDateTimeToJsTick())
                         {
                             // 获取EP信息
-                            var subject = await BangumiHttpWrapper.GetSubjectEpsAsync(item.subject_id.ToString());
+                            var subject = await BangumiHttpWrapper.GetSubjectEpsAsync(item.SubjectId.ToString());
 
-                            item.eps = new List<SimpleEp>();
+                            item.Eps = new List<SimpleEp>();
                             if (subject.Eps != null)
                             {
                                 foreach (var ep in subject.Eps)
                                 {
                                     SimpleEp simpleEp = new SimpleEp();
-                                    simpleEp.id = ep.Id;
-                                    simpleEp.sort = ep.Sort;
-                                    simpleEp.status = ep.Status;
-                                    simpleEp.type = ep.Type;
-                                    simpleEp.name = ep.NameCn == "" ? ep.Name : ep.NameCn;
-                                    item.eps.Add(simpleEp);
+                                    simpleEp.Id = ep.Id;
+                                    simpleEp.Sort = ep.Sort;
+                                    simpleEp.Status = ep.Status;
+                                    simpleEp.Type = ep.Type;
+                                    simpleEp.Name = ep.NameCn == "" ? ep.Name : ep.NameCn;
+                                    item.Eps.Add(simpleEp);
                                 }
-                                if (item.eps.Where(e => e.status == "NA").Count() == 0)
-                                    item.updated_eps = "全" + item.eps.Count + "话";
-                                else
-                                {
-                                    if (item.eps.Count - item.eps.Where(e => e.status == "NA").Count() != 0)
-                                        item.updated_eps = "更新到第" + (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()) + "话";
-                                    else
-                                        item.updated_eps = "尚未放送";
-                                }
+                                item.UpdatedEps = item.Eps.Count - item.Eps.Where(e => e.Status == "NA").Count();
 
-                                var progress = await GetProgressesAsync(item.subject_id.ToString());
+                                var progress = await GetProgressesAsync(item.SubjectId.ToString());
                                 if (progress != null)
                                 {
-                                    item.watched_eps = progress.Eps.Count;
-                                    if (item.eps.Count == item.watched_eps)
-                                        item.next_ep = -1;
-                                    if (progress.Eps.Count < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
-                                        item.ep_color = "#d26585";
+                                    item.WatchedEps = progress.Eps.Count;
+                                    if (item.Eps.Count == item.WatchedEps)
+                                        item.NextEp = -1;
+                                    if (progress.Eps.Count < (item.Eps.Count - item.Eps.Where(e => e.Status == "NA").Count()))
+                                        item.EpColor = "#d26585";
                                     else
-                                        item.ep_color = "Gray";
-                                    foreach (var ep in item.eps) // 填充用户观看状态
+                                        item.EpColor = "Gray";
+                                    foreach (var ep in item.Eps) // 填充用户观看状态
                                     {
                                         foreach (var p in progress.Eps)
                                         {
-                                            if (p.Id == ep.id)
+                                            if (p.Id == ep.Id)
                                             {
-                                                ep.status = p.Status.CnName;
+                                                ep.Status = p.Status.CnName;
                                                 progress.Eps.Remove(p);
                                                 break;
                                             }
@@ -136,34 +139,34 @@ namespace Bangumi.Facades
                                 }
                                 else
                                 {
-                                    item.watched_eps = 0;
-                                    if (item.updated_eps != "尚未放送")
-                                        item.ep_color = "#d26585";
+                                    item.WatchedEps = 0;
+                                    if (item.UpdatedEps != 0)
+                                        item.EpColor = "#d26585";
                                 }
                             }
                             else
                             {
-                                item.watched_eps = -1;
-                                item.updated_eps = "无章节";
-                                item.ep_color = "Gray";
+                                item.WatchedEps = -1;
+                                item.UpdatedEps = -1;
+                                item.EpColor = "Gray";
                             }
 
-                            if (item.next_ep != -1 && item.eps.Count != 0)
-                                item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").Count() != 0 ?
-                                               item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").OrderBy(ep=>ep.sort).FirstOrDefault().sort :
-                                               item.eps.Where(ep => ep.status == "NA").FirstOrDefault().sort;
-                            item.lasttouch = watching.LastTouch;
-                            item.lastupdate = DateTime.Today.ConvertDateTimeToJsTick();
+                            if (item.NextEp != -1 && item.Eps.Count != 0)
+                                item.NextEp = item.Eps.Where(ep => ep.Status == "Air" || ep.Status == "Today").Count() != 0 ?
+                                               item.Eps.Where(ep => ep.Status == "Air" || ep.Status == "Today").OrderBy(ep => ep.Sort).FirstOrDefault().Sort :
+                                               item.Eps.Where(ep => ep.Status == "NA").FirstOrDefault().Sort;
+                            item.LastTouch = watching.LastTouch;
+                            item.LastUpdate = DateTime.Today.ConvertDateTimeToJsTick();
                         }
-                        item.isUpdating = false;
+                        item.IsUpdating = false;
                     }
                 }
             }
             catch (Exception e)
             {
-                foreach (var item in watchingListCollection.Where(i => i.isUpdating == true))
+                foreach (var item in watchingListCollection.Where(i => i.IsUpdating == true))
                 {
-                    item.isUpdating = false;
+                    item.IsUpdating = false;
                 }
                 Debug.WriteLine("显示用户收视进度列表失败。");
                 Debug.WriteLine(e.Message);

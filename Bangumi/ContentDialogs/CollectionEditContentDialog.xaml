@@ -10,8 +10,7 @@
     Loaded="ContentDialog_Loaded"
     PrimaryButtonText="确认"
     SecondaryButtonText="取消"
-    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
     
     <ContentDialog.Resources>
         <Style x:Key="CollectionStatusRadioButtonStyle" TargetType="RadioButton">

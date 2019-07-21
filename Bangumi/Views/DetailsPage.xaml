@@ -497,6 +497,7 @@
                         <TextBlock LineHeight="22" 
                                    IsTextSelectionEnabled="True"
                                    Text="{x:Bind ViewModel.MoreSummary,Mode=OneWay}"
+                                   Visibility="{x:Bind common:Converters.CollapsedIfNullOrEmpty(ViewModel.MoreSummary),Mode=OneWay}"
                                    TextWrapping="Wrap"/>
 
                         <!-- 角色资料 -->

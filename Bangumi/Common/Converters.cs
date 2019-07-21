@@ -139,7 +139,21 @@ namespace Bangumi.Common
                 return "";
             if (watched_eps == 0)
                 return "尚未观看";
-            return "看到第" + watched_eps + "话";
+            return watched_eps.ToString();
+        }
+
+        /// <summary>
+        /// 根据更新进度返回相应描述
+        /// </summary>
+        /// <param name="watched_eps"></param>
+        /// <returns></returns>
+        public static string GetUpdatedEpsDesc(int updated_eps)
+        {
+            if (updated_eps == -1)
+                return "无章节";
+            if (updated_eps == 0)
+                return "尚未放送";
+            return updated_eps.ToString();
         }
 
         /// <summary>
@@ -170,18 +184,20 @@ namespace Bangumi.Common
             {
                 return "";
             }
-            int? type = eps?.Where(p => p.sort == next_ep).FirstOrDefault()?.type;
-            if (type == null)
+            var ep = eps?.Where(p => p.Sort == next_ep).FirstOrDefault();
+            if (ep == null)
             {
                 return "";
             }
-            else if (type == 0)
+            else if (ep.Type == 0)
             {
-                return next_ep.ToString();
+                return next_ep.ToString() + 
+                       (string.IsNullOrEmpty(ep.Name) ? "" : " " + ep.Name);
             }
             else
             {
-                return type?.GetEpisodeType() + " " + next_ep;
+                return ep.Type.GetEpisodeType() + " " + next_ep + 
+                       (string.IsNullOrEmpty(ep.Name) ? "" : " " + ep.Name);
             }
         }
 
