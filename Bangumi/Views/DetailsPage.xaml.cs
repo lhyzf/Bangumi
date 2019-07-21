@@ -80,25 +80,27 @@ namespace Bangumi.Views
             if (e.Parameter.GetType() == typeof(WatchingStatus))
             {
                 var p = (WatchingStatus)e.Parameter;
-                if (!(ViewModel.SubjectId == p.subject_id.ToString()))
+                if (!(ViewModel.SubjectId == p.SubjectId.ToString()))
                 {
                     needReLoad = true;
                     ViewModel.InitViewModel();
                 }
-                ViewModel.SubjectId = p.subject_id.ToString();
-                ViewModel.ImageSource = p.image;
-                ViewModel.NameCn = p.name_cn;
-                if (p.eps != null)
+                ViewModel.SubjectId = p.SubjectId.ToString();
+                ViewModel.ImageSource = p.Image;
+                ViewModel.NameCn = p.NameCn;
+                ViewModel.AirDate = p.AirDate;
+                ViewModel.AirWeekday = p.AirWeekday;
+                if (p.Eps != null)
                 {
                     ViewModel.eps.Clear();
-                    foreach (var ep in p.eps)
+                    foreach (var ep in p.Eps)
                     {
                         var newEp = new Ep();
-                        newEp.Id = ep.id;
-                        newEp.Sort = ep.sort;
-                        newEp.Status = ep.status;
-                        newEp.Type = ep.type;
-                        newEp.NameCn = ep.name;
+                        newEp.Id = ep.Id;
+                        newEp.Sort = ep.Sort;
+                        newEp.Status = ep.Status;
+                        newEp.Type = ep.Type;
+                        newEp.NameCn = ep.Name;
                         ViewModel.eps.Add(newEp);
                     }
                 }
@@ -135,10 +137,6 @@ namespace Bangumi.Views
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            if (e.NavigationMode == NavigationMode.Back)
-            {
-                MyPivot.SelectedIndex = 0;
-            }
             // 设置收藏按钮隐藏以及解除事件绑定
             MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Collapsed;
             MainPage.rootPage.CollectionAppBarButton.Click -= CollectionAppBarButton_Click;

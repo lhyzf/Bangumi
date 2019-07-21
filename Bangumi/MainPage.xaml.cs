@@ -112,6 +112,13 @@ namespace Bangumi
                 appTitleBar.ButtonForegroundColor = Colors.White;
         }
 
+        private void BackInvoked(KeyboardAccelerator sender,
+                                 KeyboardAcceleratorInvokedEventArgs args)
+        {
+            On_BackRequested();
+            args.Handled = true;
+        }
+
         /// <summary>
         /// 鼠标后退键返回上一页。
         /// </summary>
@@ -166,6 +173,11 @@ namespace Bangumi
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            // 将 Esc 添加为后导航的键盘快捷键
+            var goBack = new KeyboardAccelerator { Key = VirtualKey.Escape };
+            goBack.Invoked += BackInvoked;
+            this.KeyboardAccelerators.Add(goBack);
+
             await UpdataUserStatusAsync();
         }
 

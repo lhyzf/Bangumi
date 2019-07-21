@@ -130,7 +130,7 @@ namespace Bangumi.Views
             {
                 var panel = sender as RelativePanel;
                 var watch = panel.DataContext as WatchingStatus;
-                await InitAirSites(watch.subject_id.ToString());
+                await InitAirSites(watch.SubjectId.ToString());
                 SitesMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
             }
         }

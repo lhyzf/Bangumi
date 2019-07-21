@@ -43,8 +43,8 @@ namespace Bangumi.ViewModels
             MainPage.rootPage.hasDialog = true;
             if (ContentDialogResult.Primary == await collectionEditContentDialog.ShowAsync())
             {
-                status.isUpdating = true;
-                if (await BangumiFacade.UpdateCollectionStatusAsync(status.subject_id.ToString(),
+                status.IsUpdating = true;
+                if (await BangumiFacade.UpdateCollectionStatusAsync(status.SubjectId.ToString(),
                                                                     BangumiConverters.GetCollectionStatusEnum(collectionEditContentDialog.collectionStatus),
                                                                     collectionEditContentDialog.comment,
                                                                     collectionEditContentDialog.rate.ToString(),
@@ -54,8 +54,9 @@ namespace Bangumi.ViewModels
                     if (collectionEditContentDialog.collectionStatus != "在看")
                         WatchingCollection.Remove(status);
                 }
-                status.isUpdating = false;
+                status.IsUpdating = false;
             }
+            MainPage.rootPage.hasDialog = false;
         }
 
         /// <summary>
@@ -98,25 +99,25 @@ namespace Bangumi.ViewModels
         // 更新下一章章节状态为已看
         public async void UpdateNextEpStatus(WatchingStatus item)
         {
-            if (item != null && item.eps != null && item.eps.Count != 0)
+            if (item != null && item.Eps != null && item.Eps.Count != 0)
             {
-                item.isUpdating = true;
-                if (item.next_ep != -1 && await BangumiFacade.UpdateProgressAsync(
-                    item.eps.Where(ep => (ep.status == "Air" || ep.status == "Today" || ep.status == "NA") && ep.sort == item.next_ep)
-                            .FirstOrDefault().id.ToString(), EpStatusEnum.watched))
+                item.IsUpdating = true;
+                if (item.NextEp != -1 && await BangumiFacade.UpdateProgressAsync(
+                    item.Eps.Where(ep => (ep.Status == "Air" || ep.Status == "Today" || ep.Status == "NA") && ep.Sort == item.NextEp)
+                            .FirstOrDefault().Id.ToString(), EpStatusEnum.watched))
                 {
-                    item.eps.Where(ep => (ep.status == "Air" || ep.status == "Today" || ep.status == "NA") && ep.sort == item.next_ep)
-                            .FirstOrDefault().status = "看过";
-                    if (item.eps.Count == item.eps.Where(e => e.status == "看过").Count())
-                        item.next_ep = -1;
+                    item.Eps.Where(ep => (ep.Status == "Air" || ep.Status == "Today" || ep.Status == "NA") && ep.Sort == item.NextEp)
+                            .FirstOrDefault().Status = "看过";
+                    if (item.Eps.Count == item.Eps.Where(e => e.Status == "看过").Count())
+                        item.NextEp = -1;
                     else
-                        item.next_ep = item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").Count() != 0 ?
-                                       item.eps.Where(ep => ep.status == "Air" || ep.status == "Today").OrderBy(ep => ep.sort).FirstOrDefault().sort :
-                                       item.eps.Where(ep => ep.status == "NA").FirstOrDefault().sort;
-                    item.watched_eps++;
+                        item.NextEp = item.Eps.Where(ep => ep.Status == "Air" || ep.Status == "Today").Count() != 0 ?
+                                       item.Eps.Where(ep => ep.Status == "Air" || ep.Status == "Today").OrderBy(ep => ep.Sort).FirstOrDefault().Sort :
+                                       item.Eps.Where(ep => ep.Status == "NA").FirstOrDefault().Sort;
+                    item.WatchedEps++;
                     // 若未看到最新一集，则使用粉色，否则使用灰色
-                    if (item.eps.Where(e => e.status == "看过").Count() < (item.eps.Count - item.eps.Where(e => e.status == "NA").Count()))
-                        item.ep_color = "#d26585";
+                    if (item.Eps.Where(e => e.Status == "看过").Count() < (item.Eps.Count - item.Eps.Where(e => e.Status == "NA").Count()))
+                        item.EpColor = "#d26585";
                     else
                     {
                         // 将已看到最新剧集的条目排到最后，且设为灰色
@@ -125,21 +126,21 @@ namespace Bangumi.ViewModels
                             WatchingCollection.Remove(item);
                             WatchingCollection.Add(item);
                         }
-                        item.ep_color = "Gray";
+                        item.EpColor = "Gray";
 
                         // 若设置启用且看完则弹窗提示修改收藏状态及评价
-                        if (SettingHelper.SubjectComplete && item.eps.Where(e => e.status == "看过").Count() == item.eps.Count)
+                        if (SettingHelper.SubjectComplete && item.Eps.Where(e => e.Status == "看过").Count() == item.Eps.Count)
                         {
                             EditCollectionStatus(item, "看过");
                         }
                     }
-                    item.lasttouch = DateTime.Now.ConvertDateTimeToJsTick();
+                    item.LastTouch = DateTime.Now.ConvertDateTimeToJsTick();
 
                     //将对象序列化并存储到文件
                     await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), OAuthHelper.CacheFile.progress.GetFilePath());
 
                 }
-                item.isUpdating = false;
+                item.IsUpdating = false;
             }
         }
 
@@ -150,23 +151,23 @@ namespace Bangumi.ViewModels
             var notWatched = new List<WatchingStatus>();
             var allWatched = new List<WatchingStatus>();
             order = WatchingCollection
-                .Where(p => p.watched_eps != 0 && p.watched_eps != p.eps.Count)
-                .OrderBy(p => p.lasttouch)
-                .OrderBy(p => p.ep_color)
+                .Where(p => p.WatchedEps != 0 && p.WatchedEps != p.Eps.Count)
+                .OrderBy(p => p.LastTouch)
+                .OrderBy(p => p.EpColor)
                 .ToList();
             notWatched = WatchingCollection
-                .Where(p => p.watched_eps == 0 && p.watched_eps != p.eps.Count)
-                .OrderBy(p => p.ep_color)
+                .Where(p => p.WatchedEps == 0 && p.WatchedEps != p.Eps.Count)
+                .OrderBy(p => p.EpColor)
                 .ToList();
             allWatched = WatchingCollection
-                .Where(p => p.watched_eps == p.eps.Count)
+                .Where(p => p.WatchedEps == p.Eps.Count)
                 .ToList();
 
             // 排序，尚未观看的排在所有有观看记录的有更新的条目之后，
             // ，在已看到最新剧集的条目之前，看完的排在最后
             for (int i = 0; i <= order.Count; i++)
             {
-                if (i == order.Count || order[i].ep_color == "Gray")
+                if (i == order.Count || order[i].EpColor == "Gray")
                 {
                     order.InsertRange(i, notWatched);
                     break;
@@ -177,7 +178,7 @@ namespace Bangumi.ViewModels
             // 仅修改与排序不同之处
             for (int i = 0; i < WatchingCollection.Count; i++)
             {
-                if (WatchingCollection[i].subject_id != order[i].subject_id)
+                if (WatchingCollection[i].SubjectId != order[i].SubjectId)
                 {
                     WatchingCollection.RemoveAt(i);
                     WatchingCollection.Insert(i, order[i]);
@@ -189,45 +190,48 @@ namespace Bangumi.ViewModels
 
     public class WatchingStatus : ViewModelBase
     {
-        public string name { get; set; }
-        public string name_cn { get; set; }
-        public int subject_id { get; set; }
-        public long lasttouch { get; set; }
-        public long lastupdate { get; set; }
-        public string url { get; set; }
-        public string image { get; set; }
-        public List<SimpleEp> eps { get; set; }
+        public string Name { get; set; }
+        public string NameCn { get; set; }
+        public int SubjectId { get; set; }
+        public long LastTouch { get; set; }
+        public long LastUpdate { get; set; }
+        public string Url { get; set; }
+        public string Image { get; set; }
+        public string AirDate { get; set; }
+        public int Type { get; set; }
+        public int AirWeekday { get; set; }
+        public List<SimpleEp> Eps { get; set; }
 
         private bool _isUpdating;
-        public bool isUpdating
+        public bool IsUpdating
         {
             get => _isUpdating;
             set => Set(ref _isUpdating, value);
         }
 
         private int _watched_eps;
-        public int watched_eps
+        public int WatchedEps
         {
             get { return _watched_eps; }
             set => Set(ref _watched_eps, value);
         }
 
-        private string _updated_eps;
-        public string updated_eps
+        private int _updated_eps;
+        public int UpdatedEps
         {
             get { return _updated_eps; }
             set => Set(ref _updated_eps, value);
         }
 
         private double _next_ep;
-        public double next_ep
+        public double NextEp
         {
             get => _next_ep;
             set => Set(ref _next_ep, value);
         }
 
         private string _ep_color;
-        public string ep_color
+        public string EpColor
         {
             get { return _ep_color; }
             set => Set(ref _ep_color, value);
@@ -236,10 +240,10 @@ namespace Bangumi.ViewModels
 
     public class SimpleEp
     {
-        public int id { get; set; }
-        public int type { get; set; }
-        public double sort { get; set; }
-        public string status { get; set; }
-        public string name { get; set; }
+        public int Id { get; set; }
+        public int Type { get; set; }
+        public double Sort { get; set; }
+        public string Status { get; set; }
+        public string Name { get; set; }
     }
 }
