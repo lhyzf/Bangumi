@@ -60,7 +60,7 @@
                                x:Phase="1"
                                RelativePanel.RightOf="BangumiImage"
                                RelativePanel.Below="AirWeekdayTextBlock"
-                               Foreground="{x:Bind EpColor, Mode=OneWay}"
+                               Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
                                TextTrimming="CharacterEllipsis">
                             <Run Text="{x:Bind common:Converters.GetWatchedEpsDesc(WatchedEps), Mode=OneWay}"/>
                             <Run Text="/"/>
@@ -76,7 +76,7 @@
                             Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
                         <FontIcon FontFamily="Segoe MDL2 Assets" 
                                   Glyph="&#xE00B;" 
-                                  Foreground="{x:Bind EpColor, Mode=OneWay}"
+                                  Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
                                   Margin="0">
                             <FontIcon.RenderTransform>
                                 <CompositeTransform CenterX="10"
@@ -97,7 +97,7 @@
                             BorderThickness="1"
                             Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
                         <TextBlock FontSize="12" 
-                                   Foreground="{x:Bind EpColor, Mode=OneWay}"
+                                   Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
                                    VerticalAlignment="Center"
                                    HorizontalTextAlignment="Right"
                                    TextTrimming="CharacterEllipsis">
@@ -145,8 +145,8 @@
                                       x:Phase="2"
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True"
-                                      Height="136" 
-                                      Width="100" 
+                                      Height="120" 
+                                      Width="85" 
                                       Margin="0,0,10,0"
                                       Stretch="UniformToFill" />
                     <TextBlock Name="TitleTextBlock"
@@ -177,7 +177,7 @@
                                x:Phase="1"
                                RelativePanel.RightOf="BangumiImage"
                                RelativePanel.Below="AirWeekdayTextBlock"
-                               Foreground="{x:Bind EpColor, Mode=OneWay}"
+                               Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
                                TextTrimming="CharacterEllipsis">
                             <Run Text="{x:Bind common:Converters.GetWatchedEpsDesc(WatchedEps), Mode=OneWay}"/>
                             <Run Text="/"/>
@@ -193,7 +193,7 @@
                             Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
                         <FontIcon FontFamily="Segoe MDL2 Assets" 
                                   Glyph="&#xE00B;" 
-                                  Foreground="{x:Bind EpColor, Mode=OneWay}"
+                                  Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
                                   Margin="0">
                             <FontIcon.RenderTransform>
                                 <CompositeTransform CenterX="10"
@@ -214,7 +214,7 @@
                             BorderThickness="1"
                             Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
                         <TextBlock FontSize="16" 
-                                   Foreground="{x:Bind EpColor, Mode=OneWay}"
+                                   Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
                                    VerticalAlignment="Center"
                                    HorizontalTextAlignment="Right"
                                    TextTrimming="CharacterEllipsis">
@@ -268,7 +268,7 @@
                     <VisualState.Setters>
                         <Setter Target="MyGridView.ItemTemplate" 
                                 Value="{StaticResource WideProgressSubjectTemplate}"/>
-                        <Setter Target="MyGridView.DesiredWidth" Value="350"/>
+                        <Setter Target="MyGridView.DesiredWidth" Value="360"/>
                         <Setter Target="EmptyImage.Width" Value="300"/>
                         <Setter Target="EmptyImage.Height" Value="490"/>
                     </VisualState.Setters>

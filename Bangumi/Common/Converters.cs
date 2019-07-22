@@ -59,6 +59,25 @@ namespace Bangumi.Common
             string.IsNullOrEmpty(value) ? Visibility.Collapsed : Visibility.Visible;
 
         /// <summary>
+        /// 将 string 转换为 Brush
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static Brush ConvertBrushFromString(string color)
+        {
+            System.Drawing.ColorConverter colorConverter = new System.Drawing.ColorConverter();
+            try
+            {
+                System.Drawing.Color brushColor = (System.Drawing.Color)colorConverter.ConvertFromString(color);
+                return new SolidColorBrush(Windows.UI.Color.FromArgb(brushColor.A, brushColor.R, brushColor.G, brushColor.B));
+            }
+            catch (Exception)
+            {
+                return new SolidColorBrush(Windows.UI.Colors.Gray);
+            }
+        }
+
+        /// <summary>
         /// 将js时间戳转换为C#时间戳
         /// </summary>
         /// <param name="dateTime"></param>
@@ -145,7 +164,7 @@ namespace Bangumi.Common
         /// <summary>
         /// 根据更新进度返回相应描述
         /// </summary>
-        /// <param name="watched_eps"></param>
+        /// <param name="updated_eps"></param>
         /// <returns></returns>
         public static string GetUpdatedEpsDesc(int updated_eps)
         {
@@ -191,12 +210,12 @@ namespace Bangumi.Common
             }
             else if (ep.Type == 0)
             {
-                return next_ep.ToString() + 
+                return next_ep.ToString() +
                        (string.IsNullOrEmpty(ep.Name) ? "" : " " + ep.Name);
             }
             else
             {
-                return ep.Type.GetEpisodeType() + " " + next_ep + 
+                return ep.Type.GetEpisodeType() + " " + next_ep +
                        (string.IsNullOrEmpty(ep.Name) ? "" : " " + ep.Name);
             }
         }
