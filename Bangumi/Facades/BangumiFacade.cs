@@ -38,16 +38,7 @@ namespace Bangumi.Facades
                         }
                     }
                 }
-            }
-            catch (Exception)
-            {
-                // 删除无法反序列化的数据
-                FileHelper.DeleteCacheFile(OAuthHelper.CacheFile.progress.GetFilePath());
-            }
 
-
-            try
-            {
                 var watchingList = await BangumiHttpWrapper.GetWatchingListAsync(OAuthHelper.MyToken.UserId);
 
                 var deletedItems = new List<WatchingStatus>(); //标记要删除的条目
