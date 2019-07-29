@@ -244,13 +244,30 @@ namespace Bangumi.Views
         }
 
         /// <summary>
-        /// 右键修改章节状态弹出菜单，无视章节状态。
+        /// 鼠标右键修改章节状态弹出菜单，无视章节状态。
         /// </summary>
         private void Eps_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             if (OAuthHelper.IsLogin && !ViewModel.IsProgressLoading)
             {
-                EpMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+                if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
+                {
+                    EpMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+                }
+            }
+        }
+
+        /// <summary>
+        /// 触摸长按修改章节状态弹出菜单，无视章节状态。
+        /// </summary>
+        private void Eps_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            if (OAuthHelper.IsLogin && !ViewModel.IsProgressLoading)
+            {
+                if (e.HoldingState == Windows.UI.Input.HoldingState.Started)
+                {
+                    EpMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+                }
             }
         }
 
@@ -346,6 +363,5 @@ namespace Bangumi.Views
                 SelectedTextBlock.DataContext = airSites[0].Url;
             }
         }
-
     }
 }

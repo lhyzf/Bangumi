@@ -65,6 +65,7 @@
             <DataTemplate x:Name="EpTemplate" x:DataType="data:Ep">
                 <RelativePanel Tapped="Eps_Tapped" 
                                RightTapped="Eps_RightTapped"
+                               Holding="Eps_Holding"
                                Padding="5" 
                                Height="68"
                                Background="Transparent"
@@ -377,6 +378,7 @@
                                                ItemsSource="{x:Bind ViewModel.eps}" 
                                                DesiredWidth="300"
                                                Padding="10,5,10,45"
+                                               SelectionMode="None"
                                                ShowsScrollingPlaceholders="False"
                                                ItemTemplate="{StaticResource EpTemplate}">
                         <GridView.Header>
