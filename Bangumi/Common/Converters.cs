@@ -158,7 +158,7 @@ namespace Bangumi.Common
                 return "";
             if (watched_eps == 0)
                 return "尚未观看";
-            return watched_eps.ToString();
+            return "看到" + watched_eps + "话";
         }
 
         /// <summary>
@@ -166,13 +166,17 @@ namespace Bangumi.Common
         /// </summary>
         /// <param name="updated_eps"></param>
         /// <returns></returns>
-        public static string GetUpdatedEpsDesc(int updated_eps)
+        public static string GetUpdatedEpsDesc(int updated_eps, List<ViewModels.SimpleEp> eps)
         {
             if (updated_eps == -1)
                 return "无章节";
             if (updated_eps == 0)
                 return "尚未放送";
-            return updated_eps.ToString();
+            if (eps != null)
+            {
+                return eps.Count == updated_eps ? "全" + updated_eps + "话" : "更新到" + updated_eps + "话";
+            }
+            return "共" + updated_eps + "话";
         }
 
         /// <summary>
