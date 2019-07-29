@@ -45,6 +45,7 @@
             <DataTemplate x:Key="NarrowZoomedInTemplate" x:DataType="data:Subject">
                 <RelativePanel Padding="5"
                                RightTapped="ItemRelativePanel_RightTapped"
+                               Holding="RelativePanel_Holding"
                                Background="Transparent">
                     <controls:ImageEx Name="BangumiImage"
                                       IsCacheEnabled="True"
@@ -78,6 +79,7 @@
             <DataTemplate x:Key="WideZoomedInTemplate" x:DataType="data:Subject">
                 <RelativePanel Padding="5"
                                RightTapped="ItemRelativePanel_RightTapped"
+                               Holding="RelativePanel_Holding"
                                Background="Transparent">
                     <controls:ImageEx Name="BangumiImage"
                                       IsCacheEnabled="True"
@@ -161,6 +163,7 @@
                                            ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                                            ShowsScrollingPlaceholders="False"
                                            IsItemClickEnabled="True"
+                                           SelectionMode="None"
                                            ItemClick="GridView_ItemClick">
                     <GridView.GroupStyle>
                         <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}"/>

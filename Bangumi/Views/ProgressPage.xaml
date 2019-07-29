@@ -26,6 +26,7 @@
             <DataTemplate x:Key="NarrowProgressSubjectTemplate" x:DataType="data:WatchingStatus">
                 <RelativePanel Padding="5"
                                RightTapped="RelativePanel_RightTapped"
+                               Holding="RelativePanel_Holding"
                                Background="Transparent">
                     <controls:ImageEx x:Name="BangumiImage"
                                       IsCacheEnabled="True"
@@ -135,6 +136,7 @@
             <DataTemplate x:Key="WideProgressSubjectTemplate" x:DataType="data:WatchingStatus">
                 <RelativePanel Padding="5"
                                RightTapped="RelativePanel_RightTapped"
+                               Holding="RelativePanel_Holding"
                                Background="Transparent">
                     <controls:ImageEx x:Name="BangumiImage"
                                       IsCacheEnabled="True"
@@ -282,6 +284,7 @@
                                    ItemsSource="{x:Bind ViewModel.WatchingCollection}" 
                                    ShowsScrollingPlaceholders="False"
                                    IsItemClickEnabled="True" 
+                                   SelectionMode="None"
                                    ItemClick="GridView_ItemClick">
             <GridView.ItemContainerTransitions>
                 <TransitionCollection>

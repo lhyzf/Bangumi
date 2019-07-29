@@ -57,15 +57,6 @@ namespace Bangumi.Views
             MainPage.rootFrame.Navigate(typeof(DetailsPage), selectedItem, new DrillInNavigationTransitionInfo());
         }
 
-        // 右键弹出菜单
-        private void ItemRelativePanel_RightTapped(object sender, RightTappedRoutedEventArgs e)
-        {
-            if (OAuthHelper.IsLogin && !ViewModel.IsLoading)
-            {
-                CollectionMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
-            }
-        }
-
         // 更新条目收藏状态
         private void UpdateCollectionStatusMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
@@ -92,5 +83,28 @@ namespace Bangumi.Views
             }
         }
 
+        // 鼠标右键弹出菜单
+        private void ItemRelativePanel_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            if (OAuthHelper.IsLogin && !ViewModel.IsLoading)
+            {
+                if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
+                {
+                    CollectionMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+                }
+            }
+        }
+
+        // 触摸长按弹出菜单
+        private void RelativePanel_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            if (OAuthHelper.IsLogin && !ViewModel.IsLoading)
+            {
+                if (e.HoldingState == Windows.UI.Input.HoldingState.Started)
+                {
+                    CollectionMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+                }
+            }
+        }
     }
 }

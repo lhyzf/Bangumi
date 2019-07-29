@@ -120,18 +120,48 @@ namespace Bangumi.Views
         }
 
         /// <summary>
-        /// 右键菜单
+        /// 显示右键菜单
+        /// </summary>
+        /// <param name="sender"></param>
+        private async void ShowSitesMenuFlyout(FrameworkElement sender, Point point)
+        {
+            var panel = sender as RelativePanel;
+            var watch = panel.DataContext as WatchingStatus;
+            await InitAirSites(watch.SubjectId.ToString());
+            SitesMenuFlyout.ShowAt(sender, point);
+        }
+
+        /// <summary>
+        /// 鼠标右键
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void RelativePanel_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+        private void RelativePanel_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
         {
-            if(SettingHelper.UseBangumiData==true)
+            if (SettingHelper.UseBangumiData == true)
             {
-                var panel = sender as RelativePanel;
-                var watch = panel.DataContext as WatchingStatus;
-                await InitAirSites(watch.SubjectId.ToString());
-                SitesMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+                if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
+                {
+                    ShowSitesMenuFlyout((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+                    e.Handled = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 触摸长按
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RelativePanel_Holding(object sender, Windows.UI.Xaml.Input.HoldingRoutedEventArgs e)
+        {
+            if (SettingHelper.UseBangumiData == true)
+            {
+                if (e.HoldingState == Windows.UI.Input.HoldingState.Started)
+                {
+                    ShowSitesMenuFlyout((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+                    e.Handled = true;
+                }
             }
         }
     }

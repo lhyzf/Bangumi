@@ -196,12 +196,27 @@ namespace Bangumi.Views
             MainPage.rootPage.MyCommandBar.Visibility = Visibility.Collapsed;
         }
 
-        // 右键弹出菜单
+        // 鼠标右键弹出菜单
         private void ItemRelativePanel_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
         {
             if (OAuthHelper.IsLogin)
             {
-                CollectionMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+                if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
+                {
+                    CollectionMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+                }
+            }
+        }
+
+        // 触摸长按弹出菜单
+        private void ItemRelativePanel_Holding(object sender, Windows.UI.Xaml.Input.HoldingRoutedEventArgs e)
+        {
+            if (OAuthHelper.IsLogin)
+            {
+                if (e.HoldingState == Windows.UI.Input.HoldingState.Started)
+                {
+                    CollectionMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+                }
             }
         }
 
@@ -230,6 +245,5 @@ namespace Bangumi.Views
                     break;
             }
         }
-
     }
 }
