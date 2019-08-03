@@ -58,12 +58,12 @@ namespace Bangumi.Views
             await OAuthHelper.Authorize();
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 10);
             if (OAuthHelper.MyToken != null)
-                MainPage.rootFrame.Navigate(typeof(HomePage));
+                MainPage.RootFrame.Navigate(typeof(HomePage));
         }
 
         private void EnterButton_Click(object sender, RoutedEventArgs e)
         {
-            MainPage.rootFrame.Navigate(typeof(HomePage));
+            MainPage.RootFrame.Navigate(typeof(HomePage));
         }
 
     }

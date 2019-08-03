@@ -26,7 +26,7 @@ namespace Bangumi.Api.Services
         /// <returns></returns>
         public static async Task<Collection2> GetSubjectCollectionAsync(string userIdString, SubjectTypeEnum subjectType)
         {
-            string url = string.Format("{0}/user/{1}/collections/{2}?app_id={3}&max_results=25", BaseUrl, userIdString, subjectType, ClientId);
+            string url = string.Format("{0}/user/{1}/collections/{2}?app_id={3}&max_results=25", BaseUrl, userIdString, subjectType.GetValue(), ClientId);
             try
             {
                 string response = await HttpHelper.GetAsync(url);
@@ -170,7 +170,7 @@ namespace Bangumi.Api.Services
                                                                    string privace = "0")
         {
             string url = string.Format("{0}/collection/{1}/update?access_token={2}", BaseUrl, subjectId, accessTokenString);
-            string postData = "status=" + collectionStatusEnum.ToString();
+            string postData = "status=" + collectionStatusEnum.GetValue();
             postData += "&comment=" + comment;
             postData += "&rating=" + rating;
             postData += "&privacy=" + privace;
@@ -178,7 +178,7 @@ namespace Bangumi.Api.Services
             try
             {
                 string response = await HttpHelper.PostAsync(url, postData);
-                if (response.Contains(string.Format("\"type\":\"{0}\"", collectionStatusEnum.ToString())))
+                if (response.Contains(string.Format("\"type\":\"{0}\"", collectionStatusEnum.GetValue())))
                 {
                     return true;
                 }

@@ -19,10 +19,10 @@ namespace Bangumi.ContentDialogs
 {
     public sealed partial class CollectionEditContentDialog : ContentDialog
     {
-        public int rate { get; set; }
-        public string comment { get; set; }
-        public bool privacy { get; set; }
-        public string collectionStatus { get; set; }
+        public int Rate { get; set; }
+        public string Comment { get; set; }
+        public bool Privacy { get; set; }
+        public string CollectionStatus { get; set; }
 
         public CollectionEditContentDialog()
         {
@@ -31,20 +31,20 @@ namespace Bangumi.ContentDialogs
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            rate = (int)RateSlider.Value;
-            comment = CommentTextBox.Text;
-            privacy = (bool)PrivacyCheckBox.IsChecked;
+            Rate = (int)RateSlider.Value;
+            Comment = CommentTextBox.Text;
+            Privacy = (bool)PrivacyCheckBox.IsChecked;
         }
 
         private void StatusRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            collectionStatus = (sender as RadioButton).Tag.ToString();
+            CollectionStatus = (sender as RadioButton).Tag.ToString();
         }
 
         private void ContentDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            if (collectionStatus != "收藏")
-                StatusPanel.Children.Cast<RadioButton>().FirstOrDefault(c => c?.Tag?.ToString() == collectionStatus).IsChecked = true;
+            if (CollectionStatus != "收藏")
+                StatusPanel.Children.Cast<RadioButton>().FirstOrDefault(c => c?.Tag?.ToString() == CollectionStatus).IsChecked = true;
         }
     }
 }

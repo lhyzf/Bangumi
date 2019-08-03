@@ -35,28 +35,28 @@ namespace Bangumi.ViewModels
         {
             CollectionEditContentDialog collectionEditContentDialog = new CollectionEditContentDialog()
             {
-                rate = 0,
-                comment = "",
-                privacy = false,
-                collectionStatus = currentStatus
+                Rate = 0,
+                Comment = "",
+                Privacy = false,
+                CollectionStatus = currentStatus
             };
-            MainPage.rootPage.hasDialog = true;
+            MainPage.RootPage.HasDialog = true;
             if (ContentDialogResult.Primary == await collectionEditContentDialog.ShowAsync())
             {
                 status.IsUpdating = true;
                 if (await BangumiFacade.UpdateCollectionStatusAsync(status.SubjectId.ToString(),
-                                                                    BangumiConverters.GetCollectionStatusEnum(collectionEditContentDialog.collectionStatus),
-                                                                    collectionEditContentDialog.comment,
-                                                                    collectionEditContentDialog.rate.ToString(),
-                                                                    collectionEditContentDialog.privacy == true ? "1" : "0"))
+                                                                    BangumiConverters.ConvertCollectionStatusToEnum(collectionEditContentDialog.CollectionStatus),
+                                                                    collectionEditContentDialog.Comment,
+                                                                    collectionEditContentDialog.Rate.ToString(),
+                                                                    collectionEditContentDialog.Privacy == true ? "1" : "0"))
                 {
                     // 若修改后状态不是在看，则从进度页面删除
-                    if (collectionEditContentDialog.collectionStatus != "在看")
+                    if (collectionEditContentDialog.CollectionStatus != "在看")
                         WatchingCollection.Remove(status);
                 }
                 status.IsUpdating = false;
             }
-            MainPage.rootPage.hasDialog = false;
+            MainPage.RootPage.HasDialog = false;
         }
 
         /// <summary>
@@ -70,11 +70,11 @@ namespace Bangumi.ViewModels
                 {
                     IsLoading = true;
                     HomePage.homePage.isLoading = IsLoading;
-                    MainPage.rootPage.RefreshAppBarButton.IsEnabled = false;
+                    MainPage.RootPage.RefreshAppBarButton.IsEnabled = false;
                     await BangumiFacade.PopulateWatchingListAsync(WatchingCollection);
                     CollectionSorting();
                     //将对象序列化并存储到文件
-                    await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), OAuthHelper.CacheFile.progress.GetFilePath());
+                    await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), OAuthHelper.CacheFile.Progress.GetFilePath());
                 }
                 else
                 {
@@ -83,7 +83,7 @@ namespace Bangumi.ViewModels
             }
             catch (Exception e)
             {
-                MainPage.rootPage.ErrorInAppNotification.Show("获取收视进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
+                MainPage.RootPage.ErrorInAppNotification.Show("获取收视进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
                 //var msgDialog = new Windows.UI.Popups.MessageDialog("获取收视进度失败！\n" + e.Message) { Title = "错误！" };
                 //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
                 //await msgDialog.ShowAsync();
@@ -92,7 +92,7 @@ namespace Bangumi.ViewModels
             {
                 IsLoading = false;
                 HomePage.homePage.isLoading = IsLoading;
-                MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
+                MainPage.RootPage.RefreshAppBarButton.IsEnabled = true;
             }
         }
 
@@ -137,7 +137,7 @@ namespace Bangumi.ViewModels
                     item.LastTouch = DateTime.Now.ConvertDateTimeToJsTick();
 
                     //将对象序列化并存储到文件
-                    await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), OAuthHelper.CacheFile.progress.GetFilePath());
+                    await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), OAuthHelper.CacheFile.Progress.GetFilePath());
 
                 }
                 item.IsUpdating = false;

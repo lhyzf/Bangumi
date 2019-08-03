@@ -12,13 +12,14 @@ namespace Bangumi.Data
 {
     public static class BangumiDataHelper
     {
-        private static HtmlParser htmlParser = new HtmlParser();
+        private static HtmlParser htmlParser;
         private static BangumiData bangumiData;
-        private static string version;
+        private static Dictionary<string, string> seasonIdMap;
         private static string latestVersion;
-        private static bool useBiliApp;
-        private static Dictionary<string, string> SeasonIDMap;
-        private static string DataFolderPath;
+        private static string folderPath;
+
+        public static string Version { get; private set; }
+        public static bool UseBiliApp { get; set; }
 
         /// <summary>
         /// 读取文件，将数据加载到内存
@@ -26,23 +27,25 @@ namespace Bangumi.Data
         /// <param name="datafolderpath">文件夹路径</param>
         public static void InitBangumiData(string datafolderpath)
         {
-            DataFolderPath = datafolderpath;
-            if (!Directory.Exists(DataFolderPath))
-                Directory.CreateDirectory(DataFolderPath);
-            if (bangumiData == null && File.Exists(DataFolderPath + "\\data.json") && File.Exists(DataFolderPath + "\\version"))
+            folderPath = datafolderpath;
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+            if (bangumiData == null &&
+                File.Exists(folderPath + "\\data.json") &&
+                File.Exists(folderPath + "\\version"))
             {
-                bangumiData = JsonConvert.DeserializeObject<BangumiData>(File.ReadAllText(DataFolderPath + "\\data.json"));
-                version = File.ReadAllText(DataFolderPath + "\\version");
+                bangumiData = JsonConvert.DeserializeObject<BangumiData>(File.ReadAllText(folderPath + "\\data.json"));
+                Version = File.ReadAllText(folderPath + "\\version");
             }
-            if (SeasonIDMap == null)
+            if (seasonIdMap == null)
             {
-                if (File.Exists(DataFolderPath + "\\map.json"))
+                if (File.Exists(folderPath + "\\map.json"))
                 {
-                    SeasonIDMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(DataFolderPath + "\\map.json"));
+                    seasonIdMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(folderPath + "\\map.json"));
                 }
                 else
                 {
-                    SeasonIDMap = new Dictionary<string, string>();
+                    seasonIdMap = new Dictionary<string, string>();
                 }
             }
         }
@@ -55,6 +58,10 @@ namespace Bangumi.Data
         {
             try
             {
+                if (htmlParser == null)
+                {
+                    htmlParser = new HtmlParser();
+                }
                 // 通过URL获取HTML
                 var htmlDoc = await HTTPHelper.GetTextByUrlAsync("https://github.com/bangumi-data/bangumi-data/releases");
                 // HTML 解析成 IHtmlDocument
@@ -92,9 +99,9 @@ namespace Bangumi.Data
                 try
                 {
                     bangumiData = JsonConvert.DeserializeObject<BangumiData>(data);
-                    File.WriteAllText(DataFolderPath + "\\data.json", data);
-                    version = latestVersion;
-                    File.WriteAllText(DataFolderPath + "\\version", version);
+                    File.WriteAllText(folderPath + "\\data.json", data);
+                    Version = latestVersion;
+                    File.WriteAllText(folderPath + "\\version", Version);
                     return true;
                 }
                 catch (Exception e)
@@ -110,38 +117,11 @@ namespace Bangumi.Data
         }
 
         /// <summary>
-        /// 获取所有数据
-        /// </summary>
-        /// <returns></returns>
-        public static BangumiData GetAllBangumiData()
-        {
-            return bangumiData;
-        }
-
-        /// <summary>
-        /// 返回数据版本号
-        /// </summary>
-        /// <returns></returns>
-        public static string GetCurVersion()
-        {
-            return version;
-        }
-
-        /// <summary>
-        /// 设置是否使用哔哩哔哩动画UWP应用
-        /// </summary>
-        /// <param name="value"></param>
-        public static void SetUseBiliApp(bool value)
-        {
-            useBiliApp = value;
-        }
-
-        /// <summary>
         /// 根据Bangumi的ID返回所有放送网站
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static async Task<List<Site>> GetAirSitesByBangumiID(string id)
+        public static async Task<List<Site>> GetAirSitesByBangumiIdAsync(string id)
         {
             if (bangumiData == null)
             {
@@ -159,14 +139,14 @@ namespace Bangumi.Data
                                site.Url :
                                bangumiData.SiteMeta[site.SiteName].UrlTemplate.Replace("{{id}}", site.Id);
                 }
-                // 启用设置
-                if (useBiliApp)
+                // 启用设置，将mediaid转换为seasonid
+                if (UseBiliApp)
                 {
                     var biliSite = siteList.Where(s => s.SiteName == "bilibili").FirstOrDefault();
                     if (biliSite != null)
                     {
                         string seasonId;
-                        if (!SeasonIDMap.TryGetValue(biliSite.Id, out seasonId))
+                        if (!seasonIdMap.TryGetValue(biliSite.Id, out seasonId))
                         {
                             var url = string.Format("https://bangumi.bilibili.com/view/web_api/media?media_id={0}", biliSite.Id);
                             try
@@ -174,8 +154,8 @@ namespace Bangumi.Data
                                 var result = await HTTPHelper.GetTextByUrlAsync(url);
                                 JObject jObject = JObject.Parse(result);
                                 seasonId = jObject.SelectToken("result.param.season_id").ToString();
-                                SeasonIDMap.Add(biliSite.Id, seasonId);
-                                File.WriteAllText(DataFolderPath + "\\map.json", JsonConvert.SerializeObject(SeasonIDMap));
+                                seasonIdMap.Add(biliSite.Id, seasonId);
+                                File.WriteAllText(folderPath + "\\map.json", JsonConvert.SerializeObject(seasonIdMap));
                             }
                             catch (Exception e)
                             {

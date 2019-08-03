@@ -10,8 +10,6 @@ namespace Bangumi.Data
 {
     internal class HTTPHelper
     {
-        public static HttpClient Client { get; } = new HttpClient();
-
         public static async Task<string> GetTextByUrlAsync(string url)
         {
             try

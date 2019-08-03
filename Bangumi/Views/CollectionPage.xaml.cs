@@ -31,7 +31,7 @@ namespace Bangumi.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            MainPage.rootPage.RefreshAppBarButton.Click += CollectionPageRefresh;
+            MainPage.RootPage.RefreshAppBarButton.Click += CollectionPageRefresh;
             if (ViewModel.SubjectCollection.Count == 0 && !ViewModel.IsLoading)
             {
                 ViewModel.LoadCollectionList();
@@ -40,7 +40,7 @@ namespace Bangumi.Views
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            MainPage.rootPage.RefreshAppBarButton.Click -= CollectionPageRefresh;
+            MainPage.RootPage.RefreshAppBarButton.Click -= CollectionPageRefresh;
         }
 
         private void CollectionPageRefresh(object sender, RoutedEventArgs e)
@@ -60,7 +60,7 @@ namespace Bangumi.Views
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var selectedItem = (Subject2)e.ClickedItem;
-            MainPage.rootFrame.Navigate(typeof(DetailsPage), selectedItem.Subject, new DrillInNavigationTransitionInfo());
+            MainPage.RootFrame.Navigate(typeof(DetailsPage), selectedItem.Subject, new DrillInNavigationTransitionInfo());
         }
 
         // 更新条目收藏状态
@@ -70,19 +70,19 @@ namespace Bangumi.Views
             switch (item.Tag)
             {
                 case "Wish":
-                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.wish);
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.Wish);
                     break;
                 case "Collect":
-                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.collect);
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.Collect);
                     break;
                 case "Doing":
-                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.@do);
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.Do);
                     break;
                 case "OnHold":
-                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.on_hold);
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.OnHold);
                     break;
                 case "Dropped":
-                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.dropped);
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject2, CollectionStatusEnum.Dropped);
                     break;
                 default:
                     break;

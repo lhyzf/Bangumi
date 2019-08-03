@@ -30,15 +30,15 @@ namespace Bangumi
     public sealed partial class MainPage : Page
     {
         SystemNavigationManager systemNavigationManager;
-        public static MainPage rootPage;
-        public static Frame rootFrame;
-        public bool hasDialog = false;
+        public static MainPage RootPage;
+        public static Frame RootFrame;
+        public bool HasDialog = false;
 
         public MainPage()
         {
             this.InitializeComponent();
-            rootPage = this;
-            rootFrame = MyFrame;
+            RootPage = this;
+            RootFrame = MyFrame;
             // 设置窗口的最小大小
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(300, 200));
 
@@ -51,7 +51,7 @@ namespace Bangumi
             if (SettingHelper.UseBangumiData == true)
             {
                 BangumiDataHelper.InitBangumiData(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
-                BangumiDataHelper.SetUseBiliApp(SettingHelper.UseBiliApp);
+                BangumiDataHelper.UseBiliApp = SettingHelper.UseBiliApp;
             }
         }
 
@@ -66,13 +66,13 @@ namespace Bangumi
             {
                 LoginButton.Label = "注销";
                 UserIcon.Glyph = "\uE7E8";
-                rootFrame.Navigate(typeof(HomePage));
+                RootFrame.Navigate(typeof(HomePage));
             }
             else
             {
                 LoginButton.Label = "登录";
                 UserIcon.Glyph = "\uEE57";
-                rootFrame.Navigate(typeof(LoginPage));
+                RootFrame.Navigate(typeof(LoginPage));
                 MyCommandBar.Visibility = Visibility.Collapsed;
             }
         }
@@ -155,19 +155,19 @@ namespace Bangumi
         // 页面向后导航
         private bool On_BackRequested()
         {
-            if (!MainPage.rootFrame.CanGoBack)
+            if (!MainPage.RootFrame.CanGoBack)
                 return false;
 
             // 有弹出框时不向后导航
-            if (hasDialog)
+            if (HasDialog)
                 return false;
 
             // 处于首页或登录页时不向后导航
-            if (MainPage.rootFrame.CurrentSourcePageType == typeof(HomePage) ||
-                MainPage.rootFrame.CurrentSourcePageType == typeof(LoginPage))
+            if (MainPage.RootFrame.CurrentSourcePageType == typeof(HomePage) ||
+                MainPage.RootFrame.CurrentSourcePageType == typeof(LoginPage))
                 return false;
 
-            MainPage.rootFrame.GoBack();
+            MainPage.RootFrame.GoBack();
             return true;
         }
 
@@ -183,12 +183,12 @@ namespace Bangumi
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            rootFrame.Navigate(typeof(SearchPage), null, new DrillInNavigationTransitionInfo());
+            RootFrame.Navigate(typeof(SearchPage), null, new DrillInNavigationTransitionInfo());
         }
 
         private void SettingButton_Click(object sender, RoutedEventArgs e)
         {
-            rootFrame.Navigate(typeof(SettingsPage), null, new DrillInNavigationTransitionInfo());
+            RootFrame.Navigate(typeof(SettingsPage), null, new DrillInNavigationTransitionInfo());
         }
 
         /// <summary>

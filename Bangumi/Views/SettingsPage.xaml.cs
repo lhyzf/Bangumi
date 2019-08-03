@@ -71,7 +71,7 @@ namespace Bangumi.Views
             Window.Current.SetTitleBar(GridTitleBar);
             // 启用标题栏的后退按钮
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            MainPage.rootPage.MyCommandBar.Visibility = Visibility.Collapsed;
+            MainPage.RootPage.MyCommandBar.Visibility = Visibility.Collapsed;
 
             EpsBatchToggleSwitch.IsOn = SettingHelper.EpsBatch;
             SubjectCompleteToggleSwitch.IsOn = SettingHelper.SubjectComplete;
@@ -164,9 +164,9 @@ namespace Bangumi.Views
                     // 获取数据版本
                     BangumiDataHelper.InitBangumiData(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
                     BangumiDataTextBlock.Text = "数据版本：" +
-                        (string.IsNullOrEmpty(BangumiDataHelper.GetCurVersion()) ?
+                        (string.IsNullOrEmpty(BangumiDataHelper.Version) ?
                         "无数据" :
-                        BangumiDataHelper.GetCurVersion());
+                        BangumiDataHelper.Version);
                 }
                 else
                 {
@@ -188,7 +188,7 @@ namespace Bangumi.Views
                 {
                     SettingHelper.UseBiliApp = false;
                 }
-                BangumiDataHelper.SetUseBiliApp(SettingHelper.UseBiliApp);
+                BangumiDataHelper.UseBiliApp = SettingHelper.UseBiliApp;
             }
         }
 
@@ -202,24 +202,24 @@ namespace Bangumi.Views
                 var v = await BangumiDataHelper.GetLatestVersion();
                 if (!string.IsNullOrEmpty(v))
                 {
-                    if (v != BangumiDataHelper.GetCurVersion())
+                    if (v != BangumiDataHelper.Version)
                     {
                         BangumiDataTextBlock.Text = "数据版本：" +
-                            (string.IsNullOrEmpty(BangumiDataHelper.GetCurVersion()) ?
+                            (string.IsNullOrEmpty(BangumiDataHelper.Version) ?
                             "无数据" :
-                            BangumiDataHelper.GetCurVersion()) +
+                            BangumiDataHelper.Version) +
                             " -> " + v;
                         button.Content = "下载数据";
                         button.Tag = "Download";
                     }
                     else
                     {
-                        MainPage.rootPage.ToastInAppNotification.Show("已是最新版本！", 1500);
+                        MainPage.RootPage.ToastInAppNotification.Show("已是最新版本！", 1500);
                     }
                 }
                 else
                 {
-                    MainPage.rootPage.ErrorInAppNotification.Show("获取最新版本失败！", 3000);
+                    MainPage.RootPage.ErrorInAppNotification.Show("获取最新版本失败！", 3000);
                 }
             }
             else if (button.Tag.ToString() == "Download")
@@ -227,16 +227,16 @@ namespace Bangumi.Views
                 if (await BangumiDataHelper.DownloadLatestBangumiData())
                 {
                     BangumiDataTextBlock.Text = "数据版本：" +
-                        (string.IsNullOrEmpty(BangumiDataHelper.GetCurVersion()) ?
+                        (string.IsNullOrEmpty(BangumiDataHelper.Version) ?
                         "无数据" :
-                        BangumiDataHelper.GetCurVersion());
+                        BangumiDataHelper.Version);
                     button.Content = "检查更新";
                     button.Tag = "Update";
-                    MainPage.rootPage.ToastInAppNotification.Show("数据下载成功！", 1500);
+                    MainPage.RootPage.ToastInAppNotification.Show("数据下载成功！", 1500);
                 }
                 else
                 {
-                    MainPage.rootPage.ErrorInAppNotification.Show("数据下载失败，请重试或稍后再试！", 3000);
+                    MainPage.RootPage.ErrorInAppNotification.Show("数据下载失败，请重试或稍后再试！", 3000);
                 }
             }
             BangumiDataProgressBar.Visibility = Visibility.Collapsed;

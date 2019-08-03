@@ -6,11 +6,11 @@ namespace Bangumi.Api.Models
 {
     public enum CollectionStatusEnum
     {
-        wish,
-        collect,
-        @do,
-        on_hold,
-        dropped,
-        no,
+        Wish,
+        Collect,
+        Do,
+        OnHold,
+        Dropped,
+        No,
     }
 }

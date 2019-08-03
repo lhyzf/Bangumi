@@ -33,7 +33,7 @@ namespace Bangumi.Views
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            MainPage.rootPage.RefreshAppBarButton.Click += ProgressPageRefresh;
+            MainPage.RootPage.RefreshAppBarButton.Click += ProgressPageRefresh;
             if (ViewModel.WatchingCollection.Count == 0 && !ViewModel.IsLoading)
             {
                 await ViewModel.LoadWatchingListAsync();
@@ -42,7 +42,7 @@ namespace Bangumi.Views
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            MainPage.rootPage.RefreshAppBarButton.Click -= ProgressPageRefresh;
+            MainPage.RootPage.RefreshAppBarButton.Click -= ProgressPageRefresh;
         }
 
         private async void ProgressPageRefresh(object sender, RoutedEventArgs e)
@@ -58,7 +58,7 @@ namespace Bangumi.Views
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var selectedItem = (WatchingStatus)e.ClickedItem;
-            MainPage.rootFrame.Navigate(typeof(DetailsPage), selectedItem, new DrillInNavigationTransitionInfo());
+            MainPage.RootFrame.Navigate(typeof(DetailsPage), selectedItem, new DrillInNavigationTransitionInfo());
         }
 
         // 将下一话标记为看过
@@ -95,7 +95,7 @@ namespace Bangumi.Views
         private async Task InitAirSites(string id)
         {
             SitesMenuFlyout.Items.Clear();
-            var airSites = await BangumiDataHelper.GetAirSitesByBangumiID(id);
+            var airSites = await BangumiDataHelper.GetAirSitesByBangumiIdAsync(id);
             if (airSites.Count != 0)
             {
                 foreach (var site in airSites)

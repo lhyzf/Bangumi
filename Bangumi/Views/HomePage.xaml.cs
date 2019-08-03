@@ -98,8 +98,8 @@ namespace Bangumi.Views
             // 禁用标题栏的后退按钮
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
 
-            MainPage.rootPage.MyCommandBar.Visibility = Visibility.Visible;
-            MainPage.rootPage.RefreshAppBarButton.IsEnabled = true;
+            MainPage.RootPage.MyCommandBar.Visibility = Visibility.Visible;
+            MainPage.RootPage.RefreshAppBarButton.IsEnabled = true;
 
             if (OAuthHelper.IsLogin)
             {
@@ -123,7 +123,7 @@ namespace Bangumi.Views
                     HomePagePivot.Items.Remove(ProgressItem);
                     HomePagePivot.Items.Remove(CollectionItem);
                     TimeLinePageFrame.Navigate(typeof(TimeLinePage), null, new SuppressNavigationTransitionInfo());
-                    MainPage.rootPage.RefreshAppBarButton.Tag = TimeLineItem.Header;
+                    MainPage.RootPage.RefreshAppBarButton.Tag = TimeLineItem.Header;
                 }
             }
         }
@@ -133,7 +133,7 @@ namespace Bangumi.Views
             var pivot = sender as Pivot;
             var pivotItem = pivot.SelectedItem as PivotItem;
             var frame = pivotItem.Content as Frame;
-            MainPage.rootPage.RefreshAppBarButton.Tag = pivotItem.Header;
+            MainPage.RootPage.RefreshAppBarButton.Tag = pivotItem.Header;
             if (frame.Content == null)
             {
                 switch (pivotItem.Header)

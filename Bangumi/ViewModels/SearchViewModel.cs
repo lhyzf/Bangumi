@@ -183,10 +183,10 @@ namespace Bangumi.ViewModels
         int offset = 0;
         int max = 20;
         int index;
-        int ItemsCount = 0;
+        int itemsCount = 0;
         private string keyword;
         private string type;
-        bool IsSearching = false;
+        bool isSearching = false;
 
         public SearchResultIncrementalLoadingCollection(string keyword, string type, int index)
         {
@@ -202,13 +202,13 @@ namespace Bangumi.ViewModels
             var dispatcher = Window.Current.Dispatcher;
             return AsyncInfo.Run(async cancelToken =>
             {
-                if (IsSearching)
+                if (isSearching)
                     return new LoadMoreItemsResult { Count = count }; 
                 await Task.WhenAll(dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
                     try
                     {
-                        IsSearching = true;
+                        isSearching = true;
                         Debug.WriteLine("Loading {0}/{1} items ({2})", offset + 20, max, type);
                         // 加载开始事件
                         if (this.OnLoadMoreStarted != null)
@@ -225,13 +225,13 @@ namespace Bangumi.ViewModels
                         {
                             System.Diagnostics.Debug.WriteLine("Loading complete.");
                         }
-                        ItemsCount += result.Results.Count;
+                        itemsCount += result.Results.Count;
                         offset += 20;
 
                     }
                     catch (Exception e)
                     {
-                        MainPage.rootPage.ErrorInAppNotification.Show("获取搜索结果失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
+                        MainPage.RootPage.ErrorInAppNotification.Show("获取搜索结果失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
                         offset = max;
                         //var msgDialog = new Windows.UI.Popups.MessageDialog("获取搜索结果失败！\n" + e.Message) { Title = "错误！" };
                         //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
@@ -246,9 +246,9 @@ namespace Bangumi.ViewModels
                             {
                                 offset = max;
                             }
-                            this.OnLoadMoreCompleted(index, ItemsCount, HasMoreItems);
+                            this.OnLoadMoreCompleted(index, itemsCount, HasMoreItems);
                         }
-                        IsSearching = false;
+                        isSearching = false;
                     }
                 }).AsTask());
 
