@@ -49,14 +49,14 @@
                     </Grid.RowDefinitions>
                     <Border Background="{ThemeResource SystemChromeLowColor}"
                             Width="10"
-                            ToolTipService.ToolTip="{x:Bind count}"
+                            ToolTipService.ToolTip="{x:Bind Count}"
                             Height="100">
                         <Rectangle Fill="{ThemeResource SystemAccentColor}"
-                                   Height="{x:Bind ratio}" 
+                                   Height="{x:Bind Ratio}" 
                                    VerticalAlignment="Bottom"/>
                     </Border>
                     <TextBlock Grid.Row="1"
-                               Text="{x:Bind score}"
+                               Text="{x:Bind Score}"
                                FontSize="10"
                                HorizontalAlignment="Center"/>
                 </Grid>
@@ -375,7 +375,7 @@
                        Margin="0">
                 <Grid>
                     <controls:AdaptiveGridView Name="EpsGridView" 
-                                               ItemsSource="{x:Bind ViewModel.eps}" 
+                                               ItemsSource="{x:Bind ViewModel.Eps}" 
                                                DesiredWidth="300"
                                                Padding="10,5,10,45"
                                                SelectionMode="None"
@@ -505,10 +505,10 @@
                         <!-- 角色资料 -->
                         <TextBlock LineHeight="34"
                                    FontSize="18"
-                                   Visibility="{x:Bind common:Converters.CollapsedIfZero(ViewModel.characters.Count),Mode=OneWay}"
+                                   Visibility="{x:Bind common:Converters.CollapsedIfZero(ViewModel.Characters.Count),Mode=OneWay}"
                                    Foreground="{StaticResource BangumiPinkColor}"
                                    Padding="0,15,0,0"><Bold>角色资料</Bold></TextBlock>
-                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.characters}"
+                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.Characters}"
                                             ItemTemplate="{StaticResource CrtTemplate}">
                             <muxc:ItemsRepeater.Layout>
                                 <muxc:UniformGridLayout Orientation="Horizontal"
@@ -523,10 +523,10 @@
                         <!-- 演职资料 -->
                         <TextBlock LineHeight="34"
                                    FontSize="18"
-                                   Visibility="{x:Bind common:Converters.CollapsedIfZero(ViewModel.staffs.Count),Mode=OneWay}"
+                                   Visibility="{x:Bind common:Converters.CollapsedIfZero(ViewModel.Staffs.Count),Mode=OneWay}"
                                    Foreground="{StaticResource BangumiPinkColor}"
                                    Padding="0,15,0,0"><Bold>演职资料</Bold></TextBlock>
-                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.staffs}"
+                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.Staffs}"
                                             ItemTemplate="{StaticResource StaffTemplate}">
                             <muxc:ItemsRepeater.Layout>
                                 <muxc:UniformGridLayout Orientation="Horizontal"
@@ -541,10 +541,10 @@
                         <!-- 评论 -->
                         <TextBlock LineHeight="34"
                                    FontSize="18"
-                                   Visibility="{x:Bind common:Converters.CollapsedIfZero(ViewModel.blogs.Count),Mode=OneWay}"
+                                   Visibility="{x:Bind common:Converters.CollapsedIfZero(ViewModel.Blogs.Count),Mode=OneWay}"
                                    Foreground="{StaticResource BangumiPinkColor}"
                                    Padding="0,15,0,0"><Bold>评论</Bold></TextBlock>
-                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.blogs}"
+                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.Blogs}"
                                             ItemTemplate="{StaticResource BlogTemplate}">
                             <muxc:ItemsRepeater.Layout>
                                 <muxc:StackLayout Spacing="8"
@@ -555,10 +555,10 @@
                         <!-- 讨论版 -->
                         <TextBlock LineHeight="34"
                                    FontSize="18"
-                                   Visibility="{x:Bind common:Converters.CollapsedIfZero(ViewModel.topics.Count),Mode=OneWay}"
+                                   Visibility="{x:Bind common:Converters.CollapsedIfZero(ViewModel.Topics.Count),Mode=OneWay}"
                                    Foreground="{StaticResource BangumiPinkColor}"
                                    Padding="0,15,0,0"><Bold>讨论版</Bold></TextBlock>
-                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.topics}"
+                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.Topics}"
                                             ItemTemplate="{StaticResource TopicTemplate}">
                             <muxc:ItemsRepeater.Layout>
                                 <muxc:StackLayout Spacing="8"

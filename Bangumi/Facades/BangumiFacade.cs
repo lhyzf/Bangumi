@@ -27,10 +27,10 @@ namespace Bangumi.Facades
                 //从文件反序列化
                 if (watchingListCollection.Count == 0)
                 {
-                    var PreWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await FileHelper.ReadFromCacheFileAsync(OAuthHelper.CacheFile.progress.GetFilePath()));
-                    if (PreWatchings != null)
+                    var preWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await FileHelper.ReadFromCacheFileAsync(OAuthHelper.CacheFile.Progress.GetFilePath()));
+                    if (preWatchings != null)
                     {
-                        foreach (var sub in PreWatchings)
+                        foreach (var sub in preWatchings)
                         {
                             // 将Collection中没有的添加进去
                             if (watchingListCollection.Where(e => e.SubjectId == sub.SubjectId).Count() == 0)
@@ -176,11 +176,11 @@ namespace Bangumi.Facades
             try
             {
                 //从文件反序列化
-                var PreCollection = JsonConvert.DeserializeObject<List<Collection>>(await FileHelper.ReadFromCacheFileAsync(subjectType.GetFilePath()));
+                var preCollection = JsonConvert.DeserializeObject<List<Collection>>(await FileHelper.ReadFromCacheFileAsync(subjectType.GetFilePath()));
                 subjectCollection.Clear();
-                if (PreCollection != null)
+                if (preCollection != null)
                 {
-                    foreach (var type in PreCollection)
+                    foreach (var type in preCollection)
                     {
                         subjectCollection.Add(type);
                     }
@@ -216,12 +216,12 @@ namespace Bangumi.Facades
             try
             {
                 //从文件反序列化
-                var PreCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await FileHelper.ReadFromCacheFileAsync(OAuthHelper.CacheFile.calendar.GetFilePath()));
+                var preCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await FileHelper.ReadFromCacheFileAsync(OAuthHelper.CacheFile.Calendar.GetFilePath()));
                 bangumiCollection.Clear();
                 int day = GetDayOfWeek();
-                if (PreCalendar != null)
+                if (preCalendar != null)
                 {
-                    foreach (var item in PreCalendar)
+                    foreach (var item in preCalendar)
                     {
                         if (item.Weekday.Id <= day)
                         {
@@ -256,7 +256,7 @@ namespace Bangumi.Facades
                 }
 
                 //将对象序列化并存储到文件
-                await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(bangumiCollection.OrderBy(c => c.Weekday.Id)), OAuthHelper.CacheFile.calendar.GetFilePath());
+                await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(bangumiCollection.OrderBy(c => c.Weekday.Id)), OAuthHelper.CacheFile.Calendar.GetFilePath());
             }
             catch (Exception e)
             {
@@ -361,15 +361,15 @@ namespace Bangumi.Facades
             {
                 if (await BangumiHttpWrapper.UpdateProgressAsync(OAuthHelper.MyToken.Token, ep, status))
                 {
-                    MainPage.rootPage.ToastInAppNotification.Show($"标记章节{ep}{status.GetValue()}成功", 1500);
+                    MainPage.RootPage.ToastInAppNotification.Show($"标记章节{ep}{status.GetValue()}成功", 1500);
                     return true;
                 }
-                MainPage.rootPage.ErrorInAppNotification.Show($"标记章节{ep}{status.GetValue()}失败，请重试！", 1500);
+                MainPage.RootPage.ErrorInAppNotification.Show($"标记章节{ep}{status.GetValue()}失败，请重试！", 1500);
                 return false;
             }
             catch (Exception e)
             {
-                MainPage.rootPage.ErrorInAppNotification.Show("更新收视进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
+                MainPage.RootPage.ErrorInAppNotification.Show("更新收视进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
                 //var msgDialog = new Windows.UI.Popups.MessageDialog("更新收视进度失败！\n" + e.Message) { Title = "错误！" };
                 //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
                 //await msgDialog.ShowAsync();
@@ -391,15 +391,15 @@ namespace Bangumi.Facades
             {
                 if (await BangumiHttpWrapper.UpdateProgressBatchAsync(OAuthHelper.MyToken.Token, ep, status, epsId))
                 {
-                    MainPage.rootPage.ToastInAppNotification.Show($"批量标记章节{epsId}{status.GetValue()}状态成功", 1500);
+                    MainPage.RootPage.ToastInAppNotification.Show($"批量标记章节{epsId}{status.GetValue()}状态成功", 1500);
                     return true;
                 }
-                MainPage.rootPage.ErrorInAppNotification.Show($"批量标记章节{epsId}{status.GetValue()}状态失败，请重试！", 1500);
+                MainPage.RootPage.ErrorInAppNotification.Show($"批量标记章节{epsId}{status.GetValue()}状态失败，请重试！", 1500);
                 return false;
             }
             catch (Exception e)
             {
-                MainPage.rootPage.ErrorInAppNotification.Show("更新收藏进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
+                MainPage.RootPage.ErrorInAppNotification.Show("更新收藏进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
                 //var msgDialog = new Windows.UI.Popups.MessageDialog("更新收藏状态失败！\n" + e.Message) { Title = "错误！" };
                 //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
                 //await msgDialog.ShowAsync();
@@ -424,15 +424,15 @@ namespace Bangumi.Facades
                 if (await BangumiHttpWrapper.UpdateCollectionStatusAsync(OAuthHelper.MyToken.Token,
                     subjectId, collectionStatusEnum, comment, rating, privace))
                 {
-                    MainPage.rootPage.ToastInAppNotification.Show($"更新条目{subjectId}{collectionStatusEnum.GetValue()}状态成功", 1500);
+                    MainPage.RootPage.ToastInAppNotification.Show($"更新条目{subjectId}{collectionStatusEnum.GetDescCn()}状态成功", 1500);
                     return true;
                 }
-                MainPage.rootPage.ErrorInAppNotification.Show($"更新条目{subjectId}{collectionStatusEnum.GetValue()}状态失败，请重试！", 1500);
+                MainPage.RootPage.ErrorInAppNotification.Show($"更新条目{subjectId}{collectionStatusEnum.GetDescCn()}状态失败，请重试！", 1500);
                 return false;
             }
             catch (Exception e)
             {
-                MainPage.rootPage.ErrorInAppNotification.Show("更新收藏进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
+                MainPage.RootPage.ErrorInAppNotification.Show("更新收藏进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
                 //var msgDialog = new Windows.UI.Popups.MessageDialog("更新收藏状态失败！\n" + e.Message) { Title = "错误！" };
                 //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
                 //await msgDialog.ShowAsync();

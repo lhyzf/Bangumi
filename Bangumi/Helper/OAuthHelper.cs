@@ -126,7 +126,7 @@ namespace Bangumi.Helper
                 if (response?.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     // 授权过期，返回登录界面
-                    MainPage.rootFrame.Navigate(typeof(LoginPage), "ms-appx:///Assets/resource/err_401.png");
+                    MainPage.RootFrame.Navigate(typeof(LoginPage), "ms-appx:///Assets/resource/err_401.png");
                 }
             }
             catch (Exception e)
@@ -142,7 +142,7 @@ namespace Bangumi.Helper
         public static async Task<bool> CheckTokens()
         {
             if (MyToken == null)
-                MyToken = JsonConvert.DeserializeObject<AccessToken>(await FileHelper.ReadFromFileAsync(OAuthFile.token.GetFilePath(), true));
+                MyToken = JsonConvert.DeserializeObject<AccessToken>(await FileHelper.ReadFromFileAsync(OAuthFile.Token.GetFilePath(), true));
             if (MyToken == null)
             {
                 //DeleteTokens();
@@ -166,7 +166,7 @@ namespace Bangumi.Helper
             MyToken = token;
             IsLogin = true;
             // 将信息写入本地文件
-            await FileHelper.WriteToFileAsync(JsonConvert.SerializeObject(token), OAuthFile.token.GetFilePath(), true);
+            await FileHelper.WriteToFileAsync(JsonConvert.SerializeObject(token), OAuthFile.Token.GetFilePath(), true);
         }
 
         /// <summary>
@@ -176,45 +176,45 @@ namespace Bangumi.Helper
         public static void DeleteTokens()
         {
             // 删除用户认证文件
-            FileHelper.DeleteLocalFile(OAuthFile.token.GetFilePath());
+            FileHelper.DeleteLocalFile(OAuthFile.Token.GetFilePath());
             // 删除用户缓存文件
-            FileHelper.DeleteCacheFile(CacheFile.progress.GetFilePath());
-            FileHelper.DeleteCacheFile(CacheFile.anime.GetFilePath());
-            FileHelper.DeleteCacheFile(CacheFile.book.GetFilePath());
-            FileHelper.DeleteCacheFile(CacheFile.game.GetFilePath());
-            FileHelper.DeleteCacheFile(CacheFile.music.GetFilePath());
-            FileHelper.DeleteCacheFile(CacheFile.real.GetFilePath());
+            FileHelper.DeleteCacheFile(CacheFile.Progress.GetFilePath());
+            FileHelper.DeleteCacheFile(CacheFile.Anime.GetFilePath());
+            FileHelper.DeleteCacheFile(CacheFile.Book.GetFilePath());
+            FileHelper.DeleteCacheFile(CacheFile.Game.GetFilePath());
+            FileHelper.DeleteCacheFile(CacheFile.Music.GetFilePath());
+            FileHelper.DeleteCacheFile(CacheFile.Real.GetFilePath());
         }
 
         #region JsonCacheFile
         public enum CacheFile
         {
-            progress,
-            anime,
-            book,
-            game,
-            music,
-            real,
-            calendar,
+            Progress,
+            Anime,
+            Book,
+            Game,
+            Music,
+            Real,
+            Calendar,
         }
 
         public static string GetFilePath(this CacheFile file)
         {
             switch (file)
             {
-                case CacheFile.progress:
+                case CacheFile.Progress:
                     return "JsonCache\\progress";
-                case CacheFile.anime:
+                case CacheFile.Anime:
                     return "JsonCache\\anime";
-                case CacheFile.book:
+                case CacheFile.Book:
                     return "JsonCache\\book";
-                case CacheFile.game:
+                case CacheFile.Game:
                     return "JsonCache\\game";
-                case CacheFile.music:
+                case CacheFile.Music:
                     return "JsonCache\\music";
-                case CacheFile.real:
+                case CacheFile.Real:
                     return "JsonCache\\real";
-                case CacheFile.calendar:
+                case CacheFile.Calendar:
                     return "JsonCache\\calendar";
                 default:
                     return string.Empty;
@@ -225,15 +225,15 @@ namespace Bangumi.Helper
         {
             switch (subjectType)
             {
-                case SubjectTypeEnum.book:
+                case SubjectTypeEnum.Book:
                     return "JsonCache\\book";
-                case SubjectTypeEnum.anime:
+                case SubjectTypeEnum.Anime:
                     return "JsonCache\\anime";
-                case SubjectTypeEnum.music:
+                case SubjectTypeEnum.Music:
                     return "JsonCache\\music";
-                case SubjectTypeEnum.game:
+                case SubjectTypeEnum.Game:
                     return "JsonCache\\game";
-                case SubjectTypeEnum.real:
+                case SubjectTypeEnum.Real:
                     return "JsonCache\\real";
                 default:
                     return string.Empty;
@@ -244,14 +244,14 @@ namespace Bangumi.Helper
         #region OAuthFile
         public enum OAuthFile
         {
-            token,
+            Token,
         };
 
         public static string GetFilePath(this OAuthFile file)
         {
             switch (file)
             {
-                case OAuthFile.token:
+                case OAuthFile.Token:
                     return "Token.data";
                 default:
                     return string.Empty;

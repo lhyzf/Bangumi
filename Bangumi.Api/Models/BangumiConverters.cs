@@ -7,22 +7,22 @@ namespace Bangumi.Api.Models
     public static class BangumiConverters
     {
         #region Value to Enum
-        public static CollectionStatusEnum GetCollectionStatusEnum(string status)
+        public static CollectionStatusEnum ConvertCollectionStatusToEnum(string status)
         {
             switch (status)
             {
                 case "想看":
-                    return CollectionStatusEnum.wish;
+                    return CollectionStatusEnum.Wish;
                 case "看过":
-                    return CollectionStatusEnum.collect;
+                    return CollectionStatusEnum.Collect;
                 case "在看":
-                    return CollectionStatusEnum.@do;
+                    return CollectionStatusEnum.Do;
                 case "搁置":
-                    return CollectionStatusEnum.on_hold;
+                    return CollectionStatusEnum.OnHold;
                 case "抛弃":
-                    return CollectionStatusEnum.dropped;
+                    return CollectionStatusEnum.Dropped;
                 default:
-                    return CollectionStatusEnum.no;
+                    return CollectionStatusEnum.No;
             }
         }
         #endregion

@@ -90,9 +90,11 @@ namespace Bangumi.Views
                 ViewModel.NameCn = p.NameCn;
                 ViewModel.AirDate = p.AirDate;
                 ViewModel.AirWeekday = p.AirWeekday;
+                ViewModel.CollectionStatusText = "在看";
+                ViewModel.CollectionStatusIcon = "\uE00B";
                 if (p.Eps != null)
                 {
-                    ViewModel.eps.Clear();
+                    ViewModel.Eps.Clear();
                     foreach (var ep in p.Eps)
                     {
                         var newEp = new Ep();
@@ -101,7 +103,7 @@ namespace Bangumi.Views
                         newEp.Status = ep.Status;
                         newEp.Type = ep.Type;
                         newEp.NameCn = ep.Name;
-                        ViewModel.eps.Add(newEp);
+                        ViewModel.Eps.Add(newEp);
                     }
                 }
             }
@@ -138,13 +140,13 @@ namespace Bangumi.Views
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             // 设置收藏按钮隐藏以及解除事件绑定
-            MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Collapsed;
-            MainPage.rootPage.CollectionAppBarButton.Click -= CollectionAppBarButton_Click;
+            MainPage.RootPage.CollectionAppBarButton.Visibility = Visibility.Collapsed;
+            MainPage.RootPage.CollectionAppBarButton.Click -= CollectionAppBarButton_Click;
             // 设置刷新按钮隐藏以及解除事件绑定
-            MainPage.rootPage.RefreshAppBarButton.Click -= DetailPageRefresh_Click;
+            MainPage.RootPage.RefreshAppBarButton.Click -= DetailPageRefresh_Click;
             // 设置访问网页按钮隐藏以及解除事件绑定
-            MainPage.rootPage.WebPageAppBarButton.Visibility = Visibility.Collapsed;
-            MainPage.rootPage.WebPageAppBarButton.Click -= LaunchWebPage_Click;
+            MainPage.RootPage.WebPageAppBarButton.Visibility = Visibility.Collapsed;
+            MainPage.RootPage.WebPageAppBarButton.Click -= LaunchWebPage_Click;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -154,12 +156,12 @@ namespace Bangumi.Views
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             // 设置刷新按钮可见以及事件绑定
-            MainPage.rootPage.MyCommandBar.Visibility = Visibility.Visible;
-            MainPage.rootPage.RefreshAppBarButton.Click += DetailPageRefresh_Click;
+            MainPage.RootPage.MyCommandBar.Visibility = Visibility.Visible;
+            MainPage.RootPage.RefreshAppBarButton.Click += DetailPageRefresh_Click;
 
             // 设置访问网页按钮可见以及事件绑定
-            MainPage.rootPage.WebPageAppBarButton.Visibility = Visibility.Visible;
-            MainPage.rootPage.WebPageAppBarButton.Click += LaunchWebPage_Click;
+            MainPage.RootPage.WebPageAppBarButton.Visibility = Visibility.Visible;
+            MainPage.RootPage.WebPageAppBarButton.Click += LaunchWebPage_Click;
 
             // 设置收藏按钮可见以及属性绑定、事件绑定
             if (OAuthHelper.IsLogin)
@@ -170,23 +172,23 @@ namespace Bangumi.Views
                     Source = ViewModel,
                     Path = new PropertyPath("CollectionStatusText"),
                 };
-                MainPage.rootPage.CollectionAppBarButton.SetBinding(AppBarButton.LabelProperty, LabelBinding);
+                MainPage.RootPage.CollectionAppBarButton.SetBinding(AppBarButton.LabelProperty, LabelBinding);
                 // 图标
                 Binding GlyphBinding = new Binding
                 {
                     Source = ViewModel,
                     Path = new PropertyPath("CollectionStatusIcon"),
                 };
-                MainPage.rootPage.CollectionAppBarButtonFontIcon.SetBinding(FontIcon.GlyphProperty, GlyphBinding);
+                MainPage.RootPage.CollectionAppBarButtonFontIcon.SetBinding(FontIcon.GlyphProperty, GlyphBinding);
                 // 是否启用
                 Binding IsEnabledBinding = new Binding
                 {
                     Source = ViewModel,
                     Path = new PropertyPath("IsStatusLoaded"),
                 };
-                MainPage.rootPage.CollectionAppBarButton.SetBinding(AppBarButton.IsEnabledProperty, IsEnabledBinding);
-                MainPage.rootPage.CollectionAppBarButton.Click += CollectionAppBarButton_Click;
-                MainPage.rootPage.CollectionAppBarButton.Visibility = Visibility.Visible;
+                MainPage.RootPage.CollectionAppBarButton.SetBinding(AppBarButton.IsEnabledProperty, IsEnabledBinding);
+                MainPage.RootPage.CollectionAppBarButton.Click += CollectionAppBarButton_Click;
+                MainPage.RootPage.CollectionAppBarButton.Visibility = Visibility.Visible;
             }
 
             if (SettingHelper.UseBangumiData == true)
@@ -346,7 +348,7 @@ namespace Bangumi.Views
             SitesMenuFlyout.Items.Clear();
             SelectedTextBlock.Text = "";
             SelectedTextBlock.DataContext = null;
-            var airSites = await BangumiDataHelper.GetAirSitesByBangumiID(ViewModel.SubjectId);
+            var airSites = await BangumiDataHelper.GetAirSitesByBangumiIdAsync(ViewModel.SubjectId);
             if (airSites.Count != 0)
             {
                 foreach (var site in airSites)

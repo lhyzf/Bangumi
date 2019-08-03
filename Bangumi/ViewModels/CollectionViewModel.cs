@@ -30,7 +30,7 @@ namespace Bangumi.ViewModels
             {
                 Set(ref _isLoading, value);
                 HomePage.homePage.isLoading = value;
-                MainPage.rootPage.RefreshAppBarButton.IsEnabled = !value;
+                MainPage.RootPage.RefreshAppBarButton.IsEnabled = !value;
             }
         }
 
@@ -71,7 +71,7 @@ namespace Bangumi.ViewModels
             }
             catch (Exception e)
             {
-                MainPage.rootPage.ErrorInAppNotification.Show("获取用户收藏失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
+                MainPage.RootPage.ErrorInAppNotification.Show("获取用户收藏失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
                 //var msgDialog = new Windows.UI.Popups.MessageDialog("获取用户收藏失败！\n" + e.Message) { Title = "错误！" };
                 //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
                 //await msgDialog.ShowAsync();
@@ -93,9 +93,9 @@ namespace Bangumi.ViewModels
             {
                 // 由于服务器原因，导致条目在多个类别下出现，则有不属于同一类别的存在，则进行更新
                 var cols = SubjectCollection.Where(sub => sub.Items.Where(it => it.SubjectId == subject.SubjectId).FirstOrDefault() != null);
-                if (cols.Where(c => c.Status.Name != collectionStatus.GetValue()).Count() == 0)
+                if (cols.Where(c => c.Status.Name != collectionStatus.GetDescCn()).Count() == 0)
                     return;
-                var col = cols.Where(c => c.Status.Name != collectionStatus.GetValue()).FirstOrDefault();
+                var col = cols.Where(c => c.Status.Name != collectionStatus.GetDescCn()).FirstOrDefault();
                 IsUpdating = true;
                 if (await BangumiFacade.UpdateCollectionStatusAsync(subject.SubjectId.ToString(), collectionStatus))
                 {
@@ -107,7 +107,7 @@ namespace Bangumi.ViewModels
                     if (col.Items.Count != 0)
                         SubjectCollection.Insert(index, col);
                     // 找到新所属类别，有则加入，无则新增
-                    var newCol = SubjectCollection.Where(sub => sub.Status.Name == collectionStatus.GetValue()).FirstOrDefault();
+                    var newCol = SubjectCollection.Where(sub => sub.Status.Name == collectionStatus.GetDescCn()).FirstOrDefault();
                     if (newCol != null)
                     {
                         newCol.Items.Insert(0, subject);
@@ -121,7 +121,7 @@ namespace Bangumi.ViewModels
                         newCol = new Collection()
                         {
                             Items = new List<Subject2>() { subject },
-                            Status = new SubjectStatus() { Name = collectionStatus.GetValue() },
+                            Status = new SubjectStatus() { Name = collectionStatus.GetDescCn() },
                             Count = 1
                         };
                         SubjectCollection.Add(newCol);
@@ -136,17 +136,17 @@ namespace Bangumi.ViewModels
             switch (SelectedIndex)
             {
                 case 0:
-                    return SubjectTypeEnum.anime;
+                    return SubjectTypeEnum.Anime;
                 case 1:
-                    return SubjectTypeEnum.book;
+                    return SubjectTypeEnum.Book;
                 case 2:
-                    return SubjectTypeEnum.music;
+                    return SubjectTypeEnum.Music;
                 case 3:
-                    return SubjectTypeEnum.game;
+                    return SubjectTypeEnum.Game;
                 case 4:
-                    return SubjectTypeEnum.real;
+                    return SubjectTypeEnum.Real;
                 default:
-                    return SubjectTypeEnum.anime;
+                    return SubjectTypeEnum.Anime;
             }
         }
 

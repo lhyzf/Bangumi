@@ -28,7 +28,7 @@ namespace Bangumi.Views
     public sealed partial class SearchPage : Page
     {
         public SearchViewModel ViewModel { get; } = new SearchViewModel();
-        ThreadPoolTimer DelayTimer;
+        ThreadPoolTimer delayTimer;
 
         public SearchPage()
         {
@@ -70,7 +70,7 @@ namespace Bangumi.Views
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var selectedItem = (Subject)e.ClickedItem;
-            MainPage.rootFrame.Navigate(typeof(DetailsPage), selectedItem, new DrillInNavigationTransitionInfo());
+            MainPage.RootFrame.Navigate(typeof(DetailsPage), selectedItem, new DrillInNavigationTransitionInfo());
         }
 
         private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -79,10 +79,10 @@ namespace Bangumi.Views
             {
                  if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
                 {
-                    if (DelayTimer != null && DelayTimer.Delay != TimeSpan.Zero)
-                        DelayTimer.Cancel();
+                    if (delayTimer != null && delayTimer.Delay != TimeSpan.Zero)
+                        delayTimer.Cancel();
                     TimeSpan delay = TimeSpan.FromMilliseconds(1000);
-                    DelayTimer = ThreadPoolTimer.CreateTimer(
+                    delayTimer = ThreadPoolTimer.CreateTimer(
                         async (source) =>
                         {
                             await Dispatcher.RunAsync(
@@ -193,7 +193,7 @@ namespace Bangumi.Views
             // 启用标题栏的后退按钮
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
-            MainPage.rootPage.MyCommandBar.Visibility = Visibility.Collapsed;
+            MainPage.RootPage.MyCommandBar.Visibility = Visibility.Collapsed;
         }
 
         // 鼠标右键弹出菜单
@@ -227,19 +227,19 @@ namespace Bangumi.Views
             switch (item.Tag)
             {
                 case "Wish":
-                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject, CollectionStatusEnum.wish);
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject, CollectionStatusEnum.Wish);
                     break;
                 case "Collect":
-                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject, CollectionStatusEnum.collect);
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject, CollectionStatusEnum.Collect);
                     break;
                 case "Doing":
-                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject, CollectionStatusEnum.@do);
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject, CollectionStatusEnum.Do);
                     break;
                 case "OnHold":
-                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject, CollectionStatusEnum.on_hold);
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject, CollectionStatusEnum.OnHold);
                     break;
                 case "Dropped":
-                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject, CollectionStatusEnum.dropped);
+                    ViewModel.UpdateCollectionStatus(item.DataContext as Subject, CollectionStatusEnum.Dropped);
                     break;
                 default:
                     break;
