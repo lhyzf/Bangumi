@@ -74,7 +74,8 @@
                             RelativePanel.RightOf="BangumiImage"
                             RelativePanel.AlignBottomWithPanel="True"
                             BorderThickness="1"
-                            Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
+                            Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
+                            Style="{StaticResource ButtonRevealStyle}">
                         <FontIcon FontFamily="Segoe MDL2 Assets" 
                                   Glyph="&#xE00B;" 
                                   Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
@@ -96,7 +97,8 @@
                             RelativePanel.RightOf="CollectionButton"
                             HorizontalAlignment="Right"
                             BorderThickness="1"
-                            Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
+                            Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
+                            Style="{StaticResource ButtonRevealStyle}">
                         <TextBlock FontSize="12" 
                                    Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
                                    VerticalAlignment="Center"
@@ -193,7 +195,8 @@
                             RelativePanel.RightOf="BangumiImage"
                             RelativePanel.AlignBottomWithPanel="True"
                             BorderThickness="1"
-                            Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
+                            Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
+                            Style="{StaticResource ButtonRevealStyle}">
                         <FontIcon FontFamily="Segoe MDL2 Assets" 
                                   Glyph="&#xE00B;" 
                                   Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
@@ -215,7 +218,8 @@
                             RelativePanel.RightOf="CollectionButton"
                             HorizontalAlignment="Right"
                             BorderThickness="1"
-                            Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
+                            Background="{ThemeResource AppBarItemBackgroundThemeBrush}"
+                            Style="{StaticResource ButtonRevealStyle}">
                         <TextBlock FontSize="16" 
                                    Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
                                    VerticalAlignment="Center"
