@@ -116,7 +116,7 @@
                         <TextBlock Name="BangumiDataTextBlock" 
                                    Text="数据版本："
                                    Margin="0,10,0,0"/>
-                        <Grid>
+                        <Grid Margin="0,4,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="*"/>
@@ -125,12 +125,13 @@
                                     Content="检查更新"
                                     Click="BangumiDataButton_Click"
                                     Tag="Update"
-                                    Margin="0,4,0,0"/>
-                            <ProgressBar Name="BangumiDataProgressBar"
-                                         Grid.Column="1"
-                                         Visibility="Collapsed"
-                                         IsIndeterminate="True"
-                                         Margin="10,4,0,0"/>
+                                    Style="{StaticResource ButtonRevealStyle}"/>
+                            <ProgressRing Name="BangumiDataProgressRing"
+                                          Grid.Column="1"
+                                          Visibility="Collapsed"
+                                          HorizontalAlignment="Left"
+                                          IsActive="True"
+                                          Margin="10,0,0,0"/>
                         </Grid>
                         <ToggleSwitch Name="UseBilibiliUWPToggleSwitch"
                                       OnContent="开启" 

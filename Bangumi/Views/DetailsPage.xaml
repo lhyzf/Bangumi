@@ -99,8 +99,9 @@
                                Tapped="ItemsRepeater_Tapped"
                                PointerEntered="RelativePanel_PointerEntered"
                                PointerExited="RelativePanel_PointerExited"
-                               BorderThickness="1.5"
-                               BorderBrush="{ThemeResource SystemControlTransparentRevealBorderBrush}"
+                               PointerPressed="RelativePanel_PointerPressed"
+                               PointerCaptureLost="RelativePanel_PointerExited"
+                               Padding="5"
                                Background="Transparent">
                     <controls:ImageEx Name="CrtImage" 
                                       Source="{x:Bind Images.Grid}"
@@ -140,8 +141,9 @@
                                Tapped="ItemsRepeater_Tapped"
                                PointerEntered="RelativePanel_PointerEntered"
                                PointerExited="RelativePanel_PointerExited"
-                               BorderThickness="1.5"
-                               BorderBrush="{ThemeResource SystemControlTransparentRevealBorderBrush}"
+                               PointerPressed="RelativePanel_PointerPressed"
+                               PointerCaptureLost="RelativePanel_PointerExited"
+                               Padding="5"
                                Background="Transparent">
                     <controls:ImageEx Name="StaffImage" 
                                       Source="{x:Bind Images.Grid}"
@@ -177,23 +179,25 @@
                                Tapped="ItemsRepeater_Tapped"
                                PointerEntered="RelativePanel_PointerEntered"
                                PointerExited="RelativePanel_PointerExited"
-                               BorderThickness="1.5"
-                               Padding="5,0"
-                               BorderBrush="{ThemeResource SystemControlTransparentRevealBorderBrush}"
+                               PointerPressed="RelativePanel_PointerPressed"
+                               PointerCaptureLost="RelativePanel_PointerExited"
+                               Padding="5"
+                               BorderBrush="{ThemeResource SystemControlBackgroundListLowRevealBorderBrush}"
                                Background="Transparent">
                     <controls:ImageEx Name="UserImage" 
                                       Source="{x:Bind User.Avatar.Small}"
                                       Width="32"
                                       Height="32"
-                                      Margin="0,5,5,5"
+                                      Margin="0,0,5,5"
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True"
                                       PlaceholderSource="ms-appx:///Assets/resource/akkarin.jpg"
                                       PlaceholderStretch="UniformToFill"
                                       IsCacheEnabled="True"/>
                     <TextBlock Name="PostInfoTextBlock"
+                               Margin="0,-3,0,0"
                                RelativePanel.RightOf="UserImage"
-                               RelativePanel.AlignTopWithPanel="True"
+                               RelativePanel.AlignTopWith="UserImage"
                                TextWrapping="Wrap">
                         <Run Text="{x:Bind User.NickName}"/>
                         <LineBreak/>
@@ -205,14 +209,13 @@
                     <TextBlock Name="BlogTitleTextBlock"
                                RelativePanel.AlignLeftWithPanel="True"
                                RelativePanel.Below="UserImage"
-                               LineHeight="24"
+                               Padding="0,0,0,3"
                                FontSize="16"
                                Foreground="RoyalBlue"
                                Text="{x:Bind Title}"
                                TextWrapping="Wrap"/>
                     <TextBlock Name="SummaryTextBlock"
                                Text="{x:Bind Summary}"
-                               LineHeight="22" 
                                TextWrapping="Wrap"
                                RelativePanel.AlignLeftWithPanel="True"
                                RelativePanel.Below="BlogTitleTextBlock"/>
@@ -224,14 +227,14 @@
                                Tapped="ItemsRepeater_Tapped"
                                PointerEntered="RelativePanel_PointerEntered"
                                PointerExited="RelativePanel_PointerExited"
-                               BorderThickness="1.5"
-                               Padding="5,0"
-                               BorderBrush="{ThemeResource SystemControlTransparentRevealBorderBrush}"
+                               PointerPressed="RelativePanel_PointerPressed"
+                               PointerCaptureLost="RelativePanel_PointerExited"
+                               Padding="5"
                                Background="Transparent">
                     <TextBlock Name="TopicTitleTextBlock"
                                RelativePanel.AlignLeftWithPanel="True"
                                RelativePanel.AlignTopWithPanel="True"
-                               LineHeight="24"
+                               Padding="0,0,0,3"
                                FontSize="16"
                                Foreground="RoyalBlue"
                                Text="{x:Bind Title}"
@@ -239,7 +242,6 @@
                     <TextBlock Name="PostInfoTextBlock"
                                RelativePanel.AlignLeftWithPanel="True"
                                RelativePanel.Below="TopicTitleTextBlock"
-                               LineHeight="22"
                                TextTrimming="WordEllipsis">
                         <Run Text="{x:Bind User.NickName}"/>
                         <Run Text="{x:Bind common:Converters.ConvertJsTickToDateTime(Timestamp)}"
@@ -250,7 +252,6 @@
                                RelativePanel.RightOf="PostInfoTextBlock"
                                RelativePanel.Below="TopicTitleTextBlock"
                                HorizontalTextAlignment="Right"
-                               LineHeight="22"
                                TextTrimming="WordEllipsis">
                         <Run Text="    最后回复:"
                              Foreground="Gray"/>
@@ -379,6 +380,7 @@
                                                DesiredWidth="300"
                                                Padding="10,5,10,45"
                                                SelectionMode="None"
+                                               IsItemClickEnabled="True" 
                                                ShowsScrollingPlaceholders="False"
                                                ItemTemplate="{StaticResource EpTemplate}">
                         <GridView.Header>
@@ -478,7 +480,7 @@
             <PivotItem Header="详情"
                        Margin="0">
                 <ScrollViewer>
-                    <StackPanel Padding="10,5,10,90">
+                    <StackPanel Padding="10,5,10,50">
                         <TextBlock IsTextSelectionEnabled="True"
                                    TextWrapping="Wrap"
                                    FontSize="18">
@@ -514,9 +516,7 @@
                                 <muxc:UniformGridLayout Orientation="Horizontal"
                                                         ItemsJustification="Start"
                                                         ItemsStretch="Fill"
-                                                        MinItemWidth="250"
-                                                        MinColumnSpacing="8"
-                                                        MinRowSpacing="8"/>
+                                                        MinItemWidth="260"/>
                             </muxc:ItemsRepeater.Layout>
                         </muxc:ItemsRepeater>
 
@@ -532,9 +532,7 @@
                                 <muxc:UniformGridLayout Orientation="Horizontal"
                                                         ItemsJustification="Start"
                                                         ItemsStretch="Fill"
-                                                        MinItemWidth="250"
-                                                        MinColumnSpacing="8"
-                                                        MinRowSpacing="8"/>
+                                                        MinItemWidth="260"/>
                             </muxc:ItemsRepeater.Layout>
                         </muxc:ItemsRepeater>
 
@@ -547,8 +545,7 @@
                         <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.Blogs}"
                                             ItemTemplate="{StaticResource BlogTemplate}">
                             <muxc:ItemsRepeater.Layout>
-                                <muxc:StackLayout Spacing="8"
-                                                  Orientation="Vertical"/>
+                                <muxc:StackLayout Orientation="Vertical"/>
                             </muxc:ItemsRepeater.Layout>
                         </muxc:ItemsRepeater>
 
@@ -561,8 +558,7 @@
                         <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.Topics}"
                                             ItemTemplate="{StaticResource TopicTemplate}">
                             <muxc:ItemsRepeater.Layout>
-                                <muxc:StackLayout Spacing="8"
-                                                  Orientation="Vertical"/>
+                                <muxc:StackLayout Orientation="Vertical"/>
                             </muxc:ItemsRepeater.Layout>
                         </muxc:ItemsRepeater>
 

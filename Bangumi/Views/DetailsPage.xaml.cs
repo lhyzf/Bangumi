@@ -1,26 +1,18 @@
-﻿using Bangumi.ContentDialogs;
-using Bangumi.Facades;
+﻿using Bangumi.Api.Models;
+using Bangumi.Common;
+using Bangumi.Data;
 using Bangumi.Helper;
-using Bangumi.Api.Models;
 using Bangumi.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation;
+using Windows.System;
 using Windows.System.Profile;
-using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using Windows.System;
-using Bangumi.Data;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -306,12 +298,23 @@ namespace Bangumi.Views
 
         private void RelativePanel_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 10);
+            var item = sender as RelativePanel;
+            item.Background = Resources["ListViewItemBackgroundPointerOver"] as Windows.UI.Xaml.Media.SolidColorBrush;
+            //Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 10);
+        }
+
+        private void RelativePanel_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            var item = sender as RelativePanel;
+            item.Background = Resources["ListViewItemBackgroundPressed"] as Windows.UI.Xaml.Media.SolidColorBrush;
+            //Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 10);
         }
 
         private void RelativePanel_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 10);
+            var item = sender as RelativePanel;
+            item.Background = Converters.ConvertBrushFromString("Transparent");
+            //Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 10);
         }
 
         /// <summary>

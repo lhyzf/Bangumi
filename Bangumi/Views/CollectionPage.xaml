@@ -118,8 +118,8 @@
             </DataTemplate>
 
             <DataTemplate x:Key="ZoomedOutTemplate" x:DataType="wuxdata:ICollectionViewGroup">
-                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" 
-                           TextWrapping="Wrap" >                
+                <TextBlock Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                           Style="{StaticResource SubtitleTextBlockStyle}" >                
                     <Run Text="{x:Bind ((data:Collection)Group).Status.Name}"/>
                     <Run Text="("/><Run Text="{x:Bind ((data:Collection)Group).Count}"/><Run Text=")"/>
                 </TextBlock>
@@ -169,7 +169,8 @@
                                            IsItemClickEnabled="True" 
                                            ItemClick="GridView_ItemClick">
                     <GridView.GroupStyle>
-                        <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}"/>
+                        <GroupStyle HeaderTemplate="{StaticResource ZoomedInGroupHeaderTemplate}"
+                                    HidesIfEmpty="True"/>
                     </GridView.GroupStyle>
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection>
@@ -183,6 +184,7 @@
                 <ListView ItemsSource="{x:Bind cvsGroups.View.CollectionGroups}"
                           Padding="12,0,12,40"
                           SelectionMode="None"
+                          IsItemClickEnabled="True" 
                           ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                           ItemTemplate="{StaticResource ZoomedOutTemplate}">
                 </ListView>

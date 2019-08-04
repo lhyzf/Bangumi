@@ -196,7 +196,7 @@ namespace Bangumi.Views
         {
             var button = sender as Button;
             button.IsEnabled = false;
-            BangumiDataProgressBar.Visibility = Visibility.Visible;
+            BangumiDataProgressRing.Visibility = Visibility.Visible;
             if (button.Tag.ToString() == "Update")
             {
                 var v = await BangumiDataHelper.GetLatestVersion();
@@ -239,7 +239,7 @@ namespace Bangumi.Views
                     MainPage.RootPage.ErrorInAppNotification.Show("数据下载失败，请重试或稍后再试！", 3000);
                 }
             }
-            BangumiDataProgressBar.Visibility = Visibility.Collapsed;
+            BangumiDataProgressRing.Visibility = Visibility.Collapsed;
             button.IsEnabled = true;
         }
 

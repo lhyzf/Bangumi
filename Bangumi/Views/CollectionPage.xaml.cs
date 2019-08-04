@@ -1,17 +1,11 @@
-﻿using Bangumi.Facades;
+﻿using Bangumi.Api.Models;
+using Bangumi.Common;
 using Bangumi.Helper;
-using Bangumi.Api.Models;
 using Bangumi.ViewModels;
-using System;
-using System.Collections.ObjectModel;
-using Windows.Foundation;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Controls.Primitives;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
