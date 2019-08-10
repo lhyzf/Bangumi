@@ -111,11 +111,11 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <RadioButton Grid.Column="0" Style="{StaticResource CollectionStatusRadioButtonStyle}" Content="想看" Tag="想看" GroupName="CollectionStatus" Checked="StatusRadioButton_Checked" />
-            <RadioButton Grid.Column="1" Style="{StaticResource CollectionStatusRadioButtonStyle}" Content="看过" Tag="看过" GroupName="CollectionStatus" Checked="StatusRadioButton_Checked" />
-            <RadioButton Grid.Column="2" Style="{StaticResource CollectionStatusRadioButtonStyle}" Content="在看" Tag="在看" GroupName="CollectionStatus" Checked="StatusRadioButton_Checked" />
-            <RadioButton Grid.Column="3" Style="{StaticResource CollectionStatusRadioButtonStyle}" Content="搁置" Tag="搁置" GroupName="CollectionStatus" Checked="StatusRadioButton_Checked" />
-            <RadioButton Grid.Column="4" Style="{StaticResource CollectionStatusRadioButtonStyle}" Content="抛弃" Tag="抛弃" GroupName="CollectionStatus" Checked="StatusRadioButton_Checked" />
+            <RadioButton Name="WishRadio" Grid.Column="0" Style="{StaticResource CollectionStatusRadioButtonStyle}" Content="想看" Tag="wish" GroupName="CollectionStatus" Checked="StatusRadioButton_Checked" />
+            <RadioButton Name="CollectRadio" Grid.Column="1" Style="{StaticResource CollectionStatusRadioButtonStyle}" Content="看过" Tag="collect" GroupName="CollectionStatus" Checked="StatusRadioButton_Checked" />
+            <RadioButton Name="DoRadio" Grid.Column="2" Style="{StaticResource CollectionStatusRadioButtonStyle}" Content="在看" Tag="do" GroupName="CollectionStatus" Checked="StatusRadioButton_Checked" />
+            <RadioButton Name="OnHoldRadio" Grid.Column="3" Style="{StaticResource CollectionStatusRadioButtonStyle}" Content="搁置" Tag="on_hold" GroupName="CollectionStatus" Checked="StatusRadioButton_Checked" />
+            <RadioButton Name="DroppedRadio" Grid.Column="4" Style="{StaticResource CollectionStatusRadioButtonStyle}" Content="抛弃" Tag="dropped" GroupName="CollectionStatus" Checked="StatusRadioButton_Checked" />
         </Grid>
         <TextBlock Text="评分（0为取消评分）："
                    Margin="0,5,0,0"/>

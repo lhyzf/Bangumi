@@ -411,23 +411,23 @@ namespace Bangumi.Facades
         /// 更新收藏状态
         /// </summary>
         /// <param name="subjectId"></param>
-        /// <param name="collectionStatusEnum"></param>
+        /// <param name="collectionStatus"></param>
         /// <param name="comment"></param>
         /// <param name="rating"></param>
         /// <param name="privace"></param>
         /// <returns>更新是否成功</returns>
         public static async Task<bool> UpdateCollectionStatusAsync(string subjectId,
-            CollectionStatusEnum collectionStatusEnum, string comment = "", string rating = "", string privace = "0")
+            CollectionStatusEnum collectionStatus, string comment = "", string rating = "", string privace = "0")
         {
             try
             {
                 if (await BangumiHttpWrapper.UpdateCollectionStatusAsync(OAuthHelper.MyToken.Token,
-                    subjectId, collectionStatusEnum, comment, rating, privace))
+                    subjectId, collectionStatus, comment, rating, privace))
                 {
-                    MainPage.RootPage.ToastInAppNotification.Show($"更新条目{subjectId}{collectionStatusEnum.GetDescCn()}状态成功", 1500);
+                    MainPage.RootPage.ToastInAppNotification.Show($"更新条目{subjectId}状态成功", 1500);
                     return true;
                 }
-                MainPage.RootPage.ErrorInAppNotification.Show($"更新条目{subjectId}{collectionStatusEnum.GetDescCn()}状态失败，请重试！", 1500);
+                MainPage.RootPage.ErrorInAppNotification.Show($"更新条目{subjectId}状态失败，请重试！", 1500);
                 return false;
             }
             catch (Exception e)

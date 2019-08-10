@@ -31,27 +31,28 @@ namespace Bangumi.ViewModels
         }
 
         // 更新收藏状态、评分、吐槽
-        public async void EditCollectionStatus(WatchingStatus status, string currentStatus = "在看")
+        public async void EditCollectionStatus(WatchingStatus status, CollectionStatusEnum currentStatus = CollectionStatusEnum.Do)
         {
             CollectionEditContentDialog collectionEditContentDialog = new CollectionEditContentDialog()
             {
                 Rate = 0,
                 Comment = "",
                 Privacy = false,
-                CollectionStatus = currentStatus
+                CollectionStatus = currentStatus,
+                SubjectType = (SubjectTypeEnum)status.Type
             };
             MainPage.RootPage.HasDialog = true;
             if (ContentDialogResult.Primary == await collectionEditContentDialog.ShowAsync())
             {
                 status.IsUpdating = true;
                 if (await BangumiFacade.UpdateCollectionStatusAsync(status.SubjectId.ToString(),
-                                                                    BangumiConverters.ConvertCollectionStatusToEnum(collectionEditContentDialog.CollectionStatus),
+                                                                    collectionEditContentDialog.CollectionStatus,
                                                                     collectionEditContentDialog.Comment,
                                                                     collectionEditContentDialog.Rate.ToString(),
                                                                     collectionEditContentDialog.Privacy == true ? "1" : "0"))
                 {
                     // 若修改后状态不是在看，则从进度页面删除
-                    if (collectionEditContentDialog.CollectionStatus != "在看")
+                    if (collectionEditContentDialog.CollectionStatus != CollectionStatusEnum.Do)
                         WatchingCollection.Remove(status);
                 }
                 status.IsUpdating = false;
@@ -131,7 +132,7 @@ namespace Bangumi.ViewModels
                         // 若设置启用且看完则弹窗提示修改收藏状态及评价
                         if (SettingHelper.SubjectComplete && item.Eps.Where(e => e.Status == "看过").Count() == item.Eps.Count)
                         {
-                            EditCollectionStatus(item, "看过");
+                            EditCollectionStatus(item, CollectionStatusEnum.Collect);
                         }
                     }
                     item.LastTouch = DateTime.Now.ConvertDateTimeToJsTick();

@@ -22,19 +22,24 @@
             </ResourceDictionary.MergedDictionaries>
             
             <MenuFlyout x:Name="CollectionMenuFlyout">
-                <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                <MenuFlyoutItem Name="WishMenuFlyoutItem"
+                                Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
                                 Text="想看"
                                 Tag="Wish"/>
-                <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                <MenuFlyoutItem Name="CollectMenuFlyoutItem"
+                                Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
                                 Text="看过"
                                 Tag="Collect"/>
-                <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                <MenuFlyoutItem Name="DoingMenuFlyoutItem"
+                                Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
                                 Text="在看"
                                 Tag="Doing"/>
-                <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                <MenuFlyoutItem Name="OnHoldMenuFlyoutItem"
+                                Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
                                 Text="搁置"
                                 Tag="OnHold"/>
-                <MenuFlyoutItem Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
+                <MenuFlyoutItem Name="DroppedMenuFlyoutItem"
+                                Click="UpdateCollectionStatusMenuFlyoutItem_Click" 
                                 Text="抛弃"
                                 Tag="Dropped"/>
             </MenuFlyout>
