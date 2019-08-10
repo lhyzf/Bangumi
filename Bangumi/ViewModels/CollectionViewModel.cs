@@ -93,9 +93,9 @@ namespace Bangumi.ViewModels
             {
                 // 由于服务器原因，导致条目在多个类别下出现，则有不属于同一类别的存在，则进行更新
                 var cols = SubjectCollection.Where(sub => sub.Items.Where(it => it.SubjectId == subject.SubjectId).FirstOrDefault() != null);
-                if (cols.Where(c => c.Status.Name != collectionStatus.GetDescCn()).Count() == 0)
+                if (cols.Where(c => c.Status.Name != collectionStatus.GetDescCn((SubjectTypeEnum)subject.Subject.Type)).Count() == 0)
                     return;
-                var col = cols.Where(c => c.Status.Name != collectionStatus.GetDescCn()).FirstOrDefault();
+                var col = cols.Where(c => c.Status.Name != collectionStatus.GetDescCn((SubjectTypeEnum)subject.Subject.Type)).FirstOrDefault();
                 IsUpdating = true;
                 if (await BangumiFacade.UpdateCollectionStatusAsync(subject.SubjectId.ToString(), collectionStatus))
                 {
@@ -107,7 +107,7 @@ namespace Bangumi.ViewModels
                     if (col.Items.Count != 0)
                         SubjectCollection.Insert(index, col);
                     // 找到新所属类别，有则加入，无则新增
-                    var newCol = SubjectCollection.Where(sub => sub.Status.Name == collectionStatus.GetDescCn()).FirstOrDefault();
+                    var newCol = SubjectCollection.Where(sub => sub.Status.Name == collectionStatus.GetDescCn((SubjectTypeEnum)subject.Subject.Type)).FirstOrDefault();
                     if (newCol != null)
                     {
                         newCol.Items.Insert(0, subject);
@@ -121,7 +121,7 @@ namespace Bangumi.ViewModels
                         newCol = new Collection()
                         {
                             Items = new List<Subject2>() { subject },
-                            Status = new SubjectStatus() { Name = collectionStatus.GetDescCn() },
+                            Status = new SubjectStatus() { Name = collectionStatus.GetDescCn((SubjectTypeEnum)subject.Subject.Type) },
                             Count = 1
                         };
                         SubjectCollection.Add(newCol);

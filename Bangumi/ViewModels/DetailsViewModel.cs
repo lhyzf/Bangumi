@@ -62,6 +62,8 @@ namespace Bangumi.ViewModels
             set => Set(ref _subjectId, value);
         }
 
+        private SubjectTypeEnum SubjectType { get; set; }
+
         private string _imageSource = "ms-appx:///Assets/resource/err_404.png";
         public string ImageSource
         {
@@ -145,11 +147,11 @@ namespace Bangumi.ViewModels
         private int myRate;
         private string myComment;
         private bool myPrivacy;
-        private string _collectionStatusText;
+        private CollectionStatusEnum _collectionStatus;
         public string CollectionStatusText
         {
-            get => _collectionStatusText;
-            set => Set(ref _collectionStatusText, value);
+            get => _collectionStatus.GetDescCn(SubjectType);
+            set => Set(ref _collectionStatus, CollectionStatusEnumEx.FromValue(value));
         }
 
         private string _collectionStatusIcon;
@@ -182,7 +184,7 @@ namespace Bangumi.ViewModels
             MoreInfo = "";
             MoreSummary = "";
             // 收藏状态，评分，吐槽
-            CollectionStatusText = "收藏";
+            CollectionStatusText = "";
             CollectionStatusIcon = "\uE006";
             myRate = 0;
             myComment = "";
@@ -205,7 +207,8 @@ namespace Bangumi.ViewModels
                 Rate = myRate,
                 Comment = myComment,
                 Privacy = myPrivacy,
-                CollectionStatus = CollectionStatusText
+                CollectionStatus = _collectionStatus,
+                SubjectType=this.SubjectType
             };
             MainPage.RootPage.HasDialog = true;
             if (ContentDialogResult.Primary == await collectionEditContentDialog.ShowAsync())
@@ -213,16 +216,16 @@ namespace Bangumi.ViewModels
                 IsUpdating = true;
                 IsStatusLoaded = false;
                 if (await BangumiFacade.UpdateCollectionStatusAsync(SubjectId,
-                    BangumiConverters.ConvertCollectionStatusToEnum(collectionEditContentDialog.CollectionStatus), collectionEditContentDialog.Comment,
+                    collectionEditContentDialog.CollectionStatus, collectionEditContentDialog.Comment,
                     collectionEditContentDialog.Rate.ToString(), collectionEditContentDialog.Privacy == true ? "1" : "0"))
                 {
                     myRate = collectionEditContentDialog.Rate;
                     myComment = collectionEditContentDialog.Comment;
                     myPrivacy = collectionEditContentDialog.Privacy;
-                    CollectionStatusText = collectionEditContentDialog.CollectionStatus;
+                    CollectionStatusText = collectionEditContentDialog.CollectionStatus.GetValue();
                     SetCollectionIcon();
                     // 若状态修改为看过，且设置启用，则批量修改章节状态为看过
-                    if (collectionEditContentDialog.CollectionStatus == CollectionStatusEnum.Collect.GetDescCn() && SettingHelper.EpsBatch)
+                    if (_collectionStatus == CollectionStatusEnum.Collect && SettingHelper.EpsBatch)
                     {
                         int epId = 0;
                         string epsId = string.Empty;
@@ -325,11 +328,11 @@ namespace Bangumi.ViewModels
         /// </summary>
         private void SetCollectionIcon()
         {
-            if (CollectionStatusText == "收藏")
+            if (CollectionStatusText == CollectionStatusEnum.No.GetValue())
             {
                 CollectionStatusIcon = "\uE006";
             }
-            else if (CollectionStatusText == "抛弃")
+            else if (CollectionStatusText == CollectionStatusEnum.Dropped.GetValue())
             {
                 CollectionStatusIcon = "\uE007";
             }
@@ -406,10 +409,12 @@ namespace Bangumi.ViewModels
                                            subject.Collection.Dropped + "抛弃";
                     }
 
+                    // 条目类别
+                    SubjectType = (SubjectTypeEnum)subject.Type;
                     // 更多资料
                     Name = subject.Name;
                     MoreSummary = subject.Summary;
-                    MoreInfo = "作品分类：" + ((SubjectTypeEnum)subject.Type).GetDescCn();
+                    MoreInfo = "作品分类：" + SubjectType.GetDescCn();
                     MoreInfo += subject.AirDate == "0000-00-00" ? "" : "\n放送开始：" + subject.AirDate;
                     MoreInfo += subject.AirWeekday == 0 ? "" : "\n放送星期：" + Converters.GetWeekday(subject.AirWeekday);
                     MoreInfo += subject.Eps == null ? "" : "\n话数：" + subject.Eps.Count;
@@ -503,7 +508,7 @@ namespace Bangumi.ViewModels
                         SubjectStatus2 collectionStatus = await BangumiFacade.GetCollectionStatusAsync(SubjectId);
                         if (collectionStatus?.Status != null)
                         {
-                            CollectionStatusText = collectionStatus.Status.Name;
+                            CollectionStatusText = collectionStatus.Status.Type;
                             myRate = collectionStatus.Rating;
                             myComment = collectionStatus.Comment;
                             myPrivacy = collectionStatus.Private == "1" ? true : false;

@@ -90,6 +90,7 @@ namespace Bangumi.Views
             {
                 if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
                 {
+                    SetMenuFlyoutByType();
                     CollectionMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
                 }
             }
@@ -102,8 +103,47 @@ namespace Bangumi.Views
             {
                 if (e.HoldingState == Windows.UI.Input.HoldingState.Started)
                 {
+                    SetMenuFlyoutByType();
                     CollectionMenuFlyout.ShowAt((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
                 }
+            }
+        }
+
+        // 根据作品类别调整菜单文字
+        private void SetMenuFlyoutByType()
+        {
+            switch (TypeCombobox.SelectedIndex)
+            {
+                case 0:
+                    WishMenuFlyoutItem.Text = "想看";
+                    CollectMenuFlyoutItem.Text = "看过";
+                    DoingMenuFlyoutItem.Text = "在看";
+                    break;
+                case 1:
+                    WishMenuFlyoutItem.Text = "想读";
+                    CollectMenuFlyoutItem.Text = "读过";
+                    DoingMenuFlyoutItem.Text = "在读";
+                    break;
+                case 2:
+                    WishMenuFlyoutItem.Text = "想听";
+                    CollectMenuFlyoutItem.Text = "听过";
+                    DoingMenuFlyoutItem.Text = "在听";
+                    break;
+                case 3:
+                    WishMenuFlyoutItem.Text = "想玩";
+                    CollectMenuFlyoutItem.Text = "玩过";
+                    DoingMenuFlyoutItem.Text = "在玩";
+                    break;
+                case 4:
+                    WishMenuFlyoutItem.Text = "想看";
+                    CollectMenuFlyoutItem.Text = "看过";
+                    DoingMenuFlyoutItem.Text = "在看";
+                    break;
+                default:
+                    WishMenuFlyoutItem.Text = "想看";
+                    CollectMenuFlyoutItem.Text = "看过";
+                    DoingMenuFlyoutItem.Text = "在看";
+                    break;
             }
         }
 

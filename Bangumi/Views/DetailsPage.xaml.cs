@@ -82,7 +82,7 @@ namespace Bangumi.Views
                 ViewModel.NameCn = p.NameCn;
                 ViewModel.AirDate = p.AirDate;
                 ViewModel.AirWeekday = p.AirWeekday;
-                ViewModel.CollectionStatusText = "在看";
+                ViewModel.CollectionStatusText = CollectionStatusEnum.Do.GetValue();
                 ViewModel.CollectionStatusIcon = "\uE00B";
                 if (p.Eps != null)
                 {
@@ -159,26 +159,26 @@ namespace Bangumi.Views
             if (OAuthHelper.IsLogin)
             {
                 // 标签文本描述
-                Binding LabelBinding = new Binding
+                Binding labelBinding = new Binding
                 {
                     Source = ViewModel,
                     Path = new PropertyPath("CollectionStatusText"),
                 };
-                MainPage.RootPage.CollectionAppBarButton.SetBinding(AppBarButton.LabelProperty, LabelBinding);
+                MainPage.RootPage.CollectionAppBarButton.SetBinding(AppBarButton.LabelProperty, labelBinding);
                 // 图标
-                Binding GlyphBinding = new Binding
+                Binding glyphBinding = new Binding
                 {
                     Source = ViewModel,
                     Path = new PropertyPath("CollectionStatusIcon"),
                 };
-                MainPage.RootPage.CollectionAppBarButtonFontIcon.SetBinding(FontIcon.GlyphProperty, GlyphBinding);
+                MainPage.RootPage.CollectionAppBarButtonFontIcon.SetBinding(FontIcon.GlyphProperty, glyphBinding);
                 // 是否启用
-                Binding IsEnabledBinding = new Binding
+                Binding isEnabledBinding = new Binding
                 {
                     Source = ViewModel,
                     Path = new PropertyPath("IsStatusLoaded"),
                 };
-                MainPage.RootPage.CollectionAppBarButton.SetBinding(AppBarButton.IsEnabledProperty, IsEnabledBinding);
+                MainPage.RootPage.CollectionAppBarButton.SetBinding(AppBarButton.IsEnabledProperty, isEnabledBinding);
                 MainPage.RootPage.CollectionAppBarButton.Click += CollectionAppBarButton_Click;
                 MainPage.RootPage.CollectionAppBarButton.Visibility = Visibility.Visible;
             }
