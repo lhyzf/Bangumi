@@ -1,7 +1,5 @@
 ﻿using Bangumi.Api.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Bangumi.Api.Utils
 {
@@ -35,7 +33,7 @@ namespace Bangumi.Api.Utils
         /// <summary>
         /// 将Images中的图片链接替换为https
         /// </summary>
-        /// <param name="http"></param>
+        /// <param name="image"></param>
         /// <returns></returns>
         public static void ConvertImageHttpToHttps(this Images image)
         {

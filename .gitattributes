@@ -63,4 +63,4 @@
 #*.RTF   diff=astextplain
 
 #Filter
-Constants.cs filter=gitignore
+MainPage.xaml.cs filter=gitignore

@@ -20,4 +20,4 @@
 
 - Visual Studio Community 2019
 
-    说明：编译之前，请至 [Bangumi 开发者平台](https://bgm.tv/dev/app) 创建应用，将申请到的 App ID 等填入 Bangumi.Api/Constants.cs 中。
+    说明：编译之前，请至 [Bangumi 开发者平台](https://bgm.tv/dev/app) 创建应用，将申请到的 App ID 等填入 Bangumi\MainPage.xaml.cs 对应的位置中。

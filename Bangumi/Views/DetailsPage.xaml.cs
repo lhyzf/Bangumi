@@ -165,6 +165,7 @@ namespace Bangumi.Views
                     Path = new PropertyPath("CollectionStatusText"),
                 };
                 MainPage.RootPage.CollectionAppBarButton.SetBinding(AppBarButton.LabelProperty, labelBinding);
+                MainPage.RootPage.CollectionAppBarButton.SetBinding(ToolTipService.ToolTipProperty, labelBinding);
                 // 图标
                 Binding glyphBinding = new Binding
                 {

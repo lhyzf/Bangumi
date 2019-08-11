@@ -1,4 +1,5 @@
-﻿using Bangumi.Api.Models;
+﻿using Bangumi.Api;
+using Bangumi.Api.Models;
 using Bangumi.Api.Services;
 using Bangumi.Views;
 using Newtonsoft.Json;
@@ -14,9 +15,6 @@ namespace Bangumi.Helper
 {
     internal static class OAuthHelper
     {
-        private const string OAuthBaseUrl = "https://bgm.tv/oauth";
-        private const string RedirectUrl = Constants.RedirectUrl;
-        private const string ClientId = Constants.ClientId;
         public static AccessToken MyToken;
         public static bool IsLogin = false;
 
@@ -28,18 +26,18 @@ namespace Bangumi.Helper
         {
             try
             {
-                string URL = $"{OAuthBaseUrl}/authorize?client_id=" + ClientId + "&response_type=code";
+                string URL = $"{BangumiApiHelper.OAuthBaseUrl}/authorize?client_id={BangumiApiHelper.ClientId}&response_type=code";
 
                 Uri StartUri = new Uri(URL);
                 // When using the desktop flow, the success code is displayed in the html title of this end uri
-                Uri EndUri = new Uri($"{OAuthBaseUrl}/{RedirectUrl}");
+                Uri EndUri = new Uri($"{BangumiApiHelper.OAuthBaseUrl}/{BangumiApiHelper.RedirectUrl}");
 
                 //rootPage.NotifyUser("Navigating to: " + GoogleURL, NotifyType.StatusMessage);
 
                 WebAuthenticationResult WebAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
                 if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
                 {
-                    await GetAccessToken(WebAuthenticationResult.ResponseData.ToString().Replace($"{OAuthBaseUrl}/{RedirectUrl}?code=", ""));
+                    await GetAccessToken(WebAuthenticationResult.ResponseData.ToString().Replace($"{BangumiApiHelper.OAuthBaseUrl}/{BangumiApiHelper.RedirectUrl}?code=", ""));
                 }
                 else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
                 {

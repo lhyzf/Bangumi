@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Bangumi.Data
+namespace Bangumi.Data.Models
 {
 
     public class Item

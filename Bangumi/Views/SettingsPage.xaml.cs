@@ -162,7 +162,7 @@ namespace Bangumi.Views
                 {
                     SettingHelper.UseBangumiData = true;
                     // 获取数据版本
-                    await BangumiDataHelper.InitBangumiDataAsync(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
+                    await BangumiDataHelper.InitAsync(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
                     BangumiDataTextBlock.Text = "数据版本：" +
                         (string.IsNullOrEmpty(BangumiDataHelper.Version) ?
                         "无数据" :

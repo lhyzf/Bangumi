@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace Bangumi.Api.Services
 {
-    public static class BangumiHttpWrapper
+    public class BangumiHttpWrapper
     {
-        private const string BaseUrl = "https://api.bgm.tv";
-        private const string OAuthBaseUrl = "https://bgm.tv/oauth";
-        private const string ClientId = Constants.ClientId;
-        private const string ClientSecret = Constants.ClientSecret;
-        private const string RedirectUrl = Constants.RedirectUrl;
-        private const string NoImageUri = Constants.NoImageUri;
+        public static string BaseUrl { get; set; }
+        public static string OAuthBaseUrl { get; set; }
+        public static string ClientId { get; set; }
+        public static string ClientSecret { get; set; }
+        public static string RedirectUrl { get; set; }
+        public static string NoImageUri { get; set; }
 
         /// <summary>
         /// 获取指定类别收藏信息。
