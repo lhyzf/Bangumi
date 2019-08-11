@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Html.Parser;
+using Bangumi.Data.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -24,7 +25,7 @@ namespace Bangumi.Data
         /// 读取文件，将数据加载到内存
         /// </summary>
         /// <param name="datafolderpath">文件夹路径</param>
-        public static async Task InitBangumiDataAsync(string datafolderpath)
+        public static async Task InitAsync(string datafolderpath)
         {
             folderPath = datafolderpath;
             if (!Directory.Exists(folderPath))

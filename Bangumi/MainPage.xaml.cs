@@ -1,4 +1,5 @@
-﻿using Bangumi.Data;
+﻿using Bangumi.Api;
+using Bangumi.Data;
 using Bangumi.Helper;
 using Bangumi.Views;
 using System;
@@ -48,9 +49,20 @@ namespace Bangumi
 
             CostomTitleBar();
 
+            // 初始化 Api 对象
+            BangumiApiHelper.Init(ApplicationData.Current.LocalCacheFolder.Path,
+                                  "https://api.bgm.tv",
+                                  "https://bgm.tv/oauth",
+                                   * 将自己申请的应用相关信息填入
+                                  "", // ClientId
+                                  "", // ClientSecret
+                                  "", // RedirectUrl
+                                  "ms-appx:///Assets/resource/err_404.png");
+
             if (SettingHelper.UseBangumiData == true)
             {
-                _ = BangumiDataHelper.InitBangumiDataAsync(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
+                // 初始化 BangumiData 对象
+                _ = BangumiDataHelper.InitAsync(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
                 BangumiDataHelper.UseBiliApp = SettingHelper.UseBiliApp;
             }
         }

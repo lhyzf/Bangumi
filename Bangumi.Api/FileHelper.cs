@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace Bangumi.Data
+namespace Bangumi.Api
 {
-    internal static class FileHelper
+    public static class FileHelper
     {
         /// <summary>
         /// 异步读文件
