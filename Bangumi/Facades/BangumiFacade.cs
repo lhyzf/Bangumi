@@ -1,7 +1,6 @@
 ﻿using Bangumi.Api.Models;
 using Bangumi.Api.Utils;
 using Bangumi.Api.Services;
-using Bangumi.Helper;
 using Bangumi.ViewModels;
 using Newtonsoft.Json;
 using System;
@@ -10,6 +9,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Bangumi.Api;
+using Bangumi.Helper;
 
 namespace Bangumi.Facades
 {
@@ -27,7 +28,7 @@ namespace Bangumi.Facades
                 //从文件反序列化
                 if (watchingListCollection.Count == 0)
                 {
-                    var preWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await FileHelper.ReadFromCacheFileAsync(OAuthHelper.CacheFile.Progress.GetFilePath()));
+                    var preWatchings = JsonConvert.DeserializeObject<List<WatchingStatus>>(await Helper.FileHelper.ReadFromCacheFileAsync(OAuthHelper.CacheFile.Progress.GetFilePath()));
                     if (preWatchings != null)
                     {
                         foreach (var sub in preWatchings)
@@ -39,7 +40,7 @@ namespace Bangumi.Facades
                     }
                 }
 
-                var watchingList = await BangumiHttpWrapper.GetWatchingListAsync(OAuthHelper.MyToken.UserId);
+                var watchingList = await BangumiHttpWrapper.GetWatchingListAsync(BangumiApiHelper.MyToken.UserId);
 
                 var deletedItems = new List<WatchingStatus>(); //标记要删除的条目
                 foreach (var sub in watchingListCollection)
@@ -176,7 +177,7 @@ namespace Bangumi.Facades
             try
             {
                 //从文件反序列化
-                var preCollection = JsonConvert.DeserializeObject<List<Collection>>(await FileHelper.ReadFromCacheFileAsync(subjectType.GetFilePath()));
+                var preCollection = JsonConvert.DeserializeObject<List<Collection>>(await Helper.FileHelper.ReadFromCacheFileAsync(subjectType.GetFilePath()));
                 subjectCollection.Clear();
                 if (preCollection != null)
                 {
@@ -186,7 +187,7 @@ namespace Bangumi.Facades
                     }
                 }
 
-                var subjectCollections = await BangumiHttpWrapper.GetSubjectCollectionAsync(OAuthHelper.MyToken.UserId, subjectType);
+                var subjectCollections = await BangumiHttpWrapper.GetSubjectCollectionAsync(BangumiApiHelper.MyToken.UserId, subjectType);
 
                 //清空原数据
                 subjectCollection.Clear();
@@ -196,7 +197,7 @@ namespace Bangumi.Facades
                 }
 
                 //将对象序列化并存储到文件
-                await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(subjectCollection), subjectType.GetFilePath());
+                await Helper.FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(subjectCollection), subjectType.GetFilePath());
             }
             catch (Exception e)
             {
@@ -216,7 +217,7 @@ namespace Bangumi.Facades
             try
             {
                 //从文件反序列化
-                var preCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await FileHelper.ReadFromCacheFileAsync(OAuthHelper.CacheFile.Calendar.GetFilePath()));
+                var preCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await Helper.FileHelper.ReadFromCacheFileAsync(OAuthHelper.CacheFile.Calendar.GetFilePath()));
                 bangumiCollection.Clear();
                 int day = GetDayOfWeek();
                 if (preCalendar != null)
@@ -256,7 +257,7 @@ namespace Bangumi.Facades
                 }
 
                 //将对象序列化并存储到文件
-                await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(bangumiCollection.OrderBy(c => c.Weekday.Id)), OAuthHelper.CacheFile.Calendar.GetFilePath());
+                await Helper.FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(bangumiCollection.OrderBy(c => c.Weekday.Id)), OAuthHelper.CacheFile.Calendar.GetFilePath());
             }
             catch (Exception e)
             {
@@ -295,7 +296,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.GetCollectionStatusAsync(OAuthHelper.MyToken.Token, subjectId);
+                return await BangumiHttpWrapper.GetCollectionStatusAsync(BangumiApiHelper.MyToken.Token, subjectId);
             }
             catch (Exception e)
             {
@@ -314,7 +315,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.GetProgressesAsync(OAuthHelper.MyToken.UserId, OAuthHelper.MyToken.Token, subjectId);
+                return await BangumiHttpWrapper.GetProgressesAsync(BangumiApiHelper.MyToken.UserId, BangumiApiHelper.MyToken.Token, subjectId);
             }
             catch (Exception e)
             {
@@ -359,7 +360,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                if (await BangumiHttpWrapper.UpdateProgressAsync(OAuthHelper.MyToken.Token, ep, status))
+                if (await BangumiHttpWrapper.UpdateProgressAsync(BangumiApiHelper.MyToken.Token, ep, status))
                 {
                     MainPage.RootPage.ToastInAppNotification.Show($"标记章节{ep}{status.GetValue()}成功", 1500);
                     return true;
@@ -389,7 +390,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                if (await BangumiHttpWrapper.UpdateProgressBatchAsync(OAuthHelper.MyToken.Token, ep, status, epsId))
+                if (await BangumiHttpWrapper.UpdateProgressBatchAsync(BangumiApiHelper.MyToken.Token, ep, status, epsId))
                 {
                     MainPage.RootPage.ToastInAppNotification.Show($"批量标记章节{epsId}{status.GetValue()}状态成功", 1500);
                     return true;
@@ -421,7 +422,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                if (await BangumiHttpWrapper.UpdateCollectionStatusAsync(OAuthHelper.MyToken.Token,
+                if (await BangumiHttpWrapper.UpdateCollectionStatusAsync(BangumiApiHelper.MyToken.Token,
                     subjectId, collectionStatus, comment, rating, privace))
                 {
                     MainPage.RootPage.ToastInAppNotification.Show($"更新条目{subjectId}状态成功", 1500);

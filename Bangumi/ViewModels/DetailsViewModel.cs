@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
+using Bangumi.Api;
 
 namespace Bangumi.ViewModels
 {
@@ -200,7 +201,7 @@ namespace Bangumi.ViewModels
         /// </summary>
         public async void EditCollectionStatus()
         {
-            if (!OAuthHelper.IsLogin)
+            if (!BangumiApiHelper.IsLogin)
                 return;
             CollectionEditContentDialog collectionEditContentDialog = new CollectionEditContentDialog()
             {
@@ -484,7 +485,7 @@ namespace Bangumi.ViewModels
                     IsDetailLoading = false;
 
                     // 确认用户登录状态
-                    if (OAuthHelper.IsLogin)
+                    if (BangumiApiHelper.IsLogin)
                     {
                         // 显示用户章节状态
                         Progress progress = await BangumiFacade.GetProgressesAsync(SubjectId);

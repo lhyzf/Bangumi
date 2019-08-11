@@ -22,6 +22,7 @@ namespace Bangumi.Api.Services
         /// <summary>
         /// 获取指定类别收藏信息。
         /// </summary>
+        /// <param name="userIdString"></param>
         /// <param name="subjectType"></param>
         /// <returns></returns>
         public static async Task<Collection2> GetSubjectCollectionAsync(string userIdString, SubjectTypeEnum subjectType)
@@ -70,6 +71,7 @@ namespace Bangumi.Api.Services
         /// <summary>
         /// 获取指定条目收藏信息。
         /// </summary>
+        /// <param name="accessTokenString"></param>
         /// <param name="subjectId"></param>
         /// <returns></returns>
         public static async Task<SubjectStatus2> GetCollectionStatusAsync(string accessTokenString, string subjectId)
@@ -91,6 +93,8 @@ namespace Bangumi.Api.Services
         /// <summary>
         /// 获取用户指定条目收视进度。
         /// </summary>
+        /// <param name="userIdString"></param>
+        /// <param name="accessTokenString"></param>
         /// <param name="subjectId"></param>
         /// <returns></returns>
         public static async Task<Progress> GetProgressesAsync(string userIdString, string accessTokenString, string subjectId)
@@ -111,6 +115,7 @@ namespace Bangumi.Api.Services
         /// <summary>
         /// 获取用户收视列表。
         /// </summary>
+        /// <param name="userIdString"></param>
         /// <returns></returns>
         public static async Task<List<Watching>> GetWatchingListAsync(string userIdString)
         {
@@ -156,6 +161,7 @@ namespace Bangumi.Api.Services
         /// <summary>
         /// 更新指定条目收藏状态。
         /// </summary>
+        /// <param name="accessTokenString"></param>
         /// <param name="subjectId"></param>
         /// <param name="collectionStatusEnum"></param>
         /// <param name="comment"></param>
@@ -194,6 +200,7 @@ namespace Bangumi.Api.Services
         /// <summary>
         /// 更新收视进度。
         /// </summary>
+        /// <param name="accessTokenString"></param>
         /// <param name="ep"></param>
         /// <param name="status"></param>
         /// <returns></returns>
@@ -220,6 +227,7 @@ namespace Bangumi.Api.Services
         /// 批量更新收视进度。
         /// 使用 HttpWebRequest 提交表单进行更新，更新收藏状态使用相同方法。
         /// </summary>
+        /// <param name="accessTokenString"></param>
         /// <param name="ep"></param>
         /// <param name="status"></param>
         /// <param name="epsId"></param>
@@ -244,7 +252,6 @@ namespace Bangumi.Api.Services
                 throw e;
             }
         }
-
 
         /// <summary>
         /// 获取指定条目所有章节。
@@ -439,8 +446,8 @@ namespace Bangumi.Api.Services
         /// 使用 code 换取 Access Token。
         /// </summary>
         /// <param name="code"></param>
-        /// <returns></returns>
-        public static async Task<AccessToken> GetAccessToken(string code)
+        /// <returns>获取失败返回 null。</returns>
+        public static async Task<AccessToken> GetTokenAsync(string code)
         {
             string url = $"{OAuthBaseUrl}/access_token";
             string postData = "grant_type=authorization_code";
@@ -464,8 +471,9 @@ namespace Bangumi.Api.Services
         /// <summary>
         /// 刷新授权有效期。
         /// </summary>
-        /// <returns></returns>
-        public static async Task<AccessToken> RefreshAccessToken(AccessToken token)
+        /// <param name="token"></param>
+        /// <returns>获取失败返回 null。</returns>
+        public static async Task<AccessToken> RefreshTokenAsync(AccessToken token)
         {
             string url = $"{OAuthBaseUrl}/access_token";
             string postData = "grant_type=refresh_token";
@@ -489,7 +497,9 @@ namespace Bangumi.Api.Services
         /// <summary>
         /// 查询授权信息，并在满足条件时刷新Token。
         /// </summary>
-        public static async Task<AccessToken> CheckAccessToken(AccessToken token)
+        /// <param name="token"></param>
+        /// <returns>获取失败返回 null，可能会抛出异常。</returns>
+        public static async Task<AccessToken> CheckTokenAsync(AccessToken token)
         {
             string url = string.Format("{0}/token_status?access_token={1}", OAuthBaseUrl, token.Token);
 
@@ -498,14 +508,14 @@ namespace Bangumi.Api.Services
                 string response = await HttpHelper.PostAsync(url);
                 if (string.IsNullOrEmpty(response))
                 {
-                    return await RefreshAccessToken(token);
+                    return await RefreshTokenAsync(token);
                 }
                 else
                 {
                     var result = JsonConvert.DeserializeObject<AccessToken>(response);
                     // 获取两天后的时间戳，离过期不足两天时或过期后更新 access_token
                     if (result.Expires < DateTime.Now.AddDays(2).ConvertDateTimeToJsTick())
-                        return await RefreshAccessToken(token);
+                        return await RefreshTokenAsync(token);
                 }
                 return token;
             }

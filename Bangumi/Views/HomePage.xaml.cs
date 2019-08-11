@@ -1,4 +1,5 @@
-﻿using Bangumi.Helper;
+﻿using Bangumi.Api;
+using Bangumi.Helper;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -101,7 +102,7 @@ namespace Bangumi.Views
             MainPage.RootPage.MyCommandBar.Visibility = Visibility.Visible;
             MainPage.RootPage.RefreshAppBarButton.IsEnabled = true;
 
-            if (OAuthHelper.IsLogin)
+            if (BangumiApiHelper.IsLogin)
             {
                 if (!HomePagePivot.Items.Cast<PivotItem>().Any(p => p.Name == "CollectionItem"))
                 {

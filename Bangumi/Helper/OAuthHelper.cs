@@ -15,8 +15,8 @@ namespace Bangumi.Helper
 {
     internal static class OAuthHelper
     {
-        public static AccessToken MyToken { get; private set; }
-        public static bool IsLogin = false;
+        //public static AccessToken MyToken { get; private set; }
+        //public static bool IsLogin = false;
 
         /// <summary>
         /// 用户登录。
@@ -37,7 +37,7 @@ namespace Bangumi.Helper
                 WebAuthenticationResult WebAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
                 if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
                 {
-                    await GetAccessToken(WebAuthenticationResult.ResponseData.ToString().Replace($"{BangumiApiHelper.OAuthBaseUrl}/{BangumiApiHelper.RedirectUrl}?code=", ""));
+                    await BangumiApiHelper.GetTokenAsync(WebAuthenticationResult.ResponseData.ToString().Replace($"{BangumiApiHelper.OAuthBaseUrl}/{BangumiApiHelper.RedirectUrl}?code=", ""));
                 }
                 else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
                 {
@@ -58,6 +58,8 @@ namespace Bangumi.Helper
             }
         }
 
+        /*
+
         /// <summary>
         /// 使用 code 换取 Access Token。
         /// </summary>
@@ -65,30 +67,23 @@ namespace Bangumi.Helper
         /// <returns></returns>
         private static async Task GetAccessToken(string code)
         {
-            try
+            AccessToken token;
+            // 重试最多三次
+            for (int i = 0; i < 3; i++)
             {
-                AccessToken token;
-                // 重试最多三次
-                for (int i = 0; i < 3; i++)
+                Debug.WriteLine($"第{i + 1}次尝试获取Token。");
+                token = await BangumiHttpWrapper.GetTokenAsync(code);
+                if (token != null)
                 {
-                    Debug.WriteLine($"第{i + 1}次尝试获取Token。");
-                    token = await BangumiHttpWrapper.GetAccessToken(code);
-                    if (token != null)
-                    {
-                        await WriteTokensAsync(token);
-                        break;
-                    }
-                    else
-                    {
-                        await Task.Delay(1000);
-                    }
+                    await WriteTokensAsync(token);
+                    break;
+                }
+                else
+                {
+                    await Task.Delay(1000);
                 }
             }
-            catch (Exception e)
-            {
-                Debug.WriteLine("获取AccessToken失败。");
-                throw e;
-            }
+
         }
 
         /// <summary>
@@ -103,7 +98,7 @@ namespace Bangumi.Helper
                 for (int i = 0; i < 3; i++)
                 {
                     Debug.WriteLine($"第{i + 1}次尝试刷新Token。");
-                    token = await BangumiHttpWrapper.CheckAccessToken(MyToken);
+                    token = await BangumiHttpWrapper.CheckTokenAsync(MyToken);
                     if (token != null)
                     {
                         // 将信息写入本地文件
@@ -184,6 +179,8 @@ namespace Bangumi.Helper
             FileHelper.DeleteCacheFile(CacheFile.Real.GetFilePath());
             MyToken = null;
         }
+
+        */
 
         #region JsonCacheFile
         public enum CacheFile
