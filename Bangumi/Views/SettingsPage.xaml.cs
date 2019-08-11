@@ -153,7 +153,7 @@ namespace Bangumi.Views
             }
         }
 
-        private void UseBangumiDataToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        private async void UseBangumiDataToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
             ToggleSwitch toggleSwitch = sender as ToggleSwitch;
             if (toggleSwitch != null)
@@ -162,7 +162,7 @@ namespace Bangumi.Views
                 {
                     SettingHelper.UseBangumiData = true;
                     // 获取数据版本
-                    BangumiDataHelper.InitBangumiData(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
+                    await BangumiDataHelper.InitBangumiDataAsync(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
                     BangumiDataTextBlock.Text = "数据版本：" +
                         (string.IsNullOrEmpty(BangumiDataHelper.Version) ?
                         "无数据" :

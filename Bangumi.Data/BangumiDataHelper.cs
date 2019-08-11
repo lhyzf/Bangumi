@@ -1,12 +1,11 @@
-﻿using System;
+﻿using AngleSharp.Html.Parser;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using AngleSharp.Html.Parser;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Bangumi.Data
 {
@@ -25,7 +24,7 @@ namespace Bangumi.Data
         /// 读取文件，将数据加载到内存
         /// </summary>
         /// <param name="datafolderpath">文件夹路径</param>
-        public static void InitBangumiData(string datafolderpath)
+        public static async Task InitBangumiDataAsync(string datafolderpath)
         {
             folderPath = datafolderpath;
             if (!Directory.Exists(folderPath))
@@ -34,14 +33,14 @@ namespace Bangumi.Data
                 File.Exists(folderPath + "\\data.json") &&
                 File.Exists(folderPath + "\\version"))
             {
-                bangumiData = JsonConvert.DeserializeObject<BangumiData>(File.ReadAllText(folderPath + "\\data.json"));
-                Version = File.ReadAllText(folderPath + "\\version");
+                bangumiData = JsonConvert.DeserializeObject<BangumiData>(await FileHelper.ReadTextAsync(folderPath + "\\data.json"));
+                Version = await FileHelper.ReadTextAsync(folderPath + "\\version");
             }
             if (seasonIdMap == null)
             {
                 if (File.Exists(folderPath + "\\map.json"))
                 {
-                    seasonIdMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(folderPath + "\\map.json"));
+                    seasonIdMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(await FileHelper.ReadTextAsync(folderPath + "\\map.json"));
                 }
                 else
                 {
@@ -51,7 +50,7 @@ namespace Bangumi.Data
         }
 
         /// <summary>
-        /// 获取最新版本号，并暂存
+        /// 解析网页获取最新版本号，并暂存
         /// </summary>
         /// <returns>返回最新版本号</returns>
         public static async Task<string> GetLatestVersion()
@@ -99,9 +98,9 @@ namespace Bangumi.Data
                 try
                 {
                     bangumiData = JsonConvert.DeserializeObject<BangumiData>(data);
-                    File.WriteAllText(folderPath + "\\data.json", data);
+                    await FileHelper.WriteTextAsync(folderPath + "\\data.json", data);
                     Version = latestVersion;
-                    File.WriteAllText(folderPath + "\\version", Version);
+                    await FileHelper.WriteTextAsync(folderPath + "\\version", Version);
                     return true;
                 }
                 catch (Exception e)
@@ -155,7 +154,7 @@ namespace Bangumi.Data
                                 JObject jObject = JObject.Parse(result);
                                 seasonId = jObject.SelectToken("result.param.season_id").ToString();
                                 seasonIdMap.Add(biliSite.Id, seasonId);
-                                File.WriteAllText(folderPath + "\\map.json", JsonConvert.SerializeObject(seasonIdMap));
+                                _ = FileHelper.WriteTextAsync(folderPath + "\\map.json", JsonConvert.SerializeObject(seasonIdMap));
                             }
                             catch (Exception e)
                             {
