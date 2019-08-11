@@ -1,4 +1,5 @@
-﻿using Bangumi.Api.Models;
+﻿using Bangumi.Api;
+using Bangumi.Api.Models;
 using Bangumi.Common;
 using Bangumi.Helper;
 using Bangumi.ViewModels;
@@ -86,7 +87,7 @@ namespace Bangumi.Views
         // 鼠标右键弹出菜单
         private void ItemRelativePanel_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            if (OAuthHelper.IsLogin && !ViewModel.IsLoading)
+            if (BangumiApiHelper.IsLogin && !ViewModel.IsLoading)
             {
                 if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
                 {
@@ -99,7 +100,7 @@ namespace Bangumi.Views
         // 触摸长按弹出菜单
         private void ItemRelativePanel_Holding(object sender, HoldingRoutedEventArgs e)
         {
-            if (OAuthHelper.IsLogin && !ViewModel.IsLoading)
+            if (BangumiApiHelper.IsLogin && !ViewModel.IsLoading)
             {
                 if (e.HoldingState == Windows.UI.Input.HoldingState.Started)
                 {

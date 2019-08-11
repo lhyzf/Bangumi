@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
+using Bangumi.Api;
 
 namespace Bangumi.ViewModels
 {
@@ -59,7 +60,7 @@ namespace Bangumi.ViewModels
             try
             {
                 var subjectType = GetSubjectType();
-                if (OAuthHelper.IsLogin)
+                if (BangumiApiHelper.IsLogin)
                 {
                     IsLoading = true;
                     await BangumiFacade.PopulateSubjectCollectionAsync(SubjectCollection, subjectType);

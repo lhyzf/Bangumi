@@ -64,3 +64,4 @@
 
 #Filter
 MainPage.xaml.cs filter=gitignore
+EncryptionHelper.cs filter=gitignore

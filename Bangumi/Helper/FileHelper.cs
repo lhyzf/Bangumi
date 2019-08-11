@@ -11,6 +11,7 @@ namespace Bangumi.Helper
     {
         public static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         public static StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
+
         /// <summary>
         /// 写入文件。
         /// </summary>

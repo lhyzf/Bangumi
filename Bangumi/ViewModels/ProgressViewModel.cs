@@ -14,6 +14,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
+using Bangumi.Api;
 
 namespace Bangumi.ViewModels
 {
@@ -67,7 +68,7 @@ namespace Bangumi.ViewModels
         {
             try
             {
-                if (OAuthHelper.IsLogin)
+                if (BangumiApiHelper.IsLogin)
                 {
                     IsLoading = true;
                     HomePage.homePage.isLoading = IsLoading;
@@ -75,7 +76,7 @@ namespace Bangumi.ViewModels
                     await BangumiFacade.PopulateWatchingListAsync(WatchingCollection);
                     CollectionSorting();
                     //将对象序列化并存储到文件
-                    await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), OAuthHelper.CacheFile.Progress.GetFilePath());
+                    await Helper.FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), OAuthHelper.CacheFile.Progress.GetFilePath());
                 }
                 else
                 {
@@ -138,7 +139,7 @@ namespace Bangumi.ViewModels
                     item.LastTouch = DateTime.Now.ConvertDateTimeToJsTick();
 
                     //将对象序列化并存储到文件
-                    await FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), OAuthHelper.CacheFile.Progress.GetFilePath());
+                    await Helper.FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(WatchingCollection), OAuthHelper.CacheFile.Progress.GetFilePath());
 
                 }
                 item.IsUpdating = false;

@@ -1,4 +1,5 @@
-﻿using Bangumi.Helper;
+﻿using Bangumi.Api;
+using Bangumi.Helper;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
@@ -57,8 +58,14 @@ namespace Bangumi.Views
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 10);
             await OAuthHelper.Authorize();
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 10);
-            if (OAuthHelper.MyToken != null)
+            if (BangumiApiHelper.IsLogin)
+            {
                 MainPage.RootFrame.Navigate(typeof(HomePage));
+            }
+            else
+            {
+                MainPage.RootPage.ErrorInAppNotification.Show("登录失败，请重试！", 3000);
+            }
         }
 
         private void EnterButton_Click(object sender, RoutedEventArgs e)
