@@ -15,7 +15,7 @@ namespace Bangumi.Helper
 {
     internal static class OAuthHelper
     {
-        public static AccessToken MyToken;
+        public static AccessToken MyToken { get; private set; }
         public static bool IsLogin = false;
 
         /// <summary>
@@ -182,6 +182,7 @@ namespace Bangumi.Helper
             FileHelper.DeleteCacheFile(CacheFile.Game.GetFilePath());
             FileHelper.DeleteCacheFile(CacheFile.Music.GetFilePath());
             FileHelper.DeleteCacheFile(CacheFile.Real.GetFilePath());
+            MyToken = null;
         }
 
         #region JsonCacheFile
