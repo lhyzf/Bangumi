@@ -50,7 +50,7 @@ namespace Bangumi
 
             if (SettingHelper.UseBangumiData == true)
             {
-                BangumiDataHelper.InitBangumiData(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
+                _ = BangumiDataHelper.InitBangumiDataAsync(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
                 BangumiDataHelper.UseBiliApp = SettingHelper.UseBiliApp;
             }
         }
