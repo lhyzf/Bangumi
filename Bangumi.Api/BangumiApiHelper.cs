@@ -130,8 +130,8 @@ namespace Bangumi.Api
         public static void DeleteToken()
         {
             // 删除用户认证文件
-            FileHelper.DeleteFile(localFolderPath + "\\token.data");
             MyToken = null;
+            FileHelper.DeleteFile(localFolderPath + "\\token.data");
             // 删除用户缓存文件
             //FileHelper.DeleteCacheFile(CacheFile.Progress.GetFilePath());
             //FileHelper.DeleteCacheFile(CacheFile.Anime.GetFilePath());
@@ -151,37 +151,18 @@ namespace Bangumi.Api
             try
             {
                 AccessToken token;
-                // 重试最多三次
-                for (int i = 0; i < 3; i++)
+                Debug.WriteLine("尝试刷新Token。");
+                token = await BangumiHttpWrapper.CheckTokenAsync(MyToken);
+                if (token != null)
                 {
-                    Debug.WriteLine($"第{i + 1}次尝试刷新Token。");
-                    token = await BangumiHttpWrapper.CheckTokenAsync(MyToken);
-                    if (token != null)
-                    {
-                        // 将信息写入本地文件
-                        if (!token.Equals(MyToken))
-                            await WriteTokenAsync(token);
-                        break;
-                    }
-                    else
-                    {
-                        await Task.Delay(1000);
-                    }
-                }
-            }
-            catch (WebException ex)
-            {
-                HttpWebResponse response = (HttpWebResponse)ex.Response;
-                Debug.WriteLine("response.StatusCode:" + response?.StatusCode);
-                if (response?.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    // 授权过期，返回登录界面
-                    throw ex;
-                    //MainPage.RootFrame.Navigate(typeof(LoginPage), "ms-appx:///Assets/resource/err_401.png");
+                    // 将信息写入本地文件
+                    if (!token.Equals(MyToken))
+                        await WriteTokenAsync(token);
                 }
             }
             catch (Exception e)
             {
+                MyToken = null;
                 Debug.WriteLine(e.Message);
             }
         }

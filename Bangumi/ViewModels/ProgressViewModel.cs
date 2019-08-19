@@ -1,20 +1,19 @@
-﻿using Bangumi.Common;
+﻿using Bangumi.Api;
+using Bangumi.Api.Models;
+using Bangumi.Api.Utils;
+using Bangumi.Common;
 using Bangumi.ContentDialogs;
 using Bangumi.Facades;
 using Bangumi.Helper;
-using Bangumi.Api.Utils;
-using Bangumi.Api.Models;
 using Bangumi.Views;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
-using Bangumi.Api;
 
 namespace Bangumi.ViewModels
 {
@@ -31,7 +30,11 @@ namespace Bangumi.ViewModels
             set => Set(ref _isLoading, value);
         }
 
-        // 更新收藏状态、评分、吐槽
+        /// <summary>
+        /// 更新收藏状态、评分、吐槽
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="currentStatus"></param>
         public async void EditCollectionStatus(WatchingStatus status, CollectionStatusEnum currentStatus = CollectionStatusEnum.Do)
         {
             CollectionEditContentDialog collectionEditContentDialog = new CollectionEditContentDialog()
@@ -85,10 +88,17 @@ namespace Bangumi.ViewModels
             }
             catch (Exception e)
             {
-                MainPage.RootPage.ErrorInAppNotification.Show("获取收视进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
-                //var msgDialog = new Windows.UI.Popups.MessageDialog("获取收视进度失败！\n" + e.Message) { Title = "错误！" };
-                //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                //await msgDialog.ShowAsync();
+                if (e.Message.Equals("401"))
+                {
+                    // 授权过期，返回登录界面
+                    MainPage.RootFrame.Navigate(typeof(LoginPage), "ms-appx:///Assets/resource/err_401.png");
+                }
+                else
+                {
+                    Debug.WriteLine("获取收视进度列表失败。");
+                    Debug.WriteLine(e.Message);
+                    MainPage.RootPage.ErrorInAppNotification.Show("获取收视进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
+                }
             }
             finally
             {
@@ -98,7 +108,10 @@ namespace Bangumi.ViewModels
             }
         }
 
-        // 更新下一章章节状态为已看
+        /// <summary>
+        /// 更新下一章章节状态为已看
+        /// </summary>
+        /// <param name="item"></param>
         public async void UpdateNextEpStatus(WatchingStatus item)
         {
             if (item != null && item.Eps != null && item.Eps.Count != 0)
@@ -146,7 +159,9 @@ namespace Bangumi.ViewModels
             }
         }
 
-        // 对条目进行排序
+        /// <summary>
+        /// 对条目进行排序
+        /// </summary>
         private void CollectionSorting()
         {
             var order = new List<WatchingStatus>();

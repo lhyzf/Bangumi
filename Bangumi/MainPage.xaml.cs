@@ -3,8 +3,6 @@ using Bangumi.Data;
 using Bangumi.Helper;
 using Bangumi.Views;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -18,8 +16,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
-using muxc = Microsoft.UI.Xaml.Controls;
 
 // https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x804 上介绍了“空白页”项模板
 
@@ -70,6 +66,7 @@ namespace Bangumi
 
         /// <summary>
         /// 根据用户登录状态改变用户图标。
+        /// 只检查 Token 是否存在。
         /// </summary>
         /// <returns></returns>
         private async Task UpdataUserStatusAsync()
@@ -86,7 +83,6 @@ namespace Bangumi
                 LoginButton.Label = "登录";
                 UserIcon.Glyph = "\uEE57";
                 RootFrame.Navigate(typeof(LoginPage));
-                MyCommandBar.Visibility = Visibility.Collapsed;
             }
         }
 
