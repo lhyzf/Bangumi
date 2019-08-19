@@ -160,8 +160,6 @@ namespace Bangumi.Facades
                 {
                     item.IsUpdating = false;
                 }
-                Debug.WriteLine("显示用户收视进度列表失败。");
-                Debug.WriteLine(e.Message);
                 throw e;
             }
         }

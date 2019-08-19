@@ -506,25 +506,18 @@ namespace Bangumi.Api.Services
             try
             {
                 string response = await HttpHelper.PostAsync(url);
-                if (string.IsNullOrEmpty(response))
-                {
+                var result = JsonConvert.DeserializeObject<AccessToken>(response);
+                // 获取4天后的时间戳，离过期不足4天时或过期后更新 access_token
+                if (result.Expires < DateTime.Now.AddDays(4).ConvertDateTimeToJsTick())
                     return await RefreshTokenAsync(token);
-                }
-                else
-                {
-                    var result = JsonConvert.DeserializeObject<AccessToken>(response);
-                    // 获取两天后的时间戳，离过期不足两天时或过期后更新 access_token
-                    if (result.Expires < DateTime.Now.AddDays(2).ConvertDateTimeToJsTick())
-                        return await RefreshTokenAsync(token);
-                }
                 return token;
-            }
-            catch (WebException ex)
-            {
-                throw ex;
             }
             catch (Exception e)
             {
+                if (e.Message.Equals("401"))
+                {
+                    return await RefreshTokenAsync(token);
+                }
                 Debug.WriteLine(e.Message);
                 throw e;
             }

@@ -36,6 +36,10 @@ namespace Bangumi.Api.Services
                 if (response != null)
                 {
                     Debug.WriteLine("response.StatusCode:" + response.StatusCode);
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        throw new Exception("401");
+                    }
                 }
                 throw ex;
             }
@@ -76,6 +80,10 @@ namespace Bangumi.Api.Services
                 if (response != null)
                 {
                     Debug.WriteLine("response.StatusCode:" + response.StatusCode);
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        throw new Exception("401");
+                    }
                 }
                 throw ex;
             }

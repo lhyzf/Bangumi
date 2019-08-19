@@ -30,6 +30,7 @@ namespace Bangumi.Views
             Window.Current.SetTitleBar(GridTitleBar);
             // 禁用标题栏的后退按钮
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            MainPage.RootPage.MyCommandBar.Visibility = Visibility.Collapsed;
         }
 
         /// <summary>
