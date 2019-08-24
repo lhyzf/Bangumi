@@ -79,6 +79,9 @@ namespace Bangumi.Api
             }
         }
 
+        #endregion
+
+
         /// <summary>
         /// 删除存在的文件
         /// </summary>
@@ -88,7 +91,6 @@ namespace Bangumi.Api
             if (File.Exists(filename))
                 File.Delete(filename);
         }
-        #endregion
 
     }
 }
