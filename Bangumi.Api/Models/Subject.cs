@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Bangumi.Api.Models
 {
@@ -79,19 +77,19 @@ namespace Bangumi.Api.Models
                    Rank == s.Rank &&
                    EpsCount == s.EpsCount &&
                    AirWeekday == s.AirWeekday &&
-                   (Url == null ? Url == s.Url : Url.Equals(s.Url)) &&
-                   (Name == null ? Name == s.Name : Name.Equals(s.Name)) &&
-                   (NameCn == null ? NameCn == s.NameCn : NameCn.Equals(s.NameCn)) &&
-                   (Summary == null ? Summary == s.Summary : Summary.Equals(s.Summary)) &&
-                   (AirDate == null ? AirDate == s.AirDate : AirDate.Equals(s.AirDate)) &&
-                   (Rating == null ? Rating == s.Rating : Rating.Equals(s.Rating)) &&
-                   (Images == null ? Images == s.Images : Images.Equals(s.Images)) &&
-                   (Collection == null ? Collection == s.Collection : Collection.Equals(s.Collection)) &&
-                   (Eps == null ? Eps == s.Eps : Eps.SequenceEqual(s.Eps)) &&
-                   (Characters == null ? Characters == s.Characters : Characters.SequenceEqual(s.Characters)) &&
-                   (Staff == null ? Staff == s.Staff : Staff.SequenceEqual(s.Staff)) &&
-                   (Topics == null ? Topics == s.Topics : Topics.SequenceEqual(s.Topics)) &&
-                   (Blogs == null ? Blogs == s.Blogs : Blogs.SequenceEqual(s.Blogs));
+                   Url.EqualsExT(s.Url) &&
+                   Name.EqualsExT(s.Name) &&
+                   NameCn.EqualsExT(s.NameCn) &&
+                   Summary.EqualsExT(s.Summary) &&
+                   AirDate.EqualsExT(s.AirDate) &&
+                   Rating.EqualsExT(s.Rating) &&
+                   Images.EqualsExT(s.Images) &&
+                   Collection.EqualsExT(s.Collection) &&
+                   Eps.SequenceEqualExT(s.Eps) &&
+                   Characters.SequenceEqualExT(s.Characters) &&
+                   Staff.SequenceEqualExT(s.Staff) &&
+                   Topics.SequenceEqualExT(s.Topics) &&
+                   Blogs.SequenceEqualExT(s.Blogs);
 
         }
 

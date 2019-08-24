@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 
 namespace Bangumi.Api.Models
 {
@@ -32,9 +30,9 @@ namespace Bangumi.Api.Models
 
             EpStatus e = (EpStatus)obj;
             return Id == e.Id &&
-                   (CssName == null ? CssName == e.CssName : CssName.Equals(e.CssName)) &&
-                   (UrlName == null ? UrlName == e.UrlName : UrlName.Equals(e.UrlName)) &&
-                   (CnName == null ? CnName == e.CnName : CnName.Equals(e.CnName));
+                   CssName.EqualsExT(e.CssName) &&
+                   UrlName.EqualsExT(e.UrlName) &&
+                   CnName.EqualsExT(e.CnName);
         }
 
         // override object.GetHashCode

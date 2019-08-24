@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 
 namespace Bangumi.Api.Models
 {
@@ -25,9 +23,9 @@ namespace Bangumi.Api.Models
             }
 
             Avatar a = (Avatar)obj;
-            return (Large == null ? Large == a.Large : Large.Equals(a.Large)) &&
-                   (Medium == null ? Medium == a.Medium : Medium.Equals(a.Medium)) &&
-                   (Small == null ? Small == a.Small : Small.Equals(a.Small));
+            return Large.EqualsExT(a.Large) &&
+                   Medium.EqualsExT(a.Medium) &&
+                   Small.EqualsExT(a.Small);
         }
 
         // override object.GetHashCode

@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Bangumi.Api.Models
 {
@@ -26,7 +24,7 @@ namespace Bangumi.Api.Models
             }
 
             Progress p = (Progress)obj;
-            return (Eps == null ? Eps == p.Eps : Eps.SequenceEqual(p.Eps));
+            return Eps.SequenceEqualExT(p.Eps);
         }
 
         // override object.GetHashCode

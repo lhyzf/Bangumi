@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Bangumi.Api.Models
 {
@@ -47,11 +45,11 @@ namespace Bangumi.Api.Models
             return Rating == s.Rating &&
                    EpStatus == s.EpStatus &&
                    LastTouch == s.LastTouch &&
-                   (Comment == null ? Comment == s.Comment : Comment.Equals(s.Comment)) &&
-                   (Private == null ? Private == s.Private : Private.Equals(s.Private)) &&
-                   (Status == null ? Status == s.Status : Status.Equals(s.Status)) &&
-                   (User == null ? User == s.User : User.Equals(s.User)) &&
-                   (Tags == null ? Tags == s.Tags : Tags.SequenceEqual(s.Tags));
+                   Comment.EqualsExT(s.Comment) &&
+                   Private.EqualsExT(s.Private) &&
+                   Status.EqualsExT(s.Status) &&
+                   User.EqualsExT(s.User) &&
+                   Tags.SequenceEqualExT(s.Tags);
         }
 
         // override object.GetHashCode

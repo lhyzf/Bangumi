@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 
 namespace Bangumi.Api.Models
 {
@@ -41,8 +39,8 @@ namespace Bangumi.Api.Models
                    EpStatus == w.EpStatus &&
                    VolStatus == w.VolStatus &&
                    LastTouch == w.LastTouch &&
-                   (Name == null ? Name == w.Name : Name.Equals(w.Name)) &&
-                   (Subject == null ? Subject == w.Subject : Subject.Equals(w.Subject));
+                   Name.EqualsExT(w.Name) &&
+                   Subject.EqualsExT(w.Subject);
         }
 
         // override object.GetHashCode

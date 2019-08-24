@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 
 namespace Bangumi.Api.Models
 {
@@ -23,7 +21,7 @@ namespace Bangumi.Api.Models
 
             Subject2 s = (Subject2)obj;
             return SubjectId == s.SubjectId &&
-                   (Subject == null ? Subject == s.Subject : Subject.Equals(s.Subject));
+                   Subject.EqualsExT(s.Subject);
         }
 
         // override object.GetHashCode

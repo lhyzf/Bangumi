@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Bangumi.Api.Models
 {
@@ -39,12 +37,12 @@ namespace Bangumi.Api.Models
 
             Staff s = (Staff)obj;
             return Id == s.Id &&
-                   (Url == null ? Url == s.Url : Url.Equals(s.Url)) &&
-                   (Name == null ? Name == s.Name : Name.Equals(s.Name)) &&
-                   (NameCn == null ? NameCn == s.NameCn : NameCn.Equals(s.NameCn)) &&
-                   (RoleName == null ? RoleName == s.RoleName : RoleName.Equals(s.RoleName)) &&
-                   (Images == null ? Images == s.Images : Images.Equals(s.Images)) &&
-                   (Jobs == null ? Jobs == s.Jobs : Jobs.SequenceEqual(s.Jobs));
+                   Url.EqualsExT(s.Url) &&
+                   Name.EqualsExT(s.Name) &&
+                   NameCn.EqualsExT(s.NameCn) &&
+                   RoleName.EqualsExT(s.RoleName) &&
+                   Images.EqualsExT(s.Images) &&
+                   Jobs.SequenceEqualExT(s.Jobs);
         }
 
         // override object.GetHashCode

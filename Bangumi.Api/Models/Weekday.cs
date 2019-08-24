@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 
 namespace Bangumi.Api.Models
 {
@@ -29,9 +27,9 @@ namespace Bangumi.Api.Models
 
             Weekday w = (Weekday)obj;
             return Id == w.Id &&
-                   (English == null ? English == w.English : English.Equals(w.English)) &&
-                   (Chinese == null ? Chinese == w.Chinese : Chinese.Equals(w.Chinese)) &&
-                   (Japanese == null ? Japanese == w.Japanese : Japanese.Equals(w.Japanese));
+                   English.EqualsExT(w.English) &&
+                   Chinese.EqualsExT(w.Chinese) &&
+                   Japanese.EqualsExT(w.Japanese);
         }
 
         // override object.GetHashCode

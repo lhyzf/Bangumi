@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 
 namespace Bangumi.Api.Models
 {
@@ -50,11 +48,11 @@ namespace Bangumi.Api.Models
                    Type == s.Type &&
                    EpsCount == s.EpsCount &&
                    AirWeekday == s.AirWeekday &&
-                   (Url == null ? Url == s.Url : Url.Equals(s.Url)) &&
-                   (Name == null ? Name == s.Name : Name.Equals(s.Name)) &&
-                   (NameCn == null ? NameCn == s.NameCn : NameCn.Equals(s.NameCn)) &&
-                   (AirDate == null ? AirDate == s.AirDate : AirDate.Equals(s.AirDate)) &&
-                   (Images == null ? Images == s.Images : Images.Equals(s.Images));
+                   Url.EqualsExT(s.Url) &&
+                   Name.EqualsExT(s.Name) &&
+                   NameCn.EqualsExT(s.NameCn) &&
+                   AirDate.EqualsExT(s.AirDate) &&
+                   Images.EqualsExT(s.Images);
 
         }
 
