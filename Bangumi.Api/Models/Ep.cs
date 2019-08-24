@@ -1,9 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Bangumi.Api.Models
 {
@@ -71,13 +69,13 @@ namespace Bangumi.Api.Models
                    Type == e.Type &&
                    Sort == e.Sort &&
                    Comment == e.Comment &&
-                   (Url == null ? Url == e.Url : Url.Equals(e.Url)) &&
-                   (Name == null ? Name == e.Name : Name.Equals(e.Name)) &&
-                   (NameCn == null ? NameCn == e.NameCn : NameCn.Equals(e.NameCn)) &&
-                   (Duration == null ? Duration == e.Duration : Duration.Equals(e.Duration)) &&
-                   (AirDate == null ? AirDate == e.AirDate : AirDate.Equals(e.AirDate)) &&
-                   (Desc == null ? Desc == e.Desc : Desc.Equals(e.Desc)) &&
-                   (Status == null ? Status == e.Status : Status.Equals(e.Status));
+                   Url.EqualsExT(e.Url) &&
+                   Name.EqualsExT(e.Name) &&
+                   NameCn.EqualsExT(e.NameCn) &&
+                   Duration.EqualsExT(e.Duration) &&
+                   AirDate.EqualsExT(e.AirDate) &&
+                   Desc.EqualsExT(e.Desc) &&
+                   Status.EqualsExT(e.Status);
         }
 
         // override object.GetHashCode

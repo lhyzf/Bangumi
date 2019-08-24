@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 
 namespace Bangumi.Api.Models
 {
@@ -31,11 +29,11 @@ namespace Bangumi.Api.Models
             }
 
             Images i = (Images)obj;
-            return (Large == null ? Large == i.Large : Large.Equals(i.Large)) &&
-                   (Common == null ? Common == i.Common : Common.Equals(i.Common)) &&
-                   (Medium == null ? Medium == i.Medium : Medium.Equals(i.Medium)) &&
-                   (Small == null ? Small == i.Small : Small.Equals(i.Small)) &&
-                   (Grid == null ? Grid == i.Grid : Grid.Equals(i.Grid));
+            return Large.EqualsExT(i.Large) &&
+                   Common.EqualsExT(i.Common) &&
+                   Medium.EqualsExT(i.Medium) &&
+                   Small.EqualsExT(i.Small) &&
+                   Grid.EqualsExT(i.Grid);
         }
 
         // override object.GetHashCode

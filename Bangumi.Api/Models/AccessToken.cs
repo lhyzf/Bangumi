@@ -1,9 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 
 namespace Bangumi.Api.Models
 {
@@ -41,11 +37,11 @@ namespace Bangumi.Api.Models
             AccessToken a = (AccessToken)obj;
             return ExpiresIn == a.ExpiresIn &&
                    Expires == a.Expires &&
-                   (Token == null ? Token == a.Token : Token.Equals(a.Token)) &&
-                   (TokenType == null ? TokenType == a.TokenType : TokenType.Equals(a.TokenType)) &&
-                   (Scope == null ? Scope == a.Scope : Scope.Equals(a.Scope)) &&
-                   (RefreshToken == null ? RefreshToken == a.RefreshToken : RefreshToken.Equals(a.RefreshToken)) &&
-                   (UserId == null ? UserId == a.UserId : UserId.Equals(a.UserId));
+                   Token.EqualsExT(a.Token) &&
+                   TokenType.EqualsExT(a.TokenType) &&
+                   Scope.EqualsExT(a.Scope) &&
+                   RefreshToken.EqualsExT(a.RefreshToken) &&
+                   UserId.EqualsExT(a.UserId);
         }
 
         // override object.GetHashCode

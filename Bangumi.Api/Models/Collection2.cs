@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Bangumi.Api.Models
 {
@@ -33,9 +31,9 @@ namespace Bangumi.Api.Models
 
             Collection2 c = (Collection2)obj;
             return Type == c.Type &&
-                   (Name == null ? Name == c.Name : Name.Equals(c.Name)) &&
-                   (NameCn == null ? NameCn == c.NameCn : NameCn.Equals(c.NameCn)) &&
-                   (Collects == null ? Collects == c.Collects : Collects.SequenceEqual(c.Collects));
+                   Name.EqualsExT(c.Name) &&
+                   NameCn.EqualsExT(c.NameCn) &&
+                   Collects.SequenceEqualExT(c.Collects);
         }
 
         // override object.GetHashCode

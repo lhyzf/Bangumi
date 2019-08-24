@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 
 namespace Bangumi.Api.Models
 {
@@ -27,7 +25,7 @@ namespace Bangumi.Api.Models
             Rating r = (Rating)obj;
             return Total == r.Total &&
                    Score == r.Score &&
-                   (Count == null ? Count == r.Count : Count.Equals(r.Count));
+                   Count.EqualsExT(r.Count);
         }
 
         // override object.GetHashCode

@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using Bangumi.Api.Utils;
+using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Bangumi.Api.Models
 {
@@ -23,8 +21,8 @@ namespace Bangumi.Api.Models
             }
 
             BangumiTimeLine b = (BangumiTimeLine)obj;
-            return (Weekday == null ? Weekday == b.Weekday : Weekday.Equals(b.Weekday)) &&
-                   (Items == null ? Items == b.Items : Items.SequenceEqual(b.Items));
+            return Weekday.EqualsExT(b.Weekday) &&
+                   Items.SequenceEqualExT(b.Items);
         }
 
         // override object.GetHashCode
