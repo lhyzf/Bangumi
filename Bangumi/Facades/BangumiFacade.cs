@@ -1,6 +1,5 @@
 ﻿using Bangumi.Api.Models;
 using Bangumi.Api.Utils;
-using Bangumi.Api.Services;
 using Bangumi.ViewModels;
 using Newtonsoft.Json;
 using System;
@@ -40,7 +39,7 @@ namespace Bangumi.Facades
                     }
                 }
 
-                var watchingList = await BangumiHttpWrapper.GetWatchingListAsync(BangumiApiHelper.MyToken.UserId);
+                var watchingList = await BangumiApiHelper.GetWatchingListAsync();
 
                 var deletedItems = new List<WatchingStatus>(); //标记要删除的条目
                 foreach (var sub in watchingListCollection)
@@ -89,7 +88,7 @@ namespace Bangumi.Facades
                             item.LastUpdate != DateTime.Today.ConvertDateTimeToJsTick())
                         {
                             // 获取EP信息
-                            var subject = await BangumiHttpWrapper.GetSubjectEpsAsync(item.SubjectId.ToString());
+                            var subject = await BangumiApiHelper.GetSubjectEpsAsync(item.SubjectId.ToString());
 
                             item.Eps = new List<SimpleEp>();
                             if (subject.Eps != null)
@@ -185,7 +184,7 @@ namespace Bangumi.Facades
                     }
                 }
 
-                var subjectCollections = await BangumiHttpWrapper.GetSubjectCollectionAsync(BangumiApiHelper.MyToken.UserId, subjectType);
+                var subjectCollections = await BangumiApiHelper.GetSubjectCollectionAsync(subjectType);
 
                 //清空原数据
                 subjectCollection.Clear();
@@ -238,7 +237,7 @@ namespace Bangumi.Facades
                     }
                 }
 
-                var bangumiCalendarList = await BangumiHttpWrapper.GetBangumiCalendarAsync();
+                var bangumiCalendarList = await BangumiApiHelper.GetBangumiCalendarAsync();
 
                 //清空原数据
                 bangumiCollection.Clear();
@@ -274,7 +273,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                var result = await BangumiHttpWrapper.GetSubjectAsync(subjectId);
+                var result = await BangumiApiHelper.GetSubjectAsync(subjectId);
                 return result;
             }
             catch (Exception e)
@@ -294,7 +293,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.GetCollectionStatusAsync(BangumiApiHelper.MyToken.Token, subjectId);
+                return await BangumiApiHelper.GetCollectionStatusAsync( subjectId);
             }
             catch (Exception e)
             {
@@ -313,7 +312,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.GetProgressesAsync(BangumiApiHelper.MyToken.UserId, BangumiApiHelper.MyToken.Token, subjectId);
+                return await BangumiApiHelper.GetProgressesAsync(subjectId);
             }
             catch (Exception e)
             {
@@ -335,7 +334,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiHttpWrapper.GetSearchResultAsync(searchText, type, start, n);
+                return await BangumiApiHelper.GetSearchResultAsync(searchText, type, start, n);
             }
             catch (Exception e)
             {
@@ -358,7 +357,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                if (await BangumiHttpWrapper.UpdateProgressAsync(BangumiApiHelper.MyToken.Token, ep, status))
+                if (await BangumiApiHelper.UpdateProgressAsync(ep, status))
                 {
                     MainPage.RootPage.ToastInAppNotification.Show($"标记章节{ep}{status.GetValue()}成功", 1500);
                     return true;
@@ -388,7 +387,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                if (await BangumiHttpWrapper.UpdateProgressBatchAsync(BangumiApiHelper.MyToken.Token, ep, status, epsId))
+                if (await BangumiApiHelper.UpdateProgressBatchAsync(ep, status, epsId))
                 {
                     MainPage.RootPage.ToastInAppNotification.Show($"批量标记章节{epsId}{status.GetValue()}状态成功", 1500);
                     return true;
@@ -420,8 +419,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                if (await BangumiHttpWrapper.UpdateCollectionStatusAsync(BangumiApiHelper.MyToken.Token,
-                    subjectId, collectionStatus, comment, rating, privace))
+                if (await BangumiApiHelper.UpdateCollectionStatusAsync(subjectId, collectionStatus, comment, rating, privace))
                 {
                     MainPage.RootPage.ToastInAppNotification.Show($"更新条目{subjectId}状态成功", 1500);
                     return true;
