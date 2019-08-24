@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -424,7 +425,7 @@ namespace Bangumi.Api
         /// <param name="dest"></param>
         private static void UpdateCache<T>(List<T> source, List<T> dest)
         {
-            if (!source.Equals(dest))
+            if (!source.SequenceEqual(dest))
             {
                 source.Clear();
                 source.AddRange(dest);
@@ -476,12 +477,12 @@ namespace Bangumi.Api
             if (MyToken == null)
             {
                 MyToken = JsonConvert.DeserializeObject<AccessToken>(await FileHelper.ReadAndDecryptFileAsync(localFolderPath + "\\token.data"));
+                if (MyToken == null)
+                {
+                    //DeleteTokens();
+                    return false;
+                }
                 isLogin = true;
-            }
-            if (MyToken == null)
-            {
-                //DeleteTokens();
-                return false;
             }
             // 检查是否在有效期内，接近过期或过期则刷新token
             _ = CheckToken();
