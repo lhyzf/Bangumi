@@ -7,11 +7,6 @@ namespace Bangumi.Api.Models
 {
     public class Rating
     {
-        public Rating()
-        {
-            Count = new RatingCount();
-        }
-
         [JsonProperty("total")]
         public int Total { get; set; }
 
@@ -32,7 +27,7 @@ namespace Bangumi.Api.Models
             Rating r = (Rating)obj;
             return Total == r.Total &&
                    Score == r.Score &&
-                   Count.Equals(r.Count);
+                   (Count == null ? Count == r.Count : Count.Equals(r.Count));
         }
 
         // override object.GetHashCode

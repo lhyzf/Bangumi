@@ -7,13 +7,6 @@ namespace Bangumi.Api.Models
 {
     public class Avatar
     {
-        public Avatar()
-        {
-            Large = string.Empty;
-            Medium = string.Empty;
-            Small = string.Empty;
-        }
-
         [JsonProperty("large")]
         public string Large { get; set; }
 
@@ -32,9 +25,9 @@ namespace Bangumi.Api.Models
             }
 
             Avatar a = (Avatar)obj;
-            return Large.Equals(a.Large) &&
-                   Medium.Equals(a.Medium) &&
-                   Small.Equals(a.Small);
+            return (Large == null ? Large == a.Large : Large.Equals(a.Large)) &&
+                   (Medium == null ? Medium == a.Medium : Medium.Equals(a.Medium)) &&
+                   (Small == null ? Small == a.Small : Small.Equals(a.Small));
         }
 
         // override object.GetHashCode

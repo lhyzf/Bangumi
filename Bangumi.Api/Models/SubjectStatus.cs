@@ -10,12 +10,6 @@ namespace Bangumi.Api.Models
     /// </summary>
     public class SubjectStatus
     {
-        public SubjectStatus()
-        {
-            Type = string.Empty;
-            Name = string.Empty;
-        }
-
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -35,8 +29,8 @@ namespace Bangumi.Api.Models
 
             SubjectStatus s = (SubjectStatus)obj;
             return Id == s.Id &&
-                   Type.Equals(s.Type) &&
-                   Name.Equals(s.Name);
+                   (Type == null ? Type == s.Type : Type.Equals(s.Type)) &&
+                   (Name == null ? Name == s.Name : Name.Equals(s.Name));
         }
 
         // override object.GetHashCode

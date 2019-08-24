@@ -10,13 +10,6 @@ namespace Bangumi.Api.Models
     /// </summary>
     public class EpStatus
     {
-        public EpStatus()
-        {
-            CssName = string.Empty;
-            UrlName = string.Empty;
-            CnName = string.Empty;
-        }
-
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -39,9 +32,9 @@ namespace Bangumi.Api.Models
 
             EpStatus e = (EpStatus)obj;
             return Id == e.Id &&
-                   CssName.Equals(e.CssName) &&
-                   UrlName.Equals(e.UrlName) &&
-                   CnName.Equals(e.CnName);
+                   (CssName == null ? CssName == e.CssName : CssName.Equals(e.CssName)) &&
+                   (UrlName == null ? UrlName == e.UrlName : UrlName.Equals(e.UrlName)) &&
+                   (CnName == null ? CnName == e.CnName : CnName.Equals(e.CnName));
         }
 
         // override object.GetHashCode

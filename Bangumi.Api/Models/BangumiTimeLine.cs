@@ -8,12 +8,6 @@ namespace Bangumi.Api.Models
 {
     public class BangumiTimeLine
     {
-        public BangumiTimeLine()
-        {
-            Weekday = new Weekday();
-            Items = new List<Subject>();
-        }
-
         [JsonProperty("weekday")]
         public Weekday Weekday { get; set; }
 
@@ -29,8 +23,8 @@ namespace Bangumi.Api.Models
             }
 
             BangumiTimeLine b = (BangumiTimeLine)obj;
-            return Weekday.Equals(b.Weekday) &&
-                   Items.SequenceEqual(b.Items);
+            return (Weekday == null ? Weekday == b.Weekday : Weekday.Equals(b.Weekday)) &&
+                   (Items == null ? Items == b.Items : Items.SequenceEqual(b.Items));
         }
 
         // override object.GetHashCode

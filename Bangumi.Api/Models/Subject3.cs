@@ -10,15 +10,6 @@ namespace Bangumi.Api.Models
     /// </summary>
     public class Subject3
     {
-        public Subject3()
-        {
-            Url = string.Empty;
-            Name = string.Empty;
-            NameCn = string.Empty;
-            AirDate = string.Empty;
-            Images = new Images();
-        }
-
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -59,11 +50,11 @@ namespace Bangumi.Api.Models
                    Type == s.Type &&
                    EpsCount == s.EpsCount &&
                    AirWeekday == s.AirWeekday &&
-                   Url.Equals(s.Url) &&
-                   Name.Equals(s.Name) &&
-                   NameCn.Equals(NameCn) &&
-                   AirDate.Equals(s.AirDate) &&
-                   Images.Equals(s.Images);
+                   (Url == null ? Url == s.Url : Url.Equals(s.Url)) &&
+                   (Name == null ? Name == s.Name : Name.Equals(s.Name)) &&
+                   (NameCn == null ? NameCn == s.NameCn : NameCn.Equals(s.NameCn)) &&
+                   (AirDate == null ? AirDate == s.AirDate : AirDate.Equals(s.AirDate)) &&
+                   (Images == null ? Images == s.Images : Images.Equals(s.Images));
 
         }
 

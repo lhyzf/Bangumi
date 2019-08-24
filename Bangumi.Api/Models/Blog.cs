@@ -7,16 +7,6 @@ namespace Bangumi.Api.Models
 {
     public class Blog
     {
-        public Blog()
-        {
-            Url = string.Empty;
-            Title = string.Empty;
-            Summary = string.Empty;
-            Image = string.Empty;
-            DateLine = string.Empty;
-            User = new User();
-        }
-
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -56,12 +46,12 @@ namespace Bangumi.Api.Models
             return Id == b.Id &&
                    Timestamp == b.Timestamp &&
                    Replies == b.Replies &&
-                   Url.Equals(b.Url) &&
-                   Title.Equals(b.Title) &&
-                   Summary.Equals(b.Summary) &&
-                   Image.Equals(b.Image) &&
-                   DateLine.Equals(b.DateLine) &&
-                   User.Equals(b.User);
+                   (Url == null ? Url == b.Url : Url.Equals(b.Url)) &&
+                   (Title == null ? Title == b.Title : Title.Equals(b.Title)) &&
+                   (Summary == null ? Summary == b.Summary : Summary.Equals(b.Summary)) &&
+                   (Image == null ? Image == b.Image : Image.Equals(b.Image)) &&
+                   (DateLine == null ? DateLine == b.DateLine : DateLine.Equals(b.DateLine)) &&
+                   (User == null ? User == b.User : User.Equals(b.User));
         }
 
         // override object.GetHashCode

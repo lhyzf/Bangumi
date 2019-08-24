@@ -11,12 +11,6 @@ namespace Bangumi.Api.Models
     /// </summary>
     public class Collection
     {
-        public Collection()
-        {
-            Status = new SubjectStatus();
-            Items = new List<Subject2>();
-        }
-
         [JsonProperty("status")]
         public SubjectStatus Status { get; set; }
 
@@ -36,8 +30,8 @@ namespace Bangumi.Api.Models
 
             Collection c = (Collection)obj;
             return Count == c.Count &&
-                   Status.Equals(c.Status) &&
-                   Items.SequenceEqual(c.Items);
+                   (Status == null ? Status == c.Status : Status.Equals(c.Status)) &&
+                   (Items == null ? Items == c.Items : Items.SequenceEqual(c.Items));
         }
 
         // override object.GetHashCode

@@ -11,15 +11,6 @@ namespace Bangumi.Api.Models
     /// </summary>
     public class SubjectStatus2
     {
-        public SubjectStatus2()
-        {
-            Comment = string.Empty;
-            Private = string.Empty;
-            Status = new SubjectStatus();
-            User = new User();
-            Tags = new List<string>();
-        }
-
         [JsonProperty("status")]
         public SubjectStatus Status { get; set; }
 
@@ -56,11 +47,11 @@ namespace Bangumi.Api.Models
             return Rating == s.Rating &&
                    EpStatus == s.EpStatus &&
                    LastTouch == s.LastTouch &&
-                   Comment.Equals(s.Comment) &&
-                   Private.Equals(s.Private) &&
-                   Status.Equals(s.Status) &&
-                   User.Equals(s.User) &&
-                   Tags.SequenceEqual(s.Tags);
+                   (Comment == null ? Comment == s.Comment : Comment.Equals(s.Comment)) &&
+                   (Private == null ? Private == s.Private : Private.Equals(s.Private)) &&
+                   (Status == null ? Status == s.Status : Status.Equals(s.Status)) &&
+                   (User == null ? User == s.User : User.Equals(s.User)) &&
+                   (Tags == null ? Tags == s.Tags : Tags.SequenceEqual(s.Tags));
         }
 
         // override object.GetHashCode

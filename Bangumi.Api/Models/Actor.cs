@@ -7,13 +7,6 @@ namespace Bangumi.Api.Models
 {
     public class Actor
     {
-        public Actor()
-        {
-            Url = string.Empty;
-            Name = string.Empty;
-            Images = new Images();
-        }
-
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -36,9 +29,9 @@ namespace Bangumi.Api.Models
 
             Actor a = (Actor)obj;
             return Id == a.Id &&
-                   Url.Equals(a.Url) &&
-                   Name.Equals(a.Name) &&
-                   Images.Equals(a.Images);
+                   (Url == null ? Url == a.Url : Url.Equals(a.Url)) &&
+                   (Name == null ? Name == a.Name : Name.Equals(a.Name)) &&
+                   (Images == null ? Images == a.Images : Images.Equals(a.Images));
         }
 
         // override object.GetHashCode

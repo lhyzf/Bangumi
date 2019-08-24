@@ -7,13 +7,6 @@ namespace Bangumi.Api.Models
 {
     public class Weekday
     {
-        public Weekday()
-        {
-            English = string.Empty;
-            Chinese = string.Empty;
-            Japanese = string.Empty;
-        }
-
         [JsonProperty("en")]
         public string English { get; set; }
 
@@ -36,9 +29,9 @@ namespace Bangumi.Api.Models
 
             Weekday w = (Weekday)obj;
             return Id == w.Id &&
-                   English.Equals(w.English) &&
-                   Chinese.Equals(w.Chinese) &&
-                   Japanese.Equals(w.Japanese);
+                   (English == null ? English == w.English : English.Equals(w.English)) &&
+                   (Chinese == null ? Chinese == w.Chinese : Chinese.Equals(w.Chinese)) &&
+                   (Japanese == null ? Japanese == w.Japanese : Japanese.Equals(w.Japanese));
         }
 
         // override object.GetHashCode
