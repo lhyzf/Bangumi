@@ -1,5 +1,7 @@
 ﻿using Bangumi.Api.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Bangumi.Api.Utils
 {
@@ -42,6 +44,30 @@ namespace Bangumi.Api.Utils
             image.Common = image.Common.ConvertHttpToHttps();
             image.Medium = image.Medium.ConvertHttpToHttps();
             image.Large = image.Large.ConvertHttpToHttps();
+        }
+
+        /// <summary>
+        /// 对象比较，支持 null
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="o"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static bool EqualsExT<T>(this T o, T obj)
+        {
+            return o == null ? obj == null : o.Equals(obj);
+        }
+
+        /// <summary>
+        /// List 比较，支持 null
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="o"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static bool SequenceEqualExT<T>(this List<T> o, List<T> obj)
+        {
+            return (o == null ? obj == null : (o.Count == 0 ? (obj != null && obj.Count == 0) : o.SequenceEqual(obj)));
         }
     }
 }
