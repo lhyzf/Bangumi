@@ -9,6 +9,17 @@ namespace Bangumi.Api.Models
 {
     public class Ep : INotifyPropertyChanged
     {
+        public Ep()
+        {
+            Url = string.Empty;
+            Name = string.Empty;
+            NameCn = string.Empty;
+            Duration = string.Empty;
+            AirDate = string.Empty;
+            Desc = string.Empty;
+            Status = string.Empty;
+        }
+
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -51,10 +62,39 @@ namespace Bangumi.Api.Models
                 OnPropertyChanged();
             }
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName]string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        // override object.Equals
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            Ep e = (Ep)obj;
+            return Id == e.Id &&
+                   Type == e.Type &&
+                   Sort == e.Sort &&
+                   Comment == e.Comment &&
+                   Url.Equals(e.Url) &&
+                   Name.Equals(e.Name) &&
+                   NameCn.Equals(e.NameCn) &&
+                   Duration.Equals(e.Duration) &&
+                   AirDate.Equals(e.AirDate) &&
+                   Desc.Equals(e.Desc) &&
+                   Status.Equals(e.Status);
+        }
+
+        // override object.GetHashCode
+        public override int GetHashCode()
+        {
+            return Id;
         }
     }
 }

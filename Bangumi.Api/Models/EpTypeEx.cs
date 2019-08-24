@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Bangumi.Api.Models
 {
-    public static class EpType
+    public static class EpTypeEx
     {        
         /// <summary>
         /// 获取章节类型的描述

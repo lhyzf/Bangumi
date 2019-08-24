@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Bangumi.Api.Models
@@ -10,6 +11,15 @@ namespace Bangumi.Api.Models
     /// </summary>
     public class SubjectStatus2
     {
+        public SubjectStatus2()
+        {
+            Comment = string.Empty;
+            Private = string.Empty;
+            Status = new SubjectStatus();
+            User = new User();
+            Tags = new List<string>();
+        }
+
         [JsonProperty("status")]
         public SubjectStatus Status { get; set; }
 
@@ -33,5 +43,30 @@ namespace Bangumi.Api.Models
 
         [JsonProperty("user")]
         public User User { get; set; }
+
+        // override object.Equals
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            SubjectStatus2 s = (SubjectStatus2)obj;
+            return Rating == s.Rating &&
+                   EpStatus == s.EpStatus &&
+                   LastTouch == s.LastTouch &&
+                   Comment.Equals(s.Comment) &&
+                   Private.Equals(s.Private) &&
+                   Status.Equals(s.Status) &&
+                   User.Equals(s.User) &&
+                   Tags.SequenceEqual(s.Tags);
+        }
+
+        // override object.GetHashCode
+        public override int GetHashCode()
+        {
+            return LastTouch;
+        }
     }
 }
