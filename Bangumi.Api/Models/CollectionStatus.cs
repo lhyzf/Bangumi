@@ -21,5 +21,27 @@ namespace Bangumi.Api.Models
 
         [JsonProperty("dropped")]
         public int Dropped { get; set; }
+
+        // override object.Equals
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            CollectionStatus c = (CollectionStatus)obj;
+            return Wish == c.Wish &&
+                   Collect == c.Collect &&
+                   Doing == c.Doing &&
+                   OnHold == c.OnHold &&
+                   Dropped == c.Dropped;
+        }
+
+        // override object.GetHashCode
+        public override int GetHashCode()
+        {
+            return Wish + Collect + Doing + OnHold + Dropped;
+        }
     }
 }

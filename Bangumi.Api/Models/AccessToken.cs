@@ -9,6 +9,15 @@ namespace Bangumi.Api.Models
 {
     public class AccessToken
     {
+        public AccessToken()
+        {
+            Token = string.Empty;
+            TokenType = string.Empty;
+            Scope = string.Empty;
+            RefreshToken = string.Empty;
+            UserId = string.Empty;
+        }
+
         [JsonProperty("access_token")]
         public string Token { get; set; }
 
@@ -29,5 +38,29 @@ namespace Bangumi.Api.Models
 
         [JsonProperty("user_id")]
         public string UserId { get; set; }
+
+        // override object.Equals
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            AccessToken a = (AccessToken)obj;
+            return ExpiresIn == a.ExpiresIn &&
+                   Expires == a.Expires &&
+                   Token.Equals(a.Token) &&
+                   TokenType.Equals(a.TokenType) &&
+                   Scope.Equals(a.Scope) &&
+                   RefreshToken.Equals(a.RefreshToken) &&
+                   UserId.Equals(a.UserId);
+        }
+
+        // override object.GetHashCode
+        public override int GetHashCode()
+        {
+            return Expires;
+        }
     }
 }

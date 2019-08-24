@@ -36,5 +36,32 @@ namespace Bangumi.Api.Models
 
         [JsonProperty("1")]
         public int _1 { get; set; }
+
+        // override object.Equals
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            RatingCount r = (RatingCount)obj;
+            return _1 == r._1 &&
+                   _2 == r._2 &&
+                   _3 == r._3 &&
+                   _4 == r._4 &&
+                   _5 == r._5 &&
+                   _6 == r._6 &&
+                   _7 == r._7 &&
+                   _8 == r._8 &&
+                   _9 == r._9 &&
+                   _10 == r._10;
+        }
+
+        // override object.GetHashCode
+        public override int GetHashCode()
+        {
+            return (_1 + _2 + _3 + _4 + _5 + _6 + _7 + _8 + _9 + _10) / 10;
+        }
     }
 }
