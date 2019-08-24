@@ -6,6 +6,15 @@ namespace Bangumi.Api.Models
 {
     public class BangumiCache
     {
+        public BangumiCache()
+        {
+            Collections = new Dictionary<string, Collection2>();
+            Subjects = new Dictionary<string, Subject>();
+            SubjectStatus = new Dictionary<string, SubjectStatus2>();
+            Progresses = new Dictionary<string, Progress>();
+            Watchings = new List<Watching>();
+            TimeLine = new List<BangumiTimeLine>();
+        }
         /// <summary>
         /// 收藏，含动画、书籍、音乐、游戏、三次元
         /// </summary>

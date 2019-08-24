@@ -113,9 +113,20 @@ namespace Bangumi.Api
                 BangumiHttpWrapper.NoImageUri = noImageUri;
             }
             // 加载缓存
-            if (BangumiCache == null && File.Exists(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath)))
+            if (BangumiCache == null)
             {
-                BangumiCache = JsonConvert.DeserializeObject<BangumiCache>(await FileHelper.ReadTextAsync(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath)));
+                BangumiCache = new BangumiCache();
+                if (File.Exists(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath)))
+                {
+                    try
+                    {
+                        BangumiCache = JsonConvert.DeserializeObject<BangumiCache>(await FileHelper.ReadTextAsync(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath)));
+                    }
+                    catch (Exception)
+                    {
+                        FileHelper.DeleteFile(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath));
+                    }
+                }
             }
             // 启动定时器，定时将缓存写入文件
             timer = new Timer(5000);
@@ -233,7 +244,7 @@ namespace Bangumi.Api
         /// <param name="rating"></param>
         /// <param name="privace"></param>
         /// <returns></returns>
-        public static async Task<bool> UpdateCollectionStatusAsync(string subjectId, 
+        public static async Task<bool> UpdateCollectionStatusAsync(string subjectId,
                                                                    CollectionStatusEnum collectionStatusEnum,
                                                                    string comment = "",
                                                                    string rating = "",
@@ -385,20 +396,23 @@ namespace Bangumi.Api
         /// <param name="value"></param>
         private static void UpdateCache<T>(Dictionary<string, T> dic, string key, T value)
         {
-            if (dic.ContainsKey(key))
+            if (value != null)
             {
-                if (!value.Equals(dic[key]))
+                if (dic.ContainsKey(key))
                 {
-                    dic[key] = value;
+                    if (!value.Equals(dic[key]))
+                    {
+                        dic[key] = value;
+                        timer.Interval = 5000;
+                        isCacheUpdated = true;
+                    }
+                }
+                else
+                {
+                    dic.Add(key, value);
                     timer.Interval = 5000;
                     isCacheUpdated = true;
                 }
-            }
-            else
-            {
-                dic.Add(key, value);
-                timer.Interval = 5000;
-                isCacheUpdated = true;
             }
         }
 
@@ -412,7 +426,8 @@ namespace Bangumi.Api
         {
             if (!source.Equals(dest))
             {
-                source = dest;
+                source.Clear();
+                source.AddRange(dest);
                 // 重新计时 5 秒
                 timer.Interval = 5000;
                 isCacheUpdated = true;
@@ -512,7 +527,10 @@ namespace Bangumi.Api
             }
             catch (Exception e)
             {
-                isLogin = false;
+                if (!e.Message.Contains("无法解析服务器的名称或地址"))
+                {
+                    isLogin = false;
+                }
                 Debug.WriteLine(e.Message);
             }
         }
