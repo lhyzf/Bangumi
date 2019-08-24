@@ -7,15 +7,6 @@ namespace Bangumi.Api.Models
 {
     public class Images
     {
-        public Images()
-        {
-            Large = string.Empty;
-            Common = string.Empty;
-            Medium = string.Empty;
-            Small = string.Empty;
-            Grid = string.Empty;
-        }
-
         [JsonProperty("large")]
         public string Large { get; set; }
 
@@ -40,11 +31,11 @@ namespace Bangumi.Api.Models
             }
 
             Images i = (Images)obj;
-            return Large.Equals(i.Large) &&
-                   Common.Equals(i.Common) &&
-                   Medium.Equals(i.Medium) &&
-                   Small.Equals(i.Small) &&
-                   Grid.Equals(i.Grid);
+            return (Large == null ? Large == i.Large : Large.Equals(i.Large)) &&
+                   (Common == null ? Common == i.Common : Common.Equals(i.Common)) &&
+                   (Medium == null ? Medium == i.Medium : Medium.Equals(i.Medium)) &&
+                   (Small == null ? Small == i.Small : Small.Equals(i.Small)) &&
+                   (Grid == null ? Grid == i.Grid : Grid.Equals(i.Grid));
         }
 
         // override object.GetHashCode

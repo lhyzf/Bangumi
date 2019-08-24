@@ -8,16 +8,6 @@ namespace Bangumi.Api.Models
 {
     public class Crt
     {
-        public Crt()
-        {
-            Url = string.Empty;
-            Name = string.Empty;
-            NameCn = string.Empty;
-            RoleName = string.Empty;
-            Images = new Images();
-            Actors = new List<Actor>();
-        }
-
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -49,12 +39,12 @@ namespace Bangumi.Api.Models
 
             Crt c = (Crt)obj;
             return Id == c.Id &&
-                   Url.Equals(c.Url) &&
-                   Name.Equals(c.Name) &&
-                   NameCn.Equals(c.NameCn) &&
-                   RoleName.Equals(c.RoleName) &&
-                   Images.Equals(c.Images) &&
-                   Actors.SequenceEqual(c.Actors);
+                   (Url == null ? Url == c.Url : Url.Equals(c.Url)) &&
+                   (Name == null ? Name == c.Name : Name.Equals(c.Name)) &&
+                   (NameCn == null ? NameCn == c.NameCn : NameCn.Equals(c.NameCn)) &&
+                   (RoleName == null ? RoleName == c.RoleName : RoleName.Equals(c.RoleName)) &&
+                   (Images == null ? Images == c.Images : Images.Equals(c.Images)) &&
+                   (Actors == null ? Actors == c.Actors : Actors.SequenceEqual(c.Actors));
         }
 
         // override object.GetHashCode

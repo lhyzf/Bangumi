@@ -7,11 +7,6 @@ namespace Bangumi.Api.Models
 {
     public class Subject2
     {
-        public Subject2()
-        {
-            Subject = new Subject();
-        }
-
         [JsonProperty("subject_id")]
         public int SubjectId { get; set; }
 
@@ -28,7 +23,7 @@ namespace Bangumi.Api.Models
 
             Subject2 s = (Subject2)obj;
             return SubjectId == s.SubjectId &&
-                   Subject.Equals(s.Subject);
+                   (Subject == null ? Subject == s.Subject : Subject.Equals(s.Subject));
         }
 
         // override object.GetHashCode

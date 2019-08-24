@@ -11,13 +11,6 @@ namespace Bangumi.Api.Models
     /// </summary>
     public class Collection2
     {
-        public Collection2()
-        {
-            Name = string.Empty;
-            NameCn = string.Empty;
-            Collects = new List<Collection>();
-        }
-
         [JsonProperty("type")]
         public int Type { get; set; }
 
@@ -40,9 +33,9 @@ namespace Bangumi.Api.Models
 
             Collection2 c = (Collection2)obj;
             return Type == c.Type &&
-                   Name.Equals(c.Name) &&
-                   NameCn.Equals(c.NameCn) &&
-                   Collects.SequenceEqual(c.Collects);
+                   (Name == null ? Name == c.Name : Name.Equals(c.Name)) &&
+                   (NameCn == null ? NameCn == c.NameCn : NameCn.Equals(c.NameCn)) &&
+                   (Collects == null ? Collects == c.Collects : Collects.SequenceEqual(c.Collects));
         }
 
         // override object.GetHashCode

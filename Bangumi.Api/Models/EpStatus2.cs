@@ -7,11 +7,6 @@ namespace Bangumi.Api.Models
 {
     public class EpStatus2
     {
-        public EpStatus2()
-        {
-            Status = new EpStatus();
-        }
-
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -28,7 +23,7 @@ namespace Bangumi.Api.Models
 
             EpStatus2 e = (EpStatus2)obj;
             return Id == e.Id &&
-                   Status.Equals(e.Status);
+                   (Status == null ? Status == e.Status : Status.Equals(e.Status));
         }
 
         // override object.GetHashCode

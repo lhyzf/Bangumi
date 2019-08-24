@@ -7,15 +7,6 @@ namespace Bangumi.Api.Models
 {
     public class User
     {
-        public User()
-        {
-            Url = string.Empty;
-            UserName = string.Empty;
-            NickName = string.Empty;
-            Sign = string.Empty;
-            Avatar = new Avatar();
-        }
-
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -48,11 +39,11 @@ namespace Bangumi.Api.Models
             User u = (User)obj;
             return Id == u.Id &&
                    UserGroup == u.UserGroup &&
-                   Url.Equals(u.Url) &&
-                   UserName.Equals(u.UserName) &&
-                   NickName.Equals(u.NickName) &&
-                   Sign.Equals(u.Sign) &&
-                   Avatar.Equals(u.Avatar);
+                   (Url == null ? Url == u.Url : Url.Equals(u.Url)) &&
+                   (UserName == null ? UserName == u.UserName : UserName.Equals(u.UserName)) &&
+                   (NickName == null ? NickName == u.NickName : NickName.Equals(u.NickName)) &&
+                   (Sign == null ? Sign == u.Sign : Sign.Equals(u.Sign)) &&
+                   (Avatar == null ? Avatar == u.Avatar : Avatar.Equals(u.Avatar));
         }
 
         // override object.GetHashCode

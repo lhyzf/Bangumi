@@ -11,23 +11,6 @@ namespace Bangumi.Api.Models
     /// </summary>
     public class Subject
     {
-        public Subject()
-        {
-            Url = string.Empty;
-            Name = string.Empty;
-            NameCn = string.Empty;
-            Summary = string.Empty;
-            AirDate = string.Empty;
-            Rating = new Rating();
-            Images = new Images();
-            Collection = new CollectionStatus();
-            Eps = new List<Ep>();
-            Characters = new List<Crt>();
-            Staff = new List<Staff>();
-            Topics = new List<Topic>();
-            Blogs = new List<Blog>();
-        }
-
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -96,19 +79,19 @@ namespace Bangumi.Api.Models
                    Rank == s.Rank &&
                    EpsCount == s.EpsCount &&
                    AirWeekday == s.AirWeekday &&
-                   Url.Equals(s.Url) &&
-                   Name.Equals(s.Name) &&
-                   NameCn.Equals(s.NameCn) &&
-                   Summary.Equals(s.Summary) &&
-                   AirDate.Equals(s.AirDate) &&
-                   Rating.Equals(s.Rating) &&
-                   Images.Equals(s.Images) &&
-                   Collection.Equals(s.Collection) &&
-                   Eps.SequenceEqual(s.Eps) &&
-                   Characters.SequenceEqual(s.Characters) &&
-                   Staff.SequenceEqual(s.Staff) &&
-                   Topics.SequenceEqual(s.Topics) &&
-                   Blogs.SequenceEqual(s.Blogs);
+                   (Url == null ? Url == s.Url : Url.Equals(s.Url)) &&
+                   (Name == null ? Name == s.Name : Name.Equals(s.Name)) &&
+                   (NameCn == null ? NameCn == s.NameCn : NameCn.Equals(s.NameCn)) &&
+                   (Summary == null ? Summary == s.Summary : Summary.Equals(s.Summary)) &&
+                   (AirDate == null ? AirDate == s.AirDate : AirDate.Equals(s.AirDate)) &&
+                   (Rating == null ? Rating == s.Rating : Rating.Equals(s.Rating)) &&
+                   (Images == null ? Images == s.Images : Images.Equals(s.Images)) &&
+                   (Collection == null ? Collection == s.Collection : Collection.Equals(s.Collection)) &&
+                   (Eps == null ? Eps == s.Eps : Eps.SequenceEqual(s.Eps)) &&
+                   (Characters == null ? Characters == s.Characters : Characters.SequenceEqual(s.Characters)) &&
+                   (Staff == null ? Staff == s.Staff : Staff.SequenceEqual(s.Staff)) &&
+                   (Topics == null ? Topics == s.Topics : Topics.SequenceEqual(s.Topics)) &&
+                   (Blogs == null ? Blogs == s.Blogs : Blogs.SequenceEqual(s.Blogs));
 
         }
 

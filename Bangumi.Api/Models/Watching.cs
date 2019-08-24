@@ -10,12 +10,6 @@ namespace Bangumi.Api.Models
     /// </summary>
     public class Watching
     {
-        public Watching()
-        {
-            Name = string.Empty;
-            Subject = new Subject3();
-        }
-
         [JsonProperty("name")]
         public string Name { get; set; }
 
@@ -47,8 +41,8 @@ namespace Bangumi.Api.Models
                    EpStatus == w.EpStatus &&
                    VolStatus == w.VolStatus &&
                    LastTouch == w.LastTouch &&
-                   Name.Equals(w.Name) &&
-                   Subject.Equals(w.Subject);
+                   (Name == null ? Name == w.Name : Name.Equals(w.Name)) &&
+                   (Subject == null ? Subject == w.Subject : Subject.Equals(w.Subject));
         }
 
         // override object.GetHashCode

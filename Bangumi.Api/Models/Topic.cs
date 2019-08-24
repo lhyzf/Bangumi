@@ -7,13 +7,6 @@ namespace Bangumi.Api.Models
 {
     public class Topic
     {
-        public Topic()
-        {
-            Url = string.Empty;
-            Title = string.Empty;
-            User = new User();
-        }
-
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -52,9 +45,9 @@ namespace Bangumi.Api.Models
                    Timestamp == t.Timestamp &&
                    LastPost == t.LastPost &&
                    Replies == t.Replies &&
-                   Url.Equals(t.Url) &&
-                   Title.Equals(t.Title) &&
-                   User.Equals(t.User);
+                   (Url == null ? Url == t.Url : Url.Equals(t.Url)) &&
+                   (Title == null ? Title == t.Title : Title.Equals(t.Title)) &&
+                   (User == null ? User == t.User : User.Equals(t.User));
         }
 
         // override object.GetHashCode

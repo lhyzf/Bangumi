@@ -9,17 +9,6 @@ namespace Bangumi.Api.Models
 {
     public class Ep : INotifyPropertyChanged
     {
-        public Ep()
-        {
-            Url = string.Empty;
-            Name = string.Empty;
-            NameCn = string.Empty;
-            Duration = string.Empty;
-            AirDate = string.Empty;
-            Desc = string.Empty;
-            Status = string.Empty;
-        }
-
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -82,13 +71,13 @@ namespace Bangumi.Api.Models
                    Type == e.Type &&
                    Sort == e.Sort &&
                    Comment == e.Comment &&
-                   Url.Equals(e.Url) &&
-                   Name.Equals(e.Name) &&
-                   NameCn.Equals(e.NameCn) &&
-                   Duration.Equals(e.Duration) &&
-                   AirDate.Equals(e.AirDate) &&
-                   Desc.Equals(e.Desc) &&
-                   Status.Equals(e.Status);
+                   (Url == null ? Url == e.Url : Url.Equals(e.Url)) &&
+                   (Name == null ? Name == e.Name : Name.Equals(e.Name)) &&
+                   (NameCn == null ? NameCn == e.NameCn : NameCn.Equals(e.NameCn)) &&
+                   (Duration == null ? Duration == e.Duration : Duration.Equals(e.Duration)) &&
+                   (AirDate == null ? AirDate == e.AirDate : AirDate.Equals(e.AirDate)) &&
+                   (Desc == null ? Desc == e.Desc : Desc.Equals(e.Desc)) &&
+                   (Status == null ? Status == e.Status : Status.Equals(e.Status));
         }
 
         // override object.GetHashCode

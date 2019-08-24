@@ -9,15 +9,6 @@ namespace Bangumi.Api.Models
 {
     public class AccessToken
     {
-        public AccessToken()
-        {
-            Token = string.Empty;
-            TokenType = string.Empty;
-            Scope = string.Empty;
-            RefreshToken = string.Empty;
-            UserId = string.Empty;
-        }
-
         [JsonProperty("access_token")]
         public string Token { get; set; }
 
@@ -50,11 +41,11 @@ namespace Bangumi.Api.Models
             AccessToken a = (AccessToken)obj;
             return ExpiresIn == a.ExpiresIn &&
                    Expires == a.Expires &&
-                   Token.Equals(a.Token) &&
-                   TokenType.Equals(a.TokenType) &&
-                   Scope.Equals(a.Scope) &&
-                   RefreshToken.Equals(a.RefreshToken) &&
-                   UserId.Equals(a.UserId);
+                   (Token == null ? Token == a.Token : Token.Equals(a.Token)) &&
+                   (TokenType == null ? TokenType == a.TokenType : TokenType.Equals(a.TokenType)) &&
+                   (Scope == null ? Scope == a.Scope : Scope.Equals(a.Scope)) &&
+                   (RefreshToken == null ? RefreshToken == a.RefreshToken : RefreshToken.Equals(a.RefreshToken)) &&
+                   (UserId == null ? UserId == a.UserId : UserId.Equals(a.UserId));
         }
 
         // override object.GetHashCode

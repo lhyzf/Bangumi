@@ -8,16 +8,6 @@ namespace Bangumi.Api.Models
 {
     public class Staff
     {
-        public Staff()
-        {
-            Url = string.Empty;
-            Name = string.Empty;
-            NameCn = string.Empty;
-            RoleName = string.Empty;
-            Images = new Images();
-            Jobs = new List<string>();
-        }
-
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -49,12 +39,12 @@ namespace Bangumi.Api.Models
 
             Staff s = (Staff)obj;
             return Id == s.Id &&
-                   Url.Equals(s.Url) &&
-                   Name.Equals(s.Name) &&
-                   NameCn.Equals(s.NameCn) &&
-                   RoleName.Equals(s.RoleName) &&
-                   Images.Equals(s.Images) &&
-                   Jobs.SequenceEqual(s.Jobs);
+                   (Url == null ? Url == s.Url : Url.Equals(s.Url)) &&
+                   (Name == null ? Name == s.Name : Name.Equals(s.Name)) &&
+                   (NameCn == null ? NameCn == s.NameCn : NameCn.Equals(s.NameCn)) &&
+                   (RoleName == null ? RoleName == s.RoleName : RoleName.Equals(s.RoleName)) &&
+                   (Images == null ? Images == s.Images : Images.Equals(s.Images)) &&
+                   (Jobs == null ? Jobs == s.Jobs : Jobs.SequenceEqual(s.Jobs));
         }
 
         // override object.GetHashCode
