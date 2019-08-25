@@ -47,20 +47,20 @@ namespace Bangumi
 
             // 初始化 Api 对象
             BangumiApi.Init(ApplicationData.Current.LocalFolder.Path,
-                                  ApplicationData.Current.LocalCacheFolder.Path,
-                                  "https://api.bgm.tv",
-                                  "https://bgm.tv/oauth",
-                                   * 将自己申请的应用相关信息填入
-                                  "", // ClientId
-                                  "", // ClientSecret
-                                  "", // RedirectUrl
-                                  "ms-appx:///Assets/resource/err_404.png");
+                            ApplicationData.Current.LocalCacheFolder.Path,
+                            "https://api.bgm.tv",
+                            "https://bgm.tv/oauth",
+                            * 将自己申请的应用相关信息填入
+                            "", // ClientId
+                            "", // ClientSecret
+                            "", // RedirectUrl
+                            "ms-appx:///Assets/resource/err_404.png");
 
-            if (SettingHelper.UseBangumiData == true)
+            if (SettingHelper.UseBangumiData)
             {
                 // 初始化 BangumiData 对象
-                _ = BangumiDataHelper.InitAsync(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
-                BangumiDataHelper.UseBiliApp = SettingHelper.UseBiliApp;
+                _ = BangumiData.Init(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data",
+                                           SettingHelper.UseBiliApp);
             }
         }
 

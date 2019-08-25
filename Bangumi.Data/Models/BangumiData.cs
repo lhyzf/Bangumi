@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 namespace Bangumi.Data.Models
 {
 
-    public class BangumiData
+    public class BangumiDataSet
     {
 
         /// <summary>

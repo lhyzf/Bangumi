@@ -95,7 +95,7 @@ namespace Bangumi.Views
         private async Task InitAirSites(string id)
         {
             SitesMenuFlyout.Items.Clear();
-            var airSites = await BangumiDataHelper.GetAirSitesByBangumiIdAsync(id);
+            var airSites = await BangumiData.GetAirSitesByBangumiIdAsync(id);
             if (airSites.Count != 0)
             {
                 foreach (var site in airSites)

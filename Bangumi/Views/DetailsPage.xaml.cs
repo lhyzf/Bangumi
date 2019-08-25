@@ -353,7 +353,7 @@ namespace Bangumi.Views
             SitesMenuFlyout.Items.Clear();
             SelectedTextBlock.Text = "";
             SelectedTextBlock.DataContext = null;
-            var airSites = await BangumiDataHelper.GetAirSitesByBangumiIdAsync(ViewModel.SubjectId);
+            var airSites = await BangumiData.GetAirSitesByBangumiIdAsync(ViewModel.SubjectId);
             if (airSites.Count != 0)
             {
                 foreach (var site in airSites)

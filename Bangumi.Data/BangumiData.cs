@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace Bangumi.Data
 {
-    public static class BangumiDataHelper
+    public static class BangumiData
     {
         private static HtmlParser htmlParser;
-        private static BangumiData bangumiData;
+        private static BangumiDataSet dataSet;
         private static Dictionary<string, string> seasonIdMap;
         private static string latestVersion;
         private static string folderPath;
@@ -25,16 +25,17 @@ namespace Bangumi.Data
         /// 读取文件，将数据加载到内存
         /// </summary>
         /// <param name="datafolderpath">文件夹路径</param>
-        public static async Task InitAsync(string datafolderpath)
+        public static async Task Init(string datafolderpath, bool useBiliApp = false)
         {
             folderPath = datafolderpath;
+            UseBiliApp = useBiliApp;
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
-            if (bangumiData == null &&
+            if (dataSet == null &&
                 File.Exists(folderPath + "\\data.json") &&
                 File.Exists(folderPath + "\\version"))
             {
-                bangumiData = JsonConvert.DeserializeObject<BangumiData>(await FileHelper.ReadTextAsync(folderPath + "\\data.json"));
+                dataSet = JsonConvert.DeserializeObject<BangumiDataSet>(await FileHelper.ReadTextAsync(folderPath + "\\data.json"));
                 Version = await FileHelper.ReadTextAsync(folderPath + "\\version");
             }
             if (seasonIdMap == null)
@@ -98,7 +99,7 @@ namespace Bangumi.Data
             {
                 try
                 {
-                    bangumiData = JsonConvert.DeserializeObject<BangumiData>(data);
+                    dataSet = JsonConvert.DeserializeObject<BangumiDataSet>(data);
                     await FileHelper.WriteTextAsync(folderPath + "\\data.json", data);
                     Version = latestVersion;
                     await FileHelper.WriteTextAsync(folderPath + "\\version", Version);
@@ -123,21 +124,21 @@ namespace Bangumi.Data
         /// <returns></returns>
         public static async Task<List<Site>> GetAirSitesByBangumiIdAsync(string id)
         {
-            if (bangumiData == null)
+            if (dataSet == null)
             {
                 return new List<Site>();
             }
 
-            var siteList = bangumiData.Items.Where(e => e.Sites.Where(s => s.SiteName == "bangumi" && s.Id == id).Count() != 0)
+            var siteList = dataSet.Items.Where(e => e.Sites.Where(s => s.SiteName == "bangumi" && s.Id == id).Count() != 0)
                                           .FirstOrDefault()?.Sites
-                                          .Where(s => bangumiData.SiteMeta[s.SiteName].Type == "onair").ToList();
+                                          .Where(s => dataSet.SiteMeta[s.SiteName].Type == "onair").ToList();
             if (siteList != null)
             {
                 foreach (var site in siteList)
                 {
                     site.Url = string.IsNullOrEmpty(site.Id) ?
                                site.Url :
-                               bangumiData.SiteMeta[site.SiteName].UrlTemplate.Replace("{{id}}", site.Id);
+                               dataSet.SiteMeta[site.SiteName].UrlTemplate.Replace("{{id}}", site.Id);
                 }
                 // 启用设置，将mediaid转换为seasonid
                 if (UseBiliApp)
