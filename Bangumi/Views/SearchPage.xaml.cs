@@ -200,7 +200,7 @@ namespace Bangumi.Views
         // 鼠标右键弹出菜单
         private void ItemRelativePanel_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
         {
-            if (BangumiApiHelper.IsLogin)
+            if (BangumiApi.IsLogin)
             {
                 if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse)
                 {
@@ -213,7 +213,7 @@ namespace Bangumi.Views
         // 触摸长按弹出菜单
         private void ItemRelativePanel_Holding(object sender, Windows.UI.Xaml.Input.HoldingRoutedEventArgs e)
         {
-            if (BangumiApiHelper.IsLogin)
+            if (BangumiApi.IsLogin)
             {
                 if (e.HoldingState == Windows.UI.Input.HoldingState.Started)
                 {

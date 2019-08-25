@@ -46,7 +46,7 @@ namespace Bangumi
             CostomTitleBar();
 
             // 初始化 Api 对象
-            BangumiApiHelper.Init(ApplicationData.Current.LocalFolder.Path,
+            BangumiApi.Init(ApplicationData.Current.LocalFolder.Path,
                                   ApplicationData.Current.LocalCacheFolder.Path,
                                   "https://api.bgm.tv",
                                   "https://bgm.tv/oauth",
@@ -71,7 +71,7 @@ namespace Bangumi
         /// <returns></returns>
         private async Task UpdataUserStatusAsync()
         {
-            bool result = await BangumiApiHelper.CheckMyToken();
+            bool result = await BangumiApi.CheckMyToken();
             if (result)
             {
                 LoginButton.Label = "注销";
@@ -220,7 +220,7 @@ namespace Bangumi
                 await msgDialog.ShowAsync();
                 if (choice == "确定")
                 {
-                    BangumiApiHelper.DeleteToken();
+                    BangumiApi.DeleteToken();
                     await UpdataUserStatusAsync();
                 }
             }

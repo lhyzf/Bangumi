@@ -201,7 +201,7 @@ namespace Bangumi.ViewModels
         /// </summary>
         public async void EditCollectionStatus()
         {
-            if (!BangumiApiHelper.IsLogin)
+            if (!BangumiApi.IsLogin)
                 return;
             CollectionEditContentDialog collectionEditContentDialog = new CollectionEditContentDialog()
             {
@@ -485,7 +485,7 @@ namespace Bangumi.ViewModels
                     IsDetailLoading = false;
 
                     // 确认用户登录状态
-                    if (BangumiApiHelper.IsLogin)
+                    if (BangumiApi.IsLogin)
                     {
                         // 显示用户章节状态
                         Progress progress = await BangumiFacade.GetProgressesAsync(SubjectId);

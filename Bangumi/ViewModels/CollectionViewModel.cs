@@ -60,7 +60,7 @@ namespace Bangumi.ViewModels
             try
             {
                 var subjectType = GetSubjectType();
-                if (BangumiApiHelper.IsLogin)
+                if (BangumiApi.IsLogin)
                 {
                     IsLoading = true;
                     await BangumiFacade.PopulateSubjectCollectionAsync(SubjectCollection, subjectType);
