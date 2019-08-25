@@ -138,6 +138,7 @@
     <Compile Include="Facades\BangumiFacade.cs" />
     <Compile Include="Helper\EncryptionHelper.cs" />
     <Compile Include="Helper\FileHelper.cs" />
+    <Compile Include="Helper\NotificationHelper.cs" />
     <Compile Include="Helper\OAuthHelper.cs" />
     <Compile Include="Helper\SettingHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
