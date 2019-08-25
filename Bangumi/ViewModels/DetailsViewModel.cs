@@ -169,6 +169,7 @@ namespace Bangumi.ViewModels
         public void InitViewModel()
         {
             IsLoading = false;
+            ImageSource = "ms-appx:///Assets/resource/err_404.png";
             NameCn = "";
             AirDate = "";
             AirWeekday = 0;
@@ -379,7 +380,7 @@ namespace Bangumi.ViewModels
                     }
                 }
 
-
+                // 获取最新数据
                 Subject subject = await BangumiApi.GetSubjectAsync(SubjectId);
 
                 if (subject != null && subject.Id.ToString() == SubjectId)
