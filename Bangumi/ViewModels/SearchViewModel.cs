@@ -1,15 +1,11 @@
-﻿using Bangumi.Common;
-using Bangumi.Facades;
+﻿using Bangumi.Api;
 using Bangumi.Api.Models;
-using Bangumi.Views;
+using Bangumi.Common;
+using Bangumi.Facades;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Core;
@@ -78,7 +74,7 @@ namespace Bangumi.ViewModels
                 try
                 {
                     Debug.WriteLine("开始获取搜索建议");
-                    var result = await BangumiFacade.GetSearchResultAsync(SearchText, "", 0, 10);
+                    var result = await BangumiApi.GetSearchResultAsync(SearchText, "", 0, 10);
                     if (SearchText == PreSearch[SelectedIndex])
                     {
                         return;
@@ -203,7 +199,7 @@ namespace Bangumi.ViewModels
             return AsyncInfo.Run(async cancelToken =>
             {
                 if (isSearching)
-                    return new LoadMoreItemsResult { Count = count }; 
+                    return new LoadMoreItemsResult { Count = count };
                 await Task.WhenAll(dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
                     try
@@ -215,7 +211,7 @@ namespace Bangumi.ViewModels
                         {
                             this.OnLoadMoreStarted(index);
                         }
-                        SearchResult result = await BangumiFacade.GetSearchResultAsync(keyword, type, offset, 20);
+                        SearchResult result = await BangumiApi.GetSearchResultAsync(keyword, type, offset, 20);
                         max = result.ResultCount;
                         foreach (Subject item in result.Results)
                         {
