@@ -26,18 +26,18 @@ namespace Bangumi.Helper
         {
             try
             {
-                string URL = $"{BangumiApiHelper.OAuthBaseUrl}/authorize?client_id={BangumiApiHelper.ClientId}&response_type=code";
+                string URL = $"{BangumiApi.OAuthBaseUrl}/authorize?client_id={BangumiApi.ClientId}&response_type=code";
 
                 Uri StartUri = new Uri(URL);
                 // When using the desktop flow, the success code is displayed in the html title of this end uri
-                Uri EndUri = new Uri($"{BangumiApiHelper.OAuthBaseUrl}/{BangumiApiHelper.RedirectUrl}");
+                Uri EndUri = new Uri($"{BangumiApi.OAuthBaseUrl}/{BangumiApi.RedirectUrl}");
 
                 //rootPage.NotifyUser("Navigating to: " + GoogleURL, NotifyType.StatusMessage);
 
                 WebAuthenticationResult WebAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri, EndUri);
                 if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
                 {
-                    await BangumiApiHelper.GetTokenAsync(WebAuthenticationResult.ResponseData.ToString().Replace($"{BangumiApiHelper.OAuthBaseUrl}/{BangumiApiHelper.RedirectUrl}?code=", ""));
+                    await BangumiApi.GetTokenAsync(WebAuthenticationResult.ResponseData.ToString().Replace($"{BangumiApi.OAuthBaseUrl}/{BangumiApi.RedirectUrl}?code=", ""));
                 }
                 else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
                 {

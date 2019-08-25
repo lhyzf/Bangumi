@@ -59,7 +59,7 @@ namespace Bangumi.Views
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Wait, 10);
             await OAuthHelper.Authorize();
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 10);
-            if (BangumiApiHelper.IsLogin)
+            if (BangumiApi.IsLogin)
             {
                 MainPage.RootFrame.Navigate(typeof(HomePage));
             }

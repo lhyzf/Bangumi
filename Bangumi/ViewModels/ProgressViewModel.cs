@@ -71,7 +71,7 @@ namespace Bangumi.ViewModels
         {
             try
             {
-                if (BangumiApiHelper.IsLogin)
+                if (BangumiApi.IsLogin)
                 {
                     IsLoading = true;
                     HomePage.homePage.isLoading = IsLoading;

@@ -39,7 +39,7 @@ namespace Bangumi.Facades
                     }
                 }
 
-                var watchingList = await BangumiApiHelper.GetWatchingListAsync();
+                var watchingList = await BangumiApi.GetWatchingListAsync();
 
                 var deletedItems = new List<WatchingStatus>(); //标记要删除的条目
                 foreach (var sub in watchingListCollection)
@@ -88,7 +88,7 @@ namespace Bangumi.Facades
                             item.LastUpdate != DateTime.Today.ConvertDateTimeToJsTick())
                         {
                             // 获取EP信息
-                            var subject = await BangumiApiHelper.GetSubjectEpsAsync(item.SubjectId.ToString());
+                            var subject = await BangumiApi.GetSubjectEpsAsync(item.SubjectId.ToString());
 
                             item.Eps = new List<SimpleEp>();
                             if (subject.Eps != null)
@@ -184,7 +184,7 @@ namespace Bangumi.Facades
                     }
                 }
 
-                var subjectCollections = await BangumiApiHelper.GetSubjectCollectionAsync(subjectType);
+                var subjectCollections = await BangumiApi.GetSubjectCollectionAsync(subjectType);
 
                 //清空原数据
                 subjectCollection.Clear();
@@ -237,7 +237,7 @@ namespace Bangumi.Facades
                     }
                 }
 
-                var bangumiCalendarList = await BangumiApiHelper.GetBangumiCalendarAsync();
+                var bangumiCalendarList = await BangumiApi.GetBangumiCalendarAsync();
 
                 //清空原数据
                 bangumiCollection.Clear();
@@ -273,7 +273,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                var result = await BangumiApiHelper.GetSubjectAsync(subjectId);
+                var result = await BangumiApi.GetSubjectAsync(subjectId);
                 return result;
             }
             catch (Exception e)
@@ -293,7 +293,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiApiHelper.GetCollectionStatusAsync( subjectId);
+                return await BangumiApi.GetCollectionStatusAsync( subjectId);
             }
             catch (Exception e)
             {
@@ -312,7 +312,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiApiHelper.GetProgressesAsync(subjectId);
+                return await BangumiApi.GetProgressesAsync(subjectId);
             }
             catch (Exception e)
             {
@@ -334,7 +334,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiApiHelper.GetSearchResultAsync(searchText, type, start, n);
+                return await BangumiApi.GetSearchResultAsync(searchText, type, start, n);
             }
             catch (Exception e)
             {
@@ -357,7 +357,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                if (await BangumiApiHelper.UpdateProgressAsync(ep, status))
+                if (await BangumiApi.UpdateProgressAsync(ep, status))
                 {
                     MainPage.RootPage.ToastInAppNotification.Show($"标记章节{ep}{status.GetValue()}成功", 1500);
                     return true;
@@ -387,7 +387,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                if (await BangumiApiHelper.UpdateProgressBatchAsync(ep, status, epsId))
+                if (await BangumiApi.UpdateProgressBatchAsync(ep, status, epsId))
                 {
                     MainPage.RootPage.ToastInAppNotification.Show($"批量标记章节{epsId}{status.GetValue()}状态成功", 1500);
                     return true;
@@ -419,7 +419,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                if (await BangumiApiHelper.UpdateCollectionStatusAsync(subjectId, collectionStatus, comment, rating, privace))
+                if (await BangumiApi.UpdateCollectionStatusAsync(subjectId, collectionStatus, comment, rating, privace))
                 {
                     MainPage.RootPage.ToastInAppNotification.Show($"更新条目{subjectId}状态成功", 1500);
                     return true;

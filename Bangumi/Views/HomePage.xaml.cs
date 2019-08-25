@@ -102,7 +102,7 @@ namespace Bangumi.Views
             MainPage.RootPage.MyCommandBar.Visibility = Visibility.Visible;
             MainPage.RootPage.RefreshAppBarButton.IsEnabled = true;
 
-            if (BangumiApiHelper.IsLogin)
+            if (BangumiApi.IsLogin)
             {
                 if (!HomePagePivot.Items.Cast<PivotItem>().Any(p => p.Name == "CollectionItem"))
                 {

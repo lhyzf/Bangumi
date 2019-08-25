@@ -16,7 +16,7 @@ namespace Bangumi.Api
     /// <summary>
     /// 提供 Api 访问以及缓存管理
     /// </summary>
-    public static class BangumiApiHelper
+    public static class BangumiApi
     {
         /// <summary>
         /// Http 请求封装
@@ -48,9 +48,9 @@ namespace Bangumi.Api
         /// </summary>
         private static Timer timer;
 
-        public static string OAuthBaseUrl => BangumiHttpWrapper.OAuthBaseUrl;
-        public static string ClientId => BangumiHttpWrapper.ClientId;
-        public static string RedirectUrl => BangumiHttpWrapper.RedirectUrl;
+        public static string OAuthBaseUrl => wrapper.OAuthBaseUrl;
+        public static string ClientId => wrapper.ClientId;
+        public static string RedirectUrl => wrapper.RedirectUrl;
 
         /// <summary>
         /// 用户认证存在且可用
@@ -97,21 +97,13 @@ namespace Bangumi.Api
                 cacheFolderPath = cacheFolder;
                 wrapper = new BangumiHttpWrapper
                 {
-                    //BaseUrl = baseUrl,
-                    //OAuthBaseUrl = oAuthBaseUrl,
-                    //ClientId = clientId,
-                    //ClientSecret = clientSecret,
-                    //RedirectUrl = redirectUrl,
-                    //NoImageUri = noImageUrl
+                    BaseUrl = baseUrl,
+                    OAuthBaseUrl = oAuthBaseUrl,
+                    ClientId = clientId,
+                    ClientSecret = clientSecret,
+                    RedirectUrl = redirectUrl,
+                    NoImageUri = noImageUri
                 };
-
-                // 临时
-                BangumiHttpWrapper.BaseUrl = baseUrl;
-                BangumiHttpWrapper.OAuthBaseUrl = oAuthBaseUrl;
-                BangumiHttpWrapper.ClientId = clientId;
-                BangumiHttpWrapper.ClientSecret = clientSecret;
-                BangumiHttpWrapper.RedirectUrl = redirectUrl;
-                BangumiHttpWrapper.NoImageUri = noImageUri;
             }
             // 加载缓存
             if (BangumiCache == null)
@@ -140,6 +132,11 @@ namespace Bangumi.Api
             //await FileHelper.ReadAndDecryptFileAsync(localFolderPath + "\\test.data");
         }
 
+        /// <summary>
+        /// 定时器事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static async void WriteCacheToFileTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (isCacheUpdated)
@@ -161,7 +158,7 @@ namespace Bangumi.Api
         {
             try
             {
-                var result = await BangumiHttpWrapper.GetSubjectCollectionAsync(MyToken.UserId, subjectType);
+                var result = await wrapper.GetSubjectCollectionAsync(MyToken.UserId, subjectType);
                 UpdateCache(BangumiCache.Collections, subjectType.GetValue(), result);
                 return result;
             }
@@ -182,7 +179,7 @@ namespace Bangumi.Api
         {
             try
             {
-                var result = await BangumiHttpWrapper.GetCollectionStatusAsync(MyToken.Token, subjectId);
+                var result = await wrapper.GetCollectionStatusAsync(MyToken.Token, subjectId);
                 UpdateCache(BangumiCache.SubjectStatus, subjectId, result);
                 return result;
             }
@@ -204,7 +201,7 @@ namespace Bangumi.Api
         {
             try
             {
-                var result = await BangumiHttpWrapper.GetProgressesAsync(MyToken.UserId, MyToken.Token, subjectId);
+                var result = await wrapper.GetProgressesAsync(MyToken.UserId, MyToken.Token, subjectId);
                 UpdateCache(BangumiCache.Progresses, subjectId, result);
                 return result;
             }
@@ -224,7 +221,7 @@ namespace Bangumi.Api
         {
             try
             {
-                var result = await BangumiHttpWrapper.GetWatchingListAsync(MyToken.UserId);
+                var result = await wrapper.GetWatchingListAsync(MyToken.UserId);
                 UpdateCache(BangumiCache.Watchings, result);
                 return result;
             }
@@ -253,7 +250,7 @@ namespace Bangumi.Api
         {
             try
             {
-                var result = await BangumiHttpWrapper.UpdateCollectionStatusAsync(MyToken.Token, subjectId,
+                var result = await wrapper.UpdateCollectionStatusAsync(MyToken.Token, subjectId,
                                     collectionStatusEnum, comment, rating, privace);
                 return result;
             }
@@ -275,7 +272,7 @@ namespace Bangumi.Api
         {
             try
             {
-                var result = await BangumiHttpWrapper.UpdateProgressAsync(MyToken.Token, ep, status);
+                var result = await wrapper.UpdateProgressAsync(MyToken.Token, ep, status);
                 return result;
             }
             catch (Exception e)
@@ -298,7 +295,7 @@ namespace Bangumi.Api
         {
             try
             {
-                var result = await BangumiHttpWrapper.UpdateProgressBatchAsync(MyToken.Token, ep, status, epsId);
+                var result = await wrapper.UpdateProgressBatchAsync(MyToken.Token, ep, status, epsId);
                 return result;
             }
             catch (Exception e)
@@ -317,7 +314,7 @@ namespace Bangumi.Api
         {
             try
             {
-                var result = await BangumiHttpWrapper.GetSubjectEpsAsync(subjectId);
+                var result = await wrapper.GetSubjectEpsAsync(subjectId);
                 return result;
             }
             catch (Exception e)
@@ -336,7 +333,7 @@ namespace Bangumi.Api
         {
             try
             {
-                var result = await BangumiHttpWrapper.GetSubjectAsync(subjectId);
+                var result = await wrapper.GetSubjectAsync(subjectId);
                 UpdateCache(BangumiCache.Subjects, subjectId, result);
                 return result;
             }
@@ -355,7 +352,7 @@ namespace Bangumi.Api
         {
             try
             {
-                var result = await BangumiHttpWrapper.GetBangumiCalendarAsync();
+                var result = await wrapper.GetBangumiCalendarAsync();
                 UpdateCache(BangumiCache.TimeLine, result);
                 return result;
             }
@@ -377,7 +374,7 @@ namespace Bangumi.Api
         {
             try
             {
-                var result = await BangumiHttpWrapper.GetSearchResultAsync(keyWord, type, start, n);
+                var result = await wrapper.GetSearchResultAsync(keyWord, type, start, n);
                 return result;
             }
             catch (Exception e)
@@ -455,7 +452,7 @@ namespace Bangumi.Api
             for (int i = 0; i < 3; i++)
             {
                 Debug.WriteLine($"第{i + 1}次尝试获取Token。");
-                token = await BangumiHttpWrapper.GetTokenAsync(code);
+                token = await wrapper.GetTokenAsync(code);
                 if (token != null)
                 {
                     await WriteTokenAsync(token);
@@ -518,7 +515,7 @@ namespace Bangumi.Api
             {
                 AccessToken token;
                 Debug.WriteLine("尝试刷新Token。");
-                token = await BangumiHttpWrapper.CheckTokenAsync(MyToken);
+                token = await wrapper.CheckTokenAsync(MyToken);
                 if (token != null)
                 {
                     // 将信息写入本地文件
