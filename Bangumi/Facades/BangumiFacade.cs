@@ -15,6 +15,8 @@ namespace Bangumi.Facades
 {
     public static class BangumiFacade
     {
+        #region 首页 进度、收藏、时间表 列表显示
+
         /// <summary>
         /// 显示用户收视进度列表。
         /// </summary>
@@ -265,6 +267,9 @@ namespace Bangumi.Facades
             }
         }
 
+        #endregion
+
+
         /// <summary>
         /// 获取指定条目详情。
         /// </summary>
@@ -346,7 +351,7 @@ namespace Bangumi.Facades
         }
 
 
-
+        #region 更新进度、状态，并显示通知
 
         /// <summary>
         /// 更新收视进度。
@@ -360,18 +365,17 @@ namespace Bangumi.Facades
             {
                 if (await BangumiApi.UpdateProgressAsync(ep, status))
                 {
-                    MainPage.RootPage.ToastInAppNotification.Show($"标记章节{ep}{status.GetValue()}成功", 1500);
+                    NotificationHelper.Notify($"标记章节{ep}{status.GetValue()}成功");
                     return true;
                 }
-                MainPage.RootPage.ErrorInAppNotification.Show($"标记章节{ep}{status.GetValue()}失败，请重试！", 1500);
+                NotificationHelper.Notify($"标记章节{ep}{status.GetValue()}失败，请重试！",
+                                          NotificationHelper.NotifyType.Warn);
                 return false;
             }
             catch (Exception e)
             {
-                MainPage.RootPage.ErrorInAppNotification.Show("更新收视进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
-                //var msgDialog = new Windows.UI.Popups.MessageDialog("更新收视进度失败！\n" + e.Message) { Title = "错误！" };
-                //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                //await msgDialog.ShowAsync();
+                NotificationHelper.Notify("更新收视进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'),
+                                          NotificationHelper.NotifyType.Error);
                 return false;
             }
         }
@@ -390,18 +394,17 @@ namespace Bangumi.Facades
             {
                 if (await BangumiApi.UpdateProgressBatchAsync(ep, status, epsId))
                 {
-                    MainPage.RootPage.ToastInAppNotification.Show($"批量标记章节{epsId}{status.GetValue()}状态成功", 1500);
+                    NotificationHelper.Notify($"批量标记章节{epsId}{status.GetValue()}状态成功");
                     return true;
                 }
-                MainPage.RootPage.ErrorInAppNotification.Show($"批量标记章节{epsId}{status.GetValue()}状态失败，请重试！", 1500);
+                    NotificationHelper.Notify($"批量标记章节{epsId}{status.GetValue()}状态失败，请重试！",
+                                              NotificationHelper.NotifyType.Warn);
                 return false;
             }
             catch (Exception e)
             {
-                MainPage.RootPage.ErrorInAppNotification.Show("更新收藏进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
-                //var msgDialog = new Windows.UI.Popups.MessageDialog("更新收藏状态失败！\n" + e.Message) { Title = "错误！" };
-                //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                //await msgDialog.ShowAsync();
+                NotificationHelper.Notify("批量标记章节状态失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'),
+                                          NotificationHelper.NotifyType.Error);
                 return false;
             }
         }
@@ -422,23 +425,22 @@ namespace Bangumi.Facades
             {
                 if (await BangumiApi.UpdateCollectionStatusAsync(subjectId, collectionStatus, comment, rating, privace))
                 {
-                    MainPage.RootPage.ToastInAppNotification.Show($"更新条目{subjectId}状态成功", 1500);
+                    NotificationHelper.Notify($"更新条目{subjectId}状态成功");
                     return true;
                 }
-                MainPage.RootPage.ErrorInAppNotification.Show($"更新条目{subjectId}状态失败，请重试！", 1500);
+                NotificationHelper.Notify($"更新条目{subjectId}状态失败，请重试！",
+                                          NotificationHelper.NotifyType.Warn);
                 return false;
             }
             catch (Exception e)
             {
-                MainPage.RootPage.ErrorInAppNotification.Show("更新收藏进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
-                //var msgDialog = new Windows.UI.Popups.MessageDialog("更新收藏状态失败！\n" + e.Message) { Title = "错误！" };
-                //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                //await msgDialog.ShowAsync();
+                NotificationHelper.Notify("更新条目状态失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'),
+                                          NotificationHelper.NotifyType.Error);
                 return false;
             }
         }
 
-
+        #endregion
 
 
         // 获取当天星期几

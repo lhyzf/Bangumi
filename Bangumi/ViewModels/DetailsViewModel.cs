@@ -1,18 +1,16 @@
-﻿using Bangumi.Common;
+﻿using Bangumi.Api;
+using Bangumi.Api.Models;
+using Bangumi.Api.Utils;
+using Bangumi.Common;
 using Bangumi.ContentDialogs;
 using Bangumi.Facades;
 using Bangumi.Helper;
-using Bangumi.Api.Models;
-using Bangumi.Api.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
-using Bangumi.Api;
 
 namespace Bangumi.ViewModels
 {
@@ -209,7 +207,7 @@ namespace Bangumi.ViewModels
                 Comment = myComment,
                 Privacy = myPrivacy,
                 CollectionStatus = _collectionStatus,
-                SubjectType=this.SubjectType
+                SubjectType = this.SubjectType
             };
             MainPage.RootPage.HasDialog = true;
             if (ContentDialogResult.Primary == await collectionEditContentDialog.ShowAsync())
@@ -358,173 +356,61 @@ namespace Bangumi.ViewModels
                 IsProgressLoading = true;
                 IsStatusLoaded = false;
                 MainPage.RootPage.RefreshAppBarButton.IsEnabled = false;
-                // 获取条目信息
-                var subject = await BangumiFacade.GetSubjectAsync(SubjectId);
+
+                // 获取缓存
+                Subject subjectCache = null;
+                Progress progressCache = null;
+                SubjectStatus2 subjectStatusCache = null;
+                if (BangumiApi.BangumiCache.Subjects.TryGetValue(SubjectId, out subjectCache))
+                {
+                    ProcessSubject(subjectCache);
+
+                    // 检查用户登录状态
+                    if (BangumiApi.IsLogin)
+                    {
+                        if (BangumiApi.BangumiCache.Progresses.TryGetValue(SubjectId, out progressCache))
+                        {
+                            ProcessProgress(subjectCache, progressCache);
+                        }
+                        if (BangumiApi.BangumiCache.SubjectStatus.TryGetValue(SubjectId, out subjectStatusCache))
+                        {
+                            ProcessCollectionStatus(subjectStatusCache);
+                        }
+                    }
+                }
+
+
+                Subject subject = await BangumiApi.GetSubjectAsync(SubjectId);
 
                 if (subject != null && subject.Id.ToString() == SubjectId)
                 {
-                    // 条目标题
-                    NameCn = string.IsNullOrEmpty(subject.NameCn) ? subject.Name : subject.NameCn;
-                    // 条目图片
-                    ImageSource = subject.Images?.Common;
-                    // 放送日期
-                    AirDate = subject.AirDate;
-                    AirWeekday = subject.AirWeekday;
-                    // 条目简介
-                    if (!string.IsNullOrEmpty(subject.Summary))
+                    bool subjectChanged = false;
+                    if (!subjectCache.EqualsExT(subject))
                     {
-                        Summary = subject.Summary.Length > 80 ? (subject.Summary.Substring(0, 80) + "...") : subject.Summary;
-                    }
-                    else
-                    {
-                        Summary = "暂无简介";
-                    }
-                    if (subject.Rating != null)
-                    {
-                        Score = subject.Rating.Score;
-                        List<SimpleRate> simpleRates = new List<SimpleRate>();
-                        simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._10, Score = 10 });
-                        simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._9, Score = 9 });
-                        simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._8, Score = 8 });
-                        simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._7, Score = 7 });
-                        simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._6, Score = 6 });
-                        simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._5, Score = 5 });
-                        simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._4, Score = 4 });
-                        simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._3, Score = 3 });
-                        simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._2, Score = 2 });
-                        simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._1, Score = 1 });
-                        double maxCount = simpleRates.Max().Count;
-                        OthersRates.Clear();
-                        foreach (var item in simpleRates)
-                        {
-                            item.Ratio = (double)item.Count * 100 / maxCount;
-                            OthersRates.Add(item);
-                        }
-                    }
-                    if (subject.Collection != null)
-                    {
-                        OthersCollection = subject.Collection.Wish + "想看/" +
-                                           subject.Collection.Collect + "看过/" +
-                                           subject.Collection.Doing + "在看/" +
-                                           subject.Collection.OnHold + "搁置/" +
-                                           subject.Collection.Dropped + "抛弃";
+                        ProcessSubject(subject);
+                        subjectChanged = true;
                     }
 
-                    // 条目类别
-                    SubjectType = (SubjectTypeEnum)subject.Type;
-                    // 更多资料
-                    Name = subject.Name;
-                    MoreSummary = subject.Summary;
-                    MoreInfo = "作品分类：" + SubjectType.GetDescCn();
-                    MoreInfo += subject.AirDate == "0000-00-00" ? "" : "\n放送开始：" + subject.AirDate;
-                    MoreInfo += subject.AirWeekday == 0 ? "" : "\n放送星期：" + Converters.GetWeekday(subject.AirWeekday);
-                    MoreInfo += subject.Eps == null ? "" : "\n话数：" + subject.Eps.Count;
-                    // 角色
-                    Characters.Clear();
-                    if (subject.Characters != null)
-                    {
-                        foreach (var crt in subject.Characters)
-                        {
-                            Characters.Add(crt);
-                        }
-                    }
-                    // 演职人员
-                    Staffs.Clear();
-                    if (subject.Staff != null)
-                    {
-                        foreach (var staff in subject.Staff)
-                        {
-                            Staffs.Add(staff);
-                        }
-                    }
-                    // 评论
-                    Blogs.Clear();
-                    if (subject.Blogs != null)
-                    {
-                        foreach (var blog in subject.Blogs)
-                        {
-                            Blogs.Add(blog);
-                        }
-                    }
-                    // 讨论版
-                    Topics.Clear();
-                    if (subject.Topics != null)
-                    {
-                        foreach (var topic in subject.Topics)
-                        {
-                            Topics.Add(topic);
-                        }
-                    }
-                    // 显示章节
-                    if (subject.Eps != null)
-                    {
-                        // 在无章节信息时添加
-                        if (Eps.Count == 0)
-                        {
-                            foreach (var ep in subject.Eps)
-                            {
-                                Eps.Add(ep);
-                            }
-                        }
-                        // 在有章节信息时覆盖
-                        else
-                        {
-                            foreach (var ep in subject.Eps)
-                            {
-                                var oldEp = Eps.Where(e => e.Id == ep.Id).FirstOrDefault();
-                                oldEp.Name = ep.Name;
-                                oldEp.NameCn = ep.NameCn;
-                                oldEp.Url = ep.Url;
-                                oldEp.Duration = ep.Duration;
-                                oldEp.AirDate = ep.AirDate;
-                                oldEp.Desc = ep.Desc;
-                                oldEp.Comment = ep.Comment;
-                            }
-                        }
-                    }
-                    IsDetailLoading = false;
-
-                    // 确认用户登录状态
+                    // 检查用户登录状态
                     if (BangumiApi.IsLogin)
                     {
-                        // 显示用户章节状态
-                        Progress progress = await BangumiFacade.GetProgressesAsync(SubjectId);
-                        if (progress != null && progress.SubjectId.ToString() == SubjectId)
+                        Task<Progress> progress = BangumiApi.GetProgressesAsync(SubjectId);
+                        Task<SubjectStatus2> subjectStatus = BangumiApi.GetCollectionStatusAsync(SubjectId);
+                        if (subjectChanged || !progressCache.EqualsExT(await progress))
                         {
-                            foreach (var ep in Eps) //用户观看状态
-                            {
-                                var prog = progress?.Eps?.Where(p => p.Id == ep.Id).FirstOrDefault();
-                                if (prog != null)
-                                {
-                                    ep.Status = prog.Status.CnName;
-                                }
-                                else
-                                {
-                                    ep.Status = subject.Eps.Where(e => e.Id == ep.Id).FirstOrDefault().Status;
-                                }
-                            }
-                            IsProgressLoading = false;
+                            ProcessProgress(subject, await progress);
                         }
-                        // 获取收藏、评分和吐槽信息。
-                        SubjectStatus2 collectionStatus = await BangumiFacade.GetCollectionStatusAsync(SubjectId);
-                        if (collectionStatus?.Status != null)
+                        if (subjectChanged || !subjectStatusCache.EqualsExT(await subjectStatus))
                         {
-                            CollectionStatusText = collectionStatus.Status.Type;
-                            myRate = collectionStatus.Rating;
-                            myComment = collectionStatus.Comment;
-                            myPrivacy = collectionStatus.Private == "1" ? true : false;
+                            ProcessCollectionStatus(await subjectStatus);
                         }
-                        SetCollectionIcon();
-                        IsStatusLoaded = true;
                     }
                 }
             }
             catch (Exception e)
             {
-                MainPage.RootPage.ErrorInAppNotification.Show("加载详情失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
-                //var msgDialog = new Windows.UI.Popups.MessageDialog("加载详情失败！\n" + e.Message) { Title = "错误！" };
-                //msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定"));
-                //await msgDialog.ShowAsync();
+                NotificationHelper.Notify("加载详情失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'),
+                                          NotificationHelper.NotifyType.Error);
             }
             finally
             {
@@ -535,6 +421,217 @@ namespace Bangumi.ViewModels
                 MainPage.RootPage.RefreshAppBarButton.IsEnabled = true;
             }
         }
+
+        /// <summary>
+        /// 处理条目信息
+        /// </summary>
+        /// <param name="subject"></param>
+        private void ProcessSubject(Subject subject)
+        {
+            try
+            {
+                // 条目标题
+                NameCn = string.IsNullOrEmpty(subject.NameCn) ? subject.Name : subject.NameCn;
+                // 条目图片
+                ImageSource = subject.Images?.Common;
+                // 放送日期
+                AirDate = subject.AirDate;
+                AirWeekday = subject.AirWeekday;
+                // 条目简介
+                if (!string.IsNullOrEmpty(subject.Summary))
+                {
+                    Summary = subject.Summary.Length > 80 ? (subject.Summary.Substring(0, 80) + "...") : subject.Summary;
+                }
+                else
+                {
+                    Summary = "暂无简介";
+                }
+                if (subject.Rating != null)
+                {
+                    Score = subject.Rating.Score;
+                    List<SimpleRate> simpleRates = new List<SimpleRate>();
+                    simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._10, Score = 10 });
+                    simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._9, Score = 9 });
+                    simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._8, Score = 8 });
+                    simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._7, Score = 7 });
+                    simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._6, Score = 6 });
+                    simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._5, Score = 5 });
+                    simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._4, Score = 4 });
+                    simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._3, Score = 3 });
+                    simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._2, Score = 2 });
+                    simpleRates.Add(new SimpleRate { Count = subject.Rating.Count._1, Score = 1 });
+                    double maxCount = simpleRates.Max().Count;
+                    OthersRates.Clear();
+                    foreach (var item in simpleRates)
+                    {
+                        item.Ratio = (double)item.Count * 100 / maxCount;
+                        OthersRates.Add(item);
+                    }
+                }
+                if (subject.Collection != null)
+                {
+                    OthersCollection = subject.Collection.Wish + "想看/" +
+                                       subject.Collection.Collect + "看过/" +
+                                       subject.Collection.Doing + "在看/" +
+                                       subject.Collection.OnHold + "搁置/" +
+                                       subject.Collection.Dropped + "抛弃";
+                }
+
+                // 条目类别
+                SubjectType = (SubjectTypeEnum)subject.Type;
+                // 更多资料
+                Name = subject.Name;
+                MoreSummary = subject.Summary;
+                MoreInfo = "作品分类：" + SubjectType.GetDescCn();
+                MoreInfo += subject.AirDate == "0000-00-00" ? "" : "\n放送开始：" + subject.AirDate;
+                MoreInfo += subject.AirWeekday == 0 ? "" : "\n放送星期：" + Converters.GetWeekday(subject.AirWeekday);
+                MoreInfo += subject.Eps == null ? "" : "\n话数：" + subject.Eps.Count;
+                // 角色
+                Characters.Clear();
+                if (subject.Characters != null)
+                {
+                    foreach (var crt in subject.Characters)
+                    {
+                        Characters.Add(crt);
+                    }
+                }
+                // 演职人员
+                Staffs.Clear();
+                if (subject.Staff != null)
+                {
+                    foreach (var staff in subject.Staff)
+                    {
+                        Staffs.Add(staff);
+                    }
+                }
+                // 评论
+                Blogs.Clear();
+                if (subject.Blogs != null)
+                {
+                    foreach (var blog in subject.Blogs)
+                    {
+                        Blogs.Add(blog);
+                    }
+                }
+                // 讨论版
+                Topics.Clear();
+                if (subject.Topics != null)
+                {
+                    foreach (var topic in subject.Topics)
+                    {
+                        Topics.Add(topic);
+                    }
+                }
+                // 显示章节
+                if (subject.Eps != null)
+                {
+                    // 在无章节信息时添加
+                    if (Eps.Count == 0)
+                    {
+                        foreach (var ep in subject.Eps)
+                        {
+                            Ep newEp = new Ep
+                            {
+                                Id = ep.Id,
+                                Url = ep.Url,
+                                Type = ep.Type,
+                                Sort = ep.Sort,
+                                Name = ep.Name,
+                                NameCn = ep.NameCn,
+                                Duration = ep.Duration,
+                                AirDate = ep.AirDate,
+                                Comment = ep.Comment,
+                                Desc = ep.Desc,
+                                Status = ep.Status
+                            };
+                            Eps.Add(newEp);
+                        }
+                    }
+                    // 在有章节信息时覆盖
+                    else
+                    {
+                        foreach (var ep in subject.Eps)
+                        {
+                            var oldEp = Eps.Where(e => e.Id == ep.Id).FirstOrDefault();
+                            oldEp.Url = ep.Url;
+                            oldEp.Type = ep.Type;
+                            oldEp.Sort = ep.Sort;
+                            oldEp.Name = ep.Name;
+                            oldEp.NameCn = ep.NameCn;
+                            oldEp.Duration = ep.Duration;
+                            oldEp.AirDate = ep.AirDate;
+                            oldEp.Comment = ep.Comment;
+                            oldEp.Desc = ep.Desc;
+                            oldEp.Status = ep.Status;
+                        }
+                    }
+                }
+                IsDetailLoading = false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 处理用户章节状态
+        /// </summary>
+        /// <param name="subject"></param>
+        /// <param name="progress"></param>
+        private void ProcessProgress(Subject subject, Progress progress)
+        {
+            try
+            {
+                if (progress != null && progress.SubjectId.ToString() == SubjectId)
+                {
+                    foreach (var ep in Eps) //用户观看状态
+                    {
+                        var prog = progress?.Eps?.Where(p => p.Id == ep.Id).FirstOrDefault();
+                        if (prog != null)
+                        {
+                            ep.Status = prog.Status.CnName;
+                        }
+                        else
+                        {
+                            ep.Status = subject.Eps.Where(e => e.Id == ep.Id).FirstOrDefault().Status;
+                        }
+                    }
+                    IsProgressLoading = false;
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 处理收藏、评分和吐槽信息。
+        /// </summary>
+        /// <param name="subjectStatus"></param>
+        private void ProcessCollectionStatus(SubjectStatus2 subjectStatus)
+        {
+            try
+            {
+                if (subjectStatus?.Status != null)
+                {
+                    CollectionStatusText = subjectStatus.Status.Type;
+                    myRate = subjectStatus.Rating;
+                    myComment = subjectStatus.Comment;
+                    myPrivacy = subjectStatus.Private == "1" ? true : false;
+                }
+                SetCollectionIcon();
+                IsStatusLoaded = true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
 
     }
 
