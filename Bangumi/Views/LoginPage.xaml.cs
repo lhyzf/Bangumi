@@ -65,7 +65,7 @@ namespace Bangumi.Views
             }
             else
             {
-                MainPage.RootPage.ErrorInAppNotification.Show("登录失败，请重试！", 3000);
+                NotificationHelper.Notify("登录失败，请重试！", NotificationHelper.NotifyType.Error);
             }
         }
 

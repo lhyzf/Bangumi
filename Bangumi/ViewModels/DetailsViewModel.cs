@@ -243,7 +243,7 @@ namespace Bangumi.ViewModels
                         }
                         else
                         {
-                            MainPage.RootPage.ToastInAppNotification.Show("无章节需要更新", 1500);
+                            NotificationHelper.Notify("无章节需要更新");
                         }
 
                     }
@@ -317,7 +317,7 @@ namespace Bangumi.ViewModels
                 }
                 else
                 {
-                    MainPage.RootPage.ToastInAppNotification.Show("无章节需要更新", 1500);
+                    NotificationHelper.Notify("无章节需要更新");
                 }
                 IsUpdating = false;
             }
