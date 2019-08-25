@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Bangumi.Api.Utils;
+using System;
 using Windows.Storage;
-using Windows.UI.Xaml;
 
 namespace Bangumi.Helper
 {
@@ -15,6 +11,7 @@ namespace Bangumi.Helper
         private static bool? _subjectComplete;
         private static bool? _useBangumiData;
         private static bool? _useBiliApp;
+        private static long? _updateDay;
 
         static SettingHelper()
         {
@@ -22,6 +19,7 @@ namespace Bangumi.Helper
             _subjectComplete = localSettings.Values["SubjectComplete"] as bool?;
             _useBangumiData = localSettings.Values["UseBangumiData"] as bool?;
             _useBiliApp = localSettings.Values["UseBiliApp"] as bool?;
+            _updateDay = localSettings.Values["_updateDay"] as long?;
         }
 
         public static bool EpsBatch
@@ -73,6 +71,28 @@ namespace Bangumi.Helper
             get
             {
                 return _useBiliApp == true;
+            }
+        }
+
+        public static bool IsUpdatedToday
+        {
+            set
+            {
+                if (value)
+                {
+                    _updateDay = DateTime.Today.ConvertDateTimeToJsTick();
+                    localSettings.Values["UpdateDay"] = _updateDay;
+                }
+                else
+                {
+                    _updateDay = DateTime.Today.AddDays(-1).ConvertDateTimeToJsTick();
+                    localSettings.Values["UpdateDay"] = _updateDay;
+                }
+            }
+            get
+            {
+                return false;
+                return _updateDay == DateTime.Today.ConvertDateTimeToJsTick();
             }
         }
 

@@ -36,7 +36,7 @@ namespace Bangumi.Api
         /// <summary>
         /// 用来表示 Token 过期或不可用
         /// </summary>
-        private static bool isLogin = false;
+        private static bool isLogin = true;
 
         /// <summary>
         /// 记录缓存是否更新过
@@ -479,9 +479,9 @@ namespace Bangumi.Api
                     //DeleteTokens();
                     return false;
                 }
-                isLogin = true;
             }
             // 检查是否在有效期内，接近过期或过期则刷新token
+            isLogin = true;
             _ = CheckToken();
             return true;
         }
@@ -525,7 +525,7 @@ namespace Bangumi.Api
             }
             catch (Exception e)
             {
-                if (!e.Message.Contains("无法解析服务器的名称或地址"))
+                if (e.Message.Contains("401"))
                 {
                     isLogin = false;
                 }
