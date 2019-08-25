@@ -71,14 +71,14 @@ namespace Bangumi.Views
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var selectedItem = (Subject)e.ClickedItem;
-            MainPage.RootFrame.Navigate(typeof(DetailsPage), selectedItem, new DrillInNavigationTransitionInfo());
+            MainPage.RootFrame.Navigate(typeof(DetailsPage), selectedItem.Id, new DrillInNavigationTransitionInfo());
         }
 
         private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             if (AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
             {
-                 if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+                if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
                 {
                     if (delayTimer != null && delayTimer.Delay != TimeSpan.Zero)
                         delayTimer.Cancel();
@@ -118,7 +118,7 @@ namespace Bangumi.Views
                 int.TryParse(args.QueryText, out result);
                 if (result > 0)
                 {
-                    Frame.Navigate(typeof(DetailsPage), result);
+                    Frame.Navigate(typeof(DetailsPage), result, new DrillInNavigationTransitionInfo());
                 }
                 if (!ViewModel.CheckIfSearched())
                 {

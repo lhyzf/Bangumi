@@ -65,69 +65,17 @@ namespace Bangumi.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            bool needReLoad = false;
-            if (e.NavigationMode == NavigationMode.New)
+            if (e.Parameter.GetType() == typeof(Int32))
             {
-                needReLoad = true;
-            }
-            if (e.Parameter.GetType() == typeof(WatchingStatus))
-            {
-                var p = (WatchingStatus)e.Parameter;
-                if (!(ViewModel.SubjectId == p.SubjectId.ToString()))
-                {
-                    needReLoad = true;
-                    ViewModel.InitViewModel();
-                }
-                ViewModel.SubjectId = p.SubjectId.ToString();
-                ViewModel.ImageSource = p.Image;
-                ViewModel.NameCn = p.NameCn;
-                ViewModel.AirDate = p.AirDate;
-                ViewModel.AirWeekday = p.AirWeekday;
-                ViewModel.CollectionStatusText = CollectionStatusEnum.Do.GetValue();
-                ViewModel.CollectionStatusIcon = "\uE00B";
-                if (p.Eps != null)
-                {
-                    ViewModel.Eps.Clear();
-                    foreach (var ep in p.Eps)
-                    {
-                        var newEp = new Ep();
-                        newEp.Id = ep.Id;
-                        newEp.Sort = ep.Sort;
-                        newEp.Status = ep.Status;
-                        newEp.Type = ep.Type;
-                        newEp.NameCn = ep.Name;
-                        ViewModel.Eps.Add(newEp);
-                    }
-                }
-            }
-            else if (e.Parameter.GetType() == typeof(Subject))
-            {
-                var p = (Subject)e.Parameter;
-                if (!(ViewModel.SubjectId == p.Id.ToString()))
-                {
-                    needReLoad = true;
-                    ViewModel.InitViewModel();
-                }
-                ViewModel.SubjectId = p.Id.ToString();
-                ViewModel.ImageSource = p.Images.Common;
-                ViewModel.NameCn = p.NameCn;
-                ViewModel.AirDate = p.AirDate;
-                ViewModel.AirWeekday = p.AirWeekday;
-            }
-            else if (e.Parameter.GetType() == typeof(Int32))
-            {
-                if (!(ViewModel.SubjectId == e.Parameter.ToString()))
-                {
-                    needReLoad = true;
-                    ViewModel.InitViewModel();
-                }
                 ViewModel.SubjectId = e.Parameter.ToString();
             }
-
-            if (needReLoad)
+            else
             {
-                ViewModel.LoadDetails();
+                return;
             }
+
+            ViewModel.InitViewModel();
+            ViewModel.LoadDetails();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
