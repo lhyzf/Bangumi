@@ -107,7 +107,7 @@ namespace Bangumi.Facades
                                 }
                                 item.UpdatedEps = item.Eps.Count - item.Eps.Where(e => e.Status == "NA").Count();
 
-                                var progress = await GetProgressesAsync(item.SubjectId.ToString());
+                                var progress = await BangumiApi.GetProgressesAsync(item.SubjectId.ToString());
                                 if (progress != null)
                                 {
                                     item.WatchedEps = progress.Eps.Count;
@@ -268,87 +268,6 @@ namespace Bangumi.Facades
         }
 
         #endregion
-
-
-        /// <summary>
-        /// 获取指定条目详情。
-        /// </summary>
-        /// <param name="subjectId"></param>
-        /// <returns></returns>
-        public static async Task<Subject> GetSubjectAsync(string subjectId)
-        {
-            try
-            {
-                var result = await BangumiApi.GetSubjectAsync(subjectId);
-                return result;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("获取指定条目详情失败。");
-                Debug.WriteLine(e.Message);
-                throw e;
-            }
-        }
-
-        /// <summary>
-        /// 获取指定条目收藏信息。
-        /// </summary>
-        /// <param name="subjectId"></param>
-        /// <returns></returns>
-        public static async Task<SubjectStatus2> GetCollectionStatusAsync(string subjectId)
-        {
-            try
-            {
-                return await BangumiApi.GetCollectionStatusAsync(subjectId);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("获取指定条目收藏信息失败。");
-                Debug.WriteLine(e.Message);
-                throw e;
-            }
-        }
-
-        /// <summary>
-        /// 获取用户指定条目收视进度。
-        /// </summary>
-        /// <param name="subjectId"></param>
-        /// <returns></returns>
-        public static async Task<Progress> GetProgressesAsync(string subjectId)
-        {
-            try
-            {
-                return await BangumiApi.GetProgressesAsync(subjectId);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("获取用户指定条目收视进度失败。");
-                Debug.WriteLine(e.Message);
-                throw e;
-            }
-        }
-
-        /// <summary>
-        /// 获取搜索结果。
-        /// </summary>
-        /// <param name="keyWord"></param>
-        /// <param name="type"></param>
-        /// <param name="start"></param>
-        /// <param name="n"></param>
-        /// <returns></returns>
-        public static async Task<SearchResult> GetSearchResultAsync(string searchText, string type, int start, int n)
-        {
-            try
-            {
-                return await BangumiApi.GetSearchResultAsync(searchText, type, start, n);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("获取搜索结果失败。");
-                Debug.WriteLine(e.Message);
-                throw e;
-            }
-        }
 
 
         #region 更新进度、状态，并显示通知
