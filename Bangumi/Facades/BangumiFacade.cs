@@ -173,28 +173,29 @@ namespace Bangumi.Facades
         {
             try
             {
-                //从文件反序列化
-                var preCollection = JsonConvert.DeserializeObject<List<Collection>>(await Helper.FileHelper.ReadFromCacheFileAsync(subjectType.GetFilePath()));
-                subjectCollection.Clear();
-                if (preCollection != null)
+                // 获取缓存
+                BangumiApi.BangumiCache.Collections.TryGetValue(subjectType.GetValue(), out Collection2 cache);
+                if (cache != null && !cache.Collects.SequenceEqualExT(subjectCollection.ToList()))
                 {
-                    foreach (var type in preCollection)
+                    //清空原数据
+                    subjectCollection.Clear();
+                    foreach (var status in cache.Collects)
                     {
-                        subjectCollection.Add(type);
+                        subjectCollection.Add(status);
                     }
                 }
 
-                var subjectCollections = await BangumiApi.GetSubjectCollectionAsync(subjectType);
+                var respose = await BangumiApi.GetSubjectCollectionAsync(subjectType);
 
-                //清空原数据
-                subjectCollection.Clear();
-                foreach (var type in subjectCollections.Collects)
+                if (!cache.EqualsExT(respose))
                 {
-                    subjectCollection.Add(type);
+                    //清空原数据
+                    subjectCollection.Clear();
+                    foreach (var status in respose.Collects)
+                    {
+                        subjectCollection.Add(status);
+                    }
                 }
-
-                //将对象序列化并存储到文件
-                await Helper.FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(subjectCollection), subjectType.GetFilePath());
             }
             catch (Exception e)
             {
@@ -207,54 +208,54 @@ namespace Bangumi.Facades
         /// <summary>
         /// 显示时间表。
         /// </summary>
-        /// <param name="bangumiCollection"></param>
+        /// <param name="bangumiTimeLine"></param>
         /// <returns></returns>
-        public static async Task PopulateBangumiCalendarAsync(ObservableCollection<BangumiTimeLine> bangumiCollection, bool force = false)
+        public static async Task PopulateBangumiCalendarAsync(ObservableCollection<BangumiTimeLine> bangumiTimeLine, bool force = false)
         {
             try
             {
-                //从文件反序列化
-                var preCalendar = JsonConvert.DeserializeObject<List<BangumiTimeLine>>(await Helper.FileHelper.ReadFromCacheFileAsync(OAuthHelper.CacheFile.Calendar.GetFilePath()));
-                bangumiCollection.Clear();
+                List<BangumiTimeLine> cache = BangumiApi.BangumiCache.TimeLine;
                 int day = GetDayOfWeek();
-                if (preCalendar != null)
+                if (!cache.SequenceEqualExT(bangumiTimeLine.OrderBy(b => b.Weekday.Id).ToList()))
                 {
-                    foreach (var item in preCalendar)
+                    bangumiTimeLine.Clear();
+                    foreach (var item in cache)
                     {
-                        if (item.Weekday.Id <= day)
+                        if (item.Weekday.Id < day)
                         {
-                            bangumiCollection.Add(item);
+                            bangumiTimeLine.Add(item);
                         }
                         else
                         {
-                            bangumiCollection.Insert(bangumiCollection.Count - day, item);
+                            bangumiTimeLine.Insert(bangumiTimeLine.Count + 1 - day, item);
                         }
                     }
-                    // 非强制加载，若缓存与当天为同一星期几则不请求新数据。
-                    if (!force && bangumiCollection[0].Weekday.Id == GetDayOfWeek() + 1)
-                    {
-                        return;
-                    }
                 }
 
-                var bangumiCalendarList = await BangumiApi.GetBangumiCalendarAsync();
-
-                //清空原数据
-                bangumiCollection.Clear();
-                foreach (var bangumiCalendar in bangumiCalendarList)
+                // 非强制加载，若缓存与当天为同一星期几则不请求新数据。
+                if (!force && bangumiTimeLine[0].Weekday.Id == day)
                 {
-                    if (bangumiCalendar.Weekday.Id <= day)
-                    {
-                        bangumiCollection.Add(bangumiCalendar);
-                    }
-                    else
-                    {
-                        bangumiCollection.Insert(bangumiCollection.Count - day, bangumiCalendar);
-                    }
+                    return;
                 }
 
-                //将对象序列化并存储到文件
-                await Helper.FileHelper.WriteToCacheFileAsync(JsonConvert.SerializeObject(bangumiCollection.OrderBy(c => c.Weekday.Id)), OAuthHelper.CacheFile.Calendar.GetFilePath());
+                var response = await BangumiApi.GetBangumiCalendarAsync();
+
+                if (!cache.SequenceEqualExT(response))
+                {
+                    //清空原数据
+                    bangumiTimeLine.Clear();
+                    foreach (var item in response)
+                    {
+                        if (item.Weekday.Id < day)
+                        {
+                            bangumiTimeLine.Add(item);
+                        }
+                        else
+                        {
+                            bangumiTimeLine.Insert(bangumiTimeLine.Count + 1 - day, item);
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -293,7 +294,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                return await BangumiApi.GetCollectionStatusAsync( subjectId);
+                return await BangumiApi.GetCollectionStatusAsync(subjectId);
             }
             catch (Exception e)
             {
@@ -443,24 +444,24 @@ namespace Bangumi.Facades
         // 获取当天星期几
         public static int GetDayOfWeek()
         {
-            switch (DateTime.Now.DayOfWeek)
+            switch (DateTime.Today.DayOfWeek)
             {
                 case DayOfWeek.Monday:
-                    return 0;
-                case DayOfWeek.Tuesday:
                     return 1;
-                case DayOfWeek.Wednesday:
+                case DayOfWeek.Tuesday:
                     return 2;
-                case DayOfWeek.Thursday:
+                case DayOfWeek.Wednesday:
                     return 3;
-                case DayOfWeek.Friday:
+                case DayOfWeek.Thursday:
                     return 4;
-                case DayOfWeek.Saturday:
+                case DayOfWeek.Friday:
                     return 5;
-                case DayOfWeek.Sunday:
+                case DayOfWeek.Saturday:
                     return 6;
+                case DayOfWeek.Sunday:
+                    return 7;
                 default:
-                    return 0;
+                    return 1;
             }
         }
 
