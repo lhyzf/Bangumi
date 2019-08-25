@@ -162,11 +162,12 @@ namespace Bangumi.Views
                 {
                     SettingHelper.UseBangumiData = true;
                     // 获取数据版本
-                    await BangumiDataHelper.InitAsync(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data");
+                    await BangumiData.Init(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data",
+                                                 SettingHelper.UseBiliApp);
                     BangumiDataTextBlock.Text = "数据版本：" +
-                        (string.IsNullOrEmpty(BangumiDataHelper.Version) ?
+                        (string.IsNullOrEmpty(BangumiData.Version) ?
                         "无数据" :
-                        BangumiDataHelper.Version);
+                        BangumiData.Version);
                 }
                 else
                 {
@@ -188,7 +189,7 @@ namespace Bangumi.Views
                 {
                     SettingHelper.UseBiliApp = false;
                 }
-                BangumiDataHelper.UseBiliApp = SettingHelper.UseBiliApp;
+                BangumiData.UseBiliApp = SettingHelper.UseBiliApp;
             }
         }
 
@@ -199,15 +200,15 @@ namespace Bangumi.Views
             BangumiDataProgressRing.Visibility = Visibility.Visible;
             if (button.Tag.ToString() == "Update")
             {
-                var v = await BangumiDataHelper.GetLatestVersion();
+                var v = await BangumiData.GetLatestVersion();
                 if (!string.IsNullOrEmpty(v))
                 {
-                    if (v != BangumiDataHelper.Version)
+                    if (v != BangumiData.Version)
                     {
                         BangumiDataTextBlock.Text = "数据版本：" +
-                            (string.IsNullOrEmpty(BangumiDataHelper.Version) ?
+                            (string.IsNullOrEmpty(BangumiData.Version) ?
                             "无数据" :
-                            BangumiDataHelper.Version) +
+                            BangumiData.Version) +
                             " -> " + v;
                         button.Content = "下载数据";
                         button.Tag = "Download";
@@ -224,12 +225,12 @@ namespace Bangumi.Views
             }
             else if (button.Tag.ToString() == "Download")
             {
-                if (await BangumiDataHelper.DownloadLatestBangumiData())
+                if (await BangumiData.DownloadLatestBangumiData())
                 {
                     BangumiDataTextBlock.Text = "数据版本：" +
-                        (string.IsNullOrEmpty(BangumiDataHelper.Version) ?
+                        (string.IsNullOrEmpty(BangumiData.Version) ?
                         "无数据" :
-                        BangumiDataHelper.Version);
+                        BangumiData.Version);
                     button.Content = "检查更新";
                     button.Tag = "Update";
                     MainPage.RootPage.ToastInAppNotification.Show("数据下载成功！", 1500);
