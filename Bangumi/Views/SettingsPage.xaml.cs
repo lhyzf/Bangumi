@@ -1,9 +1,7 @@
 ﻿using Bangumi.Data;
 using Bangumi.Helper;
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.System.Profile;
@@ -215,12 +213,12 @@ namespace Bangumi.Views
                     }
                     else
                     {
-                        MainPage.RootPage.ToastInAppNotification.Show("已是最新版本！", 1500);
+                        NotificationHelper.Notify("已是最新版本！");
                     }
                 }
                 else
                 {
-                    MainPage.RootPage.ErrorInAppNotification.Show("获取最新版本失败！", 3000);
+                    NotificationHelper.Notify("获取最新版本失败！", NotificationHelper.NotifyType.Error);
                 }
             }
             else if (button.Tag.ToString() == "Download")
@@ -233,11 +231,11 @@ namespace Bangumi.Views
                         BangumiData.Version);
                     button.Content = "检查更新";
                     button.Tag = "Update";
-                    MainPage.RootPage.ToastInAppNotification.Show("数据下载成功！", 1500);
+                    NotificationHelper.Notify("数据下载成功！");
                 }
                 else
                 {
-                    MainPage.RootPage.ErrorInAppNotification.Show("数据下载失败，请重试或稍后再试！", 3000);
+                    NotificationHelper.Notify("数据下载失败，请重试或稍后再试！", NotificationHelper.NotifyType.Error);
                 }
             }
             BangumiDataProgressRing.Visibility = Visibility.Collapsed;

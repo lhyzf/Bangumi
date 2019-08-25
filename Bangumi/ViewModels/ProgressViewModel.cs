@@ -97,7 +97,8 @@ namespace Bangumi.ViewModels
                 {
                     Debug.WriteLine("获取收视进度列表失败。");
                     Debug.WriteLine(e.Message);
-                    MainPage.RootPage.ErrorInAppNotification.Show("获取收视进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'), 3000);
+                    NotificationHelper.Notify("获取收视进度失败！\n" + e.Message.Replace("\r\n\r\n", "\r\n").TrimEnd('\n').TrimEnd('\r'),
+                                              NotificationHelper.NotifyType.Error);
                 }
             }
             finally
