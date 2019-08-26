@@ -19,7 +19,7 @@ namespace Bangumi.Helper
             _subjectComplete = localSettings.Values["SubjectComplete"] as bool?;
             _useBangumiData = localSettings.Values["UseBangumiData"] as bool?;
             _useBiliApp = localSettings.Values["UseBiliApp"] as bool?;
-            _updateDay = localSettings.Values["_updateDay"] as long?;
+            _updateDay = localSettings.Values["UpdateDay"] as long?;
         }
 
         public static bool EpsBatch
@@ -91,7 +91,6 @@ namespace Bangumi.Helper
             }
             get
             {
-                return false;
                 return _updateDay == DateTime.Today.ConvertDateTimeToJsTick();
             }
         }
