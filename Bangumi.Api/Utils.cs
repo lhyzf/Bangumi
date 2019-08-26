@@ -65,9 +65,9 @@ namespace Bangumi.Api.Utils
         /// <param name="o"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static bool SequenceEqualExT<T>(this List<T> o, List<T> obj)
+        public static bool SequenceEqualExT<T>(this IEnumerable<T> o, IEnumerable<T> obj)
         {
-            return (o == null ? obj == null : (o.Count == 0 ? (obj != null && obj.Count == 0) : o.SequenceEqual(obj)));
+            return (o == null ? obj == null : (o.Count() == 0 ? (obj != null && obj.Count() == 0) : o.SequenceEqual(obj)));
         }
     }
 }
