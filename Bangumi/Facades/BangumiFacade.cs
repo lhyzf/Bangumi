@@ -68,7 +68,7 @@ namespace Bangumi.Facades
         {
             try
             {
-                List<BangumiTimeLine> cache = BangumiApi.BangumiCache.TimeLine;
+                List<BangumiTimeLine> cache = BangumiApi.BangumiCache.TimeLine.ToList();
                 int day = GetDayOfWeek();
                 if (!cache.SequenceEqualExT(bangumiTimeLine.OrderBy(b => b.Weekday.Id).ToList()))
                 {
@@ -87,7 +87,7 @@ namespace Bangumi.Facades
                 }
 
                 // 非强制加载，若缓存与当天为同一星期几则不请求新数据。
-                if (!force && bangumiTimeLine[0].Weekday.Id == day)
+                if (!force && bangumiTimeLine.Count > 0 && bangumiTimeLine[0].Weekday.Id == day)
                 {
                     return;
                 }
