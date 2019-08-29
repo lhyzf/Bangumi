@@ -6,8 +6,6 @@ using Bangumi.ContentDialogs;
 using Bangumi.Facades;
 using Bangumi.Helper;
 using Bangumi.Views;
-using Microsoft.Toolkit.Uwp.Helpers;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +13,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 
 namespace Bangumi.ViewModels
@@ -25,6 +22,8 @@ namespace Bangumi.ViewModels
         public ProgressViewModel() => IsLoading = false;
 
         public ObservableCollection<WatchingStatus> WatchingCollection { get; private set; } = new ObservableCollection<WatchingStatus>();
+
+        private object lockObj = new object();
 
         private bool _isLoading;
         public bool IsLoading
@@ -175,10 +174,10 @@ namespace Bangumi.ViewModels
             try
             {
                 List<Watching> watchingsCache = BangumiApi.BangumiCache.Watchings.ToList();
-                if (watchingCollection.Count == 0)
+                // 加载缓存
+                var cachedList = await ProcessWatchings(watchingsCache);
+                if (!watchingCollection.SequenceEqualExT(cachedList))
                 {
-                    // 加载缓存
-                    var cachedList = await ProcessWatchings(watchingsCache);
                     watchingCollection.Clear();
                     foreach (var item in cachedList)
                     {
@@ -250,7 +249,7 @@ namespace Bangumi.ViewModels
 
             var tasks = new List<Task>();
             // semaphore, allow to run 10 tasks in parallel
-            using (var semaphore = new SemaphoreSlim(1))
+            using (var semaphore = new SemaphoreSlim(10))
             {
                 foreach (var watching in watchings)
                 {
@@ -307,7 +306,11 @@ namespace Bangumi.ViewModels
                                 }
                                 //item.LastUpdate = DateTime.Today.ConvertDateTimeToJsTick();
                             }
-                            watchList.Add(item);
+                            lock (lockObj)
+                            {
+                                // 集合的修改操作非线程安全，需加锁
+                                watchList.Add(item);
+                            }
                             //}
                             //else
                             //{

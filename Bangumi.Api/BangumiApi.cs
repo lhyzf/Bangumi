@@ -264,15 +264,18 @@ namespace Bangumi.Api
         /// <summary>
         /// 更新收视进度。
         /// </summary>
-        /// <param name="accessTokenString"></param>
-        /// <param name="ep"></param>
+        /// <param name="epId"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public static async Task<bool> UpdateProgressAsync(string ep, EpStatusEnum status)
+        public static async Task<bool> UpdateProgressAsync(string epId, EpStatusEnum status)
         {
             try
             {
-                var result = await wrapper.UpdateProgressAsync(MyToken.Token, ep, status);
+                var result = await wrapper.UpdateProgressAsync(MyToken.Token, epId, status);
+                if (result)
+                {
+                    UpdateProgressCache(int.Parse(epId), status);
+                }
                 return result;
             }
             catch (Exception e)
@@ -385,6 +388,70 @@ namespace Bangumi.Api
         }
 
         #region 更新缓存方法
+        /// <summary>
+        /// 更新章节状态，大致更新进度，以防显示错误，在下次更新完整进度前凑合使用
+        /// TODO: 可以将状态填充得更完整
+        /// </summary>
+        /// <param name="epId"></param>
+        /// <param name="status"></param>
+        private static void UpdateProgressCache(int epId, EpStatusEnum status)
+        {
+            var sub = BangumiCache.Subjects.Values.Where(s => s.Eps.Where(p => p.Id == epId).FirstOrDefault() != null).FirstOrDefault();
+            if (sub != null)
+            {
+                var pro = BangumiCache.Progresses.Values.Where(p => p.SubjectId == sub.Id).FirstOrDefault();
+                if (pro != null)
+                {
+                    var ep = pro.Eps.Where(e => e.Id == epId).FirstOrDefault();
+                    if (status != EpStatusEnum.remove)
+                    {
+                        if (ep != null)
+                        {
+                            ep.Status.CnName = status.GetValue();
+                        }
+                        else
+                        {
+                            pro.Eps.Add(new EpStatus2()
+                            {
+                                Id = epId,
+                                Status = new EpStatus()
+                                {
+                                    CnName = status.GetValue(),
+                                }
+                            });
+                        }
+                    }
+                    else
+                    {
+                        if (ep != null)
+                        {
+                            pro.Eps.Remove(ep);
+                        }
+                    }
+                }
+                else if (status != EpStatusEnum.remove)
+                {
+
+                    BangumiCache.Progresses.Add(sub.Id.ToString(), new Progress()
+                    {
+                        SubjectId = sub.Id,
+                        Eps = new List<EpStatus2>()
+                        {
+                            new EpStatus2()
+                            {
+                                Id = epId,
+                                Status = new EpStatus()
+                                {
+                                    CnName = status.GetValue(),
+                                }
+                            }
+                        }
+                    });
+                }
+                timer.Interval = 5000;
+                isCacheUpdated = true;
+            }
+        }
         /// <summary>
         /// 更新缓存，字典
         /// </summary>
