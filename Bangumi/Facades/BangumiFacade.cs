@@ -136,10 +136,10 @@ namespace Bangumi.Facades
             {
                 if (await BangumiApi.UpdateProgressAsync(ep, status))
                 {
-                    NotificationHelper.Notify($"标记章节{ep}{status.GetValue()}成功");
+                    NotificationHelper.Notify($"标记章节{ep}{status.GetCnName()}成功");
                     return true;
                 }
-                NotificationHelper.Notify($"标记章节{ep}{status.GetValue()}失败，请重试！",
+                NotificationHelper.Notify($"标记章节{ep}{status.GetCnName()}失败，请重试！",
                                           NotificationHelper.NotifyType.Warn);
                 return false;
             }
@@ -165,10 +165,10 @@ namespace Bangumi.Facades
             {
                 if (await BangumiApi.UpdateProgressBatchAsync(ep, status, epsId))
                 {
-                    NotificationHelper.Notify($"批量标记章节{epsId}{status.GetValue()}状态成功");
+                    NotificationHelper.Notify($"批量标记章节{epsId}{status.GetCnName()}状态成功");
                     return true;
                 }
-                NotificationHelper.Notify($"批量标记章节{epsId}{status.GetValue()}状态失败，请重试！",
+                NotificationHelper.Notify($"批量标记章节{epsId}{status.GetCnName()}状态失败，请重试！",
                                           NotificationHelper.NotifyType.Warn);
                 return false;
             }

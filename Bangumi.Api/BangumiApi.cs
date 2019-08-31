@@ -48,6 +48,11 @@ namespace Bangumi.Api
         /// </summary>
         private static Timer timer;
 
+        /// <summary>
+        /// 定时器触发间隔
+        /// </summary>
+        private const int interval = 30000;
+
         public static string OAuthBaseUrl => wrapper.OAuthBaseUrl;
         public static string ClientId => wrapper.ClientId;
         public static string RedirectUrl => wrapper.RedirectUrl;
@@ -121,8 +126,8 @@ namespace Bangumi.Api
                     }
                 }
             }
-            // 启动定时器，定时将缓存写入文件
-            timer = new Timer(5000);
+            // 启动定时器，定时将缓存写入文件，30 秒
+            timer = new Timer(interval);
             timer.Elapsed += WriteCacheToFileTimer_Elapsed;
             timer.AutoReset = true;
             timer.Start();
@@ -138,6 +143,16 @@ namespace Bangumi.Api
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private static async void WriteCacheToFileTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (isCacheUpdated)
+            {
+                isCacheUpdated = false;
+                await FileHelper.WriteTextAsync(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath),
+                                                JsonConvert.SerializeObject(BangumiCache));
+            }
+        }
+
+        public static async Task WriteCacheToFileRightNow()
         {
             if (isCacheUpdated)
             {
@@ -252,6 +267,10 @@ namespace Bangumi.Api
             {
                 var result = await wrapper.UpdateCollectionStatusAsync(MyToken.Token, subjectId,
                                     collectionStatusEnum, comment, rating, privace);
+                if (result)
+                {
+                    UpdateSubjectStatusCache(subjectId, collectionStatusEnum, comment, rating, privace);
+                }
                 return result;
             }
             catch (Exception e)
@@ -317,7 +336,18 @@ namespace Bangumi.Api
         {
             try
             {
-                var result = await wrapper.GetSubjectEpsAsync(subjectId);
+                Subject result;
+                // 若缓存中已有该条目，则只获取 Ep 信息，
+                // 否则获取完整信息
+                if (BangumiCache.Subjects.ContainsKey(subjectId))
+                {
+                    result = await wrapper.GetSubjectEpsAsync(subjectId);
+                    UpdateCache(BangumiCache.Subjects[subjectId].Eps, result.Eps);
+                }
+                else
+                {
+                    result = await GetSubjectAsync(subjectId);
+                }
                 return result;
             }
             catch (Exception e)
@@ -388,17 +418,53 @@ namespace Bangumi.Api
         }
 
         #region 更新缓存方法
+
         /// <summary>
-        /// 更新章节状态，大致更新进度，以防显示错误，在下次更新完整进度前凑合使用
-        /// TODO: 可以将状态填充得更完整
+        /// 更新缓存记录的条目状态
+        /// </summary>
+        /// <param name="subjectId"></param>
+        /// <param name="collectionStatus"></param>
+        /// <param name="comment"></param>
+        /// <param name="rating"></param>
+        /// <param name="privace"></param>
+        private static void UpdateSubjectStatusCache(string subjectId, CollectionStatusEnum collectionStatus,
+                                                     string comment, string rating, string privace)
+        {
+            BangumiCache.SubjectStatus.TryGetValue(subjectId, out var status);
+            if (status != null)
+            {
+                if (collectionStatus != CollectionStatusEnum.No)
+                {
+                    status.Status = new SubjectStatus()
+                    {
+                        Id = (int)collectionStatus,
+                        Type = collectionStatus.GetValue(),
+                    };
+                    status.Comment = comment;
+                    status.Rating = string.IsNullOrEmpty(rating) ? 0 : int.Parse(rating);
+                    status.Private = privace;
+                }
+                else
+                {
+                    BangumiCache.SubjectStatus.Remove(subjectId);
+                }
+                timer.Interval = interval;
+                isCacheUpdated = true;
+            }
+        }
+
+        /// <summary>
+        /// 更新缓存记录的章节状态
         /// </summary>
         /// <param name="epId"></param>
         /// <param name="status"></param>
         private static void UpdateProgressCache(int epId, EpStatusEnum status)
         {
+            // 找到该章节所属的条目
             var sub = BangumiCache.Subjects.Values.Where(s => s.Eps.Where(p => p.Id == epId).FirstOrDefault() != null).FirstOrDefault();
             if (sub != null)
             {
+                // 找到已有进度，否则新建
                 var pro = BangumiCache.Progresses.Values.Where(p => p.SubjectId == sub.Id).FirstOrDefault();
                 if (pro != null)
                 {
@@ -407,7 +473,10 @@ namespace Bangumi.Api
                     {
                         if (ep != null)
                         {
-                            ep.Status.CnName = status.GetValue();
+                            ep.Status.Id = (int)status;
+                            ep.Status.CnName = status.GetCnName();
+                            ep.Status.CssName = status.GetCssName();
+                            ep.Status.UrlName = status.GetUrlName();
                         }
                         else
                         {
@@ -416,7 +485,10 @@ namespace Bangumi.Api
                                 Id = epId,
                                 Status = new EpStatus()
                                 {
-                                    CnName = status.GetValue(),
+                                    Id = (int)status,
+                                    CnName = status.GetCnName(),
+                                    CssName = status.GetCssName(),
+                                    UrlName = status.GetUrlName(),
                                 }
                             });
                         }
@@ -442,16 +514,20 @@ namespace Bangumi.Api
                                 Id = epId,
                                 Status = new EpStatus()
                                 {
-                                    CnName = status.GetValue(),
+                                    Id = (int)status,
+                                    CnName = status.GetCnName(),
+                                    CssName = status.GetCssName(),
+                                    UrlName = status.GetUrlName(),
                                 }
                             }
                         }
                     });
                 }
-                timer.Interval = 5000;
+                timer.Interval = interval;
                 isCacheUpdated = true;
             }
         }
+
         /// <summary>
         /// 更新缓存，字典
         /// </summary>
@@ -468,14 +544,14 @@ namespace Bangumi.Api
                     if (!value.Equals(dic[key]))
                     {
                         dic[key] = value;
-                        timer.Interval = 5000;
+                        timer.Interval = interval;
                         isCacheUpdated = true;
                     }
                 }
                 else
                 {
                     dic.Add(key, value);
-                    timer.Interval = 5000;
+                    timer.Interval = interval;
                     isCacheUpdated = true;
                 }
             }
@@ -494,7 +570,7 @@ namespace Bangumi.Api
                 source.Clear();
                 source.AddRange(dest);
                 // 重新计时 5 秒
-                timer.Interval = 5000;
+                timer.Interval = interval;
                 isCacheUpdated = true;
             }
         }
