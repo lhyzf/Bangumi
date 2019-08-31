@@ -266,9 +266,9 @@ namespace Bangumi.ViewModels
                 IsUpdating = true;
                 if (await BangumiFacade.UpdateProgressAsync(ep.Id.ToString(), status))
                 {
-                    if (!string.IsNullOrEmpty(status.GetValue()))
+                    if (!string.IsNullOrEmpty(status.GetCnName()))
                     {
-                        ep.Status = status.GetValue();
+                        ep.Status = status.GetCnName();
                     }
                     else
                     {

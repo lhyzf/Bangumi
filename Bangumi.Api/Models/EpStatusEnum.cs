@@ -6,9 +6,9 @@ namespace Bangumi.Api.Models
 {
     public enum EpStatusEnum
     {
-        watched,
-        queue,
-        drop,
+        watched = 2,
+        queue = 1,
+        drop = 3,
         remove,
     }
 }

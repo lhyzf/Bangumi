@@ -229,23 +229,6 @@ namespace Bangumi.ViewModels
         private async Task<List<WatchingStatus>> ProcessWatchings(List<Watching> watchings, List<WatchingStatus> cachedWatchings = null, bool fromCache = true)
         {
             List<WatchingStatus> watchList = new List<WatchingStatus>();
-            //try
-            //{
-            //var deletedItems = new List<WatchingStatus>(); //标记要删除的条目
-            //foreach (var sub in watchingCollection)
-            //{
-            //    //根据最新的进度删除原有条目
-            //    if (watchings.Find(e => e.SubjectId == sub.SubjectId) == null)
-            //    {
-            //        deletedItems.Add(sub);
-            //    }
-            //}
-            //foreach (var item in deletedItems) //删除条目
-            //{
-            //    watchingCollection.Remove(item);
-            //}
-
-            //var watchList = watchingCollection.ToList();
 
             var tasks = new List<Task>();
             // semaphore, allow to run 10 tasks in parallel
@@ -259,10 +242,6 @@ namespace Bangumi.ViewModels
                     {
                         try
                         {
-                            ////若在看含有原来没有的条目则新增,之后再细化
-                            //var item = watchList.Find(e => e.SubjectId == watching.SubjectId);
-                            //if (item == null)
-                            //{
                             var item = new WatchingStatus
                             {
                                 Name = watching.Subject.Name,
@@ -284,7 +263,6 @@ namespace Bangumi.ViewModels
                             // 加载缓存
                             if (fromCache)
                             {
-                                //item.LastTouch = watching.LastTouch; // 该条目上次修改时间
                                 if (BangumiApi.BangumiCache.Subjects.TryGetValue(item.SubjectId.ToString(), out Subject subjectCache))
                                 {
                                     await ProcessSubject(item, subjectCache, fromCache);
@@ -304,37 +282,12 @@ namespace Bangumi.ViewModels
                                 {
                                     item = cachedWatchings.Find(c => c.SubjectId == item.SubjectId);
                                 }
-                                //item.LastUpdate = DateTime.Today.ConvertDateTimeToJsTick();
                             }
                             lock (lockObj)
                             {
                                 // 集合的修改操作非线程安全，需加锁
                                 watchList.Add(item);
                             }
-                            //}
-                            //else
-                            //{
-                            //    // 首次更新或条目有修改或 当天首次加载(当天未更新成功且条目未更新过)
-                            //    if (item.LastTouch == 0 ||                                          // 条目首次更新
-                            //        item.LastTouch != watching.LastTouch ||                         // 条目已修改
-                            //        (!SettingHelper.IsUpdatedToday &&                               // 今天未更新成功
-                            //        item.LastUpdate != DateTime.Today.ConvertDateTimeToJsTick()))   // 条目今天未更新
-                            //    {
-                            //        // 加载缓存
-                            //        BangumiApi.BangumiCache.Subjects.TryGetValue(item.SubjectId.ToString(), out Subject subjectCache);
-                            //        await ProcessSubject(item, subjectCache, fromCache);
-
-                            //        if (!fromCache)
-                            //        {
-                            //            var subject = await BangumiApi.GetSubjectAsync(item.SubjectId.ToString());
-                            //            if (!subjectCache.EqualsExT(subject))
-                            //            {
-                            //                // 更新数据
-                            //                await ProcessSubject(item, subject, fromCache);
-                            //            }
-                            //        }
-                            //    }
-                            //}
                         }
                         catch (Exception e)
                         {
@@ -350,19 +303,7 @@ namespace Bangumi.ViewModels
                 // await for the rest of tasks to complete
                 await Task.WhenAll(tasks);
                 return CollectionSorting(watchList);
-                //watchingCollection.Clear();
-                //foreach (var item in CollectionSorting(watchList))
-                //{
-                //    watchingCollection.Add(item);
-                //}
             }
-
-            //}
-            //catch (Exception)
-            //{
-
-            //    throw;
-            //}
         }
 
         /// <summary>
@@ -529,7 +470,6 @@ namespace Bangumi.ViewModels
         public string NameCn { get; set; }
         public int SubjectId { get; set; }
         public long LastTouch { get; set; }
-        public long LastUpdate { get; set; }
         public string Url { get; set; }
         public string Image { get; set; }
         public string AirDate { get; set; }
@@ -583,7 +523,6 @@ namespace Bangumi.ViewModels
             WatchingStatus w = (WatchingStatus)obj;
             return SubjectId == w.SubjectId &&
                    LastTouch == w.LastTouch &&
-                   LastUpdate == w.LastUpdate &&
                    Type == w.Type &&
                    AirWeekday == w.AirWeekday &&
                    IsUpdating == w.IsUpdating &&
