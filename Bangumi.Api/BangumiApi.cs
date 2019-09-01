@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -144,14 +142,14 @@ namespace Bangumi.Api
         /// <param name="e"></param>
         private static async void WriteCacheToFileTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (isCacheUpdated)
-            {
-                isCacheUpdated = false;
-                await FileHelper.WriteTextAsync(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath),
-                                                JsonConvert.SerializeObject(BangumiCache));
-            }
+            await WriteCacheToFileRightNow();
         }
 
+        #region 缓存操作方法
+        /// <summary>
+        /// 将缓存写入文件
+        /// </summary>
+        /// <returns></returns>
         public static async Task WriteCacheToFileRightNow()
         {
             if (isCacheUpdated)
@@ -161,6 +159,27 @@ namespace Bangumi.Api
                                                 JsonConvert.SerializeObject(BangumiCache));
             }
         }
+
+        /// <summary>
+        /// 清楚缓存并删除缓存文件
+        /// </summary>
+        public static void DeleteCache()
+        {
+            BangumiCache = null;
+            BangumiCache = new BangumiCache();
+            FileHelper.DeleteFile(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath));
+        }
+
+        /// <summary>
+        /// 获取缓存文件大小
+        /// </summary>
+        /// <returns></returns>
+        public static long GetCacheFileLength()
+        {
+            return FileHelper.GetFileLength(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath));
+        }
+
+        #endregion
 
         #region Api 请求
         /// <summary>
@@ -638,13 +657,12 @@ namespace Bangumi.Api
             // 删除用户认证文件
             MyToken = null;
             FileHelper.DeleteFile(localFolderPath + "\\token.data");
-            // 删除用户缓存文件
-            //FileHelper.DeleteCacheFile(CacheFile.Progress.GetFilePath());
-            //FileHelper.DeleteCacheFile(CacheFile.Anime.GetFilePath());
-            //FileHelper.DeleteCacheFile(CacheFile.Book.GetFilePath());
-            //FileHelper.DeleteCacheFile(CacheFile.Game.GetFilePath());
-            //FileHelper.DeleteCacheFile(CacheFile.Music.GetFilePath());
-            //FileHelper.DeleteCacheFile(CacheFile.Real.GetFilePath());
+            // 清空用户缓存
+            BangumiCache.Watchings.Clear();
+            BangumiCache.Progresses.Clear();
+            BangumiCache.Collections.Clear();
+            BangumiCache.SubjectStatus.Clear();
+            isCacheUpdated = true;
         }
         #endregion
 
@@ -702,7 +720,7 @@ namespace Bangumi.Api
 
         private static string GetFilePath(this JsonCacheFile file, string folder)
         {
-            return $"{folder}\\{file.ToString().ToLower()}.json";
+            return $"{folder}\\{file.ToString().ToLower()}";
         }
 
         #endregion

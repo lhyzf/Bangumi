@@ -187,6 +187,10 @@ namespace Bangumi
             goBack.Invoked += BackInvoked;
             this.KeyboardAccelerators.Add(goBack);
 
+            // 删除Json缓存文件夹，v0.5.5 及之前版本，在从旧版本升级时使用
+            if (System.IO.Directory.Exists(ApplicationData.Current.LocalCacheFolder.Path + "\\JsonCache"))
+                await (await ApplicationData.Current.LocalCacheFolder.GetFolderAsync("JsonCache")).DeleteAsync();
+
             await UpdataUserStatusAsync();
         }
 

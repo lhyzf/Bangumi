@@ -1,4 +1,5 @@
-﻿using Bangumi.Data;
+﻿using Bangumi.Api;
+using Bangumi.Data;
 using Bangumi.Helper;
 using System;
 using System.IO;
@@ -76,26 +77,9 @@ namespace Bangumi.Views
             UseBangumiDataToggleSwitch.IsOn = SettingHelper.UseBangumiData;
             UseBilibiliUWPToggleSwitch.IsOn = SettingHelper.UseBiliApp;
 
-            // 计算文件夹 JsonCache 中文件大小
-            if (Directory.Exists(ApplicationData.Current.LocalCacheFolder.Path + "\\JsonCache"))
-            {
-                StorageFolder jsonCacheFolder = await ApplicationData.Current.LocalCacheFolder.GetFolderAsync("JsonCache");
-                var files = await jsonCacheFolder.GetFilesAsync();
-                double fileSize = 0;
-                foreach (var file in files)
-                {
-                    var fileInfo = await file.GetBasicPropertiesAsync();
-                    fileSize += fileInfo.Size;
-                }
-                JsonCacheSizeTextBlock.Text = (fileSize / 1024).ToString("F3");
-                DeleteUserCacheFileButton.IsEnabled = true;
-            }
-            else
-            {
-                // 文件夹 JsonCache 不存在
-                JsonCacheSizeTextBlock.Text = "0";
-                DeleteUserCacheFileButton.IsEnabled = false;
-            }
+            // 获取缓存文件大小
+            JsonCacheSizeTextBlock.Text = ((double)BangumiApi.GetCacheFileLength() / 1024).ToString("F3");
+            DeleteUserCacheFileButton.IsEnabled = true;
 
             // 计算文件夹 ImageCache 中文件大小
             if (Directory.Exists(ApplicationData.Current.TemporaryFolder.Path + "\\ImageCache"))
@@ -242,11 +226,10 @@ namespace Bangumi.Views
             button.IsEnabled = true;
         }
 
-        private async void DeleteJsonCacheFileButton_Click(object sender, RoutedEventArgs e)
+        private void DeleteJsonCacheFileButton_Click(object sender, RoutedEventArgs e)
         {
-            // 删除Json缓存文件夹
-            if (Directory.Exists(ApplicationData.Current.LocalCacheFolder.Path + "\\JsonCache"))
-                await (await ApplicationData.Current.LocalCacheFolder.GetFolderAsync("JsonCache")).DeleteAsync();
+            // 删除缓存文件
+            BangumiApi.DeleteCache();
             JsonCacheSizeTextBlock.Text = "0";
             DeleteUserCacheFileButton.IsEnabled = false;
         }

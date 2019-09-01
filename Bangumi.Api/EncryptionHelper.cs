@@ -28,7 +28,7 @@ namespace Bangumi.Api
                 FileStream fStream = new FileStream(fileName, FileMode.OpenOrCreate);
 
                 //Debug.WriteLine("Original data: " + UnicodeEncoding.ASCII.GetString(toEncrypt));
-                //Debug.WriteLine("Encrypting and writing to disk...");
+                Debug.WriteLine("Encrypting and writing to disk...");
 
                 // Encrypt a copy of the data to the stream.
                 int bytesWritten = await EncryptDataToStream(toEncrypt, entropy, DataProtectionScope.CurrentUser, fStream);
@@ -55,7 +55,7 @@ namespace Bangumi.Api
 
                 fStream.Close();
 
-                Debug.WriteLine("Decrypted data: " + UnicodeEncoding.ASCII.GetString(decryptData));
+                //Debug.WriteLine("Decrypted data: " + UnicodeEncoding.ASCII.GetString(decryptData));
                 return UnicodeEncoding.ASCII.GetString(decryptData);
             }
             catch (Exception e)
