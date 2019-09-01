@@ -34,9 +34,9 @@ namespace Bangumi.Views
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             MainPage.RootPage.RefreshAppBarButton.Click += ProgressPageRefresh;
-            if (ViewModel.WatchingCollection.Count == 0 && !ViewModel.IsLoading)
+            if (!ViewModel.IsLoading)
             {
-                await ViewModel.LoadWatchingListAsync();
+                await ViewModel.LoadWatchingListAsync(ViewModel.WatchingCollection.Count != 0);
             }
         }
 
@@ -51,7 +51,7 @@ namespace Bangumi.Views
             var tag = button.Tag;
             if (tag.Equals("进度"))
             {
-                await ViewModel.LoadWatchingListAsync();
+                await ViewModel.LoadWatchingListAsync(false);
             }
         }
 

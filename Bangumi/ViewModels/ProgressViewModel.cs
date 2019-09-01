@@ -72,7 +72,7 @@ namespace Bangumi.ViewModels
         /// <summary>
         /// 刷新收视进度列表。
         /// </summary>
-        public async Task LoadWatchingListAsync()
+        public async Task LoadWatchingListAsync(bool fromCache)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace Bangumi.ViewModels
                     IsLoading = true;
                     HomePage.homePage.isLoading = IsLoading;
                     MainPage.RootPage.RefreshAppBarButton.IsEnabled = false;
-                    await PopulateWatchingListAsync(WatchingCollection);
+                    await PopulateWatchingListAsync(WatchingCollection, fromCache);
                 }
                 else
                 {
@@ -169,7 +169,7 @@ namespace Bangumi.ViewModels
         /// </summary>
         /// <param name="watchingCollection"></param>
         /// <returns></returns>
-        private async Task PopulateWatchingListAsync(ObservableCollection<WatchingStatus> watchingCollection)
+        private async Task PopulateWatchingListAsync(ObservableCollection<WatchingStatus> watchingCollection, bool fromCache)
         {
             try
             {
@@ -184,35 +184,37 @@ namespace Bangumi.ViewModels
                         watchingCollection.Add(item);
                     }
                 }
-
-                var watchings = await BangumiApi.GetWatchingListAsync();
-                if (!SettingHelper.IsUpdatedToday)
+                if (!fromCache)
                 {
-                    var newList = await ProcessWatchings(watchings, watchingCollection.ToList(), false);
-                    if (!watchingCollection.SequenceEqualExT(newList))
+                    var watchings = await BangumiApi.GetWatchingListAsync();
+                    if (!SettingHelper.IsUpdatedToday)
                     {
-                        watchingCollection.Clear();
-                        foreach (var item in newList)
+                        var newList = await ProcessWatchings(watchings, watchingCollection.ToList(), false);
+                        if (!watchingCollection.SequenceEqualExT(newList))
                         {
-                            watchingCollection.Add(item);
+                            watchingCollection.Clear();
+                            foreach (var item in newList)
+                            {
+                                watchingCollection.Add(item);
+                            }
                         }
                     }
-                }
-                else if (!watchingsCache.SequenceEqualExT(watchings))
-                {
-                    // 更新数据
-                    var newList = await ProcessWatchings(watchings, watchingCollection.ToList(), false);
-                    if (!watchingCollection.SequenceEqualExT(newList))
+                    else if (!watchingsCache.SequenceEqualExT(watchings))
                     {
-                        watchingCollection.Clear();
-                        foreach (var item in newList)
+                        // 更新数据
+                        var newList = await ProcessWatchings(watchings, watchingCollection.ToList(), false);
+                        if (!watchingCollection.SequenceEqualExT(newList))
                         {
-                            watchingCollection.Add(item);
+                            watchingCollection.Clear();
+                            foreach (var item in newList)
+                            {
+                                watchingCollection.Add(item);
+                            }
                         }
                     }
+                    // 当天成功更新
+                    SettingHelper.IsUpdatedToday = true;
                 }
-                // 当天成功更新
-                SettingHelper.IsUpdatedToday = true;
             }
             catch (Exception e)
             {
