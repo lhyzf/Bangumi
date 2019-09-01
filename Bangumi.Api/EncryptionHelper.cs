@@ -25,15 +25,14 @@ namespace Bangumi.Api
                 byte[] toEncrypt = UnicodeEncoding.ASCII.GetBytes(data);
 
                 // Create a file.
-                FileStream fStream = new FileStream(fileName, FileMode.OpenOrCreate);
+                using (FileStream fStream = new FileStream(fileName, FileMode.OpenOrCreate))
+                {
+                    //Debug.WriteLine("Original data: " + UnicodeEncoding.ASCII.GetString(toEncrypt));
+                    Debug.WriteLine("Encrypting and writing to disk...");
 
-                //Debug.WriteLine("Original data: " + UnicodeEncoding.ASCII.GetString(toEncrypt));
-                Debug.WriteLine("Encrypting and writing to disk...");
-
-                // Encrypt a copy of the data to the stream.
-                int bytesWritten = await EncryptDataToStream(toEncrypt, entropy, DataProtectionScope.CurrentUser, fStream);
-
-                fStream.Close();
+                    // Encrypt a copy of the data to the stream.
+                    int bytesWritten = await EncryptDataToStream(toEncrypt, entropy, DataProtectionScope.CurrentUser, fStream);
+                }
             }
             catch (Exception e)
             {
@@ -48,15 +47,14 @@ namespace Bangumi.Api
                 Debug.WriteLine("Reading data from disk and decrypting...");
 
                 // Open the file.
-                FileStream fStream = new FileStream(fileName, FileMode.Open);
+                using (FileStream fStream = new FileStream(fileName, FileMode.Open))
+                {
+                    // Read from the stream and decrypt the data.
+                    byte[] decryptData = await DecryptDataFromStream(entropy, DataProtectionScope.CurrentUser, fStream);
 
-                // Read from the stream and decrypt the data.
-                byte[] decryptData = await DecryptDataFromStream(entropy, DataProtectionScope.CurrentUser, fStream);
-
-                fStream.Close();
-
-                //Debug.WriteLine("Decrypted data: " + UnicodeEncoding.ASCII.GetString(decryptData));
-                return UnicodeEncoding.ASCII.GetString(decryptData);
+                    //Debug.WriteLine("Decrypted data: " + UnicodeEncoding.ASCII.GetString(decryptData));
+                    return UnicodeEncoding.ASCII.GetString(decryptData);
+                }
             }
             catch (Exception e)
             {
