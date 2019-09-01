@@ -1,14 +1,16 @@
-﻿using Bangumi.Common;
-using Bangumi.Facades;
+﻿using Bangumi.Api;
 using Bangumi.Api.Models;
+using Bangumi.Api.Utils;
+using Bangumi.Common;
+using Bangumi.Facades;
+using Bangumi.Helper;
 using Bangumi.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Bangumi.Helper;
 
 namespace Bangumi.ViewModels
 {
@@ -25,7 +27,12 @@ namespace Bangumi.ViewModels
         public bool IsLoading
         {
             get => _isLoading;
-            set => Set(ref _isLoading, value);
+            set
+            {
+                Set(ref _isLoading, value);
+                HomePage.homePage.isLoading = value;
+                MainPage.RootPage.RefreshAppBarButton.IsEnabled = !value;
+            }
         }
 
         private bool _isUpdating;
@@ -46,9 +53,7 @@ namespace Bangumi.ViewModels
             try
             {
                 IsLoading = true;
-                HomePage.homePage.isLoading = IsLoading;
-                MainPage.RootPage.RefreshAppBarButton.IsEnabled = false;
-                await BangumiFacade.PopulateBangumiCalendarAsync(BangumiCollection, force);
+                await PopulateBangumiCalendarAsync(BangumiCollection, force);
             }
             catch (Exception e)
             {
@@ -58,8 +63,6 @@ namespace Bangumi.ViewModels
             finally
             {
                 IsLoading = false;
-                HomePage.homePage.isLoading = IsLoading;
-                MainPage.RootPage.RefreshAppBarButton.IsEnabled = true;
             }
         }
 
@@ -77,6 +80,94 @@ namespace Bangumi.ViewModels
                 IsUpdating = false;
             }
         }
+
+        /// <summary>
+        /// 显示时间表。
+        /// </summary>
+        /// <param name="bangumiTimeLine"></param>
+        /// <returns></returns>
+        private async Task PopulateBangumiCalendarAsync(ObservableCollection<BangumiTimeLine> bangumiTimeLine, bool force = false)
+        {
+            try
+            {
+                List<BangumiTimeLine> cache = BangumiApi.BangumiCache.TimeLine.ToList();
+                int day = GetDayOfWeek();
+                if (!cache.SequenceEqualExT(bangumiTimeLine.OrderBy(b => b.Weekday.Id).ToList()))
+                {
+                    bangumiTimeLine.Clear();
+                    foreach (var item in cache)
+                    {
+                        if (item.Weekday.Id < day)
+                        {
+                            bangumiTimeLine.Add(item);
+                        }
+                        else
+                        {
+                            bangumiTimeLine.Insert(bangumiTimeLine.Count + 1 - day, item);
+                        }
+                    }
+                }
+
+                // 非强制加载，若缓存与当天为同一星期几则不请求新数据。
+                if (!force && bangumiTimeLine.Count > 0 && bangumiTimeLine[0].Weekday.Id == day)
+                {
+                    return;
+                }
+
+                var response = await BangumiApi.GetBangumiCalendarAsync();
+
+                if (!cache.SequenceEqualExT(response))
+                {
+                    //清空原数据
+                    bangumiTimeLine.Clear();
+                    foreach (var item in response)
+                    {
+                        if (item.Weekday.Id < day)
+                        {
+                            bangumiTimeLine.Add(item);
+                        }
+                        else
+                        {
+                            bangumiTimeLine.Insert(bangumiTimeLine.Count + 1 - day, item);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("显示时间表失败。");
+                Debug.WriteLine(e.Message);
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// 获取当天星期几
+        /// </summary>
+        /// <returns></returns>
+        private int GetDayOfWeek()
+        {
+            switch (DateTime.Today.DayOfWeek)
+            {
+                case DayOfWeek.Monday:
+                    return 1;
+                case DayOfWeek.Tuesday:
+                    return 2;
+                case DayOfWeek.Wednesday:
+                    return 3;
+                case DayOfWeek.Thursday:
+                    return 4;
+                case DayOfWeek.Friday:
+                    return 5;
+                case DayOfWeek.Saturday:
+                    return 6;
+                case DayOfWeek.Sunday:
+                    return 7;
+                default:
+                    return 1;
+            }
+        }
+
 
     }
 }
