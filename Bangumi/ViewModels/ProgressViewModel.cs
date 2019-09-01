@@ -72,6 +72,8 @@ namespace Bangumi.ViewModels
         /// <summary>
         /// 刷新收视进度列表。
         /// </summary>
+        /// <param name="fromCache">只从缓存加载</param>
+        /// <returns></returns>
         public async Task LoadWatchingListAsync(bool fromCache)
         {
             try
@@ -168,6 +170,7 @@ namespace Bangumi.ViewModels
         /// 显示用户收视进度列表。
         /// </summary>
         /// <param name="watchingCollection"></param>
+        /// <param name="fromCache">只从缓存加载</param>
         /// <returns></returns>
         private async Task PopulateWatchingListAsync(ObservableCollection<WatchingStatus> watchingCollection, bool fromCache)
         {
@@ -176,44 +179,21 @@ namespace Bangumi.ViewModels
                 List<Watching> watchingsCache = BangumiApi.BangumiCache.Watchings.ToList();
                 // 加载缓存
                 var cachedList = await ProcessWatchings(watchingsCache);
-                if (!watchingCollection.SequenceEqualExT(cachedList))
-                {
-                    watchingCollection.Clear();
-                    foreach (var item in cachedList)
-                    {
-                        watchingCollection.Add(item);
-                    }
-                }
+                DiffListToObservableCollection(watchingCollection, cachedList);
                 if (!fromCache)
                 {
                     var watchings = await BangumiApi.GetWatchingListAsync();
-                    if (!SettingHelper.IsUpdatedToday)
+                    // 当天首次更新或内容有变更
+                    if (!SettingHelper.IsUpdatedToday || !watchingsCache.SequenceEqualExT(watchings))
                     {
                         var newList = await ProcessWatchings(watchings, watchingCollection.ToList(), false);
-                        if (!watchingCollection.SequenceEqualExT(newList))
+                        DiffListToObservableCollection(watchingCollection, newList);
+                        // 当天成功更新
+                        if (!SettingHelper.IsUpdatedToday)
                         {
-                            watchingCollection.Clear();
-                            foreach (var item in newList)
-                            {
-                                watchingCollection.Add(item);
-                            }
+                            SettingHelper.IsUpdatedToday = true;
                         }
                     }
-                    else if (!watchingsCache.SequenceEqualExT(watchings))
-                    {
-                        // 更新数据
-                        var newList = await ProcessWatchings(watchings, watchingCollection.ToList(), false);
-                        if (!watchingCollection.SequenceEqualExT(newList))
-                        {
-                            watchingCollection.Clear();
-                            foreach (var item in newList)
-                            {
-                                watchingCollection.Add(item);
-                            }
-                        }
-                    }
-                    // 当天成功更新
-                    SettingHelper.IsUpdatedToday = true;
                 }
             }
             catch (Exception e)
@@ -226,6 +206,7 @@ namespace Bangumi.ViewModels
         /// 处理用户收视进度列表
         /// </summary>
         /// <param name="watchings">收视列表</param>
+        /// <param name="cachedWatchings">缓存的收视列表</param>
         /// <param name="fromCache">是否从缓存加载</param>
         /// <returns></returns>
         private async Task<List<WatchingStatus>> ProcessWatchings(List<Watching> watchings, List<WatchingStatus> cachedWatchings = null, bool fromCache = true)
@@ -409,6 +390,37 @@ namespace Bangumi.ViewModels
                 if (item.UpdatedEps != 0)
                 {
                     item.EpColor = "#d26585";
+                }
+            }
+        }
+
+        /// <summary>
+        /// 以新列表为准，将老列表改为与新列表相同
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="origin">显示的列表</param>
+        /// <param name="dest">新的列表</param>
+        private void DiffListToObservableCollection<T>(ObservableCollection<T> origin, List<T> dest)
+        {
+            if (!origin.SequenceEqualExT(dest))
+            {
+                for (int i = 0; i < dest.Count; i++)
+                {
+                    if (i < origin.Count)
+                    {
+                        if (dest[i].GetHashCode() != origin[i].GetHashCode())
+                        {
+                            origin.RemoveAt(i--);
+                        }
+                        else if (!dest[i].EqualsExT(origin[i]))
+                        {
+                            origin[i] = dest[i];
+                        }
+                    }
+                    else
+                    {
+                        origin.Add(dest[i]);
+                    }
                 }
             }
         }
