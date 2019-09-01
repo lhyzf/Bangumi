@@ -29,7 +29,12 @@ namespace Bangumi.ViewModels
         public bool IsLoading
         {
             get => _isLoading;
-            set => Set(ref _isLoading, value);
+            set
+            {
+                Set(ref _isLoading, value);
+                HomePage.homePage.isLoading = value;
+                MainPage.RootPage.RefreshAppBarButton.IsEnabled = !value;
+            }
         }
 
 
@@ -81,8 +86,6 @@ namespace Bangumi.ViewModels
                 if (BangumiApi.IsLogin)
                 {
                     IsLoading = true;
-                    HomePage.homePage.isLoading = IsLoading;
-                    MainPage.RootPage.RefreshAppBarButton.IsEnabled = false;
                     await PopulateWatchingListAsync(WatchingCollection, fromCache);
                 }
                 else
@@ -108,8 +111,6 @@ namespace Bangumi.ViewModels
             finally
             {
                 IsLoading = false;
-                HomePage.homePage.isLoading = IsLoading;
-                MainPage.RootPage.RefreshAppBarButton.IsEnabled = true;
             }
         }
 

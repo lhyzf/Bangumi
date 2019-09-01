@@ -198,7 +198,7 @@
 
         <ComboBox Name="TypeCombobox" 
                   HorizontalAlignment="Right"
-                  SelectedIndex="0"
+                  SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
                   SelectionChanged="TypeCombobox_SelectionChanged"
                   Margin="0,5,24,0">
             <ComboBoxItem Content="动画"/>

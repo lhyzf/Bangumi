@@ -1,16 +1,16 @@
-﻿using Bangumi.Common;
+﻿using Bangumi.Api;
+using Bangumi.Api.Models;
+using Bangumi.Api.Utils;
+using Bangumi.Common;
 using Bangumi.Facades;
 using Bangumi.Helper;
-using Bangumi.Api.Models;
 using Bangumi.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Data;
-using Bangumi.Api;
 
 namespace Bangumi.ViewModels
 {
@@ -63,7 +63,7 @@ namespace Bangumi.ViewModels
                 if (BangumiApi.IsLogin)
                 {
                     IsLoading = true;
-                    await BangumiFacade.PopulateSubjectCollectionAsync(SubjectCollection, subjectType);
+                    await PopulateSubjectCollectionAsync(SubjectCollection, subjectType);
                 }
                 else
                 {
@@ -130,6 +130,52 @@ namespace Bangumi.ViewModels
             }
         }
 
+        /// <summary>
+        /// 显示用户选定类别收藏信息。
+        /// </summary>
+        /// <param name="subjectCollection"></param>
+        /// <param name="subjectType"></param>
+        /// <returns></returns>
+        private async Task PopulateSubjectCollectionAsync(ObservableCollection<Collection> subjectCollection, SubjectTypeEnum subjectType)
+        {
+            try
+            {
+                // 获取缓存
+                BangumiApi.BangumiCache.Collections.TryGetValue(subjectType.GetValue(), out Collection2 cache);
+                if (cache != null && !cache.Collects.SequenceEqualExT(subjectCollection.ToList()))
+                {
+                    //清空原数据
+                    subjectCollection.Clear();
+                    foreach (var status in cache.Collects)
+                    {
+                        subjectCollection.Add(status);
+                    }
+                }
+
+                var respose = await BangumiApi.GetSubjectCollectionAsync(subjectType);
+
+                if (!cache.EqualsExT(respose))
+                {
+                    //清空原数据
+                    subjectCollection.Clear();
+                    foreach (var status in respose.Collects)
+                    {
+                        subjectCollection.Add(status);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("显示用户选定类别收藏信息失败。");
+                Debug.WriteLine(e.Message);
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// 根据下拉框返回所选择的收藏类型
+        /// </summary>
+        /// <returns></returns>
         private SubjectTypeEnum GetSubjectType()
         {
             switch (SelectedIndex)

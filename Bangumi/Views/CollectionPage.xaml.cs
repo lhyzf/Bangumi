@@ -48,7 +48,6 @@ namespace Bangumi.Views
 
         private void TypeCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.SelectedIndex = TypeCombobox.SelectedIndex;
             ViewModel.LoadCollectionList();
         }
 
