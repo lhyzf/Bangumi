@@ -49,24 +49,5 @@ namespace Bangumi.Helper
         }
 
 
-        #region JsonCacheFile
-        public enum CacheFile
-        {
-            Progress,
-        }
-
-        public static string GetFilePath(this CacheFile file)
-        {
-            switch (file)
-            {
-                case CacheFile.Progress:
-                    return "JsonCache\\progress";
-                default:
-                    return string.Empty;
-            }
-        }
-        #endregion
-
-
     }
 }

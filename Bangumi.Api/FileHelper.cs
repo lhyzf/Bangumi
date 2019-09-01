@@ -81,6 +81,30 @@ namespace Bangumi.Api
 
         #endregion
 
+        /// <summary>
+        /// 获取文件长度 bytes
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public static long GetFileLength(string fileName)
+        {
+            try
+            {
+                if (File.Exists(fileName))
+                {
+                    using (FileStream fs = File.OpenRead(fileName))
+                    {
+                        return fs.Length;
+                    }
+                }
+                return 0;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return 0;
+            }
+        }
 
         /// <summary>
         /// 删除存在的文件
