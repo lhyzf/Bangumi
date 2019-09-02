@@ -53,6 +53,7 @@
                                       Source="{x:Bind Images.Common}" 
                                       PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
                                       PlaceholderStretch="UniformToFill"
+                                      CornerRadius="2"
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True"
                                       x:Phase="2"
@@ -95,6 +96,7 @@
                                       Source="{x:Bind Images.Common}" 
                                       PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
                                       PlaceholderStretch="UniformToFill"
+                                      CornerRadius="2"
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True"
                                       x:Phase="2"
@@ -137,6 +139,7 @@
                                       Source="{x:Bind Images.Common}" 
                                       PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
                                       PlaceholderStretch="UniformToFill"
+                                      CornerRadius="2"
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True"
                                       x:Phase="2"
@@ -171,6 +174,7 @@
                                       Source="{x:Bind Images.Common}" 
                                       PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
                                       PlaceholderStretch="UniformToFill"
+                                      CornerRadius="2"
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True"
                                       x:Phase="2"
@@ -209,7 +213,7 @@
                         <Setter Target="AllGridView.DesiredWidth" 
                                 Value="300"/>
                         <Setter Target="AnimeGridView.ItemTemplate" 
-                                Value="{StaticResource NarrowSubjectWithTypeTemplate}"/>
+                                Value="{StaticResource NarrowSubjectTemplate}"/>
                         <Setter Target="AnimeGridView.DesiredWidth" 
                                 Value="300"/>
                         <Setter Target="BookGridView.ItemTemplate" 

@@ -48,12 +48,14 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Border Background="{ThemeResource SystemChromeLowColor}"
+                            CornerRadius="2"
                             Width="10"
                             ToolTipService.ToolTip="{x:Bind Count}"
                             Height="100">
-                        <Rectangle Fill="{ThemeResource SystemAccentColor}"
-                                   Height="{x:Bind Ratio}" 
-                                   VerticalAlignment="Bottom"/>
+                        <Border Background="{ThemeResource SystemAccentColor}"
+                                CornerRadius="2"
+                                Height="{x:Bind Ratio}"
+                                VerticalAlignment="Bottom"/>
                     </Border>
                     <TextBlock Grid.Row="1"
                                Text="{x:Bind Score}"
@@ -69,7 +71,8 @@
                                Padding="5" 
                                Height="68"
                                Background="Transparent"
-                               BorderThickness="0.5"
+                               CornerRadius="2"
+                               BorderThickness="0.75"
                                BorderBrush="{ThemeResource SystemControlBackgroundListMediumBrush}">
                     <TextBlock Name="SortTextBlock"
                                Text="{x:Bind common:Converters.GetEpSortDesc(Sort,Type)}" 
@@ -101,6 +104,7 @@
                                PointerExited="RelativePanel_PointerExited"
                                PointerPressed="RelativePanel_PointerPressed"
                                PointerCaptureLost="RelativePanel_PointerExited"
+                               CornerRadius="2"
                                Padding="5"
                                Background="Transparent">
                     <controls:ImageEx Name="CrtImage" 
@@ -110,6 +114,7 @@
                                       Margin="0,0,5,0"
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True"
+                                      CornerRadius="2"
                                       PlaceholderSource="ms-appx:///Assets/resource/akkarin.jpg"
                                       PlaceholderStretch="UniformToFill"
                                       IsCacheEnabled="True"/>
@@ -143,6 +148,7 @@
                                PointerExited="RelativePanel_PointerExited"
                                PointerPressed="RelativePanel_PointerPressed"
                                PointerCaptureLost="RelativePanel_PointerExited"
+                               CornerRadius="2"
                                Padding="5"
                                Background="Transparent">
                     <controls:ImageEx Name="StaffImage" 
@@ -152,6 +158,7 @@
                                       Margin="0,0,5,0"
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True"
+                                      CornerRadius="2"
                                       PlaceholderSource="ms-appx:///Assets/resource/akkarin.jpg"
                                       PlaceholderStretch="UniformToFill"
                                       IsCacheEnabled="True"/>
@@ -181,6 +188,7 @@
                                PointerExited="RelativePanel_PointerExited"
                                PointerPressed="RelativePanel_PointerPressed"
                                PointerCaptureLost="RelativePanel_PointerExited"
+                               CornerRadius="2"
                                Padding="5"
                                BorderBrush="{ThemeResource SystemControlBackgroundListLowRevealBorderBrush}"
                                Background="Transparent">
@@ -191,6 +199,7 @@
                                       Margin="0,0,5,5"
                                       RelativePanel.AlignLeftWithPanel="True"
                                       RelativePanel.AlignTopWithPanel="True"
+                                      CornerRadius="2"
                                       PlaceholderSource="ms-appx:///Assets/resource/akkarin.jpg"
                                       PlaceholderStretch="UniformToFill"
                                       IsCacheEnabled="True"/>
@@ -229,6 +238,7 @@
                                PointerExited="RelativePanel_PointerExited"
                                PointerPressed="RelativePanel_PointerPressed"
                                PointerCaptureLost="RelativePanel_PointerExited"
+                               CornerRadius="2"
                                Padding="5"
                                Background="Transparent">
                     <TextBlock Name="TopicTitleTextBlock"
@@ -391,9 +401,11 @@
                                                   Source="{x:Bind ViewModel.ImageSource, Mode=OneWay}"
                                                   PlaceholderSource="ms-appx:///Assets/resource/err_404.png"
                                                   PlaceholderStretch="UniformToFill"
+                                                  CornerRadius="2"
                                                   RelativePanel.AlignLeftWithPanel="True"
                                                   RelativePanel.AlignTopWithPanel="True"
-                                                  Margin="0,0,5,0" />
+                                                  Margin="0,0,5,0"
+                                                  Stretch="UniformToFill"/>
                                 <ItemsControl Name="RateItemsControl"
                                               RelativePanel.Above="collectionTextBlock"
                                               RelativePanel.AlignRightWithPanel="True"
