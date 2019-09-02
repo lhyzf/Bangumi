@@ -75,8 +75,7 @@
                     <Button Name="DeleteUserCacheFileButton"
                             Content="清空缓存" 
                             Margin="0,4,0,0"
-                            Click="DeleteJsonCacheFileButton_Click"
-                            Style="{StaticResource ButtonRevealStyle}"/>
+                            Click="DeleteJsonCacheFileButton_Click"/>
 
                     <!-- 图片缓存 -->
                     <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
@@ -91,8 +90,7 @@
                     <Button Name="DeleteImageTempFileButton"
                             Content="清空缓存" 
                             Margin="0,4,0,0"
-                            Click="DeleteImageTempFileButton_Click"
-                            Style="{StaticResource ButtonRevealStyle}"/>
+                            Click="DeleteImageTempFileButton_Click"/>
 
                 </StackPanel>
             </PivotItem>
@@ -125,8 +123,7 @@
                             <Button Name="BangumiDataButton"
                                     Content="检查更新"
                                     Click="BangumiDataButton_Click"
-                                    Tag="Update"
-                                    Style="{StaticResource ButtonRevealStyle}"/>
+                                    Tag="Update"/>
                             <ProgressRing Name="BangumiDataProgressRing"
                                           Grid.Column="1"
                                           Visibility="Collapsed"
