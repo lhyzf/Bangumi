@@ -245,12 +245,9 @@ namespace Bangumi.ViewModels
 
 
                             // 加载缓存
-                            if (fromCache)
+                            if (fromCache && BangumiApi.BangumiCache.Subjects.TryGetValue(item.SubjectId.ToString(), out Subject subjectCache))
                             {
-                                if (BangumiApi.BangumiCache.Subjects.TryGetValue(item.SubjectId.ToString(), out Subject subjectCache))
-                                {
-                                    await ProcessSubject(item, subjectCache, fromCache);
-                                }
+                                await ProcessSubject(item, subjectCache, fromCache);
                             }
                             else
                             {
@@ -318,13 +315,10 @@ namespace Bangumi.ViewModels
                 }
                 item.UpdatedEps = item.Eps.Count - item.Eps.Where(e => e.Status == "NA").Count();
 
-                if (fromCache)
+                if (fromCache && BangumiApi.BangumiCache.Progresses.TryGetValue(item.SubjectId.ToString(), out Progress progressCache))
                 {
-                    if (BangumiApi.BangumiCache.Progresses.TryGetValue(item.SubjectId.ToString(), out Progress progressCache))
-                    {
-                        // 加载缓存
-                        ProcessProgress(item, progressCache);
-                    }
+                    // 加载缓存
+                    ProcessProgress(item, progressCache);
                 }
                 else
                 {
