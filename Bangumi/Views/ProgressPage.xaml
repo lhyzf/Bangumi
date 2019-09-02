@@ -74,6 +74,7 @@
                             Padding="8,1"
                             RelativePanel.RightOf="BangumiImage"
                             RelativePanel.AlignBottomWithPanel="True"
+                            ToolTipService.ToolTip="收藏"
                             Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
                         <FontIcon FontFamily="Segoe MDL2 Assets" 
                                   Glyph="&#xE00B;" 
@@ -95,8 +96,11 @@
                             RelativePanel.AlignBottomWithPanel="True"
                             RelativePanel.RightOf="CollectionButton"
                             HorizontalAlignment="Right"
+                            Visibility="{x:Bind common:Converters.CollapsedIf(IsUpdating), Mode=OneWay}"
+                            ToolTipService.ToolTip="{Binding ElementName=NextEpTextBlock, Path=Text}"
                             Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
-                        <TextBlock FontSize="12" 
+                        <TextBlock Name="NextEpTextBlock" 
+                                   FontSize="12" 
                                    Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
                                    VerticalAlignment="Center"
                                    HorizontalTextAlignment="Right"
@@ -108,7 +112,7 @@
                 
                     <ProgressBar Maximum="{x:Bind Eps.Count, Mode=OneWay}"
                                  Value="{x:Bind WatchedEps, Mode=OneWay}"
-                                 Width="{Binding Width,ElementName=BangumiImage}"
+                                 Width="{Binding ElementName=BangumiImage, Path=Width}"
                                  RelativePanel.Below="BangumiImage"
                                  RelativePanel.AlignLeftWithPanel="True"
                                  Margin="0,1,0,0"
@@ -116,16 +120,16 @@
                                  Foreground="{StaticResource BangumiPinkColor}" />
 
                     <ProgressRing IsActive="True"
-                                  Visibility="{x:Bind IsUpdating,Mode=OneWay}"
+                                  Visibility="{x:Bind IsUpdating, Mode=OneWay}"
                                   RelativePanel.AlignRightWithPanel="True"
-                                  RelativePanel.AlignTopWithPanel="True"
+                                  RelativePanel.AlignBottomWithPanel="True"
                                   Width="20" 
                                   Height="20" >
                         <ProgressRing.RenderTransform>
-                            <CompositeTransform CenterX="10"
-                                                CenterY="10"
-                                                ScaleX="0.6" 
-                                                ScaleY="0.6"/>
+                            <CompositeTransform CenterX="0"
+                                                CenterY="3"
+                                                ScaleX="0.75" 
+                                                ScaleY="0.75"/>
                         </ProgressRing.RenderTransform>
                     </ProgressRing>
 
@@ -192,6 +196,7 @@
                             Padding="12,4"
                             RelativePanel.RightOf="BangumiImage"
                             RelativePanel.AlignBottomWithPanel="True"
+                            ToolTipService.ToolTip="收藏"
                             Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
                         <FontIcon FontFamily="Segoe MDL2 Assets" 
                                   Glyph="&#xE00B;" 
@@ -213,8 +218,11 @@
                             RelativePanel.AlignBottomWithPanel="True"
                             RelativePanel.RightOf="CollectionButton"
                             HorizontalAlignment="Right"
+                            Visibility="{x:Bind common:Converters.CollapsedIf(IsUpdating), Mode=OneWay}"
+                            ToolTipService.ToolTip="{Binding ElementName=NextEpTextBlock, Path=Text}"
                             Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
-                        <TextBlock FontSize="16" 
+                        <TextBlock Name="NextEpTextBlock" 
+                                   FontSize="16" 
                                    Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
                                    VerticalAlignment="Center"
                                    HorizontalTextAlignment="Right"
@@ -226,7 +234,7 @@
 
                     <ProgressBar Maximum="{x:Bind Eps.Count, Mode=OneWay}"
                                  Value="{x:Bind WatchedEps, Mode=OneWay}"
-                                 Width="{Binding Width,ElementName=BangumiImage}"
+                                 Width="{Binding ElementName=BangumiImage, Path=Width}"
                                  RelativePanel.Below="BangumiImage"
                                  RelativePanel.AlignLeftWithPanel="True"
                                  Margin="0,1,0,0"
@@ -234,10 +242,10 @@
                                  Foreground="{StaticResource BangumiPinkColor}" />
 
                     <ProgressRing IsActive="True"
-                                  Visibility="{x:Bind IsUpdating,Mode=OneWay}"
+                                  Visibility="{x:Bind IsUpdating, Mode=OneWay}"
                                   RelativePanel.AlignRightWithPanel="True"
-                                  RelativePanel.AlignTopWithPanel="True"
-                                  Margin="8"
+                                  RelativePanel.AlignBottomWithPanel="True"
+                                  Margin="4"
                                   Width="20" 
                                   Height="20" >
                     </ProgressRing>
