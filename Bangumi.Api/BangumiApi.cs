@@ -1,5 +1,6 @@
 ﻿using Bangumi.Api.Models;
 using Bangumi.Api.Services;
+using Bangumi.Api.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -541,6 +542,12 @@ namespace Bangumi.Api
                             }
                         }
                     });
+                }
+                // 找到收视列表中的条目，修改 LastTouch
+                var watch = BangumiCache.Watchings.Where(w => w.SubjectId == sub.Id).FirstOrDefault();
+                if (watch != null)
+                {
+                    watch.LastTouch = DateTime.Now.ConvertDateTimeToJsTick();
                 }
                 timer.Interval = interval;
                 isCacheUpdated = true;

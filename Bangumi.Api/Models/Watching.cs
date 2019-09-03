@@ -21,7 +21,7 @@ namespace Bangumi.Api.Models
         public int VolStatus { get; set; }
 
         [JsonProperty("lasttouch")]
-        public int LastTouch { get; set; }
+        public long LastTouch { get; set; }
 
         [JsonProperty("subject")]
         public Subject3 Subject { get; set; }
