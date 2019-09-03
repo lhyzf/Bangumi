@@ -25,7 +25,7 @@ namespace Bangumi.Api.Models
         public int EpStatus { get; set; }
 
         [JsonProperty("lasttouch")]
-        public int LastTouch { get; set; }
+        public long LastTouch { get; set; }
 
         [JsonProperty("private")]
         public string Private { get; set; }
@@ -55,7 +55,7 @@ namespace Bangumi.Api.Models
         // override object.GetHashCode
         public override int GetHashCode()
         {
-            return LastTouch;
+            return (int)LastTouch;
         }
     }
 }
