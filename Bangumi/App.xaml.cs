@@ -21,6 +21,23 @@ namespace Bangumi
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            UnhandledException += App_UnhandledException;
+        }
+
+        /// <summary>
+        /// 未处理的异常
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+            // 马上将缓存写入文件
+            var task = BangumiApi.WriteCacheToFileRightNow();
+            Windows.UI.Popups.MessageDialog dialog = new Windows.UI.Popups.MessageDialog($"发生未知错误，应用即将关闭！\n{e.Message}", "未知错误");
+            await dialog.ShowAsync();
+            await task;
+            Application.Current.Exit();
         }
 
         /// <summary>

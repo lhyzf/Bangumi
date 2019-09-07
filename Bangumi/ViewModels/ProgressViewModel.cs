@@ -252,7 +252,7 @@ namespace Bangumi.ViewModels
                             else
                             {
                                 // 将条目修改时间进行比较，仅更新有修改的条目，以及每天首次更新
-                                if (item.LastTouch != cachedWatchings.Find(c => c.SubjectId == item.SubjectId)?.LastTouch ||
+                                if (item.LastTouch != cachedWatchings?.Find(c => c.SubjectId == item.SubjectId)?.LastTouch ||
                                     !SettingHelper.IsUpdatedToday)
                                 {
                                     var subject = await BangumiApi.GetSubjectAsync(item.SubjectId.ToString());
