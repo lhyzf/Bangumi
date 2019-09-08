@@ -205,21 +205,23 @@ namespace Bangumi.Common
         {
             if (next_ep == -1)
             {
-                return "";
+                return "EP.";
             }
             var ep = eps?.Where(p => p.Sort == next_ep).FirstOrDefault();
             if (ep == null)
             {
-                return "";
+                return "EP.";
             }
             else if (ep.Type == 0)
             {
-                return next_ep.ToString() +
+                return "EP." +
+                       next_ep.ToString() +
                        (string.IsNullOrEmpty(ep.Name) ? "" : " " + ep.Name);
             }
             else
             {
-                return ep.Type.GetEpisodeType() + " " + next_ep +
+                return "EP." +
+                       ep.Type.GetEpisodeType() + " " + next_ep +
                        (string.IsNullOrEmpty(ep.Name) ? "" : " " + ep.Name);
             }
         }
