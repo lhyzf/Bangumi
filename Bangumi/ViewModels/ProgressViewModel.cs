@@ -389,6 +389,8 @@ namespace Bangumi.ViewModels
             }
         }
 
+        #endregion
+
         /// <summary>
         /// 以新列表为准，将老列表改为与新列表相同
         /// 目前效率不高
@@ -405,7 +407,7 @@ namespace Bangumi.ViewModels
                 {
                     if (dest.Find(d => d.GetHashCode() == origin[i].GetHashCode()) == null)
                     {
-                        origin.Remove(origin[i]);
+                        origin.Remove(origin[i--]);
                     }
                 }
                 // 添加新增的
@@ -426,8 +428,6 @@ namespace Bangumi.ViewModels
                 }
             }
         }
-
-        #endregion
 
         /// <summary>
         /// 对条目进行排序
@@ -524,7 +524,7 @@ namespace Bangumi.ViewModels
         // override object.GetHashCode
         public override int GetHashCode()
         {
-            return (int)(LastTouch % 1000000000);
+            return (int)(LastTouch % 1000000000) - UpdatedEps;
         }
     }
 
