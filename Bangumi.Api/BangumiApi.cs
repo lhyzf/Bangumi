@@ -481,7 +481,7 @@ namespace Bangumi.Api
         private static void UpdateProgressCache(int epId, EpStatusEnum status)
         {
             // 找到该章节所属的条目
-            var sub = BangumiCache.Subjects.Values.Where(s => s.Eps.Where(p => p.Id == epId).FirstOrDefault() != null).FirstOrDefault();
+            var sub = BangumiCache.Subjects.Values.Where(s => s.Eps?.Where(p => p.Id == epId).FirstOrDefault() != null).FirstOrDefault();
             if (sub != null)
             {
                 // 找到已有进度，否则新建
