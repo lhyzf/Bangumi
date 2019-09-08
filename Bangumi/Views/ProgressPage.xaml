@@ -104,9 +104,8 @@
                                    Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
                                    VerticalAlignment="Center"
                                    HorizontalTextAlignment="Right"
-                                   TextTrimming="CharacterEllipsis">
-                                    <Run Text="EP."/>
-                                    <Run Text="{x:Bind common:Converters.GetEpNextSortDesc(NextEp,Eps), Mode=OneWay}"/>
+                                   TextTrimming="CharacterEllipsis"
+                                   Text="{x:Bind common:Converters.GetEpNextSortDesc(NextEp,Eps), Mode=OneWay}">
                         </TextBlock>
                     </Button>
                 
@@ -226,9 +225,8 @@
                                    Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
                                    VerticalAlignment="Center"
                                    HorizontalTextAlignment="Right"
-                                   TextTrimming="CharacterEllipsis">
-                                    <Run Text="EP."/>
-                                    <Run Text="{x:Bind common:Converters.GetEpNextSortDesc(NextEp,Eps), Mode=OneWay}"/>
+                                   TextTrimming="CharacterEllipsis"
+                                   Text="{x:Bind common:Converters.GetEpNextSortDesc(NextEp,Eps), Mode=OneWay}">
                         </TextBlock>
                     </Button>
 
