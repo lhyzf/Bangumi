@@ -391,6 +391,7 @@ namespace Bangumi.ViewModels
 
         /// <summary>
         /// 以新列表为准，将老列表改为与新列表相同
+        /// 目前效率不高
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="origin">显示的列表</param>
@@ -399,22 +400,28 @@ namespace Bangumi.ViewModels
         {
             if (!origin.SequenceEqualExT(dest))
             {
+                // 检查原有列表中的项目是否还在，否则删除
+                for (int i = 0; i < origin.Count; i++)
+                {
+                    if (dest.Find(d => d.GetHashCode() == origin[i].GetHashCode()) == null)
+                    {
+                        origin.Remove(origin[i]);
+                    }
+                }
+                // 添加新增的
                 for (int i = 0; i < dest.Count; i++)
                 {
-                    if (i < origin.Count)
+                    if (origin.Where(o => o.GetHashCode() == dest[i].GetHashCode()).FirstOrDefault() == null)
                     {
-                        if (dest[i].GetHashCode() != origin[i].GetHashCode())
-                        {
-                            origin.RemoveAt(i--);
-                        }
-                        else if (!dest[i].EqualsExT(origin[i]))
-                        {
-                            origin[i] = dest[i];
-                        }
+                        origin.Insert(i, dest[i]);
                     }
-                    else
+                }
+                // 调整顺序
+                for (int i = 0; i < origin.Count; i++)
+                {
+                    if (origin.IndexOf(dest[i]) != i)
                     {
-                        origin.Add(dest[i]);
+                        origin.Move(origin.IndexOf(dest[i]), i);
                     }
                 }
             }
@@ -427,44 +434,11 @@ namespace Bangumi.ViewModels
         /// </summary>
         private List<WatchingStatus> CollectionSorting(List<WatchingStatus> watchingStatuses)
         {
-            var order = new List<WatchingStatus>();
-            var notWatched = new List<WatchingStatus>();
-            var allWatched = new List<WatchingStatus>();
-            order = watchingStatuses
-                .Where(p => p.WatchedEps != 0 && p.WatchedEps != p.Eps.Count)
-                .OrderBy(p => p.LastTouch)
-                .OrderBy(p => p.EpColor)
-                .ToList();
-            notWatched = watchingStatuses
-                .Where(p => p.WatchedEps == 0 && p.WatchedEps != p.Eps.Count)
-                .OrderBy(p => p.EpColor)
-                .ToList();
-            allWatched = watchingStatuses
-                .Where(p => p.WatchedEps == p.Eps.Count)
-                .ToList();
-
-            // 排序，尚未观看的排在所有有观看记录的有更新的条目之后，
-            // ，在已看到最新剧集的条目之前，看完的排在最后
-            for (int i = 0; i <= order.Count; i++)
-            {
-                if (i == order.Count || order[i].EpColor == "Gray")
-                {
-                    order.InsertRange(i, notWatched);
-                    break;
-                }
-            }
-            order.AddRange(allWatched);
-
-            // 仅修改与排序不同之处
-            for (int i = 0; i < watchingStatuses.Count; i++)
-            {
-                if (watchingStatuses[i].SubjectId != order[i].SubjectId)
-                {
-                    watchingStatuses.RemoveAt(i);
-                    watchingStatuses.Insert(i, order[i]);
-                }
-            }
-            return watchingStatuses;
+            return watchingStatuses.OrderBy(p => p.EpColor)
+                                   .ThenBy(p => p.WatchedEps == 0)
+                                   .ThenBy(p => p.UpdatedEps - p.WatchedEps)
+                                   .ThenBy(p => p.LastTouch)
+                                   .ToList();
         }
 
         #endregion
@@ -550,7 +524,7 @@ namespace Bangumi.ViewModels
         // override object.GetHashCode
         public override int GetHashCode()
         {
-            return SubjectId;
+            return (int)(LastTouch % 1000000000);
         }
     }
 
