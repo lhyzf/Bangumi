@@ -50,7 +50,7 @@ namespace Bangumi
                             ApplicationData.Current.LocalCacheFolder.Path,
                             "https://api.bgm.tv",
                             "https://bgm.tv/oauth",
-                            * 将自己申请的应用相关信息填入
+                            // 将自己申请的应用相关信息填入
                             "", // ClientId
                             "", // ClientSecret
                             "", // RedirectUrl
