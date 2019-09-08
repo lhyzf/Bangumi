@@ -13,8 +13,9 @@
 
 ## 安装
 
-- 系统版本：Windows 10 16299 及以上
-- [下载地址](https://www.microsoft.com/store/apps/9PLKXLTWSVXR)
+- 系统版本：Windows 10 17763 及以上
+
+[<img src='https://assets.windowsphone.com/85864462-9c82-451e-9355-a3d5f874397a/English_get-it-from-MS_InvariantCulture_Default.png' alt='English badge' width=284 height=104/>](https://www.microsoft.com/store/apps/9PLKXLTWSVXR)
 
 ## 编译环境
 
