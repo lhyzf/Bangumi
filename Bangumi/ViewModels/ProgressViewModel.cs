@@ -421,9 +421,10 @@ namespace Bangumi.ViewModels
                 // 调整顺序
                 for (int i = 0; i < origin.Count; i++)
                 {
-                    if (origin.IndexOf(dest[i]) != i)
+                    int index = origin.IndexOf(dest[i]);
+                    if (index != i && index >= 0)
                     {
-                        origin.Move(origin.IndexOf(dest[i]), i);
+                        origin.Move(index, i);
                     }
                 }
             }
