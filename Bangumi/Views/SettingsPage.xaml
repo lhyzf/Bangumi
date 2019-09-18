@@ -210,8 +210,8 @@
                     </TextBlock>
                     <TextBlock TextWrapping="Wrap"
                                Margin="0,0,0,5">
-                        <Hyperlink NavigateUri="https://github.com/AngleSharp/AngleSharp">
-                            AngleSharp(https://github.com/AngleSharp/AngleSharp)
+                        <Hyperlink NavigateUri="https://flurl.dev/">
+                            Flurl(https://flurl.dev/)
                         </Hyperlink>
                     </TextBlock>
 

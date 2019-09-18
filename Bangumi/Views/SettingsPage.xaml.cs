@@ -175,13 +175,18 @@ namespace Bangumi.Views
             }
         }
 
+        /// <summary>
+        /// 检查更新并下载最新版本
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void BangumiDataButton_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
-            button.IsEnabled = false;
-            BangumiDataProgressRing.Visibility = Visibility.Visible;
-            if (button.Tag.ToString() == "Update")
+            if (sender is Button button)
             {
+                button.IsEnabled = false;
+                BangumiDataProgressRing.Visibility = Visibility.Visible;
+                button.Content = "正在检查更新";
                 var v = await BangumiData.GetLatestVersion();
                 if (!string.IsNullOrEmpty(v))
                 {
@@ -192,8 +197,19 @@ namespace Bangumi.Views
                             "无数据" :
                             BangumiData.Version) +
                             " -> " + v;
-                        button.Content = "下载数据";
-                        button.Tag = "Download";
+                        button.Content = "正在下载数据";
+                        if (await BangumiData.DownloadLatestBangumiData())
+                        {
+                            BangumiDataTextBlock.Text = "数据版本：" +
+                                (string.IsNullOrEmpty(BangumiData.Version) ?
+                                "无数据" :
+                                BangumiData.Version);
+                            NotificationHelper.Notify("数据下载成功！");
+                        }
+                        else
+                        {
+                            NotificationHelper.Notify("数据下载失败，请重试或稍后再试！", NotificationHelper.NotifyType.Error);
+                        }
                     }
                     else
                     {
@@ -204,26 +220,10 @@ namespace Bangumi.Views
                 {
                     NotificationHelper.Notify("获取最新版本失败！", NotificationHelper.NotifyType.Error);
                 }
+                button.Content = "检查更新";
+                BangumiDataProgressRing.Visibility = Visibility.Collapsed;
+                button.IsEnabled = true;
             }
-            else if (button.Tag.ToString() == "Download")
-            {
-                if (await BangumiData.DownloadLatestBangumiData())
-                {
-                    BangumiDataTextBlock.Text = "数据版本：" +
-                        (string.IsNullOrEmpty(BangumiData.Version) ?
-                        "无数据" :
-                        BangumiData.Version);
-                    button.Content = "检查更新";
-                    button.Tag = "Update";
-                    NotificationHelper.Notify("数据下载成功！");
-                }
-                else
-                {
-                    NotificationHelper.Notify("数据下载失败，请重试或稍后再试！", NotificationHelper.NotifyType.Error);
-                }
-            }
-            BangumiDataProgressRing.Visibility = Visibility.Collapsed;
-            button.IsEnabled = true;
         }
 
         private void DeleteJsonCacheFileButton_Click(object sender, RoutedEventArgs e)
