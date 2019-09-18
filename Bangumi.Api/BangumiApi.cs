@@ -75,7 +75,7 @@ namespace Bangumi.Api
         public static BangumiCache BangumiCache { get; private set; }
 
         /// <summary>
-        /// 初始化帮助类
+        /// 初始化 Api
         /// </summary>
         /// <param name="localFolder">本地文件夹</param>
         /// <param name="cacheFolder">缓存文件夹</param>
@@ -85,55 +85,61 @@ namespace Bangumi.Api
         /// <param name="clientSecret"></param>
         /// <param name="redirectUrl"></param>
         /// <param name="noImageUri">无图片时显示的图片路径</param>
-        public static async void Init(string localFolder,
-                                      string cacheFolder,
-                                      string baseUrl,
-                                      string oAuthBaseUrl,
-                                      string clientId,
-                                      string clientSecret,
-                                      string redirectUrl,
-                                      string noImageUri)
+        /// <param name="encryptionDelegate">加密方法</param>
+        /// <param name="decryptionDelegate">解密方法</param>
+        public static async void Init(
+            string localFolder,
+            string cacheFolder,
+            string baseUrl,
+            string oAuthBaseUrl,
+            string clientId,
+            string clientSecret,
+            string redirectUrl,
+            string noImageUri,
+            FileHelper.EncryptionDelegate encryptionDelegate,
+            FileHelper.DecryptionDelegate decryptionDelegate)
         {
-            // 实例化 Http 封装
-            if (wrapper == null)
+
+            FileHelper.EncryptionAsync = encryptionDelegate ?? throw new ArgumentNullException("encryptionDelegate");
+            FileHelper.DecryptionAsync = decryptionDelegate ?? throw new ArgumentNullException("decryptionDelegate");
+            if (wrapper == null && BangumiCache == null && timer == null)
             {
-                localFolderPath = localFolder;
-                cacheFolderPath = cacheFolder;
+                localFolderPath = localFolder ?? throw new ArgumentNullException("localFolder");
+                cacheFolderPath = cacheFolder ?? throw new ArgumentNullException("cacheFolder");
                 wrapper = new BangumiHttpWrapper
                 {
-                    BaseUrl = baseUrl,
-                    OAuthBaseUrl = oAuthBaseUrl,
-                    ClientId = clientId,
-                    ClientSecret = clientSecret,
-                    RedirectUrl = redirectUrl,
-                    NoImageUri = noImageUri
+                    BaseUrl = baseUrl ?? throw new ArgumentNullException("baseUrl"),
+                    OAuthBaseUrl = oAuthBaseUrl ?? throw new ArgumentNullException("oAuthBaseUrl"),
+                    ClientId = clientId ?? throw new ArgumentNullException("clientId"),
+                    ClientSecret = clientSecret ?? throw new ArgumentNullException("clientSecret"),
+                    RedirectUrl = redirectUrl ?? throw new ArgumentNullException("redirectUrl"),
+                    NoImageUri = noImageUri ?? throw new ArgumentNullException("noImageUri")
                 };
-            }
-            // 加载缓存
-            if (BangumiCache == null)
-            {
+
+                // 加载缓存
                 BangumiCache = new BangumiCache();
-                if (File.Exists(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath)))
+                if (File.Exists(AppFile.BangumiCache.GetFilePath(cacheFolderPath)))
                 {
                     try
                     {
-                        BangumiCache = JsonConvert.DeserializeObject<BangumiCache>(await FileHelper.ReadTextAsync(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath)));
+                        BangumiCache = JsonConvert.DeserializeObject<BangumiCache>(await FileHelper.ReadTextAsync(AppFile.BangumiCache.GetFilePath(cacheFolderPath)));
                     }
                     catch (Exception)
                     {
-                        FileHelper.DeleteFile(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath));
+                        FileHelper.DeleteFile(AppFile.BangumiCache.GetFilePath(cacheFolderPath));
                     }
                 }
-            }
-            // 启动定时器，定时将缓存写入文件，30 秒
-            timer = new Timer(interval);
-            timer.Elapsed += WriteCacheToFileTimer_Elapsed;
-            timer.AutoReset = true;
-            timer.Start();
 
-            //await FileHelper.EncryptAndWriteFileAsync(localFolderPath + "\\test.data",
-            //                            redirectUrl);
-            //await FileHelper.ReadAndDecryptFileAsync(localFolderPath + "\\test.data");
+                // 启动定时器，定时将缓存写入文件，30 秒
+                timer = new Timer(interval);
+                timer.Elapsed += WriteCacheToFileTimer_Elapsed;
+                timer.AutoReset = true;
+                timer.Start();
+            }
+            else
+            {
+                throw new InvalidOperationException("Cant init twice!");
+            }
         }
 
         /// <summary>
@@ -156,7 +162,7 @@ namespace Bangumi.Api
             if (isCacheUpdated)
             {
                 isCacheUpdated = false;
-                await FileHelper.WriteTextAsync(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath),
+                await FileHelper.WriteTextAsync(AppFile.BangumiCache.GetFilePath(cacheFolderPath),
                                                 JsonConvert.SerializeObject(BangumiCache));
             }
         }
@@ -168,7 +174,7 @@ namespace Bangumi.Api
         {
             BangumiCache = null;
             BangumiCache = new BangumiCache();
-            FileHelper.DeleteFile(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath));
+            FileHelper.DeleteFile(AppFile.BangumiCache.GetFilePath(cacheFolderPath));
         }
 
         /// <summary>
@@ -177,7 +183,7 @@ namespace Bangumi.Api
         /// <returns></returns>
         public static long GetCacheFileLength()
         {
-            return FileHelper.GetFileLength(JsonCacheFile.BangumiCache.GetFilePath(cacheFolderPath));
+            return FileHelper.GetFileLength(AppFile.BangumiCache.GetFilePath(cacheFolderPath));
         }
 
         #endregion
@@ -642,7 +648,7 @@ namespace Bangumi.Api
         {
             if (MyToken == null)
             {
-                MyToken = JsonConvert.DeserializeObject<AccessToken>(await FileHelper.ReadAndDecryptFileAsync(localFolderPath + "\\token.data"));
+                MyToken = JsonConvert.DeserializeObject<AccessToken>(await FileHelper.ReadAndDecryptFileAsync(AppFile.Token_Data.GetFilePath(localFolderPath)));
                 if (MyToken == null)
                 {
                     //DeleteTokens();
@@ -663,7 +669,7 @@ namespace Bangumi.Api
         {
             // 删除用户认证文件
             MyToken = null;
-            FileHelper.DeleteFile(localFolderPath + "\\token.data");
+            FileHelper.DeleteFile(AppFile.Token_Data.GetFilePath(localFolderPath));
             // 清空用户缓存
             BangumiCache.Watchings.Clear();
             BangumiCache.Progresses.Clear();
@@ -712,22 +718,34 @@ namespace Bangumi.Api
             MyToken = token;
             isLogin = true;
             // 将信息写入本地文件
-            await FileHelper.EncryptAndWriteFileAsync(localFolderPath + "\\token.data",
+            await FileHelper.EncryptAndWriteFileAsync(AppFile.Token_Data.GetFilePath(localFolderPath),
                                                       JsonConvert.SerializeObject(token));
         }
         #endregion
 
         #endregion
 
-        #region JsonCacheFile
-        public enum JsonCacheFile
+        #region AppFile
+        /// <summary>
+        /// 使用的文件
+        /// </summary>
+        internal enum AppFile
         {
+            Token_Data,
             BangumiCache,
         }
 
-        private static string GetFilePath(this JsonCacheFile file, string folder)
+        /// <summary>
+        /// 文件名转换为小写，
+        /// 与文件夹组合为路径，
+        /// 将 '_' 替换为 '.'
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="folder"></param>
+        /// <returns></returns>
+        private static string GetFilePath(this AppFile file, string folder)
         {
-            return $"{folder}\\{file.ToString().ToLower()}";
+            return Path.Combine(folder, file.ToString().ToLower().Replace('_', '.'));
         }
 
         #endregion

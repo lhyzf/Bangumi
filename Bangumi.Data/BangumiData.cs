@@ -32,17 +32,17 @@ namespace Bangumi.Data
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
             if (dataSet == null &&
-                File.Exists(folderPath + "\\data.json") &&
-                File.Exists(folderPath + "\\version"))
+                File.Exists(AppFile.Data_json.GetFilePath(folderPath)) &&
+                File.Exists(AppFile.Version.GetFilePath(folderPath)))
             {
-                dataSet = JsonConvert.DeserializeObject<BangumiDataSet>(await FileHelper.ReadTextAsync(folderPath + "\\data.json"));
-                Version = await FileHelper.ReadTextAsync(folderPath + "\\version");
+                dataSet = JsonConvert.DeserializeObject<BangumiDataSet>(await FileHelper.ReadTextAsync(AppFile.Data_json.GetFilePath(folderPath)));
+                Version = await FileHelper.ReadTextAsync(AppFile.Version.GetFilePath(folderPath));
             }
             if (seasonIdMap == null)
             {
-                if (File.Exists(folderPath + "\\map.json"))
+                if (File.Exists(AppFile.Map_json.GetFilePath(folderPath)))
                 {
-                    seasonIdMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(await FileHelper.ReadTextAsync(folderPath + "\\map.json"));
+                    seasonIdMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(await FileHelper.ReadTextAsync(AppFile.Map_json.GetFilePath(folderPath)));
                 }
                 else
                 {
@@ -100,9 +100,9 @@ namespace Bangumi.Data
                 try
                 {
                     dataSet = JsonConvert.DeserializeObject<BangumiDataSet>(data);
-                    await FileHelper.WriteTextAsync(folderPath + "\\data.json", data);
+                    await FileHelper.WriteTextAsync(AppFile.Data_json.GetFilePath(folderPath), data);
                     Version = latestVersion;
-                    await FileHelper.WriteTextAsync(folderPath + "\\version", Version);
+                    await FileHelper.WriteTextAsync(AppFile.Version.GetFilePath(folderPath), Version);
                     return true;
                 }
                 catch (Exception e)
@@ -156,7 +156,7 @@ namespace Bangumi.Data
                                 JObject jObject = JObject.Parse(result);
                                 seasonId = jObject.SelectToken("result.param.season_id").ToString();
                                 seasonIdMap.Add(biliSite.Id, seasonId);
-                                _ = FileHelper.WriteTextAsync(folderPath + "\\map.json", JsonConvert.SerializeObject(seasonIdMap));
+                                _ = FileHelper.WriteTextAsync(AppFile.Map_json.GetFilePath(folderPath), JsonConvert.SerializeObject(seasonIdMap));
                             }
                             catch (Exception e)
                             {
@@ -175,6 +175,33 @@ namespace Bangumi.Data
                 return new List<Site>();
             }
         }
+
+
+        #region AppFile
+        /// <summary>
+        /// 使用的文件
+        /// </summary>
+        internal enum AppFile
+        {
+            Data_json,
+            Version,
+            Map_json,
+        }
+
+        /// <summary>
+        /// 文件名转换为小写，
+        /// 与文件夹组合为路径，
+        /// 将 '_' 替换为 '.'
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="folder"></param>
+        /// <returns></returns>
+        private static string GetFilePath(this AppFile file, string folder)
+        {
+            return Path.Combine(folder, file.ToString().ToLower().Replace('_', '.'));
+        }
+
+        #endregion
 
 
     }

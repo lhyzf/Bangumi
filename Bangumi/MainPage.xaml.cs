@@ -3,6 +3,7 @@ using Bangumi.Data;
 using Bangumi.Helper;
 using Bangumi.Views;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -51,16 +52,18 @@ namespace Bangumi
                             "https://api.bgm.tv",
                             "https://bgm.tv/oauth",
                             // 将自己申请的应用相关信息填入
-                            "", // ClientId
-                            "", // ClientSecret
-                            "", // RedirectUrl
-                            "ms-appx:///Assets/resource/err_404.png");
+                            "bgm8905c514a1b94ec1", // ClientId
+                            "b678c34dd896203627da308b6b453775", // ClientSecret
+                            "BangumiGithubVersion", // RedirectUrl
+                            "ms-appx:///Assets/resource/err_404.png",
+                            new FileHelper.EncryptionDelegate(EncryptionHelper.EncryptionAsync),
+                            new FileHelper.DecryptionDelegate(EncryptionHelper.DecryptionAsync));
 
             if (SettingHelper.UseBangumiData)
             {
                 // 初始化 BangumiData 对象
-                _ = BangumiData.Init(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data",
-                                           SettingHelper.UseBiliApp);
+                _ = BangumiData.Init(Path.Combine(ApplicationData.Current.LocalFolder.Path, "bangumi-data"),
+                                     SettingHelper.UseBiliApp);
             }
         }
 
@@ -188,7 +191,7 @@ namespace Bangumi
             this.KeyboardAccelerators.Add(goBack);
 
             // 删除Json缓存文件夹，v0.5.5 及之前版本，在从旧版本升级时使用
-            if (System.IO.Directory.Exists(ApplicationData.Current.LocalCacheFolder.Path + "\\JsonCache"))
+            if (System.IO.Directory.Exists(Path.Combine(ApplicationData.Current.LocalCacheFolder.Path, "JsonCache")))
                 await (await ApplicationData.Current.LocalCacheFolder.GetFolderAsync("JsonCache")).DeleteAsync();
 
             await UpdataUserStatusAsync();
