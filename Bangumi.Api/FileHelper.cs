@@ -7,16 +7,28 @@ namespace Bangumi.Api
 {
     public static class FileHelper
     {
+        public delegate Task<byte[]> EncryptionDelegate(string data);
+        public delegate Task<string> DecryptionDelegate(byte[] buff);
+
+        /// <summary>
+        /// 加密委托
+        /// </summary>
+        public static EncryptionDelegate EncryptionAsync { get; set; }
+        /// <summary>
+        /// 解密委托
+        /// </summary>
+        public static DecryptionDelegate DecryptionAsync { get; set; }
+
         #region 异步读写文件
 
         /// <summary>
         /// 异步读文件
         /// </summary>
-        /// <param name="fileName">文件路径全名</param>
+        /// <param name="filePath">文件路径全名</param>
         /// <returns></returns>
-        public static async Task<string> ReadTextAsync(string fileName)
+        public static async Task<string> ReadTextAsync(string filePath)
         {
-            using (var reader = File.OpenText(fileName))
+            using (var reader = File.OpenText(filePath))
             {
                 return await reader.ReadToEndAsync();
             }
@@ -25,12 +37,12 @@ namespace Bangumi.Api
         /// <summary>
         /// 异步写文件
         /// </summary>
-        /// <param name="fileName">文件路径全名</param>
+        /// <param name="filePath">文件路径全名</param>
         /// <param name="data">待写入文本</param>
         /// <returns></returns>
-        public static async Task WriteTextAsync(string fileName, string data)
+        public static async Task WriteTextAsync(string filePath, string data)
         {
-            using (var writer = File.CreateText(fileName))
+            using (var writer = File.CreateText(filePath))
             {
                 await writer.WriteAsync(data);
             }
@@ -42,14 +54,18 @@ namespace Bangumi.Api
         /// <summary>
         /// 加密并写入文件。
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="filePath"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static async Task EncryptAndWriteFileAsync(string fileName, string data)
+        public static async Task EncryptAndWriteFileAsync(string filePath, string data)
         {
             try
             {
-                await EncryptionHelper.Write(fileName, data);
+                var encryptedData = await EncryptionAsync(data);
+                using (var writer = File.Create(filePath))
+                {
+                    await writer.WriteAsync(encryptedData, 0, encryptedData.Length);
+                }
             }
             catch (Exception e)
             {
@@ -60,15 +76,21 @@ namespace Bangumi.Api
         /// <summary>
         /// 从文件读取并解密。
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="filePath"></param>
         /// <returns></returns>
-        public static async Task<string> ReadAndDecryptFileAsync(string fileName)
+        public static async Task<string> ReadAndDecryptFileAsync(string filePath)
         {
             try
             {
-                if (File.Exists(fileName))
+                if (File.Exists(filePath))
                 {
-                    return await EncryptionHelper.Read(fileName);
+                    byte[] encryptedData;
+                    using (var reader = File.OpenRead(filePath))
+                    {
+                        encryptedData = new byte[reader.Length];
+                        await reader.ReadAsync(encryptedData, 0, (int)reader.Length);
+                    }
+                    return await DecryptionAsync(encryptedData);
                 }
                 return "";
             }
@@ -84,15 +106,15 @@ namespace Bangumi.Api
         /// <summary>
         /// 获取文件长度 bytes
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="filePath"></param>
         /// <returns></returns>
-        public static long GetFileLength(string fileName)
+        public static long GetFileLength(string filePath)
         {
             try
             {
-                if (File.Exists(fileName))
+                if (File.Exists(filePath))
                 {
-                    using (FileStream fs = File.OpenRead(fileName))
+                    using (FileStream fs = File.OpenRead(filePath))
                     {
                         return fs.Length;
                     }
@@ -109,11 +131,11 @@ namespace Bangumi.Api
         /// <summary>
         /// 删除存在的文件
         /// </summary>
-        /// <param name="filename">文件完整路径</param>
-        public static void DeleteFile(string filename)
+        /// <param name="filePath">文件完整路径</param>
+        public static void DeleteFile(string filePath)
         {
-            if (File.Exists(filename))
-                File.Delete(filename);
+            if (File.Exists(filePath))
+                File.Delete(filePath);
         }
 
     }

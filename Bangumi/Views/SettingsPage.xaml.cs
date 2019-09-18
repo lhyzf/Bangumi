@@ -82,7 +82,7 @@ namespace Bangumi.Views
             DeleteUserCacheFileButton.IsEnabled = true;
 
             // 计算文件夹 ImageCache 中文件大小
-            if (Directory.Exists(ApplicationData.Current.TemporaryFolder.Path + "\\ImageCache"))
+            if (Directory.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "ImageCache")))
             {
                 StorageFolder imageCacheFolder = await ApplicationData.Current.TemporaryFolder.GetFolderAsync("ImageCache");
                 var files = await imageCacheFolder.GetFilesAsync();
@@ -144,8 +144,8 @@ namespace Bangumi.Views
                 {
                     SettingHelper.UseBangumiData = true;
                     // 获取数据版本
-                    await BangumiData.Init(ApplicationData.Current.LocalFolder.Path + "\\bangumi-data",
-                                                 SettingHelper.UseBiliApp);
+                    await BangumiData.Init(Path.Combine(ApplicationData.Current.LocalFolder.Path, "bangumi-data"),
+                                           SettingHelper.UseBiliApp);
                     BangumiDataTextBlock.Text = "数据版本：" +
                         (string.IsNullOrEmpty(BangumiData.Version) ?
                         "无数据" :
@@ -237,7 +237,7 @@ namespace Bangumi.Views
         private async void DeleteImageTempFileButton_Click(object sender, RoutedEventArgs e)
         {
             // 删除图片缓存文件夹
-            if (Directory.Exists(ApplicationData.Current.TemporaryFolder.Path + "\\ImageCache"))
+            if (Directory.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "ImageCache")))
                 await (await ApplicationData.Current.TemporaryFolder.GetFolderAsync("ImageCache")).DeleteAsync();
             ImageCacheSizeTextBlock.Text = "0";
             DeleteImageTempFileButton.IsEnabled = false;
