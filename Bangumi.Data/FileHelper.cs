@@ -8,11 +8,11 @@ namespace Bangumi.Data
         /// <summary>
         /// 异步读文件
         /// </summary>
-        /// <param name="fileName">文件路径全名</param>
+        /// <param name="filePath">文件路径全名</param>
         /// <returns></returns>
-        public static async Task<string> ReadTextAsync(string fileName)
+        public static async Task<string> ReadTextAsync(string filePath)
         {
-            using (var reader = File.OpenText(fileName))
+            using (var reader = File.OpenText(filePath))
             {
                 return await reader.ReadToEndAsync();
             }
@@ -21,12 +21,12 @@ namespace Bangumi.Data
         /// <summary>
         /// 异步写文件
         /// </summary>
-        /// <param name="fileName">文件路径全名</param>
+        /// <param name="filePath">文件路径全名</param>
         /// <param name="data">待写入文本</param>
         /// <returns></returns>
-        public static async Task WriteTextAsync(string fileName, string data)
+        public static async Task WriteTextAsync(string filePath, string data)
         {
-            using (var writer = File.CreateText(fileName))
+            using (var writer = File.CreateText(filePath))
             {
                 await writer.WriteAsync(data);
             }

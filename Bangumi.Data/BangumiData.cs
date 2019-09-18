@@ -1,9 +1,10 @@
-﻿using AngleSharp.Html.Parser;
-using Bangumi.Data.Models;
+﻿using Bangumi.Data.Models;
+using Flurl.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +13,8 @@ namespace Bangumi.Data
 {
     public static class BangumiData
     {
-        private static HtmlParser htmlParser;
+        private const string BangumiDataUrl = "https://api.github.com/repos/bangumi-data/bangumi-data/tags";
+        private const string BangumiDataCDNUrl = "https://cdn.jsdelivr.net/npm/bangumi-data@0.3/dist/data.json";
         private static BangumiDataSet dataSet;
         private static Dictionary<string, string> seasonIdMap;
         private static string latestVersion;
@@ -59,28 +61,15 @@ namespace Bangumi.Data
         {
             try
             {
-                if (htmlParser == null)
-                {
-                    htmlParser = new HtmlParser();
-                }
-                // 通过URL获取HTML
-                var htmlDoc = await HTTPHelper.GetTextByUrlAsync("https://github.com/bangumi-data/bangumi-data/releases");
-                // HTML 解析成 IHtmlDocument
-                var dom = htmlParser.ParseDocument(htmlDoc);
-                // 查找第一个release
-                var release = dom.QuerySelector("div.release-entry");
-                if (release != null)
-                {
-                    // 查找链接
-                    var ss = release.QuerySelectorAll("a").Where(a => a.GetAttribute("href").Contains("/bangumi-data/bangumi-data/releases/tag/")).ToList();
-                    latestVersion = ss[0].GetAttribute("href").Replace("/bangumi-data/bangumi-data/releases/tag/", "");
-                    return latestVersion;
-                }
-                return "";
+                var result = await BangumiDataUrl.WithHeader("User-Agent", "Bangumi UWP").GetStringAsync();
+                JArray jArray = JArray.Parse(result);
+                // 返回第一个 tag 版本号
+                latestVersion = jArray[0].SelectToken("name").ToString();
+                return latestVersion;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Debug.WriteLine(e.Message);
                 return "";
             }
         }
@@ -91,14 +80,13 @@ namespace Bangumi.Data
         /// <returns></returns>
         public static async Task<bool> DownloadLatestBangumiData()
         {
-            //var data = await HTTPHelper.GetTextByUrlAsync("https://github.com/bangumi-data/bangumi-data/raw/master/dist/data.json");
-            var data = await HTTPHelper.GetTextByUrlAsync("https://cdn.jsdelivr.net/npm/bangumi-data@0.3/dist/data.json");
             if (string.IsNullOrEmpty(latestVersion))
                 await GetLatestVersion();
-            if (!string.IsNullOrEmpty(data) && !string.IsNullOrEmpty(latestVersion))
+            if (!string.IsNullOrEmpty(latestVersion))
             {
                 try
                 {
+                    var data = await BangumiDataCDNUrl.GetStringAsync();
                     dataSet = JsonConvert.DeserializeObject<BangumiDataSet>(data);
                     await FileHelper.WriteTextAsync(AppFile.Data_json.GetFilePath(folderPath), data);
                     Version = latestVersion;
@@ -107,7 +95,7 @@ namespace Bangumi.Data
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    Debug.WriteLine(e.Message);
                     return false;
                 }
             }
@@ -152,7 +140,7 @@ namespace Bangumi.Data
                             var url = string.Format("https://bangumi.bilibili.com/view/web_api/media?media_id={0}", biliSite.Id);
                             try
                             {
-                                var result = await HTTPHelper.GetTextByUrlAsync(url);
+                                var result = await url.GetStringAsync();
                                 JObject jObject = JObject.Parse(result);
                                 seasonId = jObject.SelectToken("result.param.season_id").ToString();
                                 seasonIdMap.Add(biliSite.Id, seasonId);
@@ -160,8 +148,8 @@ namespace Bangumi.Data
                             }
                             catch (Exception e)
                             {
-                                Console.WriteLine("获取seasonId失败");
-                                Console.WriteLine(e.Message);
+                                Debug.WriteLine("获取seasonId失败");
+                                Debug.WriteLine(e.Message);
                                 return siteList;
                             }
                         }
