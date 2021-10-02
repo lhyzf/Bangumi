@@ -206,9 +206,9 @@
                                    Style="{StaticResource TitleTextBlockStyle}" />
                         <TextBlock TextWrapping="Wrap">
                             <LineBreak/>
-                            © 2008-2020 Bangumi (a.k.a.Chobits), some rights reserved
+                            © 2008-2021 Bangumi (a.k.a.Chobits), some rights reserved
                             <LineBreak/>
-                            © 2019-2020 Teachoc
+                            © 2019-2021 猫苇
                             <LineBreak/>
                             <LineBreak/>
                             <Run Text="{x:Bind ViewModel.Version}"/>
@@ -220,8 +220,8 @@
                         </TextBlock>
                         <TextBlock TextWrapping="Wrap">
                             <Run Text="项目开源地址："/>
-                            <Hyperlink NavigateUri="https://github.com/Teachoc/Bangumi">
-                                https://github.com/Teachoc/Bangumi
+                            <Hyperlink NavigateUri="https://github.com/lhyzf/Bangumi">
+                                https://github.com/lhyzf/Bangumi
                             </Hyperlink>
                         </TextBlock>
                         <TextBlock TextWrapping="Wrap">

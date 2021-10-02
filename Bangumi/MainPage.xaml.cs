@@ -115,7 +115,6 @@ namespace Bangumi
             NetworkHelper.NetworkChanged += (sender, e) => OnPropertyChanged(nameof(IsOffline));
 
             // 初始化 Api 对象
-            // 将自己申请的应用相关信息填入 https://bgm.tv/dev/app
             BangumiApi.Init(
                 Constants.ClientId,
                 Constants.ClientSecret,

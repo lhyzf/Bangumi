@@ -4,7 +4,7 @@
   <mp:PhoneIdentity PhoneProductId="dfc9923b-db95-43e6-aaa9-f833fc1f86e0" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Bangumi 番组计划</DisplayName>
-    <PublisherDisplayName>Teachoc</PublisherDisplayName>
+    <PublisherDisplayName>猫苇</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>

@@ -2,7 +2,7 @@
 
 一个使用 [Bangumi API](https://github.com/bangumi/api) 开发的 [Bangumi 番组计划](https://bgm.tv) 第三方 Win10 客户端。
 
-[![Build Status](https://dev.azure.com/Teachoc/Bangumi%20UWP/_apis/build/status/Teachoc.Bangumi?branchName=master)](https://dev.azure.com/Teachoc/Bangumi%20UWP/_build/latest?definitionId=5&branchName=master)
+[![Build Status](https://dev.azure.com/lhyzf/Bangumi%20UWP/_apis/build/status/lhyzf.Bangumi?branchName=master)](https://dev.azure.com/lhyzf/Bangumi%20UWP/_build/latest?definitionId=5&branchName=master)
 
 ## 功能
 
@@ -19,10 +19,10 @@
 
 - 系统版本：Windows 10 17763 及以上
 
-    [<img src='https://assets.windowsphone.com/85864462-9c82-451e-9355-a3d5f874397a/English_get-it-from-MS_InvariantCulture_Default.png' alt='English badge' width=284 height=104/>](https://www.microsoft.com/store/apps/9PLKXLTWSVXR)
+    [<img src='https://developer.microsoft.com/store/badges/images/English_get-it-from-MS.png' alt='Get it from microsoft store.' width=284 height=104/>](https://www.microsoft.com/store/apps/9plkxltwsvxr?cid=storebadge&ocid=badge)
 
 ## 编译环境
 
 - Visual Studio Community 2019
 
-    说明：编译之前，请考虑至 [Bangumi 开发者平台](https://bgm.tv/dev/app) 创建应用，将申请到的 App ID 等填入 Bangumi\MainPage.xaml.cs 对应的位置中。
+    说明：编译之前，请考虑至 [Bangumi 开发者平台](https://bgm.tv/dev/app) 创建应用，将申请到的 App ID 等填入 Bangumi\Common\Constants.cs 对应的位置中。
