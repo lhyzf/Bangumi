@@ -133,6 +133,27 @@ namespace Bangumi.ContentDialogs
         {
             await BangumiData.SetSitesEnabledOrder(EnabledSites.Select(it => it.Key).ToArray());
         }
+
+        private async void ResetHyperlinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool choice = false;
+            var msgDialog = new Windows.UI.Popups.MessageDialog("确认重置启用站点及顺序？") { Title = "提示" };
+            msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定", uiCommand => { choice = true; }));
+            msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("取消", uiCommand => { choice = false; }));
+            await msgDialog.ShowAsync();
+            if (choice)
+            {
+                await BangumiData.ResetSitesEnabledOrder();
+                EnabledSites.Clear();
+                NotEnabledSites.Clear();
+                BangumiData.GetEnabledSites()
+                    .Select(it => SiteMetaWithKey.FromSiteMeta(it)).ToList()
+                    .ForEach(it => EnabledSites.Add(it));
+                BangumiData.GetDisabledSites()
+                    .Select(it => SiteMetaWithKey.FromSiteMeta(it)).ToList()
+                    .ForEach(it => NotEnabledSites.Add(it));
+            }
+        }
     }
 
     public class SiteMetaWithKey : SiteMeta

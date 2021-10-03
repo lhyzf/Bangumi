@@ -310,6 +310,15 @@ namespace Bangumi.Data
             _info.SitesEnabledOrder = siteKeys;
             await SaveConfig();
         }
+
+        /// <summary>
+        /// 重置启用的站点以及顺序
+        /// </summary>
+        public static async Task ResetSitesEnabledOrder()
+        {
+            _info.SitesEnabledOrder = _dataSet?.SiteMeta.Where(it => it.Value.Type == "onair").Select(it => it.Key).ToArray();
+            await SaveConfig();
+        }
         #endregion
 
         #region 版本更新

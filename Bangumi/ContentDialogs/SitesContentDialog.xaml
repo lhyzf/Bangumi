@@ -25,6 +25,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -35,7 +36,6 @@
         <ListView x:Name="EnabledSitesListView"
                   Grid.Row="1"
                   Grid.Column="0"
-                  MaxHeight="240"
                   CanDragItems="True" 
                   CanReorderItems="True" 
                   AllowDrop="True"
@@ -51,7 +51,6 @@
         <ListView x:Name="NotEnabledSitesListView"
                   Grid.Row="1"
                   Grid.Column="1"
-                  MaxHeight="240"
                   CanDragItems="True" 
                   CanReorderItems="True" 
                   AllowDrop="True"
@@ -62,6 +61,9 @@
                   ItemsSource="{x:Bind NotEnabledSites}"
                   ItemTemplate="{StaticResource SiteTemplate}">
         </ListView>
-        
+        <HyperlinkButton Grid.Row="2"
+                         Content="重置"
+                         Click="ResetHyperlinkButton_Click"/>
+
     </Grid>
 </ContentDialog>
