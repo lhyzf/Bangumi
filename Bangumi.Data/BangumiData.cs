@@ -231,14 +231,14 @@ namespace Bangumi.Data
             // 启用设置，将mediaid转换为seasonid
             if (UseBiliApp)
             {
-                var biliSite = siteList.FirstOrDefault(s => s.SiteName == "bilibili");
-                if (biliSite != null)
+                var biliSites = siteList.Where(s => s.SiteName.StartsWith("bilibili"));
+                foreach (var biliSite in biliSites)
                 {
-                    if (!_seasonIdMap.TryGetValue(biliSite.Id, out var seasonId))
+                    try
                     {
-                        var url = $"https://bangumi.bilibili.com/view/web_api/media?media_id={biliSite.Id}";
-                        try
+                        if (!_seasonIdMap.TryGetValue(biliSite.Id, out var seasonId))
                         {
+                            var url = $"https://bangumi.bilibili.com/view/web_api/media?media_id={biliSite.Id}";
                             var result = await url.GetStringAsync();
                             JObject jObject = JObject.Parse(result);
                             seasonId = jObject.SelectToken("result.param.season_id").ToString();
@@ -246,15 +246,14 @@ namespace Bangumi.Data
                             _ = FileHelper.WriteTextAsync(AppFile.Map_json.GetFilePath(_folderPath),
                                                      JsonConvert.SerializeObject(_seasonIdMap));
                         }
-                        catch (Exception e)
-                        {
-                            Debug.WriteLine("获取seasonId失败");
-                            Debug.WriteLine(e.Message);
-                            return siteList;
-                        }
+                        biliSite.Url = "bilibili://bangumi/season/" + seasonId;
                     }
-
-                    biliSite.Url = "bilibili://bangumi/season/" + seasonId;
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine("获取seasonId失败");
+                        Debug.WriteLine(e.Message);
+                        break;
+                    }
                 }
             }
 
