@@ -349,7 +349,7 @@ namespace Bangumi.ViewModels
         {
             Name = w.Subject.Name,
             NameCn = w.Subject.NameCn,
-            Image = w.Subject.Images.Common,
+            Image = w.Subject.Images?.Common,
             SubjectId = w.SubjectId,
             Url = w.Subject.Url,
             LastTouch = w.LastTouch, // 该条目上次修改时间
