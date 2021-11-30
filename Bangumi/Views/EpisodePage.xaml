@@ -296,7 +296,6 @@
         <CommandBar x:Name="MyCommandBar"
                     VerticalAlignment="Bottom"
                     RequestedTheme="Dark"
-                    CommandBarOverflowPresenterStyle="{ThemeResource CommandBarOverflowPresenterStyle1}"
                     Background="{ThemeResource SystemControlAltMediumLowAcrylicElementMediumBrush}"
                     DefaultLabelPosition="Right">
             <AppBarButton IsEnabled="{x:Bind common:Converters.Not(ViewModel.IsStatusLoading), Mode=OneWay}"
@@ -328,9 +327,8 @@
             </AppBarButton>
             <AppBarButton Label="访问网页"
                           ToolTipService.ToolTip="访问网页"
+                          Icon="PreviewLink"
                           Click="LaunchWebPage_Click">
-                <FontIcon FontFamily="Segoe MDL2 Assets" 
-                          Glyph="&#xE12A;" />
             </AppBarButton>
         </CommandBar>
     </Grid>

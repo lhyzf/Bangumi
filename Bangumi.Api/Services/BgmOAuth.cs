@@ -17,7 +17,7 @@ namespace Bangumi.Api.Services
         public string ClientSecret { get; private set; }
         public string RedirectUrl { get; private set; }
 
-        private const int RetryCount = 3;
+        private const int RetryCount = 5;
         private readonly string _localFolder;
         private readonly IBgmCache _bgmCache;
         private bool IsTokenChecking;
@@ -91,7 +91,7 @@ namespace Bangumi.Api.Services
                 {
                     Debug.WriteLine($"第{i + 1}次尝试获取Token失败。");
                     Debug.WriteLine(e.StackTrace);
-                    await Task.Delay(1000).ConfigureAwait(false);
+                    await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
                     if (i + 1 >= RetryCount)
                     {
                         throw;

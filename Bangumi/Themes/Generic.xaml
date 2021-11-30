@@ -41,8 +41,20 @@
         <Setter Property="FontSize" Value="16"/>
     </Style>
 
-    <!-- 二级菜单不使用圆角 -->
-    <Style x:Key="CommandBarOverflowPresenterStyle1" TargetType="CommandBarOverflowPresenter">
+    <!-- CommandBar 二级菜单不使用圆角 -->
+    <Style TargetType="CommandBar">
+        <Setter Property="CommandBarOverflowPresenterStyle" Value="{x:Null}"/>
+    </Style>
+    <!-- 使用系统默认字体 -->
+    <Style x:Key="SubtitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
+    </Style>
+    <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+        <Setter Property="FontWeight" Value="SemiLight" />
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
     </Style>
 
     <Style x:Key="ContentDialogStyle1" TargetType="ContentDialog">

@@ -13,36 +13,13 @@
     Background="{ThemeResource SystemChromeLowColor}">
 
     <Grid>
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="Narrow">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0"/>
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="WelcomeImage.Width" Value="200"/>
-                        <Setter Target="WelcomeImage.Height" Value="326"/>
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="Wide">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="400" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="WelcomeImage.Width" Value="300"/>
-                        <Setter Target="WelcomeImage.Height" Value="490"/>
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="32"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="24"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -56,8 +33,7 @@
         <Image Name="WelcomeImage"
                Grid.Row="2"
                Grid.ColumnSpan="2"
-               Width="200"
-               Height="326"
+               MaxHeight="490"
                Source="{x:Bind common:Constants.WelcomeImgUri}"
                Stretch="Uniform"/>
         <Button Name="LoginButton"
