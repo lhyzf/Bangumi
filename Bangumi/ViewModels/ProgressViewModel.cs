@@ -375,8 +375,10 @@ namespace Bangumi.ViewModels
                         var site = sites.FirstOrDefault();
                         if (site != null)
                         {
+                            var nextEp = EpisodeForSort.FromEpisode(NextEp);
+                            nextEp.Desc = null;
                             ToastNotificationHelper.ScheduledToast(airTime, Converters.StringOneOrTwo(NameCn, Name),
-                                $"更新到：{NextEpDesc}", $"前往{site.SiteName}播放", "gotoPlaySite", "url", site.Url, "episode", JsonConvert.SerializeObject(NextEp));
+                                $"更新到：{NextEpDesc}", $"前往{site.SiteName}播放", "gotoPlaySite", "url", site.Url, "episode", JsonConvert.SerializeObject(nextEp));
                         }
                     }
                 }
