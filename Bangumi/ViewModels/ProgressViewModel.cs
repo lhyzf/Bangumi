@@ -82,11 +82,12 @@ namespace Bangumi.ViewModels
                 var watchingsNotCached = BangumiApi.BgmCache.IsUpdatedToday ?
                                          newWatching.Where(it => cachedWatchings.All(it2 => !it2.EqualsExT(it))).ToList() :
                                          newWatching;
-                using (var semaphore = new SemaphoreSlim(10))
+                using (var semaphore = new SemaphoreSlim(2))
                 {
                     foreach (var item in watchingsNotCached)
                     {
                         await semaphore.WaitAsync();
+                        Debug.WriteLine($"Get SubjectEp, SubjectId: {item.SubjectId}");
                         subjectTasks.Add(BangumiApi.BgmApi.SubjectEp(item.SubjectId.ToString())
                             .ContinueWith(t =>
                             {
@@ -94,6 +95,7 @@ namespace Bangumi.ViewModels
                                 return t.Result;
                             }));
                         await semaphore.WaitAsync();
+                        Debug.WriteLine($"Get Progress, SubjectId: {item.SubjectId}");
                         progressTasks.Add(BangumiApi.BgmApi.Progress(item.SubjectId.ToString())
                             .ContinueWith(t =>
                             {
@@ -387,6 +389,10 @@ namespace Bangumi.ViewModels
 
         private void ProcessAirTime()
         {
+            if (Eps == null)
+            {
+                return;
+            }
             // 获取最后一集放送日期
             if (Eps.LastOrDefault(ep => ep.Type == EpisodeType.本篇 && !Regex.IsMatch(ep.Status, "(NA)"))?.AirDate is DateTime last)
             {
@@ -424,6 +430,10 @@ namespace Bangumi.ViewModels
 
         public void ProcessProgress(Progress progress)
         {
+            if (Eps == null)
+            {
+                return;
+            }
             if (progress?.Eps != null)
             {
                 // 填充用户观看状态
