@@ -1,9 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Bangumi.Helper
 {
@@ -16,7 +11,7 @@ namespace Bangumi.Helper
         static NetworkHelper()
         {
             Microsoft.Toolkit.Uwp.Connectivity.NetworkHelper.Instance.NetworkChanged +=
-                (sender, e) => DispatcherHelper.ExecuteOnUIThreadAsync(() => NetworkChanged?.Invoke(sender, e));
+                (sender, e) => NetworkChanged?.Invoke(sender, e);
         }
     }
 }

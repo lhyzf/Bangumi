@@ -3,12 +3,14 @@ using Bangumi.Common;
 using Bangumi.Data;
 using Bangumi.Helper;
 using Bangumi.Views;
+using Microsoft.Toolkit.Uwp;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -112,7 +114,8 @@ namespace Bangumi
             SearchButton.Click += (sender, e) => NavigateToPage(typeof(SearchPage), null, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
             SettingButton.Click += (sender, e) => NavigateToPage(typeof(SettingsPage), null, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
 
-            NetworkHelper.NetworkChanged += (sender, e) => OnPropertyChanged(nameof(IsOffline));
+            var dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            NetworkHelper.NetworkChanged += (sender, e) => dispatcherQueue.EnqueueAsync(() => OnPropertyChanged(nameof(IsOffline)));
 
             // 初始化 Api 对象
             BangumiApi.Init(

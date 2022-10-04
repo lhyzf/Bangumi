@@ -5,6 +5,7 @@ using Bangumi.Helper;
 using Bangumi.ViewModels;
 using System.Timers;
 using Windows.Devices.Input;
+using Windows.System;
 using Windows.System.Profile;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
@@ -22,7 +23,7 @@ namespace Bangumi.Views
     /// </summary>
     public sealed partial class SearchPage : Page
     {
-        public SearchViewModel ViewModel { get; } = new SearchViewModel();
+        public SearchViewModel ViewModel { get; } = new SearchViewModel(DispatcherQueue.GetForCurrentThread());
         private readonly Timer delayTimer;
 
         public SearchPage()
@@ -118,32 +119,32 @@ namespace Bangumi.Views
             {
                 case 0:
                     type = "";
-                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex);
+                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex, DispatcherQueue.GetForCurrentThread());
                     AllGridView.ItemsSource = ViewModel.SearchResultCollection;
                     break;
                 case 1:
                     type = "2";
-                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex);
+                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex, DispatcherQueue.GetForCurrentThread());
                     AnimeGridView.ItemsSource = ViewModel.SearchResultCollection;
                     break;
                 case 2:
                     type = "1";
-                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex);
+                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex, DispatcherQueue.GetForCurrentThread());
                     BookGridView.ItemsSource = ViewModel.SearchResultCollection;
                     break;
                 case 3:
                     type = "3";
-                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex);
+                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex, DispatcherQueue.GetForCurrentThread());
                     MusicGridView.ItemsSource = ViewModel.SearchResultCollection;
                     break;
                 case 4:
                     type = "4";
-                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex);
+                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex, DispatcherQueue.GetForCurrentThread());
                     GameGridView.ItemsSource = ViewModel.SearchResultCollection;
                     break;
                 case 5:
                     type = "6";
-                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex);
+                    ViewModel.SearchResultCollection = new SearchResultIncrementalLoadingCollection(ViewModel.SearchText, type, ViewModel.SelectedIndex, DispatcherQueue.GetForCurrentThread());
                     RealGridView.ItemsSource = ViewModel.SearchResultCollection;
                     break;
                 default:

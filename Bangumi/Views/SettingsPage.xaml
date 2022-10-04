@@ -206,9 +206,9 @@
                                    Style="{StaticResource TitleTextBlockStyle}" />
                         <TextBlock TextWrapping="Wrap">
                             <LineBreak/>
-                            © 2008-2021 Bangumi (a.k.a.Chobits), some rights reserved
+                            © 2008-2022 Bangumi (a.k.a.Chobits), some rights reserved
                             <LineBreak/>
-                            © 2019-2021 猫苇
+                            © 2019-2022 猫苇
                             <LineBreak/>
                             <LineBreak/>
                             <Run Text="{x:Bind ViewModel.Version}"/>

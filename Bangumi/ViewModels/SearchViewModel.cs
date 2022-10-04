@@ -3,7 +3,7 @@ using Bangumi.Api.Models;
 using Bangumi.Common;
 using Bangumi.Controls;
 using Bangumi.Helper;
-using Microsoft.Toolkit.Uwp.Helpers;
+using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -11,6 +11,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
@@ -19,6 +20,13 @@ namespace Bangumi.ViewModels
 {
     public class SearchViewModel : ViewModelBase
     {
+        private readonly DispatcherQueue _dispatcherQueue;
+
+        public SearchViewModel(DispatcherQueue dispatcherQueue)
+        {
+            _dispatcherQueue = dispatcherQueue;
+        }
+
         public ObservableCollection<string> Suggestions { get; private set; } = new ObservableCollection<string>();
         public SearchResultIncrementalLoadingCollection SearchResultCollection;
 
@@ -79,7 +87,7 @@ namespace Bangumi.ViewModels
                     {
                         return;
                     }
-                    await DispatcherHelper.ExecuteOnUIThreadAsync(() =>
+                    await _dispatcherQueue.EnqueueAsync(() =>
                     {
                         Suggestions.Clear();
                         foreach (var item in result.Results)
@@ -196,19 +204,21 @@ namespace Bangumi.ViewModels
     /// </summary>
     public class SearchResultIncrementalLoadingCollection : ObservableCollection<SubjectForSearch>, ISupportIncrementalLoading
     {
+        private readonly string _keyword;
+        private readonly string _type;
+        private readonly int _index;
+        private readonly DispatcherQueue _dispatcherQueue;
         int offset = 0;
         int max = 20;
-        int index;
         int itemsCount = 0;
-        private string keyword;
-        private string type;
         bool isSearching = false;
 
-        public SearchResultIncrementalLoadingCollection(string keyword, string type, int index)
+        public SearchResultIncrementalLoadingCollection(string keyword, string type, int index, DispatcherQueue dispatcherQueue)
         {
-            this.keyword = keyword;
-            this.type = type;
-            this.index = index;
+            _keyword = keyword;
+            _type = type;
+            _index = index;
+            _dispatcherQueue = dispatcherQueue;
         }
 
         public bool HasMoreItems => offset < max;
@@ -227,13 +237,13 @@ namespace Bangumi.ViewModels
                     try
                     {
                         isSearching = true;
-                        Debug.WriteLine("Loading {0}/{1} items ({2})", offset + 20, max, type);
+                        Debug.WriteLine("Loading {0}/{1} items ({2})", offset + 20, max, _type);
                         // 加载开始事件
                         if (this.OnLoadMoreStarted != null)
                         {
-                            this.OnLoadMoreStarted(index);
+                            this.OnLoadMoreStarted(_index);
                         }
-                        await BangumiApi.BgmApi.Search(keyword, type, offset, 20)
+                        await BangumiApi.BgmApi.Search(_keyword, _type, offset, 20)
                             .ContinueWith(async t =>
                             {
                                 if (BangumiApi.BgmOAuth.IsLogin)
@@ -247,7 +257,7 @@ namespace Bangumi.ViewModels
                                 max = t.Result.ResultCount;
                                 foreach (var item in t.Result.Results)
                                 {
-                                    await DispatcherHelper.ExecuteOnUIThreadAsync(() => Add(item));
+                                    await _dispatcherQueue.EnqueueAsync(() => Add(item));
                                 }
                                 itemsCount += t.Result.Results.Count;
                                 offset += 20;
@@ -273,7 +283,7 @@ namespace Bangumi.ViewModels
                             {
                                 offset = max;
                             }
-                            this.OnLoadMoreCompleted(index, itemsCount, HasMoreItems);
+                            this.OnLoadMoreCompleted(_index, itemsCount, HasMoreItems);
                         }
                         isSearching = false;
                     }

@@ -1,8 +1,9 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
+﻿using Microsoft.Toolkit.Uwp;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Timers;
+using Windows.System;
 using Windows.UI.Xaml.Controls;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
@@ -11,6 +12,7 @@ namespace Bangumi.Controls
 {
     public sealed partial class InAppNotification : UserControl
     {
+        private readonly DispatcherQueue _dispatcherQueue;
         private ObservableCollection<NotifyMessage> Notifies = new ObservableCollection<NotifyMessage>();
         private TimeSpan _delay = TimeSpan.FromSeconds(3);
         private DateTime _lastMessage;
@@ -20,6 +22,7 @@ namespace Bangumi.Controls
         public InAppNotification()
         {
             this.InitializeComponent();
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             _timer = new Timer();
             _timer.Elapsed += _timer_Elapsed;
             _timer.AutoReset = false;
@@ -27,7 +30,7 @@ namespace Bangumi.Controls
 
         private async void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            await DispatcherHelper.ExecuteOnUIThreadAsync(() => Notifies.RemoveAt(0));
+            await _dispatcherQueue.EnqueueAsync(() => Notifies.RemoveAt(0));
             if (Notifies.Count > 0)
             {
                 _timer.Interval = Notifies[0].ExpiresIn.TotalMilliseconds;
@@ -43,7 +46,7 @@ namespace Bangumi.Controls
                 _timer.Start();
             }
             var now = DateTime.Now;
-            await DispatcherHelper.ExecuteOnUIThreadAsync(() =>
+            await _dispatcherQueue.EnqueueAsync(() =>
             {
                 Notifies.Add(new NotifyMessage
                 {
