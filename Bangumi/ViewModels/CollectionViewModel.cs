@@ -55,7 +55,7 @@ namespace Bangumi.ViewModels
                     return;
                 }
                 PopulateSubjectCollectionFromCache();
-                PopulateSubjectCollectionAsync();
+                _ = PopulateSubjectCollectionAsync();
             }
         }
 

@@ -189,6 +189,7 @@
                   HorizontalAlignment="Right"
                   SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
                   Margin="0,4,16,0"
+                  IsEnabled="{x:Bind common:Converters.Not(ViewModel.IsLoading), Mode=OneWay}"
                   TabIndex="-1">
             <ComboBoxItem Content="动画"/>
             <ComboBoxItem Content="书籍" />

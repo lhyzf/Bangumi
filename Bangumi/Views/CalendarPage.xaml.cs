@@ -32,21 +32,21 @@ namespace Bangumi.Views
             InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (!ViewModel.IsLoading)
             {
                 if (ViewModel.CalendarCollection.Count == 0)
                 {
                     ViewModel.PopulateCalendarFromCache();
-                    ViewModel.PopulateCalendarAsync();
+                    await ViewModel.PopulateCalendarAsync();
                 }
                 else
                 {
                     ViewModel.PopulateCalendarFromCache();
                     if (ViewModel.CalendarCollection.Count == 0)
                     {
-                        ViewModel.PopulateCalendarAsync();
+                        await ViewModel.PopulateCalendarAsync();
                     }
                 }
             }
@@ -59,26 +59,26 @@ namespace Bangumi.Views
         }
 
         // 更新条目收藏状态
-        private void UpdateCollectionStatusMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void UpdateCollectionStatusMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyoutItem item)
             {
                 switch (item.Tag)
                 {
                     case "Wish":
-                        ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForCalendar, CollectionStatusType.Wish);
+                        await ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForCalendar, CollectionStatusType.Wish);
                         break;
                     case "Collect":
-                        ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForCalendar, CollectionStatusType.Collect);
+                        await ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForCalendar, CollectionStatusType.Collect);
                         break;
                     case "Doing":
-                        ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForCalendar, CollectionStatusType.Do);
+                        await ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForCalendar, CollectionStatusType.Do);
                         break;
                     case "OnHold":
-                        ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForCalendar, CollectionStatusType.OnHold);
+                        await ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForCalendar, CollectionStatusType.OnHold);
                         break;
                     case "Dropped":
-                        ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForCalendar, CollectionStatusType.Dropped);
+                        await ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForCalendar, CollectionStatusType.Dropped);
                         break;
                     default:
                         break;

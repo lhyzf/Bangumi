@@ -42,7 +42,7 @@ namespace Bangumi.Views
             InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             (((Frame.Parent as NavigationView)?.Parent as Grid).Parent as MainPage)?.SelectPlaceholderItem("章节");
@@ -57,16 +57,16 @@ namespace Bangumi.Views
                 }
                 else
                 {
-                    ViewModel.LoadDetails();
+                    await ViewModel.LoadDetails();
                 }
             }
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (SettingHelper.UseBangumiDataAirSites)
             {
-                InitAirSites();
+                await InitAirSites();
             }
             else
             {
@@ -205,7 +205,7 @@ namespace Bangumi.Views
             }
         }
 
-        private void EpStatusRadioButton_Checked(object sender, RoutedEventArgs e)
+        private async void EpStatusRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             if (sender is RadioButton item)
             {
@@ -213,19 +213,19 @@ namespace Bangumi.Views
                 switch (item.Tag)
                 {
                     case "Watched":
-                        ViewModel.UpdateEpStatus(ep, EpStatusType.watched);
+                        await ViewModel.UpdateEpStatus(ep, EpStatusType.watched);
                         break;
                     case "WatchedTo":
-                        ViewModel.UpdateEpStatusBatch(ep);
+                        await ViewModel.UpdateEpStatusBatch(ep);
                         break;
                     case "Queue":
-                        ViewModel.UpdateEpStatus(ep, EpStatusType.queue);
+                        await ViewModel.UpdateEpStatus(ep, EpStatusType.queue);
                         break;
                     case "Drop":
-                        ViewModel.UpdateEpStatus(ep, EpStatusType.drop);
+                        await ViewModel.UpdateEpStatus(ep, EpStatusType.drop);
                         break;
                     case "Remove":
-                        ViewModel.UpdateEpStatus(ep, EpStatusType.remove);
+                        await ViewModel.UpdateEpStatus(ep, EpStatusType.remove);
                         break;
                     default:
                         break;

@@ -169,7 +169,7 @@ namespace Bangumi.ViewModels
         /// <summary>
         /// 更新收藏状态、评分、吐槽
         /// </summary>
-        public async Task EditCollectionStatus()
+        public async void EditCollectionStatus()
         {
             if (NetworkHelper.IsOffline)
             {

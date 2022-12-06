@@ -1,5 +1,4 @@
 ﻿using Bangumi.Controls;
-using System;
 
 namespace Bangumi.Helper
 {
@@ -7,7 +6,7 @@ namespace Bangumi.Helper
     {
         public static void Notify(string msg, NotifyType notifyType = NotifyType.Message)
         {
-            MainPage.RootPage.NotifyControl.AddNotification(msg, notifyType);
+            _ = MainPage.RootPage.NotifyControl.AddNotification(msg, notifyType);
         }
 
     }

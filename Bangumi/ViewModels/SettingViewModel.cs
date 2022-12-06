@@ -356,7 +356,7 @@ namespace Bangumi.ViewModels
             }
         }
 
-        public async Task Load()
+        public async void Load()
         {
             if (UserCacheSize == "正在计算")
             {
@@ -403,7 +403,7 @@ namespace Bangumi.ViewModels
         /// <summary>
         /// 删除图片缓存文件夹
         /// </summary>
-        public async Task DeleteImageTempFile()
+        public async void DeleteImageTempFile()
         {
             ImageCacheCanDelete = false;
             if (Directory.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "ImageCache")))
@@ -416,7 +416,7 @@ namespace Bangumi.ViewModels
         /// <summary>
         /// 检查更新并下载最新版本
         /// </summary>
-        public async Task UpdateBangumiData()
+        public async void UpdateBangumiData()
         {
             BangumiDataStatus = "正在检查更新";
             BangumiDataVersionChecking = true;
@@ -455,7 +455,7 @@ namespace Bangumi.ViewModels
         /// <summary>
         /// 打开站点设置面板
         /// </summary>
-        public async Task OpenSitesContentDialog()
+        public async void OpenSitesContentDialog()
         {
             var dg = new SitesContentDialog();
             await dg.ShowAsync();

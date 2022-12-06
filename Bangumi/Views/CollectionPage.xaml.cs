@@ -32,7 +32,7 @@ namespace Bangumi.Views
             InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (!BangumiApi.BgmOAuth.IsLogin)
             {
@@ -42,7 +42,7 @@ namespace Bangumi.Views
             if (ViewModel.SubjectCollection.Count == 0 && !ViewModel.IsLoading)
             {
                 ViewModel.PopulateSubjectCollectionFromCache();
-                ViewModel.PopulateSubjectCollectionAsync();
+                await ViewModel.PopulateSubjectCollectionAsync();
             }
         }
 
@@ -53,7 +53,7 @@ namespace Bangumi.Views
         }
 
         // 更新条目收藏状态
-        private void UpdateCollectionStatusMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void UpdateCollectionStatusMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyoutItem item)
             {
@@ -61,19 +61,19 @@ namespace Bangumi.Views
                 switch (item.Tag)
                 {
                     case "Wish":
-                        ViewModel.UpdateCollectionStatus(sub, CollectionStatusType.Wish);
+                        await ViewModel.UpdateCollectionStatus(sub, CollectionStatusType.Wish);
                         break;
                     case "Collect":
-                        ViewModel.UpdateCollectionStatus(sub, CollectionStatusType.Collect);
+                        await ViewModel.UpdateCollectionStatus(sub, CollectionStatusType.Collect);
                         break;
                     case "Doing":
-                        ViewModel.UpdateCollectionStatus(sub, CollectionStatusType.Do);
+                        await ViewModel.UpdateCollectionStatus(sub, CollectionStatusType.Do);
                         break;
                     case "OnHold":
-                        ViewModel.UpdateCollectionStatus(sub, CollectionStatusType.OnHold);
+                        await ViewModel.UpdateCollectionStatus(sub, CollectionStatusType.OnHold);
                         break;
                     case "Dropped":
-                        ViewModel.UpdateCollectionStatus(sub, CollectionStatusType.Dropped);
+                        await ViewModel.UpdateCollectionStatus(sub, CollectionStatusType.Dropped);
                         break;
                     default:
                         break;

@@ -143,7 +143,7 @@ namespace Bangumi
             UpdateBackButtonStatus();
         }
 
-        private void Page_Loading(FrameworkElement sender, object args)
+        private async void Page_Loading(FrameworkElement sender, object args)
         {
             if (BangumiApi.BgmOAuth.IsLogin)
             {
@@ -153,7 +153,7 @@ namespace Bangumi
             {
                 NavigateToPage(typeof(CalendarPage), null, new SuppressNavigationTransitionInfo());
             }
-            UpdateAvatar();
+            await UpdateAvatar();
         }
 
         /// <summary>
@@ -277,24 +277,24 @@ namespace Bangumi
             NavigateToPage(type, null, args.RecommendedNavigationTransitionInfo);
         }
 
-        private void ContentFrame_Navigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+        private async void ContentFrame_Navigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
         {
             UpdateBackButtonStatus();
             PageStatusChanged();
             if (e.SourcePageType == typeof(ProgressPage))
             {
                 NavView.SelectedItem = NavView.MenuItems[0];
-                HidePlaceholderItem();
+                await HidePlaceholderItem();
             }
             else if (e.SourcePageType == typeof(CollectionPage))
             {
                 NavView.SelectedItem = NavView.MenuItems[1];
-                HidePlaceholderItem();
+                await HidePlaceholderItem();
             }
             else if (e.SourcePageType == typeof(CalendarPage))
             {
                 NavView.SelectedItem = NavView.MenuItems[2];
-                HidePlaceholderItem();
+                await HidePlaceholderItem();
             }
             else
             {

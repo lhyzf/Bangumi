@@ -66,22 +66,22 @@ namespace Bangumi.Views
         /// <summary>
         /// 将下一话标记为看过
         /// </summary>
-        private void NextEpButton_Click(object sender, RoutedEventArgs e)
+        private async void NextEpButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.DataContext is WatchProgress watch)
             {
-                ViewModel.MarkNextEpWatched(watch);
+                await ViewModel.MarkNextEpWatched(watch);
             }
         }
 
         /// <summary>
         /// 修改收藏状态
         /// </summary>
-        private void CollectionButton_Click(object sender, RoutedEventArgs e)
+        private async void CollectionButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.DataContext is WatchProgress watch)
             {
-                ViewModel.EditCollectionStatus(watch);
+                await ViewModel.EditCollectionStatus(watch);
             }
         }
 
@@ -154,7 +154,8 @@ namespace Bangumi.Views
         {
             if (SettingHelper.UseBangumiDataAirSites && e.PointerDeviceType == PointerDeviceType.Mouse)
             {
-                object data = e.OriginalSource switch{
+                object data = e.OriginalSource switch
+                {
                     GridViewItem item => item.Content,
                     FrameworkElement element => element.DataContext,
                     _ => null
@@ -173,12 +174,12 @@ namespace Bangumi.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void RelativePanel_Holding(object sender, HoldingRoutedEventArgs e)
+        private async void RelativePanel_Holding(object sender, HoldingRoutedEventArgs e)
         {
             if (SettingHelper.UseBangumiDataAirSites && e.HoldingState == HoldingState.Started)
             {
                 e.Handled = true;
-                ShowSitesMenuFlyout((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
+                await ShowSitesMenuFlyout((FrameworkElement)sender, e.GetPosition((FrameworkElement)sender));
             }
         }
     }

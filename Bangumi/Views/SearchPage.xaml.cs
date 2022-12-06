@@ -30,7 +30,7 @@ namespace Bangumi.Views
         {
             InitializeComponent();
             delayTimer = new Timer(1000);
-            delayTimer.Elapsed += (sender, e) => ViewModel.GetSearchSuggestions();
+            delayTimer.Elapsed += async (sender, e) => await ViewModel.GetSearchSuggestions();
             delayTimer.AutoReset = false;
         }
 
@@ -189,26 +189,26 @@ namespace Bangumi.Views
         }
 
         // 更新条目收藏状态
-        private void UpdateCollectionStatusMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void UpdateCollectionStatusMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyoutItem item)
             {
                 switch (item.Tag)
                 {
                     case "Wish":
-                        ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForSearch, CollectionStatusType.Wish);
+                        await ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForSearch, CollectionStatusType.Wish);
                         break;
                     case "Collect":
-                        ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForSearch, CollectionStatusType.Collect);
+                        await ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForSearch, CollectionStatusType.Collect);
                         break;
                     case "Doing":
-                        ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForSearch, CollectionStatusType.Do);
+                        await ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForSearch, CollectionStatusType.Do);
                         break;
                     case "OnHold":
-                        ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForSearch, CollectionStatusType.OnHold);
+                        await ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForSearch, CollectionStatusType.OnHold);
                         break;
                     case "Dropped":
-                        ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForSearch, CollectionStatusType.Dropped);
+                        await ViewModel.UpdateCollectionStatus(item.DataContext as SubjectForSearch, CollectionStatusType.Dropped);
                         break;
                     default:
                         break;
