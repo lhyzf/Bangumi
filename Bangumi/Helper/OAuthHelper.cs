@@ -13,6 +13,7 @@ namespace Bangumi.Helper
         /// 用户登录。
         /// </summary>
         /// <returns></returns>
+        [Obsolete("网站登录页面脚本在 IE11 下无法正常运行")]
         public static async Task Authorize()
         {
             try

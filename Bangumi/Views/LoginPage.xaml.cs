@@ -1,7 +1,7 @@
 ﻿using Bangumi.Api;
-using Bangumi.Helper;
+using Bangumi.Api.Services;
 using System;
-using Windows.UI.Core;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -37,24 +37,10 @@ namespace Bangumi.Views
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Wait, 10);
-            try
-            {
-                await OAuthHelper.Authorize();
-                if (BangumiApi.BgmOAuth.IsLogin)
-                {
-                    this.Frame.Navigate(typeof(MainPage), null, new DrillInNavigationTransitionInfo());
-                }
-            }
-            catch (Exception ex)
-            {
-                await NotifyControl.AddNotification($"登录失败，请重试！\n{ex.Message}", Controls.NotifyType.Error);
-                //NotificationHelper.Notify($"登录失败，请重试！\n{ex.Message}", NotificationHelper.NotifyType.Error);
-            }
-            finally
-            {
-                Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 10);
-            }
+            // Launch the URI
+            string url = $"{BgmOAuth.OAuthHOST}/authorize?client_id={BangumiApi.BgmOAuth.ClientId}&response_type=code";
+            var loginUri = new Uri(url);
+            await Launcher.LaunchUriAsync(loginUri);
         }
 
         private void EnterButton_Click(object sender, RoutedEventArgs e)

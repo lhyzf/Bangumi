@@ -45,14 +45,10 @@ namespace Bangumi.Views
             }
             if (!ViewModel.IsLoading)
             {
+                ViewModel.PopulateWatchingListFromCache();
                 if (ViewModel.WatchingCollection.Count == 0)
                 {
-                    ViewModel.PopulateWatchingListFromCache();
                     await ViewModel.PopulateWatchingListAsync();
-                }
-                else
-                {
-                    ViewModel.PopulateWatchingListFromCache();
                 }
             }
         }

@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Bangumi.Views"
     xmlns:local2="using:Bangumi.Controls.TitleBar"
-    xmlns:local3="using:Bangumi.Controls"
     xmlns:common="using:Bangumi.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -61,8 +60,5 @@
                 https://bgm.tv/
             </Hyperlink>
         </TextBlock>
-        <local3:InAppNotification x:Name="NotifyControl"
-                                  Grid.Row="1"
-                                  Grid.ColumnSpan="2"/>
     </Grid>
 </Page>

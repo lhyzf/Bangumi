@@ -14,6 +14,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Bangumi
@@ -145,6 +146,35 @@ namespace Bangumi
             }
 
             // 处理其它激活方式
+            if (e is ProtocolActivatedEventArgs protocolActivatedArgs)
+            {
+                if (rootFrame.Content == null)
+                {
+                    rootFrame.Navigate(typeof(MainPage));
+                }
+
+                var uri = protocolActivatedArgs.Uri;
+                // 处理登录协议
+                if (string.Equals(uri.Host, "authorize", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var args = QueryString.Parse(uri.Query.TrimStart('?'));
+                    if (args.TryGetValue("code", out var code))
+                    {
+                        if (BangumiApi.BgmOAuth.IsLogin)
+                        {
+                            NotificationHelper.Notify("当前已登录，如需重新登录或切换账号，请先退出登录！", Controls.NotifyType.Warn);
+                        }
+                        else
+                        {
+                            await BangumiApi.BgmOAuth.GetToken(code);
+                            if (BangumiApi.BgmOAuth.IsLogin)
+                            {
+                                rootFrame.Navigate(typeof(MainPage), null, new DrillInNavigationTransitionInfo());
+                            }
+                        }
+                    }
+                }
+            }
 
             // 确保当前窗口处于活动状态
             Window.Current.Activate();
