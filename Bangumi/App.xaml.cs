@@ -145,7 +145,7 @@ namespace Bangumi
                 }
             }
 
-            // 处理其它激活方式
+            // 处理协议激活
             if (e is ProtocolActivatedEventArgs protocolActivatedArgs)
             {
                 if (rootFrame.Content == null)
@@ -175,6 +175,8 @@ namespace Bangumi
                     }
                 }
             }
+
+            // 处理其它激活方式
 
             // 确保当前窗口处于活动状态
             Window.Current.Activate();

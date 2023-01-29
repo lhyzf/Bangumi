@@ -132,12 +132,18 @@
     <Compile Include="ContentDialogs\SitesContentDialog.xaml.cs">
       <DependentUpon>SitesContentDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\AnimeEpisode.xaml.cs">
+      <DependentUpon>AnimeEpisode.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\InAppNotification.xaml.cs">
       <DependentUpon>InAppNotification.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ItemsStretchWrapGrid.cs" />
     <Compile Include="Controls\TitleBar\TitleBarEx.xaml.cs">
       <DependentUpon>TitleBarEx.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RateTemplateDictionary.xaml.cs">
+      <DependentUpon>RateTemplateDictionary.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helper\CollectionHelper.cs" />
     <Compile Include="Helper\EncryptionHelper.cs" />
@@ -258,7 +264,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\AnimeEpisode.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\InAppNotification.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\RateTemplateDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -349,7 +363,7 @@
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
