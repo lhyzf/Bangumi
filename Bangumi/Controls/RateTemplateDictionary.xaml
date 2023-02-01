@@ -13,15 +13,15 @@
             <Border Background="{ThemeResource SystemChromeMediumColor}"
                     CornerRadius="2"
                     Width="10"
-                    ToolTipService.ToolTip="{x:Bind Count}"
+                    ToolTipService.ToolTip="{Binding Count}"
                     Height="100">
                 <Border Background="{ThemeResource SystemChromeGrayColor}"
                         CornerRadius="2"
-                        Height="{x:Bind Ratio}"
+                        Height="{Binding Ratio}"
                         VerticalAlignment="Bottom"/>
             </Border>
             <TextBlock Grid.Row="1"
-                       Text="{x:Bind Score}"
+                       Text="{Binding Score}"
                        FontSize="10"
                        HorizontalAlignment="Center"/>
         </Grid>

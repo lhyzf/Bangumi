@@ -19,10 +19,6 @@
     <Page.Resources>
         <ResourceDictionary>
 
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="ms-appx:///Controls/RateTemplateDictionary.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-
         </ResourceDictionary>
     </Page.Resources>
 
