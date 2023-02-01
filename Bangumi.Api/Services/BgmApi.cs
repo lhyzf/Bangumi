@@ -77,7 +77,7 @@ namespace Bangumi.Api.Services
             List<Watching> result = await $"{HOST}/user/{_bgmOAuth.MyToken.UserId}/collection"
                 .SetQueryParams(new
                 {
-                    cat = "watching",
+                    cat = "all_watching",
                     responseGroup = "medium"
                 })
                 .GetAsync()
@@ -347,6 +347,32 @@ namespace Bangumi.Api.Services
                 {
                     _bgmCache.UpdateProgress(int.Parse(item), EpStatusType.watched);
                 }
+            }
+            return success;
+        }
+
+        /// <summary>
+        /// 批量更新书籍阅读进度。
+        /// 使用 post 的 UrlEncoded 提交进行更新，更新收藏状态使用相同方法。
+        /// </summary>
+        /// <param name="subjectId">条目 ID</param>
+        /// <param name="watched_eps">章节话数</param>
+        /// <param name="watched_vols">书籍卷数</param>
+        /// <returns></returns>
+        public async Task<bool> UpdateBookProgress(string subjectId, string watched_eps, string watched_vols)
+        {
+            var result = await $"{HOST}/subject/{subjectId}/update/watched_eps"
+                .PostUrlEncodedAsync(new
+                {
+                    subject_id = subjectId,
+                    watched_eps,
+                    watched_vols
+                })
+                .ReceiveString();
+            bool success = result.Contains("\"error\":\"Accepted\"");
+            if (success)
+            {
+                _bgmCache.UpdateBookProgress(subjectId, watched_eps, watched_vols);
             }
             return success;
         }

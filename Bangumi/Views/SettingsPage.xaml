@@ -137,7 +137,8 @@
                                             Visibility="{x:Bind ViewModel.BangumiDataAutoCheck, Mode=OneWay}"
                                             Value="{x:Bind ViewModel.BangumiDataCheckInterval, Mode=TwoWay}" 
                                             SpinButtonPlacementMode="Inline" 
-                                            Width="180"
+                                            Minimum="0"
+                                            MinWidth="180"
                                             HorizontalAlignment="Left"/>
                             <Button Content="设置站点" 
                                     Margin="0,4,0,0"

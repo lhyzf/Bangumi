@@ -13,7 +13,13 @@ namespace Bangumi.Api.Models
         /// 话数
         /// </summary>
         [JsonProperty("eps_count")]
-        public int EpsCount { get; set; }
+        public int? EpsCount { get; set; }
+
+        /// <summary>
+        /// 卷数 - 书籍
+        /// </summary>
+        [JsonProperty("vols_count")]
+        public int? VolsCount { get; set; }
 
         /// <summary>
         /// 排名
@@ -64,6 +70,7 @@ namespace Bangumi.Api.Models
             return base.Equals(obj) &&
                    Rank == s.Rank &&
                    EpsCount == s.EpsCount &&
+                   VolsCount == s.VolsCount &&
                    Rating.EqualsExT(s.Rating) &&
                    Collection.EqualsExT(s.Collection) &&
                    Eps.SequenceEqualExT(s.Eps) &&

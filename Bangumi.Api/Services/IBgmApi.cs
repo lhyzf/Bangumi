@@ -21,6 +21,7 @@ namespace Bangumi.Api.Services
             string rating = "", string privacy = "0");
         Task<bool> UpdateProgress(string ep, EpStatusType status);
         Task<bool> UpdateProgressBatch(int ep, string ep_id);
+        Task<bool> UpdateBookProgress(string subjectId, string watched_eps, string watched_vols);
         Task<SearchResult> Search(string keyWord, string type, int start, int max_results);
     }
 }

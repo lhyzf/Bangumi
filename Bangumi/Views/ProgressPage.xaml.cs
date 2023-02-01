@@ -179,4 +179,29 @@ namespace Bangumi.Views
             }
         }
     }
+
+    public sealed class ProgressDataTemplateSelector : DataTemplateSelector
+    {
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+        {
+            var element = container as FrameworkElement;
+            if (element != null && item is WatchProgress progress)
+            {
+                if (progress.Type == Api.Models.SubjectType.Anime
+                    || progress.Type == Api.Models.SubjectType.Real)
+                {
+                    return ProgressSubjectTemplate;
+                }
+                else if (progress.Type == Api.Models.SubjectType.Book)
+                {
+                    return ProgressBookSubjectTemplate;
+                }
+            }
+            return ProgressSubjectTemplate;
+        }
+
+
+        public DataTemplate ProgressSubjectTemplate { get; set; }
+        public DataTemplate ProgressBookSubjectTemplate { get; set; }
+    }
 }

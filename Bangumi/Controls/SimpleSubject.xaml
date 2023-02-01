@@ -1,0 +1,167 @@
+﻿<UserControl
+    x:Class="Bangumi.Controls.SimpleSubject"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Bangumi.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="using:System"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:common="using:Bangumi.Common"
+    xmlns:model="using:Bangumi.Api.Models"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Controls/RateTemplateDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Narrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BangumiImage.Width" Value="75"/>
+                        <Setter Target="BangumiImage.Height" Value="107"/>
+                        <Setter Target="NameTextBlock.FontSize" Value="16"/>
+                        <Setter Target="NameTextBlock.MaxLines" Value="1"/>
+                        <Setter Target="AirDateTextBlock.FontSize" Value="14"/>
+                        <Setter Target="AirWeekdayTextBlock.FontSize" Value="14"/>
+                        <Setter Target="CollectionTextBlock.FontSize" Value="12"/>
+                        <Setter Target="RatingTextBlock.FontSize" Value="24"/>
+                        <Setter Target="RatingTextBlock.Margin" Value="5,10"/>
+                        <Setter Target="RatingTextBlockDesc.FontSize" Value="12"/>
+                        <Setter Target="RatingCountTextBlock.FontSize" Value="12"/>
+                        <Setter Target="RatingCountTextBlock.Margin" Value="0,0,0,29"/>
+                        <Setter Target="RateItemsControl.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="400" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BangumiImage.Width" Value="150"/>
+                        <Setter Target="BangumiImage.Height" Value="214"/>
+                        <Setter Target="NameTextBlock.FontSize" Value="24"/>
+                        <Setter Target="AirDateTextBlock.FontSize" Value="16"/>
+                        <Setter Target="AirWeekdayTextBlock.FontSize" Value="16"/>
+                        <Setter Target="CollectionTextBlock.FontSize" Value="14"/>
+                        <Setter Target="RatingTextBlock.FontSize" Value="48"/>
+                        <Setter Target="RatingTextBlock.Margin" Value="5,20"/>
+                        <Setter Target="RatingTextBlockDesc.FontSize" Value="18"/>
+                        <Setter Target="RatingCountTextBlock.FontSize" Value="18"/>
+                        <Setter Target="RatingCountTextBlock.Margin" Value="0,0,10,52"/>
+                        <Setter Target="RateItemsControl.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ExWide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="BangumiImage.Width" Value="150"/>
+                        <Setter Target="BangumiImage.Height" Value="214"/>
+                        <Setter Target="NameTextBlock.FontSize" Value="24"/>
+                        <Setter Target="AirDateTextBlock.FontSize" Value="16"/>
+                        <Setter Target="AirWeekdayTextBlock.FontSize" Value="16"/>
+                        <Setter Target="CollectionTextBlock.FontSize" Value="14"/>
+                        <Setter Target="RatingTextBlock.FontSize" Value="48"/>
+                        <Setter Target="RatingTextBlock.Margin" Value="5,20"/>
+                        <Setter Target="RatingTextBlockDesc.FontSize" Value="18"/>
+                        <Setter Target="RatingCountTextBlock.FontSize" Value="18"/>
+                        <Setter Target="RatingCountTextBlock.Margin" Value="0,0,10,52"/>
+                        <Setter Target="RateItemsControl.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <!-- 书籍条目使用 -->
+        <ScrollViewer>
+            <RelativePanel Margin="8,8,16,48">
+                <controls:ImageEx Name="BangumiImage" 
+                                  IsCacheEnabled="True"
+                                  CacheMode="BitmapCache"
+                                  Source="{x:Bind ViewModel.ImageSource, Mode=OneWay}"
+                                  PlaceholderSource="{x:Bind common:Constants.NotFoundImgUri}"
+                                  PlaceholderStretch="UniformToFill"
+                                  CornerRadius="2"
+                                  RelativePanel.AlignLeftWithPanel="True"
+                                  RelativePanel.AlignTopWithPanel="True"
+                                  Margin="0,0,5,0"
+                                  Stretch="UniformToFill"/>
+                <ItemsControl Name="RateItemsControl"
+                              RelativePanel.Above="CollectionTextBlock"
+                              RelativePanel.AlignRightWithPanel="True"
+                              ItemTemplate="{StaticResource RateTemplate}"
+                              ItemsSource="{x:Bind ViewModel.OthersRates}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <controls:WrapPanel HorizontalSpacing="8"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+
+                <TextBlock Name="NameTextBlock" 
+                           Text="{x:Bind ViewModel.Name, Mode=OneWay}"
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.AlignTopWithPanel="True"
+                           IsTextSelectionEnabled="True"
+                           TextWrapping="Wrap"
+                           TextTrimming="CharacterEllipsis"
+                           Foreground="{StaticResource BangumiPinkBrush}" />
+                <TextBlock Name="AirDateTextBlock" 
+                           Text="{x:Bind sys:String.Format('开播时间：{0}',ViewModel.AirDate), Mode=OneWay}" 
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.Below="NameTextBlock"
+                           Foreground="#666666" 
+                           Margin="0,2,0,0" />
+                <TextBlock Name="AirWeekdayTextBlock" 
+                           Text="{x:Bind sys:String.Format('更新时间：{0}',ViewModel.AirTime), Mode=OneWay}" 
+                           RelativePanel.RightOf="BangumiImage"
+                           RelativePanel.Below="AirDateTextBlock"
+                           Foreground="#666666" 
+                           Margin="0,2,0,0" />
+                <TextBlock Name="RatingTextBlock" 
+                           HorizontalTextAlignment="Center"
+                           RelativePanel.LeftOf="RatingCountTextBlock"
+                           RelativePanel.Above="CollectionTextBlock"
+                           Foreground="{StaticResource BangumiPinkBrush}" >
+                    <Run Text="{x:Bind common:Converters.DoubleToString(ViewModel.Score,1), Mode=OneWay}"/>
+                    <LineBreak/>
+                    <Run x:Name="RatingTextBlockDesc" Text="{x:Bind common:Converters.GetRateDesc(ViewModel.Score), Mode=OneWay}"/>
+                </TextBlock>
+                <TextBlock Name="RatingCountTextBlock" 
+                           Text="{x:Bind ViewModel.RatingCount, Mode=OneWay}" 
+                           HorizontalTextAlignment="Center"
+                           RelativePanel.LeftOf="RateItemsControl"
+                           RelativePanel.Above="CollectionTextBlock"
+                           Foreground="#666666" >
+                </TextBlock>
+                <TextBlock Name="CollectionTextBlock" 
+                           Text="{x:Bind ViewModel.OthersCollection,Mode=OneWay}" 
+                           ToolTipService.ToolTip="{x:Bind ViewModel.OthersCollection,Mode=OneWay}"
+                           RelativePanel.AlignRightWithPanel="True"
+                           RelativePanel.AlignBottomWith="BangumiImage"
+                           RelativePanel.RightOf="BangumiImage"
+                           TextTrimming="CharacterEllipsis"
+                           HorizontalAlignment="Right"
+                           Foreground="#666666" 
+                           Margin="0,2,0,0" >
+                </TextBlock>
+            </RelativePanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

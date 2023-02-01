@@ -5,6 +5,7 @@
     xmlns:local="using:Bangumi.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:data="using:Bangumi.ViewModels"
     xmlns:common="using:Bangumi.Common"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
@@ -161,7 +162,7 @@
                                      Foreground="{StaticResource BangumiPinkBrush}" />
 
                         <ProgressRing x:Name="ProgressRing"
-                                      IsActive="True"
+                                      IsActive="{x:Bind IsUpdating, Mode=OneWay}"
                                       Visibility="{x:Bind IsUpdating, Mode=OneWay}"
                                       RelativePanel.AlignRightWithPanel="True"
                                       RelativePanel.AlignBottomWithPanel="True"
@@ -174,6 +175,234 @@
                     </RelativePanel>
                 </UserControl>
             </DataTemplate>
+
+            <DataTemplate x:Key="ProgressBookSubjectTemplate" x:DataType="data:WatchProgress">
+                <UserControl>
+                    <RelativePanel Padding="5"
+                                   Holding="RelativePanel_Holding"
+                                   Background="Transparent">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="Narrow">
+                                    <VisualState.StateTriggers>
+                                        <AdaptiveTrigger MinWindowWidth="0"/>
+                                    </VisualState.StateTriggers>
+                                    <VisualState.Setters>
+                                        <Setter Target="BangumiImage.Height" Value="75"/>
+                                        <Setter Target="BangumiImage.Width" Value="75"/>
+                                        <Setter Target="BangumiImage.Margin" Value="0,0,6,0"/>
+                                        <Setter Target="TitleTextBlock.FontSize" Value="16"/>
+                                        <Setter Target="StatusGridTransform.ScaleX" Value="0.72"/>
+                                        <Setter Target="StatusGridTransform.ScaleY" Value="0.72"/>
+                                        <Setter Target="ChapPlusButton.Padding" Value="4,-1,4,0"/>
+                                        <Setter Target="VolPlusButton.Padding" Value="4,-1,4,0"/>
+                                        <Setter Target="CollectionButton.Padding" Value="8,1"/>
+                                        <Setter Target="CollectionButtonTransform.ScaleX" Value="0.6"/>
+                                        <Setter Target="CollectionButtonTransform.ScaleY" Value="0.6"/>
+                                        <Setter Target="NextEpTextBlock.FontSize" Value="12"/>
+                                        <Setter Target="ProgressRing.Margin" Value="0"/>
+                                        <Setter Target="ProgressRingTransform.ScaleX" Value="0.75"/>
+                                        <Setter Target="ProgressRingTransform.ScaleY" Value="0.75"/>
+                                        <Setter Target="ProgressRingTransform.CenterX" Value="0"/>
+                                        <Setter Target="ProgressRingTransform.CenterY" Value="3"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Wide">
+                                    <VisualState.StateTriggers>
+                                        <AdaptiveTrigger MinWindowWidth="420" />
+                                    </VisualState.StateTriggers>
+                                    <VisualState.Setters>
+                                        <Setter Target="BangumiImage.Height" Value="100"/>
+                                        <Setter Target="BangumiImage.Width" Value="100"/>
+                                        <Setter Target="BangumiImage.Margin" Value="0,0,10,0"/>
+                                        <Setter Target="TitleTextBlock.FontSize" Value="20"/>
+                                        <Setter Target="StatusGridTransform.ScaleX" Value="0.96"/>
+                                        <Setter Target="StatusGridTransform.ScaleY" Value="0.96"/>
+                                        <Setter Target="ChapPlusButton.Padding" Value="4,-1,4,0"/>
+                                        <Setter Target="VolPlusButton.Padding" Value="4,-1,4,0"/>
+                                        <Setter Target="CollectionButton.Padding" Value="12,4"/>
+                                        <Setter Target="CollectionButtonTransform.ScaleX" Value="0.9"/>
+                                        <Setter Target="CollectionButtonTransform.ScaleY" Value="0.9"/>
+                                        <Setter Target="NextEpTextBlock.FontSize" Value="16"/>
+                                        <Setter Target="ProgressRing.Margin" Value="4"/>
+                                        <Setter Target="ProgressRingTransform.ScaleX" Value="1"/>
+                                        <Setter Target="ProgressRingTransform.ScaleY" Value="1"/>
+                                        <Setter Target="ProgressRingTransform.CenterX" Value="0"/>
+                                        <Setter Target="ProgressRingTransform.CenterY" Value="0"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <controls:ImageEx x:Name="BangumiImage"
+                                          IsCacheEnabled="True"
+                                          CacheMode="BitmapCache"
+                                          Source="{x:Bind Image}" 
+                                          PlaceholderSource="{x:Bind common:Constants.NotFoundImgUri}"
+                                          PlaceholderStretch="UniformToFill"
+                                          CornerRadius="2"
+                                          x:Phase="2"
+                                          RelativePanel.AlignLeftWithPanel="True"
+                                          RelativePanel.AlignTopWithPanel="True"
+                                          Stretch="UniformToFill" />
+                        <TextBlock x:Name="TitleTextBlock"
+                                   RelativePanel.RightOf="BangumiImage"
+                                   RelativePanel.AlignTopWithPanel="True"
+                                   Text="{x:Bind common:Converters.StringOneOrTwo(NameCn, Name)}" 
+                                   Foreground="{StaticResource BangumiPinkBrush}"
+                                   TextTrimming="CharacterEllipsis">
+                            <ToolTipService.ToolTip>
+                                <StackPanel>
+                                    <TextBlock Visibility="{x:Bind common:Converters.CollapsedIfNullOrEmpty(NameCn)}">
+                                        <Run Text="中文名："/><Run Text="{x:Bind NameCn}"/>
+                                    </TextBlock>
+                                    <TextBlock Visibility="{x:Bind common:Converters.CollapsedIfNullOrEmpty(Name)}">
+                                        <Run Text="原名："/><Run Text="{x:Bind Name}"/>
+                                    </TextBlock>
+                                </StackPanel>
+                            </ToolTipService.ToolTip>
+                        </TextBlock>
+                        <Grid RelativePanel.Below="TitleTextBlock"
+                              RelativePanel.RightOf="BangumiImage"
+                              RowSpacing="1"
+                              ColumnSpacing="4"
+                              Margin="0,0,0,0">
+                            <Grid.RenderTransform>
+                                <CompositeTransform x:Name="StatusGridTransform"/>
+                            </Grid.RenderTransform>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </Grid.Resources>
+
+                            <TextBlock Text="Chap."
+                                       Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"/>
+                            <muxc:NumberBox Grid.Column="1"
+                                            Value="{x:Bind ChapStatus,Mode=TwoWay}"
+                                            SpinButtonPlacementMode="Hidden"
+                                            Minimum="0">
+                                <muxc:NumberBox.Resources>
+                                    <ResourceDictionary Source="ms-appx:///Microsoft.UI.Xaml/DensityStyles/Compact.xaml" />
+                                </muxc:NumberBox.Resources>
+                            </muxc:NumberBox>
+                            <TextBlock Grid.Column="2"
+                                       Text="/"
+                                       Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"/>
+                            <TextBlock Grid.Column="3"
+                                       Text="{x:Bind ChapCountString,Mode=OneWay}"
+                                       Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"/>
+                            <Button Name="ChapPlusButton"
+                                    Grid.Column="4"
+                                    Content="+"
+                                    Click="{x:Bind MarkNextChapReaded}"
+                                    Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
+                                    Background="{ThemeResource AppBarItemBackgroundThemeBrush}"/>
+
+                            <TextBlock Grid.Row="1"
+                                       Text="Vol."
+                                       Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"/>
+                            <muxc:NumberBox Grid.Row="1"
+                                            Grid.Column="1"
+                                            Value="{x:Bind VolStatus,Mode=TwoWay}"
+                                            SpinButtonPlacementMode="Hidden"
+                                            Minimum="0">
+                                <muxc:NumberBox.Resources>
+                                    <ResourceDictionary Source="ms-appx:///Microsoft.UI.Xaml/DensityStyles/Compact.xaml" />
+                                </muxc:NumberBox.Resources>
+                            </muxc:NumberBox>
+                            <TextBlock Grid.Row="1"
+                                       Grid.Column="2"
+                                       Text="/"
+                                       Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"/>
+                            <TextBlock Grid.Row="1"
+                                       Grid.Column="3"
+                                       Text="{x:Bind VolCountString,Mode=OneWay}"
+                                       Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"/>
+                            <Button Name="VolPlusButton"
+                                    Grid.Row="1"
+                                    Grid.Column="4"
+                                    Content="+"
+                                    Click="{x:Bind MarkNextVolReaded}"
+                                    Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
+                                    Background="{ThemeResource AppBarItemBackgroundThemeBrush}"/>
+                        </Grid>
+
+                        <Button x:Name="CollectionButton"
+                                Click="CollectionButton_Click"
+                                RelativePanel.RightOf="BangumiImage"
+                                RelativePanel.AlignBottomWithPanel="True"
+                                ToolTipService.ToolTip="收藏"
+                                Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" 
+                                      Glyph="&#xE00B;" 
+                                      Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
+                                      Margin="0">
+                                <FontIcon.RenderTransform>
+                                    <CompositeTransform x:Name="CollectionButtonTransform"
+                                                        CenterX="10"
+                                                        CenterY="10"/>
+                                </FontIcon.RenderTransform>
+                            </FontIcon>
+                        </Button>
+
+                        <Button x:Name="NextEpButton"
+                                Click="{x:Bind UpdateReadedChapsAndVols}"
+                                Padding="8,3"
+                                RelativePanel.AlignRightWithPanel="True"
+                                RelativePanel.AlignBottomWithPanel="True"
+                                RelativePanel.RightOf="CollectionButton"
+                                HorizontalAlignment="Right"
+                                Visibility="{x:Bind common:Converters.CollapsedIf(IsUpdating), Mode=OneWay}"
+                                ToolTipService.ToolTip="{Binding ElementName=NextEpTextBlock, Path=Text}"
+                                Background="{ThemeResource AppBarItemBackgroundThemeBrush}">
+                            <TextBlock x:Name="NextEpTextBlock" 
+                                       Foreground="{x:Bind common:Converters.ConvertBrushFromString(EpColor), Mode=OneWay}"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Right"
+                                       TextTrimming="CharacterEllipsis"
+                                       Text="{x:Bind NextEpDesc, Mode=OneWay}">
+                            </TextBlock>
+                        </Button>
+
+                        <ProgressBar Maximum="{x:Bind EpsCount, Mode=OneWay}"
+                                     Value="{x:Bind WatchedEpsCount, Mode=OneWay}"
+                                     Width="{Binding ElementName=BangumiImage, Path=Width}"
+                                     RelativePanel.Below="BangumiImage"
+                                     RelativePanel.AlignLeftWithPanel="True"
+                                     ToolTipService.ToolTip="{x:Bind common:Converters.Split(WatchedEpsCount, EpsCount, ' / '), Mode=OneWay}"
+                                     Margin="0,1,0,0"
+                                     Background="{ThemeResource SystemChromeHighColor}"
+                                     Foreground="{StaticResource BangumiPinkBrush}" />
+
+                        <ProgressRing x:Name="ProgressRing"
+                                      IsActive="{x:Bind IsUpdating, Mode=OneWay}"
+                                      Visibility="{x:Bind IsUpdating, Mode=OneWay}"
+                                      RelativePanel.AlignRightWithPanel="True"
+                                      RelativePanel.AlignBottomWithPanel="True"
+                                      Width="20" 
+                                      Height="20" >
+                            <ProgressRing.RenderTransform>
+                                <CompositeTransform x:Name="ProgressRingTransform"/>
+                            </ProgressRing.RenderTransform>
+                        </ProgressRing>
+                    </RelativePanel>
+                </UserControl>
+            </DataTemplate>
+
+            <local:ProgressDataTemplateSelector x:Key="ProgressDataTemplateSelector"
+                                                ProgressSubjectTemplate="{StaticResource ProgressSubjectTemplate}"
+                                                ProgressBookSubjectTemplate="{StaticResource ProgressBookSubjectTemplate}"/>
         </ResourceDictionary>
     </Page.Resources>
 
@@ -212,7 +441,7 @@
                                    ItemClick="GridView_ItemClick"
                                    RightTapped="GridView_RightTapped"
                                    SelectionMode="None"
-                                   ItemTemplate="{StaticResource ProgressSubjectTemplate}">
+                                   ItemTemplateSelector="{StaticResource ProgressDataTemplateSelector}">
             <GridView.ItemContainerTransitions>
                 <TransitionCollection>
                     <RepositionThemeTransition IsStaggeringEnabled="False" />

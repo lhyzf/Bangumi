@@ -19,6 +19,7 @@ namespace Bangumi.Api.Services
         internal CollectionStatus UpdateStatus(string key, CollectionStatus value);
         internal Progress UpdateProgress(string key, Progress value);
         internal void UpdateProgress(int key, EpStatusType value);
+        internal void UpdateBookProgress(string key, string watched_eps, string watched_vols);
         internal List<Calendar> UpdateCalendar(List<Calendar> value);
 
         List<Watching> Watching();

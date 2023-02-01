@@ -255,7 +255,8 @@ namespace Bangumi.ViewModels
         {
             if (SettingHelper.OrderByAirTime)
             {
-                return watchingStatuses.OrderBy(p => p.EpColor)
+                return watchingStatuses.OrderBy(p => p.Type == SubjectType.Book) // 书籍放在列表底部
+                    .ThenBy(p => p.EpColor)
                     .ThenBy(p => p.WatchedEpsCount == 0)
                     //.ThenBy(p => p.AirEpsCount - p.WatchedEpsCount) //尝试不依靠已放送章节数与已观看章节数之差排序
                     .ThenBy(p => p.Eps?.LastOrDefault(ep => ep.Type == EpisodeType.本篇 && !Regex.IsMatch(ep.Status, "(NA)"))?.AirDate)
@@ -279,6 +280,21 @@ namespace Bangumi.ViewModels
         public string Image { get; set; }
         public SubjectType Type { get; set; }
         public string AirTime { get; set; }
+        public int? ChapCount { get; set; }
+        /// <inheritdoc cref="ChapCount"/>
+        public string ChapCountString
+        {
+            get => ChapCount?.ToString() ?? "??";
+        }
+        public int? VolCount { get; set; }
+        /// <inheritdoc cref="VolCount"/>
+        public string VolCountString
+        {
+            get => VolCount?.ToString() ?? "??";
+        }
+
+        public int ChapStatus { get; set; }
+        public int VolStatus { get; set; }
         /// <summary>
         /// 正片数量
         /// </summary>
@@ -300,6 +316,8 @@ namespace Bangumi.ViewModels
                     OnPropertyChanged(nameof(NextEp));
                     OnPropertyChanged(nameof(NextEpDesc));
                     OnPropertyChanged(nameof(EpColor));
+                    OnPropertyChanged(nameof(ChapStatus));
+                    OnPropertyChanged(nameof(VolStatus));
                 }
             }
         }
@@ -344,7 +362,18 @@ namespace Bangumi.ViewModels
             }
         }
         public EpisodeForSort NextEp => Eps?.FirstOrDefault(ep => ep.Type == EpisodeType.本篇 && ep.EpStatus == EpStatusType.remove);
-        public string NextEpDesc => $"EP.{NextEp?.Sort} {Converters.StringOneOrTwo(NextEp?.NameCn, NextEp?.Name)}";
+        public string NextEpDesc
+        {
+            get
+            {
+                if (Type == SubjectType.Book)
+                {
+                    return "更新";
+                }
+                return $"EP.{NextEp?.Sort} {Converters.StringOneOrTwo(NextEp?.NameCn, NextEp?.Name)}";
+            }
+        }
+
         public string EpColor => (NextEp == null || NextEp.Status == "NA") ? "Gray" : "#d26585";
 
         public static WatchProgress FromWatching(Watching w) => new WatchProgress
@@ -357,11 +386,19 @@ namespace Bangumi.ViewModels
             LastTouch = w.LastTouch, // 该条目上次修改时间
             AirTime = w.Subject.AirDate,
             Type = w.Subject.Type,
+            ChapCount = w.Subject.EpsCount,
+            VolCount = w.Subject.VolsCount,
+            ChapStatus = w.EpStatus,
+            VolStatus = w.VolStatus,
             IsUpdating = false,
         };
 
         public async Task ScheduleToast()
         {
+            if (Type == SubjectType.Book)
+            {
+                return;
+            }
             if (DateTimeOffset.TryParse(AirTime, out var airTime))
             {
                 if (airTime > DateTimeOffset.Now)
@@ -487,6 +524,67 @@ namespace Bangumi.ViewModels
         }
 
         /// <summary>
+        /// 已看的章节 +1
+        /// </summary>
+        public async Task MarkNextChapReaded()
+        {
+            ChapStatus++;
+            await UpdateReadedChapsAndVolsInternal();
+        }
+
+        /// <summary>
+        /// 已看的卷数 +1
+        /// </summary>
+        public async Task MarkNextVolReaded()
+        {
+            VolStatus++;
+            await UpdateReadedChapsAndVolsInternal();
+        }
+
+        /// <summary>
+        /// 更新已看的章节和卷数
+        /// </summary>
+        public async Task UpdateReadedChapsAndVols()
+        {
+            await UpdateReadedChapsAndVolsInternal();
+        }
+
+        /// <summary>
+        /// 更新已看的章节和卷数
+        /// </summary>
+        private async Task UpdateReadedChapsAndVolsInternal()
+        {
+            if (NetworkHelper.IsOffline)
+            {
+                NotificationHelper.Notify("无网络连接！", NotifyType.Warn);
+                return;
+            }
+            try
+            {
+                IsUpdating = true;
+                if (await BangumiApi.BgmApi.UpdateBookProgress(SubjectId.ToString(), ChapStatus.ToString(), VolStatus.ToString()))
+                {
+                    LastTouch = DateTime.Now.ToJsTick();
+                    NotificationHelper.Notify($"标记《{NameCn}》Chap.{ChapStatus} Vol.{VolStatus} 成功");
+                }
+                else
+                {
+                    NotificationHelper.Notify($"标记《{NameCn}》Chap.{ChapStatus} Vol.{VolStatus} 失败，请重试！",
+                                              NotifyType.Warn);
+                }
+            }
+            catch (Exception e)
+            {
+                NotificationHelper.Notify($"标记《{NameCn}》Chap.{ChapStatus} Vol.{VolStatus} 失败！\n错误信息：{e.Message}",
+                                          NotifyType.Error);
+            }
+            finally
+            {
+                IsUpdating = false;
+            }
+        }
+
+        /// <summary>
         /// 标记下一话为看过，静默（后台任务使用）
         /// </summary>
         public async Task<(bool, string)> MarkNextEpWatchedSilently()
@@ -529,7 +627,10 @@ namespace Bangumi.ViewModels
                    LastTouch == w.LastTouch &&
                    Type == w.Type &&
                    AirTime == w.AirTime &&
-                   IsUpdating == w.IsUpdating &&
+                   ChapCount == w.ChapCount &&
+                   VolCount == w.VolCount &&
+                   ChapStatus == w.ChapStatus &&
+                   VolStatus == w.VolStatus &&
                    Name.EqualsExT(w.Name) &&
                    NameCn.EqualsExT(w.NameCn) &&
                    Url.EqualsExT(w.Url) &&

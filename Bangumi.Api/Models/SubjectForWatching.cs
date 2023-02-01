@@ -1,5 +1,6 @@
 ﻿using Bangumi.Api.Common;
 using Newtonsoft.Json;
+using System;
 
 namespace Bangumi.Api.Models
 {
@@ -12,13 +13,20 @@ namespace Bangumi.Api.Models
         /// 话数
         /// </summary>
         [JsonProperty("eps")]
+        [Obsolete]
         public int Eps { get; set; }
 
         /// <summary>
         /// 话数
         /// </summary>
         [JsonProperty("eps_count")]
-        public int EpsCount { get; set; }
+        public int? EpsCount { get; set; }
+
+        /// <summary>
+        /// 卷数 - 书籍
+        /// </summary>
+        [JsonProperty("vols_count")]
+        public int? VolsCount { get; set; }
 
         /// <summary>
         /// doing
@@ -38,6 +46,7 @@ namespace Bangumi.Api.Models
             return base.Equals(obj) &&
                    Eps == s.Eps &&
                    EpsCount == s.EpsCount &&
+                   VolsCount == s.VolsCount &&
                    Collection.EqualsExT(s.Collection);
         }
 

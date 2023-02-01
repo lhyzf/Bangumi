@@ -121,14 +121,14 @@ namespace Bangumi.Api.Services
 
 
 
-        List<Watching> IBgmCache.UpdateWatching(List<Watching> value)
+        public List<Watching> UpdateWatching(List<Watching> value)
         {
             _cache.Watching = value;
             _isCacheUpdated = true;
             return _cache.Watching;
         }
 
-        CollectionE IBgmCache.UpdateCollections(SubjectType key, CollectionE value)
+        public CollectionE UpdateCollections(SubjectType key, CollectionE value)
         {
             return _cache.Collections.AddOrUpdate(key.GetValue(), value, (k, v) =>
             {
@@ -140,7 +140,7 @@ namespace Bangumi.Api.Services
             });
         }
 
-        SubjectLarge IBgmCache.UpdateSubject(string key, SubjectLarge value)
+        public SubjectLarge UpdateSubject(string key, SubjectLarge value)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
 
@@ -154,7 +154,7 @@ namespace Bangumi.Api.Services
             });
         }
 
-        SubjectLarge IBgmCache.UpdateSubjectEp(string subjectId, SubjectLarge subject)
+        public SubjectLarge UpdateSubjectEp(string subjectId, SubjectLarge subject)
         {
             var sub = _cache.Subject.GetOrAdd(subjectId, subject);
             if (sub == null)
@@ -169,7 +169,7 @@ namespace Bangumi.Api.Services
             return sub;
         }
 
-        CollectionStatusE IBgmCache.UpdateStatus(string subjectId, CollectionStatusE subjectStatus)
+        public CollectionStatusE UpdateStatus(string subjectId, CollectionStatusE subjectStatus)
         {
             if (subjectStatus != null)
             {
@@ -180,28 +180,37 @@ namespace Bangumi.Api.Services
                     _cache.Watching.RemoveAll(w => w.SubjectId.ToString() == subjectId);
                 }
                 else if (subjectStatus.Status?.Id == CollectionStatusType.Do &&
-                         _cache.Watching.All(w => w.SubjectId.ToString() != subjectId) &&
-                         _cache.Subject.TryGetValue(subjectId, out var subject) &&
-                         subject.Type == SubjectType.Anime)
+                    _cache.Subject.TryGetValue(subjectId, out var subject))
                 {
-                    _cache.Watching.Add(new Watching
+                    if (_cache.Watching.All(w => w.SubjectId.ToString() != subjectId) &&
+                        (subject.Type == SubjectType.Anime || subject.Type == SubjectType.Real || subject.Type == SubjectType.Book))
                     {
-                        SubjectId = subject.Id,
-                        LastTouch = DateTime.Now.ToJsTick(),
-                        Name = subject.Name,
-                        Subject = new SubjectForWatching
+                        _cache.Watching.Add(new Watching
                         {
-                            Id = subject.Id,
+                            SubjectId = subject.Id,
+                            LastTouch = DateTime.Now.ToJsTick(),
                             Name = subject.Name,
-                            NameCn = subject.NameCn,
-                            Type = subject.Type,
-                            AirDate = subject.AirDate,
-                            AirWeekday = subject.AirWeekday,
-                            EpsCount = subject.EpsCount,
-                            Images = subject.Images,
-                            Url = subject.Url
-                        }
-                    });
+                            EpStatus = subjectStatus.EpStatus,
+                            VolStatus = subjectStatus.VolStatus,
+                            Subject = new SubjectForWatching
+                            {
+                                Id = subject.Id,
+                                Name = subject.Name,
+                                NameCn = subject.NameCn,
+                                Type = subject.Type,
+                                AirDate = subject.AirDate,
+                                AirWeekday = subject.AirWeekday,
+                                EpsCount = subject.EpsCount,
+                                VolsCount = subject.VolsCount,
+                                Images = subject.Images,
+                                Url = subject.Url
+                            }
+                        });
+                    }
+                    else if (subject.Type == SubjectType.Book)
+                    {
+                        UpdateBookProgress(subjectId, subjectStatus.EpStatus.ToString(), subjectStatus.VolStatus.ToString());
+                    }
                 }
             }
             else
@@ -214,7 +223,7 @@ namespace Bangumi.Api.Services
             return subjectStatus;
         }
 
-        CollectionStatus IBgmCache.UpdateStatus(string subjectId, CollectionStatus subjectStatus)
+        public CollectionStatus UpdateStatus(string subjectId, CollectionStatus subjectStatus)
         {
             if (subjectStatus != null)
             {
@@ -228,7 +237,7 @@ namespace Bangumi.Api.Services
             return subjectStatus;
         }
 
-        Progress IBgmCache.UpdateProgress(string key, Progress value)
+        public Progress UpdateProgress(string key, Progress value)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
 
@@ -242,7 +251,7 @@ namespace Bangumi.Api.Services
             });
         }
 
-        void IBgmCache.UpdateProgress(int epId, EpStatusType status)
+        public void UpdateProgress(int epId, EpStatusType status)
         {
             // 找到该章节所属的条目
             var sub = _cache.Subject.Values.FirstOrDefault(s => s.Eps?.FirstOrDefault(p => p.Id == epId) != null);
@@ -317,7 +326,23 @@ namespace Bangumi.Api.Services
             }
         }
 
-        List<Calendar> IBgmCache.UpdateCalendar(List<Calendar> value)
+        public void UpdateBookProgress(string subjectId, string watched_eps, string watched_vols)
+        {
+            if (_cache.Status.TryGetValue(subjectId, out var collectionStatusE))
+            {
+                collectionStatusE.EpStatus = int.Parse(watched_eps);
+                collectionStatusE.VolStatus = int.Parse(watched_vols);
+                _isCacheUpdated = true;
+            }
+            if (_cache.Watching.Find(w => w.SubjectId.ToString() == subjectId) is Watching watching)
+            {
+                watching.EpStatus = int.Parse(watched_eps);
+                watching.VolStatus = int.Parse(watched_vols);
+                _isCacheUpdated = true;
+            }
+        }
+
+        public List<Calendar> UpdateCalendar(List<Calendar> value)
         {
             _cache.Calendar = value;
             _isCacheUpdated = true;

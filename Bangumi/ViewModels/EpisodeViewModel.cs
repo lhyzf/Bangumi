@@ -65,7 +65,12 @@ namespace Bangumi.ViewModels
             set => Set(ref _subjectId, value);
         }
 
-        private SubjectType SubjectType { get; set; }
+        private SubjectType _subjectType;
+        public SubjectType SubjectType
+        {
+            get => _subjectType;
+            set => Set(ref _subjectType, value);
+        }
 
         private string _imageSource;
         public string ImageSource
@@ -123,6 +128,89 @@ namespace Bangumi.ViewModels
         {
             get => _othersCollection;
             set => Set(ref _othersCollection, value);
+        }
+
+        // 书籍类型的条目使用
+        private int? _chapCount;
+        /// <summary>
+        /// 章节数
+        /// </summary>
+        public int? ChapCount
+        {
+            get => _chapCount;
+            set
+            {
+                if (Set(ref _chapCount, value))
+                {
+                    OnPropertyChanged(nameof(ChapCountString));
+                }
+            }
+        }
+        /// <inheritdoc cref="ChapCount"/>
+        public string ChapCountString
+        {
+            get => ChapCount?.ToString() ?? "??";
+        }
+
+        private int? _volCount;
+        /// <summary>
+        /// 单行本数
+        /// </summary>
+        public int? VolCount
+        {
+            get => _volCount;
+            set
+            {
+                if (Set(ref _volCount, value))
+                {
+                    OnPropertyChanged(nameof(VolCountString));
+                }
+            }
+        }
+        /// <inheritdoc cref="VolCount"/>
+        public string VolCountString
+        {
+            get => VolCount?.ToString() ?? "??";
+        }
+
+        private int _chapStatus;
+        /// <summary>
+        /// 章节状态
+        /// </summary>
+        public int ChapStatus
+        {
+            get => _chapStatus;
+            set
+            {
+                if (value >= 0)
+                {
+                    Set(ref _chapStatus, value);
+                }
+                else
+                {
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _volStatus;
+        /// <summary>
+        /// 单行本状态
+        /// </summary>
+        public int VolStatus
+        {
+            get => _volStatus;
+            set
+            {
+                if (value >= 0)
+                {
+                    Set(ref _volStatus, value);
+                }
+                else
+                {
+                    OnPropertyChanged();
+                }
+            }
         }
 
         // 详情
@@ -345,6 +433,40 @@ namespace Bangumi.ViewModels
         }
 
         /// <summary>
+        /// 更新书籍阅读状态
+        /// </summary>
+        public async Task UpdateBookStatus()
+        {
+            if (NetworkHelper.IsOffline)
+            {
+                NotificationHelper.Notify("无网络连接！", NotifyType.Warn);
+                return;
+            }
+            try
+            {
+                IsUpdating = true;
+                if (await BangumiApi.BgmApi.UpdateBookProgress(SubjectId, ChapStatus.ToString(), VolStatus.ToString()))
+                {
+                    NotificationHelper.Notify($"标记 Chap.{ChapStatus} Vol.{VolStatus} 成功");
+                }
+                else
+                {
+                    NotificationHelper.Notify($"标记 Chap.{ChapStatus} Vol.{VolStatus} 失败，请重试！",
+                                              NotifyType.Warn);
+                }
+            }
+            catch (Exception e)
+            {
+                NotificationHelper.Notify($"标记 Chap.{ChapStatus} Vol.{VolStatus} 失败！\n错误信息：{e.Message}",
+                                          NotifyType.Error);
+            }
+            finally
+            {
+                IsUpdating = false;
+            }
+        }
+
+        /// <summary>
         /// 加载详情和章节，
         /// 用户进度，收藏状态。
         /// </summary>
@@ -366,25 +488,36 @@ namespace Bangumi.ViewModels
                 IsProgressLoading = true;
                 IsStatusLoading = true;
 
-                var subject = BangumiApi.BgmApi.Subject(SubjectId);
-                ProcessSubject(BangumiApi.BgmCache.Subject(SubjectId));
+                var subjectTask = BangumiApi.BgmApi.Subject(SubjectId);
+                var cachedSubject = BangumiApi.BgmCache.Subject(SubjectId);
+                ProcessSubject(cachedSubject);
                 // 检查用户登录状态
                 if (BangumiApi.BgmOAuth.IsLogin)
                 {
                     var progress = BangumiApi.BgmApi.Progress(SubjectId);
                     var status = BangumiApi.BgmApi.Status(SubjectId);
-                    ProcessProgress(BangumiApi.BgmCache.Progress(SubjectId));
-                    SetCollectionStatus(BangumiApi.BgmCache.Status(SubjectId)?.Status?.Id);
-                    ProcessSubject(await subject);
+                    if (cachedSubject.Type == SubjectType.Anime
+                        || cachedSubject.Type == SubjectType.Real)
+                    {
+                        ProcessProgress(BangumiApi.BgmCache.Progress(SubjectId));
+                    }
+                    ProcessCollectionStatus(BangumiApi.BgmCache.Status(SubjectId));
+                    var subject = await subjectTask;
+                    ProcessSubject(subject);
                     IsDetailLoading = false;
-                    ProcessProgress(await progress);
+                    // 动画、三次元有独立的章节状态
+                    if (subject.Type == SubjectType.Anime
+                        || subject.Type == SubjectType.Real)
+                    {
+                        ProcessProgress(await progress);
+                    }
                     IsProgressLoading = false;
-                    SetCollectionStatus((await status)?.Status?.Id);
+                    ProcessCollectionStatus(await status);
                     IsStatusLoading = false;
                 }
                 else
                 {
-                    ProcessSubject(await subject);
+                    ProcessSubject(await subjectTask);
                     IsDetailLoading = false;
                 }
             }
@@ -408,9 +541,14 @@ namespace Bangumi.ViewModels
         /// </summary>
         public void LoadDetailsFromCache()
         {
-            ProcessSubject(BangumiApi.BgmCache.Subject(SubjectId));
-            ProcessProgress(BangumiApi.BgmCache.Progress(SubjectId));
-            SetCollectionStatus(BangumiApi.BgmCache.Status(SubjectId)?.Status?.Id);
+            var subject = BangumiApi.BgmCache.Subject(SubjectId);
+            ProcessSubject(subject);
+            if (subject.Type == SubjectType.Anime
+                || subject.Type == SubjectType.Real)
+            {
+                ProcessProgress(BangumiApi.BgmCache.Progress(SubjectId));
+            }
+            ProcessCollectionStatus(BangumiApi.BgmCache.Status(SubjectId));
         }
 
         /// <summary>
@@ -509,6 +647,19 @@ namespace Bangumi.ViewModels
                         GroupedEps.Add(item);
                     }
                 }
+            }
+            // 书籍信息
+            ChapCount = subject.EpsCount;
+            VolCount = subject.VolsCount;
+        }
+
+        private void ProcessCollectionStatus(CollectionStatusE collectionStatusE)
+        {
+            SetCollectionStatus(collectionStatusE?.Status?.Id);
+            if (collectionStatusE != null)
+            {
+                ChapStatus = collectionStatusE.EpStatus;
+                VolStatus = collectionStatusE.VolStatus;
             }
         }
 

@@ -31,6 +31,66 @@ namespace Bangumi.Common
             value ? Visibility.Collapsed : Visibility.Visible;
 
         /// <summary>
+        /// Returns Visibility.Collapsed if the specified value is equal to target; otherwise, returns Visibility.Visible.
+        /// </summary>
+        public static Visibility CollapsedIf(object value, object target) =>
+            target.Equals(value) ? Visibility.Collapsed : Visibility.Visible;
+
+        /// <summary>
+        /// Returns Visibility.Collapsed if the specified value is not equal to target; otherwise, returns Visibility.Visible.
+        /// </summary>
+        public static Visibility CollapsedIfNot(object value, object target) =>
+            target.Equals(value) ? Visibility.Visible : Visibility.Collapsed;
+
+        /// <summary>
+        /// Returns Visibility.Collapsed if the specified value is equal to target1 or target2; otherwise, returns Visibility.Visible.
+        /// </summary>
+        public static Visibility CollapsedIfAny(object value, object target1, object target2) =>
+            CollapsedIfAnyCore(value, target1, target2);
+
+        /// <summary>
+        /// Returns Visibility.Visible if the specified value is equal to target1 or target2; otherwise, returns Visibility.Visible.
+        /// </summary>
+        public static Visibility CollapsedIfNotAny(object value, object target1, object target2) =>
+            CollapsedIfNotAnyCore(value, target1, target2);
+
+        /// <summary>
+        /// Returns Visibility.Collapsed if the specified value is equal to target1, target2 or target3; otherwise, returns Visibility.Visible.
+        /// </summary>
+        public static Visibility CollapsedIfAny(object value, object target1, object target2, object target3) =>
+            CollapsedIfAnyCore(value, target1, target2, target3);
+
+        /// <summary>
+        /// Returns Visibility.Visible if the specified value is equal to target1, target2 or target3; otherwise, returns Visibility.Visible.
+        /// </summary>
+        public static Visibility CollapsedIfNotAny(object value, object target1, object target2, object target3) =>
+            CollapsedIfNotAnyCore(value, target1, target2, target3);
+
+        /// <summary>
+        /// Returns Visibility.Collapsed if the specified value is equal to target1, target2, target3 or target4; otherwise, returns Visibility.Visible.
+        /// </summary>
+        public static Visibility CollapsedIfAny(object value, object target1, object target2, object target3, object target4) =>
+            CollapsedIfAnyCore(value, target1, target2, target3, target4);
+
+        /// <summary>
+        /// Returns Visibility.Visible if the specified value is equal to target1, target2, target3 or target4; otherwise, returns Visibility.Visible.
+        /// </summary>
+        public static Visibility CollapsedIfNotAny(object value, object target1, object target2, object target3, object target4) =>
+            CollapsedIfNotAnyCore(value, target1, target2, target3, target4);
+
+        /// <summary>
+        /// Returns Visibility.Collapsed if the specified value is equal to any of the targets; otherwise, returns Visibility.Visible.
+        /// </summary>
+        private static Visibility CollapsedIfAnyCore(object value, params object[] targets) =>
+            targets.Any(it => it.Equals(value)) ? Visibility.Collapsed : Visibility.Visible;
+
+        /// <summary>
+        /// Returns Visibility.Visible if the specified value is equal to any of the targets; otherwise, returns Visibility.Visible.
+        /// </summary>
+        private static Visibility CollapsedIfNotAnyCore(object value, params object[] targets) =>
+            targets.Any(it => it.Equals(value)) ? Visibility.Visible : Visibility.Collapsed;
+
+        /// <summary>
         /// Returns Visibility.Collapsed if the specified value is null; otherwise, returns Visibility.Visible.
         /// </summary>
         public static Visibility CollapsedIfNull(object value) =>

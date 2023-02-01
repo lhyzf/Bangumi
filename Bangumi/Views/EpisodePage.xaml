@@ -5,8 +5,8 @@
     xmlns:local="using:Bangumi.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:data="using:Bangumi.Api.Models"
-    xmlns:data2="using:Bangumi.ViewModels"
+    xmlns:model="using:Bangumi.Api.Models"
+    xmlns:vm="using:Bangumi.ViewModels"
     xmlns:common="using:Bangumi.Common"
     xmlns:sys="using:System"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
@@ -60,7 +60,17 @@
         </VisualStateManager.VisualStateGroups>
 
         <!-- 动画、三次元条目使用 -->
-        <controls:AnimeEpisode x:Name="MyAnimeEpisode" ViewModel="{x:Bind ViewModel}"/>
+        <controls:AnimeEpisode x:Name="MyAnimeEpisode"
+                               ViewModel="{x:Bind ViewModel}"
+                               Visibility="{x:Bind common:Converters.CollapsedIfNotAny(ViewModel.SubjectType, model:SubjectType.Anime, model:SubjectType.Real),Mode=OneWay}"/>
+        <!-- 书籍条目使用 -->
+        <controls:BookChapter x:Name="MyBookChapter"
+                              ViewModel="{x:Bind ViewModel}"
+                              Visibility="{x:Bind common:Converters.CollapsedIfNot(ViewModel.SubjectType, model:SubjectType.Book),Mode=OneWay}"/>
+        <!-- 不在上方的条目类型 -->
+        <controls:SimpleSubject x:Name="MySimpleSubject"
+                              ViewModel="{x:Bind ViewModel}"
+                              Visibility="{x:Bind common:Converters.CollapsedIfAny(ViewModel.SubjectType, model:SubjectType.Anime, model:SubjectType.Real, model:SubjectType.Book),Mode=OneWay}"/>
 
         <ProgressBar Name="MyProgressBar"
                      Visibility="{x:Bind ViewModel.IsUpdating, Mode=OneWay}"

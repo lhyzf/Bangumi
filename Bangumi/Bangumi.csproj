@@ -132,6 +132,12 @@
     <Compile Include="ContentDialogs\SitesContentDialog.xaml.cs">
       <DependentUpon>SitesContentDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SimpleSubject.xaml.cs">
+      <DependentUpon>SimpleSubject.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BookChapter.xaml.cs">
+      <DependentUpon>BookChapter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\AnimeEpisode.xaml.cs">
       <DependentUpon>AnimeEpisode.xaml</DependentUpon>
     </Compile>
@@ -263,6 +269,14 @@
     <Page Include="ContentDialogs\SitesContentDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SimpleSubject.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\BookChapter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\AnimeEpisode.xaml">
       <Generator>MSBuild:Compile</Generator>
