@@ -375,12 +375,12 @@
                             </TextBlock>
                         </Button>
 
-                        <ProgressBar Maximum="{x:Bind EpsCount, Mode=OneWay}"
-                                     Value="{x:Bind WatchedEpsCount, Mode=OneWay}"
+                        <ProgressBar Maximum="{x:Bind ChapCount.Value, Mode=OneWay}"
+                                     Value="{x:Bind ChapStatus, Mode=OneWay}"
                                      Width="{Binding ElementName=BangumiImage, Path=Width}"
                                      RelativePanel.Below="BangumiImage"
                                      RelativePanel.AlignLeftWithPanel="True"
-                                     ToolTipService.ToolTip="{x:Bind common:Converters.Split(WatchedEpsCount, EpsCount, ' / '), Mode=OneWay}"
+                                     ToolTipService.ToolTip="{x:Bind common:Converters.Split(ChapStatus, ChapCount, ' / '), Mode=OneWay}"
                                      Margin="0,1,0,0"
                                      Background="{ThemeResource SystemChromeHighColor}"
                                      Foreground="{StaticResource BangumiPinkBrush}" />

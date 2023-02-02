@@ -275,7 +275,7 @@ namespace Bangumi.Common
         /// <returns></returns>
         public static string Split(object a, object b, string splitter)
         {
-            return $"{a}{splitter}{b}";
+            return $"{a}{splitter}{b ?? "??"}";
         }
 
         /// <summary>
