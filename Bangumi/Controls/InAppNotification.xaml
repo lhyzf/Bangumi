@@ -24,7 +24,9 @@
                             HorizontalAlignment="Center"
                             BorderThickness="8"
                             CornerRadius="10">
-                        <TextBlock Foreground="White" Text="{x:Bind Message}"/>
+                        <TextBlock Foreground="White"
+                                   Text="{x:Bind Message}"
+                                   TextWrapping="Wrap"/>
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

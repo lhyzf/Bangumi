@@ -8,7 +8,9 @@ using Bangumi.Controls;
 using Bangumi.Data;
 using Bangumi.Helper;
 using Bangumi.Views;
+using Flurl.Http;
 using Newtonsoft.Json;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -84,23 +86,49 @@ namespace Bangumi.ViewModels
                                          newWatching;
                 using (var semaphore = new SemaphoreSlim(2))
                 {
+                    var retryPolicy = Policy.Handle<FlurlHttpException>(r => r.StatusCode == 503)
+                        .WaitAndRetryAsync(3, retryAttempt =>
+                            TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                            (exception, timespan, retryCount, context) =>
+                            {
+                                Debug.WriteLine($"Retry {retryCount}: {nameof(Watching.SubjectId)}: {context[nameof(Watching.SubjectId)]}, Exception: {exception}");
+                            });
                     foreach (var item in watchingsNotCached)
                     {
-                        await semaphore.WaitAsync();
                         Debug.WriteLine($"Get SubjectEp, SubjectId: {item.SubjectId}");
-                        subjectTasks.Add(BangumiApi.BgmApi.SubjectEp(item.SubjectId.ToString())
-                            .ContinueWith(t =>
+                        subjectTasks.Add(retryPolicy
+                            .ExecuteAsync(async (context) =>
                             {
-                                semaphore.Release();
-                                return t.Result;
+                                await semaphore.WaitAsync();
+                                try
+                                {
+                                    return await BangumiApi.BgmApi.SubjectEp(context[nameof(Watching.SubjectId)].ToString());
+                                }
+                                finally
+                                {
+                                    semaphore.Release();
+                                }
+                            }, new Dictionary<string, object>()
+                            {
+                                { nameof(Watching.SubjectId), item.SubjectId }
                             }));
-                        await semaphore.WaitAsync();
                         Debug.WriteLine($"Get Progress, SubjectId: {item.SubjectId}");
-                        progressTasks.Add(BangumiApi.BgmApi.Progress(item.SubjectId.ToString())
-                            .ContinueWith(t =>
+                        progressTasks.Add(retryPolicy
+                            .ExecuteAsync(async (context) =>
                             {
-                                semaphore.Release();
-                                return t.Result;
+                                await semaphore.WaitAsync();
+                                try
+                                {
+                                    return await BangumiApi.BgmApi.Progress(context[nameof(Watching.SubjectId)].ToString());
+                                }
+                                finally
+                                {
+                                    semaphore.Release();
+                                }
+                            },
+                            new Dictionary<string, object>()
+                            {
+                                { nameof(Watching.SubjectId), item.SubjectId }
                             }));
                     }
                     newSubjects = await Task.WhenAll(subjectTasks);
