@@ -206,8 +206,9 @@
                 <TextBlock LineHeight="34"
                            FontSize="18"
                            Foreground="{StaticResource BangumiPinkBrush}"
-                           Padding="0,15,0,0"><Bold>影片信息</Bold></TextBlock>
+                           Padding="0,15,0,0"><Bold>条目信息</Bold></TextBlock>
                 <TextBlock LineHeight="22" 
+                           IsTextSelectionEnabled="True"
                            Text="{x:Bind ViewModel.Info}"
                            TextWrapping="Wrap"/>
                 <TextBlock LineHeight="34"

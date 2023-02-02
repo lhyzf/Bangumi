@@ -496,8 +496,9 @@ namespace Bangumi.ViewModels
                 {
                     var progress = BangumiApi.BgmApi.Progress(SubjectId);
                     var status = BangumiApi.BgmApi.Status(SubjectId);
-                    if (cachedSubject.Type == SubjectType.Anime
-                        || cachedSubject.Type == SubjectType.Real)
+                    if (cachedSubject != null &&
+                        (cachedSubject.Type == SubjectType.Anime ||
+                        cachedSubject.Type == SubjectType.Real))
                     {
                         ProcessProgress(BangumiApi.BgmCache.Progress(SubjectId));
                     }
@@ -506,8 +507,9 @@ namespace Bangumi.ViewModels
                     ProcessSubject(subject);
                     IsDetailLoading = false;
                     // 动画、三次元有独立的章节状态
-                    if (subject.Type == SubjectType.Anime
-                        || subject.Type == SubjectType.Real)
+                    if (subject != null &&
+                        (subject.Type == SubjectType.Anime ||
+                        subject.Type == SubjectType.Real))
                     {
                         ProcessProgress(await progress);
                     }
@@ -543,8 +545,9 @@ namespace Bangumi.ViewModels
         {
             var subject = BangumiApi.BgmCache.Subject(SubjectId);
             ProcessSubject(subject);
-            if (subject.Type == SubjectType.Anime
-                || subject.Type == SubjectType.Real)
+            if (subject != null &&
+                (subject.Type == SubjectType.Anime ||
+                subject.Type == SubjectType.Real))
             {
                 ProcessProgress(BangumiApi.BgmCache.Progress(SubjectId));
             }
@@ -613,13 +616,44 @@ namespace Bangumi.ViewModels
 
             SubjectType = subject.Type;
             // 详情
-            string info = "作品分类：" + subject.Type.GetDesc();
-            info += subject.AirDate == "0000-00-00" ? "" : "\n放送开始：" + subject.AirDate;
-            info += subject.AirWeekday == 0 ? "" : "\n放送星期：" + subject.AirWeekdayCn;
-            info += subject.Eps == null ? "" : "\n话数：" + subject.Eps.Count;
+            var infoList = new List<(string, string)>();
+            if (!string.IsNullOrEmpty(subject.NameCn))
+            {
+                infoList.Add(("中文名", subject.NameCn));
+            }
+            infoList.Add(("作品分类", subject.Type.GetDesc()));
+            if (subject.Type == SubjectType.Anime || subject.Type == SubjectType.Real)
+            {
+                if (subject.AirDate != "0000-00-00")
+                {
+                    infoList.Add(("放送开始", subject.AirDate));
+                }
+                if (subject.AirWeekday != 0)
+                {
+                    infoList.Add(("放送星期", subject.AirWeekdayCn));
+                }
+                if (subject.Eps != null)
+                {
+                    infoList.Add(("话数", subject.Eps.Count.ToString()));
+                }
+            }
+            else if (subject.Type == SubjectType.Book)
+            {
+                infoList.Add(("发售日", subject.AirDate));
+            }
+            else if (subject.Type == SubjectType.Music)
+            {
+                infoList.Add(("发售日期", subject.AirDate));
+            }
+            else if (subject.Type == SubjectType.Game)
+            {
+                infoList.Add(("发行日期", subject.AirDate));
+            }
+            string info = string.Join(Environment.NewLine, infoList.Select(it => it.Item1 + "：" + it.Item2));
             Detail = new DetailViewModel
             {
                 Name = subject.Name,
+                NameCn = subject.NameCn,
                 Summary = subject.Summary,
                 Info = info,
                 Characters = subject.Characters,

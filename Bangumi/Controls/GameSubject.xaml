@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Bangumi.Controls.SimpleSubject"
+    x:Class="Bangumi.Controls.GameSubject"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Bangumi.Controls"
@@ -36,7 +36,6 @@
                         <Setter Target="NameTextBlock.FontSize" Value="16"/>
                         <Setter Target="NameTextBlock.MaxLines" Value="1"/>
                         <Setter Target="AirDateTextBlock.FontSize" Value="14"/>
-                        <Setter Target="AirWeekdayTextBlock.FontSize" Value="14"/>
                         <Setter Target="CollectionTextBlock.FontSize" Value="12"/>
                         <Setter Target="RatingTextBlock.FontSize" Value="24"/>
                         <Setter Target="RatingTextBlock.Margin" Value="5,10"/>
@@ -55,7 +54,6 @@
                         <Setter Target="BangumiImage.Height" Value="214"/>
                         <Setter Target="NameTextBlock.FontSize" Value="24"/>
                         <Setter Target="AirDateTextBlock.FontSize" Value="16"/>
-                        <Setter Target="AirWeekdayTextBlock.FontSize" Value="16"/>
                         <Setter Target="CollectionTextBlock.FontSize" Value="14"/>
                         <Setter Target="RatingTextBlock.FontSize" Value="48"/>
                         <Setter Target="RatingTextBlock.Margin" Value="5,20"/>
@@ -74,7 +72,6 @@
                         <Setter Target="BangumiImage.Height" Value="214"/>
                         <Setter Target="NameTextBlock.FontSize" Value="24"/>
                         <Setter Target="AirDateTextBlock.FontSize" Value="16"/>
-                        <Setter Target="AirWeekdayTextBlock.FontSize" Value="16"/>
                         <Setter Target="CollectionTextBlock.FontSize" Value="14"/>
                         <Setter Target="RatingTextBlock.FontSize" Value="48"/>
                         <Setter Target="RatingTextBlock.Margin" Value="5,20"/>
@@ -123,15 +120,9 @@
                            TextTrimming="CharacterEllipsis"
                            Foreground="{StaticResource BangumiPinkBrush}" />
                 <TextBlock Name="AirDateTextBlock" 
-                           Text="{x:Bind sys:String.Format('开播时间：{0}',ViewModel.AirDate), Mode=OneWay}" 
+                           Text="{x:Bind sys:String.Format('发行日期：{0}',ViewModel.AirDate), Mode=OneWay}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.Below="NameTextBlock"
-                           Foreground="#666666" 
-                           Margin="0,2,0,0" />
-                <TextBlock Name="AirWeekdayTextBlock" 
-                           Text="{x:Bind sys:String.Format('更新时间：{0}',ViewModel.AirTime), Mode=OneWay}" 
-                           RelativePanel.RightOf="BangumiImage"
-                           RelativePanel.Below="AirDateTextBlock"
                            Foreground="#666666" 
                            Margin="0,2,0,0" />
                 <TextBlock Name="RatingTextBlock" 

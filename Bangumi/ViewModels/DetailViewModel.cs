@@ -7,6 +7,7 @@ namespace Bangumi.ViewModels
     public class DetailViewModel
     {
         public string Name { get; set; }
+        public string NameCn { get; set; }
         public string Info { get; set; }
         public string Summary { get; set; }
         // 角色资料

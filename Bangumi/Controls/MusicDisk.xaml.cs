@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Bangumi.Controls
 {
-    public sealed partial class SimpleSubject : UserControl
+    public sealed partial class MusicDisk : UserControl
     {
         public EpisodeViewModel ViewModel
         {
@@ -16,10 +16,10 @@ namespace Bangumi.Controls
 
         // Using a DependencyProperty as the backing store for ViewModel.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(nameof(SimpleSubject), typeof(EpisodeViewModel), typeof(SimpleSubject), null);
+            DependencyProperty.Register(nameof(MusicDisk), typeof(EpisodeViewModel), typeof(MusicDisk), null);
 
 
-        public SimpleSubject()
+        public MusicDisk()
         {
             this.InitializeComponent();
         }

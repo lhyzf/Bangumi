@@ -297,20 +297,6 @@ namespace Bangumi.ViewModels
             set => Set(ref _userCacheSize, value);
         }
 
-        private bool _imageCacheCanDelete;
-        public bool ImageCacheCanDelete
-        {
-            get => _imageCacheCanDelete;
-            set => Set(ref _imageCacheCanDelete, value);
-        }
-
-        private string _imageCacheSize;
-        public string ImageCacheSize
-        {
-            get => _imageCacheSize;
-            set => Set(ref _imageCacheSize, value);
-        }
-
         private string _bangumiDataStatus = "检查更新";
         public string BangumiDataStatus
         {
@@ -362,34 +348,12 @@ namespace Bangumi.ViewModels
             {
                 return;
             }
-            ImageCacheCanDelete = false;
-            ImageCacheSize = "正在计算";
             UserCacheCanDelete = false;
             UserCacheSize = "正在计算";
 
             // 获取缓存文件大小
             UserCacheSize = FileSizeHelper.GetSizeString(BangumiApi.BgmCache.GetFileLength());
             UserCacheCanDelete = true;
-
-            // 计算文件夹 ImageCache 中文件大小
-            if (Directory.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "ImageCache")))
-            {
-                StorageFolder imageCacheFolder = await ApplicationData.Current.TemporaryFolder.GetFolderAsync("ImageCache");
-                var files = await imageCacheFolder.GetFilesAsync();
-                ulong fileSize = 0;
-                foreach (var file in files)
-                {
-                    var fileInfo = await file.GetBasicPropertiesAsync();
-                    fileSize += fileInfo.Size;
-                }
-                ImageCacheSize = FileSizeHelper.GetSizeString(fileSize);
-                ImageCacheCanDelete = true;
-            }
-            else
-            {
-                // 文件夹 ImageCache 不存在
-                ImageCacheSize = "无缓存";
-            }
         }
 
         public void DeleteUserCacheFile()
@@ -398,19 +362,6 @@ namespace Bangumi.ViewModels
             BangumiApi.BgmCache.Delete();
             UserCacheSize = "无缓存";
             UserCacheCanDelete = false;
-        }
-
-        /// <summary>
-        /// 删除图片缓存文件夹
-        /// </summary>
-        public async void DeleteImageTempFile()
-        {
-            ImageCacheCanDelete = false;
-            if (Directory.Exists(Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "ImageCache")))
-            {
-                await (await ApplicationData.Current.TemporaryFolder.GetFolderAsync("ImageCache")).DeleteAsync();
-            }
-            ImageCacheSize = "无缓存";
         }
 
         /// <summary>

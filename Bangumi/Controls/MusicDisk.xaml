@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Bangumi.Controls.BookChapter"
+    x:Class="Bangumi.Controls.MusicDisk"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Bangumi.Controls"
@@ -10,7 +10,6 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:common="using:Bangumi.Common"
     xmlns:model="using:Bangumi.Api.Models"
-    Loaded="UserControl_Loaded"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
@@ -121,7 +120,7 @@
                            TextTrimming="CharacterEllipsis"
                            Foreground="{StaticResource BangumiPinkBrush}" />
                 <TextBlock Name="AirDateTextBlock" 
-                           Text="{x:Bind sys:String.Format('发售日：{0}',ViewModel.AirDate), Mode=OneWay}" 
+                           Text="{x:Bind sys:String.Format('发售日期：{0}',ViewModel.AirDate), Mode=OneWay}" 
                            RelativePanel.RightOf="BangumiImage"
                            RelativePanel.Below="NameTextBlock"
                            Foreground="#666666" 
@@ -153,60 +152,6 @@
                            Foreground="#666666" 
                            Margin="0,2,0,0" >
                 </TextBlock>
-
-                <Grid RelativePanel.Below="BangumiImage"
-                      RowSpacing="4"
-                      ColumnSpacing="4"
-                      Margin="0,4,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.Resources>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                        </Style>
-                    </Grid.Resources>
-
-                    <TextBlock Text="Chap."/>
-                    <muxc:NumberBox Grid.Column="1"
-                                    Value="{x:Bind ViewModel.ChapStatus,Mode=TwoWay}"
-                                    SpinButtonPlacementMode="Inline"
-                                    Minimum="0"
-                                    MinWidth="180"/>
-                    <TextBlock Grid.Column="2"
-                               Text="/"/>
-                    <TextBlock Grid.Column="3"
-                               Text="{x:Bind ViewModel.ChapCountString,Mode=OneWay}"/>
-
-                    <TextBlock Grid.Row="1"
-                               Text="Vol."/>
-                    <muxc:NumberBox Grid.Row="1"
-                                    Grid.Column="1"
-                                    Value="{x:Bind ViewModel.VolStatus,Mode=TwoWay}"
-                                    SpinButtonPlacementMode="Inline" 
-                                    Minimum="0"
-                                    MinWidth="180"/>
-                    <TextBlock Grid.Row="1"
-                               Grid.Column="2"
-                               Text="/"/>
-                    <TextBlock Grid.Row="1"
-                               Grid.Column="3"
-                               Text="{x:Bind ViewModel.VolCountString,Mode=OneWay}"/>
-
-                    <Button Grid.Row="2"
-                            Grid.ColumnSpan="4"
-                            Content="更新"
-                            Click="{x:Bind ViewModel.UpdateBookStatus}"/>
-                </Grid>
-
             </RelativePanel>
         </ScrollViewer>
     </Grid>

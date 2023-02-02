@@ -63,10 +63,14 @@
         <controls:BookChapter x:Name="MyBookChapter"
                               ViewModel="{x:Bind ViewModel}"
                               Visibility="{x:Bind common:Converters.CollapsedIfNot(ViewModel.SubjectType, model:SubjectType.Book),Mode=OneWay}"/>
-        <!-- 不在上方的条目类型 -->
-        <controls:SimpleSubject x:Name="MySimpleSubject"
+        <!-- 音乐条目使用 -->
+        <controls:MusicDisk x:Name="MyMusicDisk"
                               ViewModel="{x:Bind ViewModel}"
-                              Visibility="{x:Bind common:Converters.CollapsedIfAny(ViewModel.SubjectType, model:SubjectType.Anime, model:SubjectType.Real, model:SubjectType.Book),Mode=OneWay}"/>
+                              Visibility="{x:Bind common:Converters.CollapsedIfNot(ViewModel.SubjectType, model:SubjectType.Music),Mode=OneWay}"/>
+        <!-- 游戏条目使用 -->
+        <controls:GameSubject x:Name="MyGameSubject"
+                              ViewModel="{x:Bind ViewModel}"
+                              Visibility="{x:Bind common:Converters.CollapsedIfNot(ViewModel.SubjectType, model:SubjectType.Game),Mode=OneWay}"/>
 
         <ProgressBar Name="MyProgressBar"
                      Visibility="{x:Bind ViewModel.IsUpdating, Mode=OneWay}"

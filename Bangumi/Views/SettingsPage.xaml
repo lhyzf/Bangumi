@@ -73,19 +73,6 @@
                                 Margin="0,4,0,0"
                                 Click="{x:Bind ViewModel.DeleteUserCacheFile}"/>
 
-                        <!-- 图片缓存 -->
-                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}"
-                                   Text="图片缓存"
-                                   Margin="0,10,0,0" />
-                        <TextBlock Margin="0,10,0,0">
-                            <Run Text="缓存大小："/>
-                            <Run Text="{x:Bind ViewModel.ImageCacheSize, Mode=OneWay}" />
-                        </TextBlock>
-                        <Button Content="清空缓存" 
-                                IsEnabled="{x:Bind ViewModel.ImageCacheCanDelete, Mode=OneWay}"
-                                Margin="0,4,0,0"
-                                Click="{x:Bind ViewModel.DeleteImageTempFile}"/>
-
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
@@ -207,9 +194,9 @@
                                    Style="{StaticResource TitleTextBlockStyle}" />
                         <TextBlock TextWrapping="Wrap">
                             <LineBreak/>
-                            © 2008-2022 Bangumi (a.k.a.Chobits), some rights reserved
+                            © 2008-2023 Bangumi (a.k.a.Chobits), some rights reserved
                             <LineBreak/>
-                            © 2019-2022 猫苇
+                            © 2019-2023 猫苇
                             <LineBreak/>
                             <LineBreak/>
                             <Run Text="{x:Bind ViewModel.Version}"/>
