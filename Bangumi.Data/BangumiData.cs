@@ -402,6 +402,11 @@ namespace Bangumi.Data
             }
             foreach (var item in _info.SitesEnabledOrder)
             {
+                // 如果站点已被移除，则跳过
+                if (!_dataSet.SiteMeta.ContainsKey(item))
+                {
+                    continue;
+                }
                 // 未标明的资源站使用番剧标题作为ID
                 if (_dataSet.SiteMeta[item].Type == "resource" && !sites.Any(it => it.SiteName == item))
                 {
