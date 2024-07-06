@@ -16,13 +16,13 @@ using Bangumi.Common;
 using Bangumi.Data;
 using Bangumi.Helper;
 using Bangumi.ViewModels;
-using Newtonsoft.Json;
+using Flurl.Http;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
@@ -89,23 +89,51 @@ namespace Bangumi.BackgroundTasks
                         var watchingsNotCached = BangumiApi.BgmCache.IsUpdatedToday ?
                                                  newWatching.Where(it => cachedWatchings.All(it2 => !it2.EqualsExT(it))).ToList() :
                                                  newWatching;
-                        using (var semaphore = new SemaphoreSlim(10))
+                        using (var semaphore = new SemaphoreSlim(2))
                         {
+                            var retryPolicy = Policy.Handle<FlurlHttpException>(r => r.StatusCode == 503)
+                                .WaitAndRetryAsync(3, retryAttempt =>
+                                    TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                                    (exception, timespan, retryCount, context) =>
+                                    {
+                                        Debug.WriteLine($"Retry {retryCount}: {nameof(Watching.SubjectId)}: {context[nameof(Watching.SubjectId)]}, Exception: {exception}");
+                                    });
                             foreach (var item in watchingsNotCached)
                             {
-                                await semaphore.WaitAsync();
-                                subjectTasks.Add(BangumiApi.BgmApi.SubjectEp(item.SubjectId.ToString())
-                                    .ContinueWith(t =>
+                                Debug.WriteLine($"Get SubjectEp, SubjectId: {item.SubjectId}");
+                                subjectTasks.Add(retryPolicy
+                                    .ExecuteAsync(async (context) =>
                                     {
-                                        semaphore.Release();
-                                        return t.Result;
+                                        await semaphore.WaitAsync();
+                                        try
+                                        {
+                                            return await BangumiApi.BgmApi.SubjectEp(context[nameof(Watching.SubjectId)].ToString());
+                                        }
+                                        finally
+                                        {
+                                            semaphore.Release();
+                                        }
+                                    }, new Dictionary<string, object>()
+                                    {
+                                        { nameof(Watching.SubjectId), item.SubjectId }
                                     }));
-                                await semaphore.WaitAsync();
-                                progressTasks.Add(BangumiApi.BgmApi.Progress(item.SubjectId.ToString())
-                                    .ContinueWith(t =>
+                                Debug.WriteLine($"Get Progress, SubjectId: {item.SubjectId}");
+                                progressTasks.Add(retryPolicy
+                                    .ExecuteAsync(async (context) =>
                                     {
-                                        semaphore.Release();
-                                        return t.Result;
+                                        await semaphore.WaitAsync();
+                                        try
+                                        {
+                                            return await BangumiApi.BgmApi.Progress(context[nameof(Watching.SubjectId)].ToString());
+                                        }
+                                        finally
+                                        {
+                                            semaphore.Release();
+                                        }
+                                    },
+                                    new Dictionary<string, object>()
+                                    {
+                                        { nameof(Watching.SubjectId), item.SubjectId }
                                     }));
                             }
                             await Task.WhenAll(subjectTasks);
