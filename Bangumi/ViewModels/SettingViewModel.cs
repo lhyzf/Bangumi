@@ -20,13 +20,13 @@ namespace Bangumi.ViewModels
         public List<Url> Urls { get; set; } = new List<Url>
         {
             new Url {Uri="https://github.com/bangumi/api", Desc="Bangumi API(https://github.com/bangumi/api)"},
-            new Url {Uri="https://www.newtonsoft.com/json", Desc="Newtonsoft.Json(https://www.newtonsoft.com/json)"},
-            new Url {Uri="https://github.com/Microsoft/microsoft-ui-xaml", Desc="Microsoft.UI.Xaml(https://github.com/Microsoft/microsoft-ui-xaml)"},
-            new Url {Uri="https://github.com/windows-toolkit/WindowsCommunityToolkit", Desc="WindowsCommunityToolkit(https://github.com/windows-toolkit/WindowsCommunityToolkit)"},
+            new Url {Uri="https://github.com/Microsoft/microsoft-ui-xaml", Desc="WinUI 2(https://github.com/Microsoft/microsoft-ui-xaml)"},
+            new Url {Uri="https://github.com/CommunityToolkit/WindowsCommunityToolkit", Desc="WindowsCommunityToolkit(https://github.com/CommunityToolkit/WindowsCommunityToolkit)"},
             new Url {Uri="https://github.com/bangumi-data/bangumi-data", Desc="bangumi-data(https://github.com/bangumi-data/bangumi-data)"},
             new Url {Uri="https://flurl.dev", Desc="Flurl(https://flurl.dev)"},
             new Url {Uri="https://github.com/Tlaster/WeiPo", Desc="WeiPo(https://github.com/Tlaster/WeiPo)"},
-            new Url {Uri="https://github.com/tobiichiamane/pixivfs-uwp", Desc="pixivfs-uwp(https://github.com/tobiichiamane/pixivfs-uwp)"},
+            new Url {Uri="https://github.com/sovetskyfish/pixivfs-uwp", Desc="pixivfs-uwp(https://github.com/sovetskyfish/pixivfs-uwp)"},
+            new Url {Uri="https://github.com/App-vNext/Polly", Desc="Polly(https://github.com/App-vNext/Polly)"},
         };
 
         public string Version => string.Format("版本：{0} v{1}.{2}.{3}.{4} {5}",
