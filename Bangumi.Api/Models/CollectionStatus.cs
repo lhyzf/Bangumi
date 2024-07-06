@@ -1,6 +1,5 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
-using System;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -17,19 +16,19 @@ namespace Bangumi.Api.Models
         /// <summary>
         /// 收藏状态 ID
         /// </summary>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public CollectionStatusType Id { get; set; }
 
         /// <summary>
         /// 收藏状态类型
         /// </summary>
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public string Type { get; set; }
 
         /// <summary>
         /// 收藏状态名称
         /// </summary>
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
         // override object.Equals

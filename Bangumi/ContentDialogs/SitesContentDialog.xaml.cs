@@ -3,19 +3,12 @@ using Bangumi.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.Json;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“内容对话框”项模板
 
@@ -45,7 +38,7 @@ namespace Bangumi.ContentDialogs
         {
             if (e.Items.Count == 1)
             {
-                e.Data.SetText(Newtonsoft.Json.JsonConvert.SerializeObject(e.Items[0]));
+                e.Data.SetText(JsonSerializer.Serialize(e.Items[0]));
                 e.Data.RequestedOperation = DataPackageOperation.Move;
             }
         }
@@ -63,7 +56,7 @@ namespace Bangumi.ContentDialogs
             {
                 DragOperationDeferral def = e.GetDeferral();
                 string s = await e.DataView.GetTextAsync();
-                var site = Newtonsoft.Json.JsonConvert.DeserializeObject<SiteMetaWithKey>(s);
+                var site = JsonSerializer.Deserialize<SiteMetaWithKey>(s);
 
                 // Find the insertion index:
                 Windows.Foundation.Point pos = e.GetPosition(target.ItemsPanelRoot);

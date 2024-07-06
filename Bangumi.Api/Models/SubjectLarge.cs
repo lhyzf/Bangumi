@@ -1,6 +1,6 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -12,49 +12,49 @@ namespace Bangumi.Api.Models
         /// <summary>
         /// 话数
         /// </summary>
-        [JsonProperty("eps_count")]
+        [JsonPropertyName("eps_count")]
         public int? EpsCount { get; set; }
 
         /// <summary>
         /// 卷数 - 书籍
         /// </summary>
-        [JsonProperty("vols_count")]
+        [JsonPropertyName("vols_count")]
         public int? VolsCount { get; set; }
 
         /// <summary>
         /// 排名
         /// </summary>
-        [JsonProperty("rank")]
+        [JsonPropertyName("rank")]
         public int Rank { get; set; }
 
-        [JsonProperty("rating")]
+        [JsonPropertyName("rating")]
         public Rating Rating { get; set; }
 
-        [JsonProperty("collection")]
+        [JsonPropertyName("collection")]
         public SubjectCollection Collection { get; set; }
 
         /// <summary>
         /// 章节
         /// </summary>
-        [JsonProperty("eps")]
+        [JsonPropertyName("eps")]
         public List<Episode> Eps { get; set; }
 
         /// <summary>
         /// 角色信息
         /// </summary>
-        [JsonProperty("crt")]
+        [JsonPropertyName("crt")]
         public List<Character> Characters { get; set; }
 
         /// <summary>
         /// 制作人员信息
         /// </summary>
-        [JsonProperty("staff")]
+        [JsonPropertyName("staff")]
         public List<Person> Staff { get; set; }
 
-        [JsonProperty("topic")]
+        [JsonPropertyName("topic")]
         public List<Topic> Topics { get; set; }
 
-        [JsonProperty("blog")]
+        [JsonPropertyName("blog")]
         public List<Blog> Blogs { get; set; }
 
 

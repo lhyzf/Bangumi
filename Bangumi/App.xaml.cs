@@ -6,8 +6,8 @@ using Bangumi.Helper;
 using Bangumi.ViewModels;
 using Bangumi.Views;
 using Microsoft.QueryStringDotNET;
-using Newtonsoft.Json;
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -135,7 +135,7 @@ namespace Bangumi
                             id = args["url"];
                             var sites = await BangumiData.GetAirSitesByBangumiIdAsync(id);
                             await Launcher.LaunchUriAsync(new Uri(args["url"]));
-                            var episode = JsonConvert.DeserializeObject<EpisodeForSort>(args["episode"]);
+                            var episode = JsonSerializer.Deserialize<EpisodeForSort>(args["episode"]);
                             ToastNotificationHelper.Toast("看完了吗？",
                                 $"Ep.{episode.Sort} {Converters.StringOneOrTwo(episode.NameCn, episode.Name)}", "看完了！看完了！",
                                 "markEpWatched", "episodeId", episode.Id.ToString(), string.Empty, string.Empty,

@@ -23,17 +23,18 @@ namespace Bangumi.Api.Services
             _bgmCache = bgmCache ?? throw new ArgumentNullException(nameof(bgmCache));
             _bgmOAuth = bgmOAuth ?? throw new ArgumentNullException(nameof(bgmOAuth));
 
-            FlurlHttp.ConfigureClient(HOST, client =>
-            {
-                client.Settings.BeforeCall = call =>
+            FlurlHttp
+                .ConfigureClientForUrl(HOST)
+                .WithHeader("User-Agent", "Bangumi UWP")
+                .BeforeCall(call =>
                 {
                     if (_bgmOAuth.IsLogin)
                     {
                         call.Request.Headers.Add("Authorization", $"Bearer {_bgmOAuth.MyToken.Token}");
                     }
                     call.Request.Headers.Add("Cookie", $"chii_searchDateLine={DateTime.Now.ToString()}");
-                };
-                client.Settings.OnErrorAsync = async call =>
+                })
+                .OnError(async call =>
                 {
                     // 若请求为未认证则检查Token
                     if (call.HttpResponseMessage?.StatusCode == HttpStatusCode.Unauthorized)
@@ -41,8 +42,7 @@ namespace Bangumi.Api.Services
                         await _bgmOAuth.CheckToken();
                         throw new BgmTokenRefreshedException("Token refreshed.");
                     }
-                };
-            });
+                });
         }
 
         /// <summary>
@@ -57,11 +57,11 @@ namespace Bangumi.Api.Services
         /// <summary>
         /// 用户信息
         /// </summary>
-        /// <param name="username"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<User> User(string username)
+        public async Task<User> User(int userId)
         {
-            var user = await $"{HOST}/user/{username}"
+            var user = await $"{HOST}/user/{userId}"
                 .GetAsync()
                 .ReceiveJson<User>();
             user.Avatar?.ConvertImageHttpToHttps();

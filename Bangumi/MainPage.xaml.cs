@@ -1,4 +1,5 @@
 ﻿using Bangumi.Api;
+using Bangumi.Api.Models;
 using Bangumi.Common;
 using Bangumi.Data;
 using Bangumi.Helper;
@@ -220,10 +221,12 @@ namespace Bangumi
                 try
                 {
                     var user = await BangumiApi.BgmApi.User();
+                    ToolTipService.SetToolTip(LoginButton, $"{user.NickName}({user.UserName}@{user.Id})");
                     img = new BitmapImage(new Uri(user.Avatar.Small));
                 }
                 catch (Exception)
                 {
+                    ToolTipService.SetToolTip(LoginButton, null);
                     img = new BitmapImage(new Uri(Constants.NoAvatarImgUri));
                 }
             }

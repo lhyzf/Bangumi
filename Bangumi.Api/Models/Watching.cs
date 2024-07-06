@@ -1,5 +1,5 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -11,34 +11,34 @@ namespace Bangumi.Api.Models
         /// <summary>
         /// 条目名称
         /// </summary>
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// 条目 ID
         /// </summary>
-        [JsonProperty("subject_id")]
+        [JsonPropertyName("subject_id")]
         public int SubjectId { get; set; }
 
         /// <summary>
         /// 章节观看状态
         /// </summary>
-        [JsonProperty("ep_status")]
+        [JsonPropertyName("ep_status")]
         public int EpStatus { get; set; }
 
         /// <summary>
         /// 书籍章节状态
         /// </summary>
-        [JsonProperty("vol_status")]
+        [JsonPropertyName("vol_status")]
         public int VolStatus { get; set; }
 
         /// <summary>
         /// 最后修改时间
         /// </summary>
-        [JsonProperty("lasttouch")]
+        [JsonPropertyName("lasttouch")]
         public int LastTouch { get; set; }
 
-        [JsonProperty("subject")]
+        [JsonPropertyName("subject")]
         public SubjectForWatching Subject { get; set; }
 
         // override object.Equals

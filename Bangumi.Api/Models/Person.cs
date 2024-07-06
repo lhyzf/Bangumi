@@ -1,6 +1,6 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -13,13 +13,13 @@ namespace Bangumi.Api.Models
         /// 人物类型
         /// <br/>example: 主角
         /// </summary>
-        [JsonProperty("role_name")]
+        [JsonPropertyName("role_name")]
         public string RoleName { get; set; }
 
         /// <summary>
         /// 职位
         /// </summary>
-        [JsonProperty("jobs")]
+        [JsonPropertyName("jobs")]
         public List<string> Jobs { get; set; }
 
         // override object.Equals

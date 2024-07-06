@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -10,34 +7,34 @@ namespace Bangumi.Api.Models
     /// </summary>
     public class RatingCount
     {
-        [JsonProperty("10")]
+        [JsonPropertyName("10")]
         public int _10 { get; set; }
 
-        [JsonProperty("9")]
+        [JsonPropertyName("9")]
         public int _9 { get; set; }
 
-        [JsonProperty("8")]
+        [JsonPropertyName("8")]
         public int _8 { get; set; }
 
-        [JsonProperty("7")]
+        [JsonPropertyName("7")]
         public int _7 { get; set; }
 
-        [JsonProperty("6")]
+        [JsonPropertyName("6")]
         public int _6 { get; set; }
 
-        [JsonProperty("5")]
+        [JsonPropertyName("5")]
         public int _5 { get; set; }
 
-        [JsonProperty("4")]
+        [JsonPropertyName("4")]
         public int _4 { get; set; }
 
-        [JsonProperty("3")]
+        [JsonPropertyName("3")]
         public int _3 { get; set; }
 
-        [JsonProperty("2")]
+        [JsonPropertyName("2")]
         public int _2 { get; set; }
 
-        [JsonProperty("1")]
+        [JsonPropertyName("1")]
         public int _1 { get; set; }
 
         // override object.Equals

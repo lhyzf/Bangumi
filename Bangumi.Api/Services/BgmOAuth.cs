@@ -2,10 +2,10 @@
 using Bangumi.Api.Exceptions;
 using Bangumi.Api.Models;
 using Flurl.Http;
-using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Bangumi.Api.Services
@@ -48,22 +48,29 @@ namespace Bangumi.Api.Services
             ClientSecret = clientSecret;
             RedirectUrl = redirectUrl;
 
-            Task.Run(async () =>
+            try
             {
-                MyToken = JsonConvert.DeserializeObject<AccessToken>(await FileHelper.ReadAndDecryptFileAsync(AppFile.Token_data.GetFilePath(_localFolder)));
-            }).Wait();
+                Task.Run(async () =>
+                {
+                    MyToken = JsonSerializer.Deserialize<AccessToken>(await FileHelper.ReadAndDecryptFileAsync(AppFile.Token_data.GetFilePath(_localFolder)));
+                }).Wait();
+            }
+            catch (Exception)
+            {
+                MyToken = null;
+            }
 
-            FlurlHttp.ConfigureClient(OAuthHOST, client =>
-            {
-                client.Settings.BeforeCall = call =>
+            FlurlHttp
+                .ConfigureClientForUrl(OAuthHOST)
+                .WithHeader("User-Agent", "Bangumi UWP")
+                .BeforeCall(call =>
                 {
                     if (IsLogin)
                     {
                         call.Request.Headers.Add("Authorization", $"Bearer {MyToken.Token}");
                     }
                     call.Request.Headers.Add("Cookie", $"chii_searchDateLine={DateTime.Now.ToString()}");
-                };
-            });
+                });
         }
 
         public async Task GetToken(string code)
@@ -184,6 +191,7 @@ namespace Bangumi.Api.Services
                     // Refresh token has expired
                     if (e.Call.HttpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
                     {
+                        IsLogin = false;
                         throw new BgmUnauthorizedException();
                     }
                 }
@@ -206,7 +214,7 @@ namespace Bangumi.Api.Services
         private async Task SaveToken()
         {
             await FileHelper.EncryptAndWriteFileAsync(AppFile.Token_data.GetFilePath(_localFolder),
-                                                      JsonConvert.SerializeObject(MyToken));
+                                                      JsonSerializer.Serialize(MyToken));
         }
 
     }

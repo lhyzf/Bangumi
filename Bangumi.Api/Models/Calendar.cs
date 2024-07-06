@@ -1,15 +1,15 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
     public class Calendar
     {
-        [JsonProperty("weekday")]
+        [JsonPropertyName("weekday")]
         public Weekday Weekday { get; set; }
 
-        [JsonProperty("items")]
+        [JsonPropertyName("items")]
         public List<SubjectForCalendar> Items { get; set; }
 
         // override object.Equals

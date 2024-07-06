@@ -31,7 +31,6 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="MyCommandBar.DefaultLabelPosition" Value="Bottom"/>
-                        <Setter Target="MyAppBarSeparator.Height" Value="Auto"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Wide">
@@ -40,7 +39,6 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="MyCommandBar.DefaultLabelPosition" Value="Right"/>
-                        <Setter Target="MyAppBarSeparator.Height" Value="40"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ExWide">
@@ -49,7 +47,6 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="MyCommandBar.DefaultLabelPosition" Value="Right"/>
-                        <Setter Target="MyAppBarSeparator.Height" Value="40"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

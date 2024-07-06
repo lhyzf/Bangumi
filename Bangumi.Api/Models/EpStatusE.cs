@@ -1,5 +1,5 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -8,10 +8,10 @@ namespace Bangumi.Api.Models
     /// </summary>
     public class EpStatusE
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
-        [JsonProperty("status")]
+        [JsonPropertyName("status")]
         public EpStatus Status { get; set; }
 
         // override object.Equals

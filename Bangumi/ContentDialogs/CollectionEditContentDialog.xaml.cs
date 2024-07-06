@@ -128,7 +128,7 @@ namespace Bangumi.ContentDialogs
             CollectionStatus = subjectStatus.Status?.Id;
             Rate = subjectStatus.Rating;
             Comment = subjectStatus.Comment;
-            Privacy = subjectStatus.Private?.Equals("1") ?? false;
+            Privacy = subjectStatus.Private == 1;
 
             if (CollectionStatus != null)
             {

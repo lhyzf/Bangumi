@@ -1,5 +1,5 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -11,37 +11,37 @@ namespace Bangumi.Api.Models
         /// <summary>
         /// ID
         /// </summary>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
         /// <summary>
         /// 地址
         /// </summary>
-        [JsonProperty("url")]
+        [JsonPropertyName("url")]
         public string Url { get; set; }
 
         /// <summary>
         /// 标题
         /// </summary>
-        [JsonProperty("title")]
+        [JsonPropertyName("title")]
         public string Title { get; set; }
 
         /// <summary>
         /// 概览
         /// </summary>
-        [JsonProperty("summary")]
+        [JsonPropertyName("summary")]
         public string Summary { get; set; }
 
         /// <summary>
         /// 图片
         /// </summary>
-        [JsonProperty("image")]
+        [JsonPropertyName("image")]
         public string Image { get; set; }
 
         /// <summary>
         /// 回复数
         /// </summary>
-        [JsonProperty("replies")]
+        [JsonPropertyName("replies")]
         public int Replies { get; set; }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Bangumi.Api.Models
         /// <br/>
         /// example: 1357144903
         /// </summary>
-        [JsonProperty("timestamp")]
+        [JsonPropertyName("timestamp")]
         public int Timestamp { get; set; }
 
         /// <summary>
@@ -57,10 +57,10 @@ namespace Bangumi.Api.Models
         /// <br/>
         /// example: 2013-1-2 16:41
         /// </summary>
-        [JsonProperty("dateline")]
+        [JsonPropertyName("dateline")]
         public string DateLine { get; set; }
 
-        [JsonProperty("user")]
+        [JsonPropertyName("user")]
         public User User { get; set; }
 
         // override object.Equals

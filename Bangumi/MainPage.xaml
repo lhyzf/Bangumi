@@ -54,6 +54,7 @@
                                   ToolTipService.ToolTip="刷新 (F5)" >
                         <AppBarButton.KeyboardAccelerators>
                             <KeyboardAccelerator Modifiers="None" Key="F5"/>
+                            <KeyboardAccelerator Modifiers="Control" Key="R"/>
                         </AppBarButton.KeyboardAccelerators>
                         <Grid>
                             <ProgressRing Visibility="{x:Bind IsLoading, Mode=OneWay}"

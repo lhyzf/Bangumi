@@ -1,7 +1,5 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -10,64 +8,64 @@ namespace Bangumi.Api.Models
         /// <summary>
         /// 章节 ID
         /// </summary>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
         /// <summary>
         /// 章节地址
         /// <br/>http://bgm.tv/ep/1027
         /// </summary>
-        [JsonProperty("url")]
+        [JsonPropertyName("url")]
         public string Url { get; set; }
 
         /// <summary>
         /// 章节类型
         /// </summary>
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public EpisodeType Type { get; set; }
 
         /// <summary>
         /// 集数
         /// </summary>
-        [JsonProperty("sort")]
+        [JsonPropertyName("sort")]
         public double Sort { get; set; }
 
         /// <summary>
         /// 标题
         /// </summary>
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// 简体中文标题
         /// </summary>
-        [JsonProperty("name_cn")]
+        [JsonPropertyName("name_cn")]
         public string NameCn { get; set; }
 
         /// <summary>
         /// 时长
         /// <br/>24m
         /// </summary>
-        [JsonProperty("duration")]
+        [JsonPropertyName("duration")]
         public string Duration { get; set; }
 
         /// <summary>
         /// 放送日期
         /// <br/>2002-04-03
         /// </summary>
-        [JsonProperty("airdate")]
+        [JsonPropertyName("airdate")]
         public string AirDate { get; set; }
 
         /// <summary>
         /// 回复数量
         /// </summary>
-        [JsonProperty("comment")]
+        [JsonPropertyName("comment")]
         public int Comment { get; set; }
 
         /// <summary>
         /// 简介
         /// </summary>
-        [JsonProperty("desc")]
+        [JsonPropertyName("desc")]
         public string Desc { get; set; }
 
         /// <summary>
@@ -76,7 +74,7 @@ namespace Bangumi.Api.Models
         /// <br/>Today
         /// <br/>NA
         /// </summary>
-        [JsonProperty("status")]
+        [JsonPropertyName("status")]
         public string Status { get; set; }
 
 

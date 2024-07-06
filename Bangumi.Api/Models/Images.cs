@@ -1,5 +1,5 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -8,19 +8,19 @@ namespace Bangumi.Api.Models
     /// </summary>
     public class Images
     {
-        [JsonProperty("large")]
+        [JsonPropertyName("large")]
         public string Large { get; set; }
 
-        [JsonProperty("common")]
+        [JsonPropertyName("common")]
         public string Common { get; set; }
 
-        [JsonProperty("medium")]
+        [JsonPropertyName("medium")]
         public string Medium { get; set; }
 
-        [JsonProperty("small")]
+        [JsonPropertyName("small")]
         public string Small { get; set; }
 
-        [JsonProperty("grid")]
+        [JsonPropertyName("grid")]
         public string Grid { get; set; }
 
         // override object.Equals

@@ -1,12 +1,11 @@
 ﻿using Bangumi.Data.Models;
 using Flurl.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Bangumi.Data
@@ -37,7 +36,7 @@ namespace Bangumi.Data
                         {
                             try
                             {
-                                _seasonIdMap = JsonConvert.DeserializeObject<Dictionary<string, string>>(await FileHelper.ReadTextAsync(AppFile.Map_json.GetFilePath(_folderPath)));
+                                _seasonIdMap = JsonSerializer.Deserialize<Dictionary<string, string>>(await FileHelper.ReadTextAsync(AppFile.Map_json.GetFilePath(_folderPath)));
                             }
                             catch
                             {
@@ -238,13 +237,12 @@ namespace Bangumi.Data
                     {
                         if (!_seasonIdMap.TryGetValue(biliSite.Id, out var seasonId))
                         {
-                            var url = $"https://bangumi.bilibili.com/view/web_api/media?media_id={biliSite.Id}";
-                            var result = await url.GetStringAsync();
-                            JObject jObject = JObject.Parse(result);
-                            seasonId = jObject.SelectToken("result.param.season_id").ToString();
+                            var url = $"https://api.bilibili.com/pgc/review/user?media_id={biliSite.Id}";
+                            var result = await url.GetJsonAsync<JsonElement>();
+                            seasonId = result.GetProperty("result").GetProperty("media").GetProperty("season_id").GetInt64().ToString();
                             _seasonIdMap.Add(biliSite.Id, seasonId);
                             _ = FileHelper.WriteTextAsync(AppFile.Map_json.GetFilePath(_folderPath),
-                                                     JsonConvert.SerializeObject(_seasonIdMap));
+                                                          JsonSerializer.Serialize(_seasonIdMap));
                         }
                         biliSite.Url = "bilibili://bangumi/season/" + seasonId;
                     }
@@ -330,10 +328,9 @@ namespace Bangumi.Data
         {
             try
             {
-                var result = await BangumiDataUrl.WithHeader("User-Agent", "Bangumi UWP").GetStringAsync();
-                JArray jArray = JArray.Parse(result);
+                var result = await BangumiDataUrl.WithHeader("User-Agent", "Bangumi UWP").GetJsonAsync<JsonElement>();
                 // 返回第一个 tag 版本号
-                LatestVersion = jArray[0].SelectToken("name").ToString();
+                LatestVersion = result[0].GetProperty("name").GetString();
                 return LatestVersion;
             }
             catch (Exception e)
@@ -367,7 +364,7 @@ namespace Bangumi.Data
             {
                 // 下载并保存数据
                 var data = await BangumiDataCDNUrl.GetStringAsync();
-                _dataSet = JsonConvert.DeserializeObject<BangumiDataSet>(data);
+                _dataSet = BangumiDataSet.FromJson(data);
                 await FileHelper.WriteTextAsync(AppFile.Data_json.GetFilePath(_folderPath), data);
                 _info.Version = LatestVersion;
                 _info.LastUpdate = DateTimeOffset.UtcNow;

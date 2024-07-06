@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Text.Json;
 
 namespace Bangumi.Data.Models
 {
@@ -13,9 +13,9 @@ namespace Bangumi.Data.Models
         public string[] SitesEnabledOrder { get; set; }
 
         public string ToJson() =>
-            JsonConvert.SerializeObject(this);
+            JsonSerializer.Serialize(this);
 
         public static VersionInfo FromJson(string json) =>
-            JsonConvert.DeserializeObject<VersionInfo>(json);
+            JsonSerializer.Deserialize<VersionInfo>(json);
     }
 }

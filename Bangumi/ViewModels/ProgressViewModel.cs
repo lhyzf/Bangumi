@@ -9,13 +9,13 @@ using Bangumi.Data;
 using Bangumi.Helper;
 using Bangumi.Views;
 using Flurl.Http;
-using Newtonsoft.Json;
 using Polly;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -445,7 +445,7 @@ namespace Bangumi.ViewModels
                             var nextEp = EpisodeForSort.FromEpisode(NextEp);
                             nextEp.Desc = null;
                             ToastNotificationHelper.ScheduledToast(airTime, Converters.StringOneOrTwo(NameCn, Name),
-                                $"更新到：{NextEpDesc}", $"前往{site.SiteName}播放", "gotoPlaySite", "url", site.Url, "episode", JsonConvert.SerializeObject(nextEp));
+                                $"更新到：{NextEpDesc}", $"前往{site.SiteName}播放", "gotoPlaySite", "url", site.Url, "episode", JsonSerializer.Serialize(nextEp));
                         }
                     }
                 }

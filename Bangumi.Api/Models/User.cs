@@ -1,5 +1,5 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -11,40 +11,40 @@ namespace Bangumi.Api.Models
         /// <summary>
         /// 用户 id
         /// </summary>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
         /// <summary>
         /// 用户主页地址
         /// </summary>
-        [JsonProperty("url")]
+        [JsonPropertyName("url")]
         public string Url { get; set; }
 
         /// <summary>
         /// 用户名
         /// </summary>
-        [JsonProperty("username")]
+        [JsonPropertyName("username")]
         public string UserName { get; set; }
 
         /// <summary>
         /// 昵称
         /// </summary>
-        [JsonProperty("nickname")]
+        [JsonPropertyName("nickname")]
         public string NickName { get; set; }
 
         /// <summary>
         /// large, medium, small
         /// </summary>
-        [JsonProperty("avatar")]
+        [JsonPropertyName("avatar")]
         public Images Avatar { get; set; }
 
         /// <summary>
         /// 签名
         /// </summary>
-        [JsonProperty("sign")]
+        [JsonPropertyName("sign")]
         public string Sign { get; set; }
 
-        [JsonProperty("usergroup")]
+        [JsonPropertyName("usergroup")]
         public UserGroup UserGroup { get; set; }
 
         // override object.Equals

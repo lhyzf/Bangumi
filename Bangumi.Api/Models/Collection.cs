@@ -1,6 +1,6 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -9,16 +9,16 @@ namespace Bangumi.Api.Models
     /// </summary>
     public class Collection
     {
-        [JsonProperty("status")]
+        [JsonPropertyName("status")]
         public CollectionStatus Status { get; set; }
 
         /// <summary>
         /// 收藏数
         /// </summary>
-        [JsonProperty("count")]
+        [JsonPropertyName("count")]
         public int Count { get; set; }
 
-        [JsonProperty("list")]
+        [JsonPropertyName("list")]
         public List<SubjectBaseE> Items { get; set; }
 
         // override object.Equals

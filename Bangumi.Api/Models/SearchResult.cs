@@ -1,16 +1,14 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
     public class SearchResult
     {
-        [JsonProperty("results")]
+        [JsonPropertyName("results")]
         public int ResultCount { get; set; }
 
-        [JsonProperty("list")]
+        [JsonPropertyName("list")]
         public List<SubjectForSearch> Results { get; set; }
     }
 }

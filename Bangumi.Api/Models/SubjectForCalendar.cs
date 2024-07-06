@@ -1,6 +1,6 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -28,16 +28,16 @@ namespace Bangumi.Api.Models
         /// <summary>
         /// 排名
         /// </summary>
-        [JsonProperty("rank")]
+        [JsonPropertyName("rank")]
         public int Rank { get; set; }
 
-        [JsonProperty("rating")]
+        [JsonPropertyName("rating")]
         public Rating Rating { get; set; }
 
         /// <summary>
         /// doing
         /// </summary>
-        [JsonProperty("collection")]
+        [JsonPropertyName("collection")]
         public SubjectCollection Collection { get; set; }
 
 

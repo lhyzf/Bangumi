@@ -1,20 +1,20 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
     public class Weekday
     {
-        [JsonProperty("en")]
+        [JsonPropertyName("en")]
         public string English { get; set; }
 
-        [JsonProperty("cn")]
+        [JsonPropertyName("cn")]
         public string Chinese { get; set; }
 
-        [JsonProperty("ja")]
+        [JsonPropertyName("ja")]
         public string Japanese { get; set; }
 
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
         // override object.Equals

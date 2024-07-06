@@ -1,5 +1,5 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -11,16 +11,16 @@ namespace Bangumi.Api.Models
         /// <summary>
         /// 总评分人数
         /// </summary>
-        [JsonProperty("total")]
+        [JsonPropertyName("total")]
         public int Total { get; set; }
 
-        [JsonProperty("count")]
+        [JsonPropertyName("count")]
         public RatingCount Count { get; set; }
 
         /// <summary>
         /// 评分
         /// </summary>
-        [JsonProperty("score")]
+        [JsonPropertyName("score")]
         public double Score { get; set; }
 
         // override object.Equals

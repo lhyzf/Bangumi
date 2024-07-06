@@ -1,7 +1,4 @@
-﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
-
-namespace Bangumi.Api.Models
+﻿namespace Bangumi.Api.Models
 {
     /// <summary>
     /// 人物

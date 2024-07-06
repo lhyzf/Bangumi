@@ -1,11 +1,11 @@
 ﻿using Bangumi.Api.Common;
 using Bangumi.Api.Models;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -49,7 +49,7 @@ namespace Bangumi.Api.Services
                 {
                     Task.Run(async () =>
                     {
-                        _cache = JsonConvert.DeserializeObject<Cache>(await FileHelper.ReadTextAsync(AppFile.BangumiCache.GetFilePath(_cacheFolder)));
+                        _cache = JsonSerializer.Deserialize<Cache>(await FileHelper.ReadTextAsync(AppFile.BangumiCache.GetFilePath(_cacheFolder)));
                     }).Wait();
                 }
                 catch (Exception)
@@ -91,7 +91,7 @@ namespace Bangumi.Api.Services
             {
                 _isCacheUpdated = false;
                 await FileHelper.WriteTextAsync(AppFile.BangumiCache.GetFilePath(_cacheFolder),
-                                                JsonConvert.SerializeObject(_cache));
+                                                JsonSerializer.Serialize(_cache));
             }
         }
 

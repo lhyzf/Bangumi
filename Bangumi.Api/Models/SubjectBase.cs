@@ -1,5 +1,5 @@
 ﻿using Bangumi.Api.Common;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Bangumi.Api.Models
 {
@@ -11,52 +11,52 @@ namespace Bangumi.Api.Models
         /// <summary>
         /// 条目 ID
         /// </summary>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
         /// <summary>
         /// 条目地址
         /// </summary>
-        [JsonProperty("url")]
+        [JsonPropertyName("url")]
         public string Url { get; set; }
 
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public SubjectType Type { get; set; }
 
         /// <summary>
         /// 条目名称
         /// </summary>
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// 条目中文名称
         /// </summary>
-        [JsonProperty("name_cn")]
+        [JsonPropertyName("name_cn")]
         public string NameCn { get; set; }
 
         /// <summary>
         /// 剧情简介
         /// </summary>
-        [JsonProperty("summary")]
+        [JsonPropertyName("summary")]
         public string Summary { get; set; }
 
         /// <summary>
         /// 放送开始日期
         /// </summary>
-        [JsonProperty("air_date")]
+        [JsonPropertyName("air_date")]
         public string AirDate { get; set; }
 
         /// <summary>
         /// 放送星期
         /// </summary>
-        [JsonProperty("air_weekday")]
+        [JsonPropertyName("air_weekday")]
         public int AirWeekday { get; set; }
 
         /// <summary>
         /// large, common, medium, small, grid
         /// </summary>
-        [JsonProperty("images")]
+        [JsonPropertyName("images")]
         public Images Images { get; set; }
 
         public string AirWeekdayCn => AirWeekday switch
