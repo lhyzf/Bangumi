@@ -19,7 +19,9 @@ namespace Bangumi.Data
         private static VersionInfo _info = new VersionInfo();
         private static string _folderPath;
         public static string LatestVersion { get; private set; }
-        public static string Version => _info.Version;
+        public static string Version => string.IsNullOrEmpty(_info.Version)
+            ? (_dataSet != null ? "未知" : _info.Version)
+            : _info.Version;
         public static DateTimeOffset LastUpdate => _info.LastUpdate;
         private static bool _useBiliApp;
         public static bool UseBiliApp
@@ -345,21 +347,28 @@ namespace Bangumi.Data
         /// </summary>
         /// <param name="startDownloadCallback">获取到最新版本后回调</param>
         /// <returns></returns>
-        public static async Task<bool> DownloadLatestBangumiData(Action startDownloadCallback)
+        public static async Task<bool> DownloadLatestBangumiData(Action startDownloadCallback, bool ignoreVersionCheck = false)
         {
-            // 获取最新版本
-            if (string.IsNullOrEmpty(await GetLatestVersion()))
+            if (!ignoreVersionCheck)
             {
-                return false;
+                // 获取最新版本
+                if (string.IsNullOrEmpty(await GetLatestVersion()))
+                {
+                    return false;
+                }
+                // 已是最新版本
+                if (_info.Version == LatestVersion)
+                {
+                    _info.LastUpdate = DateTimeOffset.UtcNow;
+                    await SaveConfig();
+                    return true;
+                }
+                startDownloadCallback?.Invoke();
             }
-            // 已是最新版本
-            if (_info.Version == LatestVersion)
+            else
             {
-                _info.LastUpdate = DateTimeOffset.UtcNow;
-                await SaveConfig();
-                return true;
+                LatestVersion = null;
             }
-            startDownloadCallback?.Invoke();
             try
             {
                 // 下载并保存数据

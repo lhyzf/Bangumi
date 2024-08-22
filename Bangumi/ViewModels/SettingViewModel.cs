@@ -17,6 +17,8 @@ namespace Bangumi.ViewModels
 {
     public class SettingViewModel : ViewModelBase
     {
+        private bool _versionCheckFailed = false;
+
         public List<Url> Urls { get; set; } = new List<Url>
         {
             new Url {Uri="https://github.com/bangumi/api", Desc="Bangumi API(https://github.com/bangumi/api)"},
@@ -369,37 +371,58 @@ namespace Bangumi.ViewModels
         /// </summary>
         public async void UpdateBangumiData()
         {
-            BangumiDataStatus = "正在检查更新";
-            BangumiDataVersionChecking = true;
-            bool hasNew = false;
-            var startDownloadAction = new Action(() =>
+            if (_versionCheckFailed)
             {
-                hasNew = true;
+                // 跳过版本检查，直接下载数据
                 BangumiDataStatus = "正在下载数据";
-            });
-            if (await BangumiData.DownloadLatestBangumiData(startDownloadAction))
-            {
-                if (hasNew)
+                BangumiDataVersionChecking = true;
+                if (await BangumiData.DownloadLatestBangumiData(null, true))
                 {
                     NotificationHelper.Notify("数据下载成功！");
+                    _versionCheckFailed = false;
                 }
                 else
                 {
-                    NotificationHelper.Notify("已是最新版本！");
+                    NotificationHelper.Notify("数据下载失败，请重试或稍后再试！", NotifyType.Error);
                 }
             }
             else
             {
-                if (hasNew)
+                BangumiDataStatus = "正在检查更新";
+                BangumiDataVersionChecking = true;
+                bool hasNew = false;
+                var startDownloadAction = new Action(() =>
                 {
-                    NotificationHelper.Notify("数据下载失败，请重试或稍后再试！", NotifyType.Error);
+                    hasNew = true;
+                    BangumiDataStatus = "正在下载数据";
+                });
+                if (await BangumiData.DownloadLatestBangumiData(startDownloadAction))
+                {
+                    if (hasNew)
+                    {
+                        NotificationHelper.Notify("数据下载成功！");
+                    }
+                    else
+                    {
+                        NotificationHelper.Notify("已是最新版本！");
+                    }
                 }
                 else
                 {
-                    NotificationHelper.Notify("获取最新版本失败！", NotifyType.Error);
+                    if (hasNew)
+                    {
+                        NotificationHelper.Notify("数据下载失败，请重试或稍后再试！", NotifyType.Error);
+                    }
+                    else
+                    {
+                        // 标记检查版本失败，可能为该 IP 地址调用 GitHub API 超过速率限制，
+                        // 允许强制更新，此时版本无效
+                        _versionCheckFailed = true;
+                        NotificationHelper.Notify("获取最新版本失败！", NotifyType.Error);
+                    }
                 }
             }
-            BangumiDataStatus = "检查更新";
+            BangumiDataStatus = _versionCheckFailed ? "强制更新" : "检查更新";
             BangumiDataVersionChecking = false;
         }
 
