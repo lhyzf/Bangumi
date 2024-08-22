@@ -23,6 +23,6 @@
 
 ## 编译环境
 
-- Visual Studio Community 2019
+- Visual Studio Community 2022
 
     说明：编译之前，请考虑至 [Bangumi 开发者平台](https://bgm.tv/dev/app) 创建应用，将申请到的 App ID 等填入 Bangumi\Common\Constants.cs 对应的位置中。
