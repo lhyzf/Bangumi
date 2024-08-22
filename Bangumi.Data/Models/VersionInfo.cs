@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json;
 
 namespace Bangumi.Data.Models
@@ -10,7 +11,7 @@ namespace Bangumi.Data.Models
         public bool AutoUpdate { get; set; } = false;
         public DateTimeOffset LastUpdate { get; set; }
         public int CheckInterval { get; set; } = 7;
-        public string[] SitesEnabledOrder { get; set; }
+        public List<string> SitesEnabledOrder { get; set; }
 
         public string ToJson() =>
             JsonSerializer.Serialize(this);

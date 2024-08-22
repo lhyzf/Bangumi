@@ -134,7 +134,7 @@ namespace Bangumi.Data
                 // 未设置站点时，设置默认值
                 if (_info.SitesEnabledOrder == null)
                 {
-                    _info.SitesEnabledOrder = _dataSet?.SiteMeta.Where(it => it.Value.Type == "onair").Select(it => it.Key).ToArray();
+                    _info.SitesEnabledOrder = _dataSet?.SiteMeta.Where(it => it.Value.Type == "onair").Select(it => it.Key).ToList();
                     await SaveConfig();
                 }
             }).Wait();
@@ -303,7 +303,7 @@ namespace Bangumi.Data
         /// 设置启用的站点以及顺序
         /// </summary>
         /// <param name="siteKeys"></param>
-        public static async Task SetSitesEnabledOrder(string[] siteKeys)
+        public static async Task SetSitesEnabledOrder(List<string> siteKeys)
         {
             _info.SitesEnabledOrder = siteKeys;
             await SaveConfig();
@@ -314,7 +314,7 @@ namespace Bangumi.Data
         /// </summary>
         public static async Task ResetSitesEnabledOrder()
         {
-            _info.SitesEnabledOrder = _dataSet?.SiteMeta.Where(it => it.Value.Type == "onair").Select(it => it.Key).ToArray();
+            _info.SitesEnabledOrder = _dataSet?.SiteMeta.Where(it => it.Value.Type == "onair").Select(it => it.Key).ToList();
             await SaveConfig();
         }
         #endregion
@@ -371,7 +371,7 @@ namespace Bangumi.Data
                 // 未设置站点时，设置默认值
                 if (_info.SitesEnabledOrder == null)
                 {
-                    _info.SitesEnabledOrder = _dataSet?.SiteMeta.Where(it => it.Value.Type == "onair").Select(it => it.Key).ToArray();
+                    _info.SitesEnabledOrder = _dataSet?.SiteMeta.Where(it => it.Value.Type == "onair").Select(it => it.Key).ToList();
                     await SaveConfig();
                 }
                 await SaveConfig();

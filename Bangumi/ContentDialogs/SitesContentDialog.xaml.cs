@@ -124,7 +124,7 @@ namespace Bangumi.ContentDialogs
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await BangumiData.SetSitesEnabledOrder(EnabledSites.Select(it => it.Key).ToArray());
+            await BangumiData.SetSitesEnabledOrder(EnabledSites.Select(it => it.Key).ToList());
         }
 
         private async void ResetHyperlinkButton_Click(object sender, RoutedEventArgs e)
