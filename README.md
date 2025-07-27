@@ -19,7 +19,7 @@
 
 - 系统版本：Windows 10 17763 及以上
 
-    [<img src='https://developer.microsoft.com/store/badges/images/English_get-it-from-MS.png' alt='Get it from microsoft store.' width=284 height=104/>](https://www.microsoft.com/store/apps/9plkxltwsvxr?cid=storebadge&ocid=badge)
+    [<img src='https://get.microsoft.com/images/en-us%20dark.svg' alt='Download from the microsoft store.' width=200/>](https://apps.microsoft.com/detail/9PLKXLTWSVXR?referrer=appbadge&cid=github&mode=direct)
 
 ## 编译环境
 
